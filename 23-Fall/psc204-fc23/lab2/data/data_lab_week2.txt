@@ -1,0 +1,28 @@
+Subject   Sex      Mother_ParityHair_CortisolAge     IrritabilityConsolability
+N001      Male     Multiparous          70.5     202       1.83         1.33
+N006      Male     Multiparous          71.2     221       1.63         1.67
+N011      Female   Multiparous            90     122       1.17              1
+N012      Male     Multiparous          87.6     165       0.88         1.75
+N064      Female   Multiparous            88     122       1.63         1.67
+N062      Male     Multiparous          74.3     178       1.13         1.25
+N049      Female   Multiparous          65.5      80        1.5         1.25
+N021      Female   Multiparous            82     174            1       1.33
+N022      Male     Multiparous          64.4     190       1.33          1.5
+N024      Female   Multiparous          72.9     185        1.5         1.38
+N030      Male     Multiparous          90.4      85       1.75         1.75
+N075      Male     Multiparous          67.3     214       1.33         1.17
+N035      Male     Multiparous          62.5     163       1.83         1.83
+N037      Female   Multiparous          73.1     213       0.88         0.75
+N067      Male     Primiparous          67.9     196        1.5         1.38
+N132      Male     Primiparous        102.7      193       1.25          1.5
+N133      Female   Primiparous        110.2      114       1.83         1.83
+N070      Female   Primiparous          69.9     152        1.5          1.5
+N068      Female   Primiparous        117.3      201       1.33              1
+N071      Female   Primiparous          88.1     165       1.75         1.63
+N069      Male     Primiparous          74.7     208        1.5          1.5
+N130      Female   Primiparous          72.8     104       1.75         1.75
+N057      Female   Primiparous          59.8      93       1.63         1.88
+N065      Male     Primiparous          78.4     180       1.75         1.75
+N058      Male     Primiparous          71.3      92       1.67         1.67
+N059      Male     Primiparous          73.4     127       1.75              2
+

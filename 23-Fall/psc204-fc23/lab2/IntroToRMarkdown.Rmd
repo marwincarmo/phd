@@ -1,0 +1,115 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
+
+# Introduction to R Markdown
+
+R markdown (and R notebook) files are like traditional R script files, but merged with text processing. Markdown files give you control over how the output will look, allowing you to present, organize, and integrate your code and output.
+
+When you work in an R markdown file (like this one), you code-in the formatting of what the final product will look like when it is exported ("knitted"). For example, the first lines of code in this R markdown file (lines 1-16) set  parameters for the title and table of contents that will be at the start of the knitted file.
+
+When you are ready to knit your markdown file, you can click on the "Knit" button in the top menu, and choose how you want to save the document. If you are working in an R notebook (similar to R markdown files), you also have the option to preview it. This file is actually an R notebook, so you have the option to preview rather than knit. For the rest of this introduction I'll talk about R markdown files, but everything applies to R notebooks as well. You can also preview what the output will look like as you write the code, to make sure it will look the way you expect. 
+
+In R markdown, not all portions of the file allow you to run code. Regions of the markdown file that let your run code are called 'chunks'. This lets you separate your code into organized units. An 
+
+Below is an example of a chunk. You can create new chunks by pressing `ctrl` + `alt` + `i`.
+
+```{r}
+# This is a chunk. You can only run R code inside chunks. The output is given at the bottom of the chunk (in addition to the output on the side window). This can be nice if you want to have multiple outputs up at once, to reference as your write the next block of code.
+
+# To run a single line of code you can press ctrl + enter.
+# To run the entire chunk, run ctrl + shift + enter. 
+# Or, you can press the green triangle in the top corner of the chunk.
+# Or, you can use the "Run" options in the menu at the top.
+
+2 + 2
+
+# When you run the code, the output is put at the bottom of the chunk. You have the option to open the output in a new window, or the minimize the output.
+
+# Code written in chunks follows all the same rules as R scripts.
+
+# Code written outside of chunks follows the rules of R markdown.
+
+```
+
+Inside the chunk, coding follows all the same rules of R scripts (i.e., use a # for a comment, etc.). But outside the chunk, you do not need to use the # to mark comments, you can just type your text. Instead, the # is used to organize headers outside of chunks. 
+
+# This is a level 1 header
+## This is a level 2 header
+### This is a level 3 header
+
+Level 1 headers will be knitted with larger font size than level 2 headers, and so forth.
+
+One benefit of organizing your code with headers is that you can easily toggle between the headers (click the arrows near the orange hashtag at the bottom of the screen). Notice that lower-level headers are indented in the header organizer.
+
+# Introduction to R Markdown, cont.
+
+## Options for Organizing Chunks
+You can title R chunks to help you stay organized. However, these titles won't appear in the knitted output. For example:
+```{r Title of Chunk}
+# Notice that this chunk, titled "Title of Chunk", is labeled in the header organizer below. However, it does not appear labeled in the knitted output.
+```
+
+You can also use arguments in the chunk header to set parameters of the chunk. For example:
+- Setting eval = F will mean this chunk will not be run when the R markdown is exported, and the output wont be shown.
+- Setting echo = F will display only the results of the code when the markdown is exported, and will hide the code that generated it. The default is echo = T (i.e., display the code and output).
+- There are many chunk options. See the rmarkdown cheat sheet on canvas for more options.
+
+In the output of the markdown, notice how the different settings change the resulting output.
+
+### Example 1 (eval = T, echo = T)
+```{r Example Chunk 1, eval = T, echo = T}
+print(letters)
+1 + 2 + 5
+plot(iris$Sepal.Length,iris$Petal.Length)
+```
+
+### Example 2 (eval = T, echo = F)
+```{r Example Chunk 2, eval = T, echo = F}
+print(letters)
+1 + 2 + 5
+plot(iris$Sepal.Length,iris$Petal.Length)
+```
+
+### Example 1 (eval = F, echo = T)
+```{r Example Chunk 3, eval = F, echo = T}
+print(letters)
+1 + 2 + 5
+plot(iris$Sepal.Length,iris$Petal.Length)
+```
+
+### Example 1 (eval = F, echo = F)
+```{r Example Chunk 4, eval = F, echo = F}
+print(letters)
+1 + 2 + 5
+plot(iris$Sepal.Length,iris$Petal.Length)
+```
+
+# Notes on Knitting
+In general, you need to run the code that you want to have in your output before you knit, or else it won't show up in the knitted output file.
+
+If you have any errors in your code, you will often run into problems knitting the files. 
+
+The code needs to be able to be run from start to end in order to be knitted. This means that if you call an object in the markdown file but never defined, you won't be able to knit the file. This often happens when you have several markdown files open at the same time that you are working in, and you create an object in your environment in one markdown file and try to call it in the new markdown file. You would need to copy whatever code you used to define the object into the new one for it to knit.
+
+# Text formating (Italics and Bold)
+There are many ways to format the text in the R Markdown file. 
+
+By using the _ character, you can mark text to be italicized when exported. For example, _this will be italicized_. 
+
+By using the __ charcters, you can mark text to be bolded when exported. For example, __this will be bolded__.
+
+See the cheatsheet for more options, or if you have a question, you can google it.
+
+# Mini-chunks
+In addition to the large chunks of code shown above, you can also embedd mini-chunks of code in-line with text.
+
+For example, if I wanted to write up an analysis, I could use a mini chunk:
+
+A correlation analysis showed a strong, positive correlation between the length of a flower's sepal and the length of a flower's petals, _r_ = `r cor(iris$Sepal.Length,iris$Petal.Length)`, _p_ = `r cor.test(iris$Sepal.Length,iris$Petal.Length)$p.value`).
+
+In the example above, notice that there are a lot of decimal places given in the numbers. To clean this up, you can wrap in the round() function. Here is a cleaned up example:
+
+A correlation analysis showed a strong, positive correlation between the length of a flower's sepal and the length of a flower's petals, _r_ = `r round(cor(iris$Sepal.Length,iris$Petal.Length),2)`, _p_ = `r round(cor.test(iris$Sepal.Length,iris$Petal.Length)$p.value,2)`).
