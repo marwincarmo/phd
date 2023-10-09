@@ -47,7 +47,7 @@ list.files()
 [1] "C:/Users/marwin/Documents/Rprojects/phd/23-Fall/psc290-fq23/problem-sets/problemset1"
 [1] "carmo_marwin_ps1.qmd" "problemset1.Rproj" 
 
-The first line of the output shows the current working directory of the R process. It was given by the function `getwd()`. The second output line says which files are in the current working directory, and was produced by the function `list.files()`. At the moment there are only two, this .qmd file and a shortcut to the problem set 1 project.
+The first line of the output shows the current working directory of the R process. It was given by the function `getwd()`. The second output line says which files are in the current working directory and was produced by the function `list.files()`. There are only two: this .qmd file and a shortcut to the problem set 1 project.
 
 ## Question 2: Knit to pdf  
 
@@ -90,83 +90,92 @@ length(df_pwe)
 
 **ANSWER:** 
 
-By applying the `length()` function to the data frame I got the information of how many columns it has.
+By applying the `length()` function to the data frame, I got the information of how many columns it has.
 
 5. Use the `str()` function to investigate the structure of the data frame `df_pwe`.
 
 ```{r}
-
+str(df_pwe)
 ```
 
 6. Use the `names` function to list the names of the elements (variables) within `df_pwe`.
 ```{r}
-
+names(df_pwe)
 ```
 
 7. Wrap your answer above --- `names(data_frame_name)` --- within the `typeof()` function. Do the same for the `length()` function, and the `str()` function as well. Interpret what the output means in your own words.
 
 ```{r}
+typeof(names(df_pwe))
 
+typeof(length(df_pwe))
+
+typeof(str(df_pwe))
 ```
 
 
+**ANSWER:** For `typeof(names(df_pwe))` the output is `"character"`, meaning that the column names of the data frame are of the class character. For `typeof(length(df_pwe))`, the output is an integer, meaning that the length of the data frame is given as an integer number. Lastly, the type of `df_pwe` was given as `NULL`, meaning that the output of this function does not have a specific class.
 
-**ANSWER:** 
 
 ## Question 4: Applying basic functions to atomic vectors
 
 1. Create an atomic vector object named age with the following values: 3, 6, 41, 43.
 ```{r}
-
+age <- c(3, 6, 41, 43)
 ```
 
 2. Apply the `typeof()`, `length()`, and `str()` functions to the object `age`.
 ```{r}
-
+typeof(age)
+length(age)
+str(age)
 ```
 
 3. Apply the `sum()` function to `age`.
 ```{r}
-
+sum(age)
 ```
 
 4. Apply the `sum()` function to `age` but this time include the argument `na.rm = FALSE`.
 ```{r}
-
+sum(age, na.rm = FALSE)
 ```
 
 5. In general, what is a function "argument name" and what is an "argument value"? What does the argument `na.rm` do?
 
-
-
-**ANSWER:** 
+**ANSWER:** A function argument name is the name of a parameter that is passed to a function. A function argument value is the value of that parameter. The argument na.rm specifies whether to remove NAs from the calculation.
 
 6. Create a new object `age2` with the following values: 3, 6, 41, 43, NA. Now calculate the sum of `age2` using the argument `na.rm = FALSE` and then calculate the sum using the argument `na.rm = TRUE`. Explain why the outputs of these two `sum()` functions differ.
+
 ```{r}
 
+age2 <- c(3, 6, 41, 43, NA)
+
+sum(age2, na.rm = FALSE)
+
+sum(age, na.rm = TRUE)
 ```
 
-
-
-**ANSWER:** 
+**ANSWER:** The outputs of these two `sum()` functions differ because of the na.rm argument. When na.rm is `FALSE`, all NAs are included in the calculation of the sum, and when there are missing values, the sum is unknown. When `na.rm` is `TRUE`, NAs are removed from the calculation of the sum.
 
 7. Create a vector `tf` using the following code: `tf <- c(TRUE,FALSE,TRUE,FALSE,TRUE)`. Next apply the  `typeof()`, `length()`, and `str()` functions to the object `tf`. Based on this output, briefly describe the object `tf` in your own words (one sentence is fine).
 ```{r}
+tf <- c(TRUE,FALSE,TRUE,FALSE,TRUE)
+
+typeof(tf)
+length(tf)
+str(tf)
 
 ```
 
-
-
-**ANSWER:** 
+**ANSWER:** `tf` is a vector of five elements which are all logical.
 
 8. Apply the `sum()` function to the object, using the option to remove `NA` values prior to calculation. What numeric value do mathematical calculations in `R` assign to `TRUE` values and what do they assign to `FALSE` values?
 ```{r}
-
+sum(tf, na.rm = TRUE)
 ```
 
-
-
-**ANSWER:** 
+**ANSWER:** `TRUE` values are assigned as 1 and `FALSE` values are assigned as 0.
 
 9. This is the syntax of the `mean()` function that includes both argument names and the default values for arguments: `mean(x, trim = 0, na.rm = FALSE)`. 
 
@@ -175,6 +184,10 @@ When using a function, `R` requires you to type the values you assign to each ar
 Use the `mean()` function to calculate the mean of object `tf` (removing `NA` values prior to calculation). In your function call, include both the argument name and the argument value for each argument (argument value for the `trim` argument can be `0`). Then run the same function, but without typing any argument names.
 
 ```{r}
+
+mean(x = tf, trim = 0, na.rm = TRUE)
+
+mean(tf, 0, TRUE)
 
 ```
 
