@@ -20,7 +20,6 @@ summary(sat_data[continuous_variables])
 
 # 4. Standard deviation of continuous variables ---------------------------
 
-
 sd(sat_data$age, na.rm = TRUE)
 sd(sat_data$ACT, na.rm = TRUE)
 sd(sat_data$SATV, na.rm = TRUE)
