@@ -90,7 +90,6 @@ df_event |>
 
 **base R using subsetting operators** (hint: use `which()` to drop `NA`s):
 
-
 ```{r}
 nrow(df_event[which(df_event$univ_id == 166629 &
            df_event$event_type == "public hs" &
@@ -123,7 +122,7 @@ nrow(subset(df_event,
 df_event |> 
   dplyr::filter(univ_id %in% c(218663, 100751),
                   (event_type == "2yr college" & event_state == instst) | pop_total < 10000,
-                !dplyr::if_any(c(univ_id, event_type, event_state, instst, pop_total), is.na)) |> 
+                !dplyr::if_all(c(univ_id, event_type, event_state, instst, pop_total), is.na)) |> 
   nrow()
 ```
 
@@ -138,7 +137,10 @@ nrow(df_event[which(df_event$univ_id %in% c(218663, 100751) &
 **base R using `subset()`**:
 
 ```{r}
-
+nrow(subset(df_event,
+            univ_id %in% c(218663, 100751) &
+                  (event_type == "2yr college" & event_state == instst) | 
+              univ_id %in% c(218663, 100751) & pop_total < 10000))
 ```
 
 # Question 3: Sorting observations
@@ -193,7 +195,7 @@ nrow(df_event[which(df_event$univ_id %in% c(218663, 100751) &
 
 1.  In the code chunk below, complete the following:
 
-    -   Use the `load()` and `url()` functions to download the `df_school_all` dataframe from the url: `https://github.com/emoriebeck/psc290-data-FQ23/raw/main/05-assignments/02-ps2/ps2-data-all.RData `
+    -   Use the `load()` and `url()` functions to download the `df_school_all` dataframe from the url: `https://github.com/emoriebeck/psc290-data-FQ23/raw/main/05-assignments/02-ps2/ps2-data-all.RData`
         -   Each row in `df_school_all` represents a high school (includes both public and private)
         -   There are columns (e.g., `visit_by_100751`) indicating the number of times a university visited that high school
         -   The variable `total_visits` identifies the number of visits the high school received from all (16) public research universities in this data collection sample
