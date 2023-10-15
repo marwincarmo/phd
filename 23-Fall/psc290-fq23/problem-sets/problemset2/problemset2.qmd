@@ -1,7 +1,7 @@
 ---
 title: 'Problem Set #2'
-author: "INSERT YOUR NAME HERE"
-date: "insert date here"
+author: "Marwin Carmo"
+date: "10-14-2023"
 format: pdf
 editor: visual
 ---
@@ -158,13 +158,18 @@ nrow(subset(df_event,
 **tidyverse using `arrange()`**:
 
 ```{r}
+df_event_sorted <- df_event |>
+  dplyr::arrange(univ_id, event_date, event_state, desc(pct_white_zip), desc(med_inc))
 
+head(df_event_sorted, 10)
 ```
 
 **base R using `order()`**:
 
 ```{r}
+df_event_sorted_2 <- df_event[ order(df_event$univ_id, df_event$event_date, df_event$event_state, -df_event$pct_white_zip, -df_event$med_inc), ]
 
+head(df_event_sorted_2, 10)
 ```
 
 # Question 4: Selecting variables
@@ -176,19 +181,22 @@ nrow(subset(df_event,
 **tidyverse using `select()`**:
 
 ```{r}
+df_event |> 
+  dplyr::select(univ_id, event_date, event_type, zip, med_inc) |> 
+  names()
 
 ```
 
 **base R using subsetting operators**:
 
 ```{r}
-
+names(df_event[, c("univ_id", "event_date", "event_type", "zip", "med_inc")])
 ```
 
 **base R using `subset()`**:
 
 ```{r}
-
+names(subset(df_event, select = c(univ_id, event_date, event_type, zip, med_inc)))
 ```
 
 # Question 5: Additional practice with `df_school_all` dataframe
@@ -203,7 +211,11 @@ nrow(subset(df_event,
     -   Use `table()` to show the categorical values of the `school_type` column
 
 ```{r}
+load(url("https://github.com/emoriebeck/psc290-data-FQ23/raw/main/05-assignments/02-ps2/ps2-data-all.RData"))
 
+names(df_school_all)
+
+table(df_school_all$school_type)
 ```
 
 2.  Use the tidyverse functions `arrange()` and `select()` to do the following:
@@ -215,7 +227,11 @@ nrow(subset(df_event,
     Print the first 10 rows of the final dataframe using `head()`, which represents the top 10 most visited schools by the 16 universities.
 
 ```{r}
-
+df_school_selected <- df_school_all |> 
+  dplyr::arrange(desc(total_visits)) |> 
+  dplyr::select(name, state_code, city, school_type, total_visits, med_inc, pct_white, pct_black, pct_hispanic, pct_asian, pct_amerindian)
+  
+head(df_school_selected, 10)
 ```
 
 3.  Building upon the previous question, print the following (select same variables as above):
@@ -224,6 +240,17 @@ nrow(subset(df_event,
     (B) Top 10 most visited private high schoools in California
 
 ```{r}
+## A
+df_school_selected |> 
+  dplyr::filter(school_type == "public", state_code == "CA") |> 
+  head(10) |> 
+  dplyr::pull(name)
+
+## B
+df_school_selected |> 
+  dplyr::filter(school_type == "private", state_code == "CA") |> 
+  head(10) |> 
+  dplyr::pull(name)
 
 ```
 
