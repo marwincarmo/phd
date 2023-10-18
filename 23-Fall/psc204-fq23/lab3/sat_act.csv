@@ -1,0 +1,51 @@
+"","gender","education","age","ACT","SATV","SATQ"
+"1","female","some college/university",19,24,500,500
+"2","female","some college/university",23,35,600,500
+"3","female","some college/university",20,21,480,470
+"4","male","college/university",27,26,550,520
+"5","male","high school",33,31,600,550
+"6","male","graduate/professional",26,28,640,640
+"7","female","graduate/professional",30,36,610,500
+"8","male","some college/university",19,22,520,560
+"9","female","college/university",23,22,400,600
+"10","female","graduate/professional",40,35,730,800
+"11","male","some college/university",23,32,760,710
+"12","female","college/university",34,29,710,600
+"13","male","college/university",32,21,600,600
+"14","female","college/university",41,35,780,725
+"15","female","some college/university",20,27,640,630
+"16","female","college/university",24,27,640,590
+"17","female","some college/university",19,33,640,650
+"18","female","college/university",24,32,700,620
+"19","male","college/university",35,28,640,580
+"20","female","college/university",46,32,610,680
+"21","female","high school",55,28,620,450
+"22","female","college/university",25,30,600,500
+"23","male","college/university",50,30,600,600
+"24","male","college/university",35,31,460,540
+"25","male","some college/university",21,30,680,650
+"26","female","high school",34,30,700,700
+"27","female","college/university",37,21,375,385
+"28","female","graduate/professional",27,28,450,450
+"29","female","graduate/professional",29,33,600,500
+"30","male","some college/university",23,24,500,710
+"31","male","some college/university",22,27,520,710
+"32","male","college/university",23,31,620,570
+"33","male","college/university",54,33,660,580
+"34","female","some college/university",20,29,600,600
+"35","male","high school",41,28,500,600
+"36","female","graduate/professional",52,24,630,570
+"37","female","some college/university",18,27,630,540
+"38","male","graduate/professional",35,31,710,690
+"39","male","college/university",27,28,530,610
+"40","female","college/university",23,29,800,610
+"41","female","graduate/professional",39,30,700,700
+"42","female","graduate/professional",30,36,660,610
+"43","male","graduate/professional",53,36,560,740
+"44","female","some college/university",17,26,770,540
+"45","male","college/university",27,33,660,650
+"46","male","college/university",30,27,800,600
+"47","female","college/university",34,23,440,440
+"48","female","graduate/professional",27,33,800,690
+"49","male","college/university",35,35,670,780
+"50","female","college/university",24,28,680,600
