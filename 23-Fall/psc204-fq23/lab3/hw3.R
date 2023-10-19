@@ -50,4 +50,13 @@ demo_sampling_dist(20, 1000)
 # AS the number of samples the histogram distribution get closer to the normal distribution
 # As the sample size increases the distribution gets narrowed around the mean
 
+n_samples <- c(10, 50, 100)
+sample_size <- c(10, 50, 100)
+sigma <- c(1, 5, 10)
 
+par(mfrow = c(3, 3))
+
+
+purrr::map(n_samples, ~demo_sampling_dist(num_samples = .x))
+purrr::map(sample_size, ~demo_sampling_dist(sample_size = .x))
+purrr::map(sigma, ~demo_sampling_dist(pop_sigma = .x))
