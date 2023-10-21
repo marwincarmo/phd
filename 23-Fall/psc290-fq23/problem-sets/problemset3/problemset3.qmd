@@ -172,7 +172,14 @@ df_race |>
       - `South`, if `state_code` is not any of the above states (Hint: Use `TRUE` as the condition to specify default value. You can see an example [here](https://dplyr.tidyverse.org/reference/case_when.html).)
     
 ```{r}
-
+df_schools <- df_school_all %>%
+  select(name, state_code) %>%
+  mutate(region = case_when(
+    state_code %in% c('CT', 'ME', 'MA', 'NH', 'RI', 'VT', 'NJ', 'NY', 'PA') ~ "Northeast",
+    state_code %in% c('IN', 'IL', 'MI', 'OH', 'WI', 'IA', 'KS', 'MN', 'MO', 'NE', 'ND', 'SD') ~ "Midwest",
+    state_code %in% c('AZ', 'CO', 'ID', 'NM', 'MT', 'UT', 'NV', 'WY', 'AK', 'CA', 'HI', 'OR', 'WA') ~ "West",
+    TRUE ~ "South"
+  ))
 ```
 
 4. Complete the following steps to recode variables using `mutate()` and `recode()`:
@@ -189,7 +196,18 @@ df_race |>
       - `Other`, if `state_code` is any other state (Hint: Use `.default` to specify the default value)
     
 ```{r}
-
+df_schools %>%
+  mutate(
+    region = recode(
+      region, Northeast = "NE", Midwest = "MW", West = "W", South = "S"),
+    state_name = recode(state_code,
+      CA = "California",
+      NY = "New York",
+      FL = "Florida",
+      .default = "Other"
+    )) |> 
+  count(state_name)
+  
 ```
 
 # Question 3: Grouping and summarizing
@@ -212,9 +230,28 @@ df_race |>
       - **ANSWER**: 
 
 ```{r}
-
+df_school_all %>%
+  group_by(state_code, school_type) %>%
+  summarise(n = n())
 ```
 
+```{r}
+df_school_all %>%
+  pivot_longer(
+    cols = contains("pct"),
+    names_to = c("prefix", "race"),
+    values_to = "pct",
+    names_sep = "_"
+  ) %>% 
+  mutate(n_student_race = round(total_students * (pct/100)), 1) %>%
+  select(state_code, school_type, total_students, n_student_race, race, pct) %>% 
+  group_by(state_code, school_type) %>%
+  mutate(total_students_state = sum(total_students)) %>%
+  group_by(state_code, school_type, race) %>%
+  summarise(pct_race_state = sum(n_student_race))
+  summarise(pct_race_state = sum(n_student_race)/total_students_state)
+  
+```
 
 2. Next, we will look at the students' median household income (`med_inc`) by state and type. Group by type state (`state_code`) and (`school_type`) and calculate the following statistics for each type:
 
