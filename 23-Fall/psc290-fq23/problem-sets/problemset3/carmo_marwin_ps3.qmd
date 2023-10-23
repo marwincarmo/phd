@@ -5,17 +5,19 @@ date: "10/20/2023"
 urlcolor: blue
 output: 
   html:
-    code-tools: true
-    code-copy: true
+    code-tools: false
+    code-copy: false
     code-line-numbers: true
     code-link: true
-    theme: united
+    theme: none
     highlight-style: tango
     df-print: paged
     code-fold: show
     toc: true
     toc-float: true
     self-contained: true
+    number-sections: true
+    fontsize: 14
 ---
 
 ```{r setup, include=FALSE}
@@ -151,13 +153,13 @@ df_race %>%
   filter(if_any(pct_black:pct_amerindian, is.na)) %>% 
   count()
 
-# Creating new variable
+# Creating a new variable
 df_race <- df_race %>%
   rowwise() %>%
   mutate(pct_bl_hisp_nat = sum(c_across(pct_black:pct_amerindian)))
 
-df_race |> 
-  mutate(gt50pct_bl_hisp_nat = if_else(pct_bl_hisp_nat > 50, 1, 0)) |> 
+df_race  %>%
+  mutate(gt50pct_bl_hisp_nat = if_else(pct_bl_hisp_nat > 50, 1, 0))  %>%
   count(gt50pct_bl_hisp_nat)
 ```
 
@@ -205,7 +207,7 @@ df_schools %>%
       NY = "New York",
       FL = "Florida",
       .default = "Other"
-    )) |> 
+    ))  %>%
   count(state_name)
   
 ```
@@ -227,16 +229,16 @@ df_schools %>%
       Lastly, sort by the number of students per state-type combinaiton in descending order, and answer the following question. 
       
     - In one or two sentences, what is something you find interesting about these results?
-      - **ANSWER**: 
+      - **ANSWER**: California and Texas have the highest number of students by school type. There is also a trend of public schools being much more popular across the country.
 
 ```{r}
 df_school_all %>%
   group_by(state_code, school_type) %>%
-  summarise(n = n())
+  summarise(n_total_students = sum(total_students))
 ```
 
 ```{r}
-df_school_all %>%
+df_pct_race <- df_school_all %>%
   pivot_longer(
     cols = contains("pct"),
     names_to = c("prefix", "race"),
@@ -244,14 +246,29 @@ df_school_all %>%
     names_sep = "_"
   ) %>% 
   mutate(n_student_race = round(total_students * (pct/100)), 1) %>%
-  select(state_code, school_type, total_students, n_student_race, race, pct) %>% 
-  group_by(state_code, school_type) %>%
-  mutate(total_students_state = sum(total_students)) %>%
+  select(state_code, school_type, n_student_race, race, pct) %>% 
+  with_groups(c(state_code, school_type), mutate,
+              total_students_state = sum(n_student_race)) %>%
   group_by(state_code, school_type, race) %>%
-  summarise(pct_race_state = sum(n_student_race))
-  summarise(pct_race_state = sum(n_student_race)/total_students_state)
+  mutate(n_race_state = sum(n_student_race)) %>%
+  summarise(pct_race_state = n_race_state/total_students_state) %>% 
+  summarise(pct_race_state = mean(pct_race_state)*100)
+df_pct_race
   
 ```
+
+```{r}
+df_school_all %>%
+  group_by(state_code, school_type) %>%
+  summarise(n_total_students = sum(total_students)) %>%
+  arrange(desc(n_total_students))
+```
+```{r}
+df_pct_race %>%
+  filter(state_code %in% c("CA", "TX"),
+         school_type == "public")
+```
+
 
 2. Next, we will look at the students' median household income (`med_inc`) by state and type. Group by type state (`state_code`) and (`school_type`) and calculate the following statistics for each type:
 
@@ -264,7 +281,31 @@ df_school_all %>%
     Lastly, sort by the number of students per state in descending order.
 
 ```{r}
+# Total number of students
+df_school_all %>%
+  group_by(state_code, school_type) %>%
+  summarise(n_total_students = sum(total_students))
 
+# The total number of visits where `med_inc` is missing
+df_school_all %>%
+  group_by(state_code, school_type) %>%
+  filter(is.na(med_inc)) %>%
+  summarise(sum(total_visits))
+
+# The average median household income of students
+df_school_all %>%
+  group_by(state_code, school_type) %>%
+  summarise(avg_inc = mean(med_inc, na.rm=TRUE))
+
+# The maximum median household income of students
+df_school_all %>%
+  group_by(state_code, school_type) %>%
+  summarise(max_inc = max(med_inc, na.rm=TRUE))
+
+# The minimum median household income of students
+df_school_all %>%
+  group_by(state_code, school_type) %>%
+  summarise(min_inc = min(med_inc, na.rm=TRUE))
 ```
 
 # Question 4: Fun with YAML Headers  
@@ -273,8 +314,8 @@ Explore the documentation on YAML headers for html on Quarto's [website](https:/
 
 Test out at least three options (but as many as you want) not currently in the YAML header from the Quarto website and note them here (If you test more than three, just list the three you thought were the coolest or where you learned the most): 
 
-1. 
-2. 
+1. fontsize: 14
+2. number-sections: true
 3. 
 
 Next, change the options for at least three things already in the YAML header and note what happens. How does the appearance change? How does the directory structure change (if at all)?
@@ -282,6 +323,8 @@ Next, change the options for at least three things already in the YAML header an
 1. 
 2. 
 3. 
+
+Even though I tried tweaking the YAML header, curiously, nothing changed in the rendered document. I also noticed that some options already in the YAML header seem not to be displayed when I render the file, such as a table of contents.
 
 # Render to pdf and submit problem set  
 
