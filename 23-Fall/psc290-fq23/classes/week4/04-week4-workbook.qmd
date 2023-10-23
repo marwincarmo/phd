@@ -1,0 +1,621 @@
+---
+title: "Week 4 - Codebooks and Data Documentation"
+author: "Emorie D Beck"
+format: 
+  html:
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    theme: united
+    highlight-style: tango
+    df-print: paged
+    code-fold: show
+    toc: true
+    toc-float: true
+    self-contained: true
+---
+
+```{r, echo = F}
+library(knitr)
+library(psych)
+library(plyr)
+library(tidyverse)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE,	
+                      warning = FALSE,
+                      results = 'show',
+                      fig.width = 4, 
+                      fig.height = 4, 
+                      fig.retina = 3)
+options(htmltools.dir.version = FALSE)
+```
+
+# Outline
+
+1.  Documenting your design\
+2.  Building a codebook\
+3.  Cleaning your data using codebooks
+4.  Problem set and Question time
+
+-   Note: the schedule says we were going to talk about data import today. I want to focus on codebooks, so please read [R for Data Science Chapters 8 and 21](https://r4ds.hadley.nz/data-import) to make sure you understand those pieces
+
+# Documenting your design
+
+-   Documentation is a critical part of open science, but not one we're really taught
+-   Documentation is going to look different for different types of research, but it's not a hopeless cause to think about common features of documentation
+-   Common Documentation:
+    -   Preregistration
+    -   Experiment Script (for standardizing across experimenters)
+    -   Survey / experimental files / stimuli / questions
+    -   Codebooks of all variables collected
+    -   Codebooks of variables used in a given study
+-   In this workbook, I want to touch on three things:
+    -   Preregistration (brief, mostly focusing on pointing you to resources)
+    -   Protocol and design flow
+    -   Codebooks of variables used in a given study (and how to use it in R)
+
+## Preregistration
+
+::: columns
+::: {.column width="70%"}
+-   Preregistration:
+    -   Specifying your study design, research questions, hypotheses, data cleaning, analytic plan, inference criteria, and robustness checks in advance
+-   Why should you preregister?
+    -   Badges are fun
+    -   Preregistrations are not rigid but a chance to think through the questions you want to ask and answer and the challenges that might arise in doing so
+    -   Builds trust in the scientific process
+:::
+
+::: {.column width="30%"}
+![](https://cdn.cos.io/media/images/prereg-badge.original.png)
+:::
+:::
+
+-   Preregistration is hard
+    -   Specifying your plan in advance takes considerable effort and time, which can feel like very slow science
+-   Preregistration is worthwhile
+    -   But preregistering plans, code, etc. can speed up the analytic portion of your research workflow, which builds great momentum for writing and submitting projects
+
+### What should I preregister?
+
+-   Depends on the project, some examples include study design, individual research projects, etc.
+    -   Study design: A large survey is collected or a multi-part experiment is conducted. Measures, design, some research questions and hypotheses are specified a priori
+    -   Individual paper / project: A single-part survey or experiment is conducted or a specific piece of a multi-part study is investigated. If part of a multi-part study/experiment, should be linked to the parent preregistration
+
+```{r, echo = F, fig.width=12, fig.align='center'}
+knitr::include_graphics('https://d33v4339jhl8k0.cloudfront.net/docs/assets/6197cc3a0042a2708a127718/images/61d85ee3d621685caa715ca2/e05f2fdb-8a6a-4a16-a1af-c9a0027fe884.png')
+```
+
+### Learning More:
+
+## Protocol and Design Flow
+
+-   Procedure sections in scientific papers are meant to map out, as concisely and simply as possible, how data were obtained (adhering to human subjects ethical codes, etc.)
+
+-   But such sections are not sufficient to replicate or reproduce research because study designs are much more intricate and include many more details than what fits in a method section
+
+    -   e.g. measures not used because they weren't focal, the code tha tunderlies how data are collected, preprocessing, etc.
+
+-   As researchers, it's our job to make sure that the work we do is documented so well that someone could replicate our studies.
+
+-   Think of it sort of like doing your taxes. You want to keep enough information that if you were audited, you would be able to quickly and easily provide all the relevant information.
+
+-   What you need to document will depend on the kind of work you do.
+
+-   As an example, in my ecological momentary assessment work, I do the following:
+
+    -   Preregister the design
+    -   Write a methods section that includes text for every measure included in any part of the study as well as an extended and detailed procedure description. This also includes information on how data will be cleaned and composited
+    -   Detailed codebook including all measures that were collected, regardless of whether I have research questions or hypotheses for them. This is shareable for anyone who wants to use the data
+    -   Make technical workflow. This documents how all documents, scripts, etc. work together to produce the final result, including what is automated, what requires researcher action, etc.
+    -   Comment all code and documents extensively
+    -   Deviations document, where I document every deviation from my initial plans after the design is complete and data begin to be collected (or analyses start)
+
+-   Extensive documentation is also an investment in future you! My measures and procedures section basically write themselves, and my analytic plan is written in the preregistration
+
+-   This both means that I'm faster and more efficient at writing these and that I feel more confident about the design choices I made, which is a win-win
+
+## Codebooks
+
+-   For me, codebooks are the most essential and important part of any research project
+-   Codebooks allow me to:
+    -   parse through documentation and find all the variables I want
+    -   document detailed information about each of those variables
+    -   make cleaning and compositing choices for each (e.g., renaming, recoding, removing missings, etc.)
+    -   differentiate among the kind of variables I have (e.g., predictors, outcomes, covariates, manipulations, and other categories)
+    -   **Pass all this information into R to aid in data cleaning**
+
+### Example Codebook
+
+In this case, we are going to using some data from the [German Socioeconomic Panel Study (GSOEP)](https://www.diw.de/en/soep/), which is an ongoing Panel Study in Germany. Note that these data are for teaching purposes only, shared under the license for the Comprehensive SOEP teaching dataset, which I, as a contracted SOEP user, can use for teaching purposes. These data represent select cases from the full data set and should not be used for the purpose of publication. The full data are available for free at https://www.diw.de/en/diw_02.c.222829.en/access_and_ordering.html.
+
+For this tutorial, I created the codebook for you: [Download](https://github.com/emoriebeck/psc290-data-FQ23/raw/main/04-workshops/04-week4-readr/codebook.xlsx), and included what I believe are the core columns you may need. Some of these columns may not be particularly helpful for every dataset.
+
+### My Core Codebook Columns
+
+Here are my core columns that are based on the original data:
+
+::: columns
+::: column
+-   dataset name (`dataset`)\
+-   how I categorize the variables (`category`)\
+-   how I rename each item (`item`)\
+-   how I composite the variables (`name`)\
+-   original variable name (`old_name`)\
+-   original item text (`item_text`)\
+-   original item values (`scale`)\
+:::
+
+::: column
+-   how I will recode each item (in text; `recode_desc`)\
+-   how I will recode each item (in R; `recode`)\
+-   whether item is reverse coded (`reverse`)\
+-   scale minimum (`mini`)\
+-   scale maximum (`maxi`)\
+-   timeline of variable collection (`year` or `wave`)\
+-   meta name / never changing name (`meta`)\
+:::
+:::
+
+1.  **dataset**: this column indexes the **name** of the dataset that you will be pulling the data from. This is important because we will use this info later on (see purrr tutorial) to load and clean specific data files. Even if you don't have multiple data sets, I believe consistency is more important and suggest using this.\
+
+2.  **category**: broad categories that different variables can be put into. I'm a fan of naming them things like "outcome", "predictor", "moderator", "demographic", "procedural", etc. but sometimes use more descriptive labels like "Big 5" to indicate the model from which the measures are derived.\
+
+3.  **name**: label is basically one level lower than category. So if the category is Big 5, the label would be, or example, "A" for Agreeableness, "SWB" for subjective well-being, etc. This column is most important and useful when you have multiple items in a scales, so I'll typically leave this blank when something is a standalone variable (e.g. sex, single-item scales, etc.).\
+
+4.  **item_name**: This is the lowest level and most descriptive variable. It indicates which item in scale something is. So it may be "kind" for Agreebleness or "sex" for the demographic biological sex variable.\
+
+5.  **old_name**: this column is the name of the variable in the data you are pulling it from. This should be exact. The goal of this column is that it will allow us to select() variables from the original data file and rename them something that is more useful to us.\
+
+6.  **item_text**: this column is the original text that participants saw or a description of the item.\
+
+7.  **scale**: this column tells you what the scale of the variable is. Is it a numeric variable, a text variable, etc. This is helpful for knowing the plausible range.
+
+8.  **recode_text**: sometimes, we want to recode variables for analyses (e.g. for categorical variables with many levels where sample sizes for some levels are too small to actually do anything with it). I use this column to note the kind of recoding I'll do to a variable for transparency.
+
+9.  **recode**: I write the R code I'll parse by reading my codebook into R into this column.
+
+Here are additional columns that will make our lives easier or are applicable to some but not all data sets:
+
+10. **reverse**: this column tells you whether items in a scale need to be reverse coded. I recommend coding this as 1 (leave alone) and -1 (reverse) for reasons that will become clear later.\
+11. **mini**: this column represents the minimum value of scales that are numeric. Leave blank otherwise.\
+12. **maxi**: this column represents the maximum value of scales that are numeric. Leave blank otherwise.\
+13. **year**: for longitudinal data, we have several waves of data and the name of the same item across waves is often different, so it's important to note to which wave an item belongs. You can do this by noting the wave (e.g. 1, 2, 3), but I prefer the actual year the data were collected (e.g. 2005, 2009, etc.)\
+14. **meta**: Some datasets have a meta name, which essentially means a name that variable has across all waves to make it clear which variables are the same. They are not always useful as some data sets have meta names but no great way of extracting variables using them. But they're still typically useful to include in your codebook regardless.
+
+## Download Example Codebook
+
+Below, let's download the codebook we will use for this study, which will include all of the above columns. We'll load it in later. For now, let's explore it.
+
+```{r codebook, eval = F}
+# set the path
+wd <- "https://github.com/emoriebeck/psc290-data-FQ23/raw/main/04-workshops/04-week4-readr"
+
+download.file(
+  url      = sprintf("%s//codebook.xlsx", wd), 
+  destfile = "codebook.xlsx"
+  )
+```
+
+### Codebook Tab
+
+The resulting codebook looks something like this:
+
+![](img/codebook.png)
+
+-   In addition, to the codebook, I also document other overarching info three other tabs
+
+### Overview Tab
+
+-   **Overview** just lists what variables I'm considering as serving different functions (e.g., demographics, covariates, moderators, predictors, outcomes, indepenedent variables, dependent variables, etc.)
+
+![](img/overview.png)
+
+### Key Tab
+
+-   **Key** helps me create tables that I'll be able to use in `R` to help me rename things. This is super helpful for making final tables and figures!!
+
+![](img/key.png)
+
+### Sample Tab
+
+-   **Sample** helps other people understand how you're using the columns. This is generally good practice and also helpful if you have research assistants or collaborators helping you out!
+
+![](img/sample.png)
+
+# Example
+
+Now, we're going to walk through an extended example. But first, let's start with a description of the data.
+
+First, we need to load in the data. We're going to use three waves of data from the **German Socioeconomic Panel Study**, which is a longitudinal study of German households that has been conducted since 1984. We're going to use more recent data from three waves of personality data collected between 2005 and 2013.
+
+*Note*: we will be using the teaching set of the GSOEP data set. I will not be pulling from the raw files as a result of this. I will also not be mirroring the format that you would usually load the GSOEP from because that is slightly more complicated and something we will return to in a later tutorial on <a  href="https://emoriebeck.github.io/R-tutorials/purrr/" target="_blank"> `purrr` (link)</a> after we have more skills. I've left that code in the `.qmd` for now, but it won't make a lot of sense right now.
+
+```{r data set up, eval = F, echo = F}
+path <- "~/Box/other projects/PCLE Replication/data/sav_files"
+ref <- sprintf("%s/cirdef.sav", path) %>% haven::read_sav(.) %>% select(hhnr, rgroup20)
+read_fun <- function(Year){
+  vars <- (codebook %>% filter(year == Year | year == 0))$old_name
+  set <- (codebook %>% filter(year == Year))$dataset[1]
+  sprintf("%s/%s.sav", path, set) %>% haven::read_sav(.) %>%
+    full_join(ref) %>%
+    filter(rgroup20 > 10) %>%
+    select(one_of(vars)) %>%
+    gather(key = item, value = value, -persnr, -hhnr, na.rm = T)
+}
+
+vars <- (codebook %>% filter(year == 0))$old_name
+dem <- sprintf("%s/ppfad.sav", path) %>% 
+  haven::read_sav(.) %>%
+  select(vars)
+  
+tibble(year = c(2005:2015)) %>%
+  mutate(data = map(year, read_fun)) %>%
+  select(-year) %>% 
+  unnest(data) %>%
+  distinct() %>% 
+  filter(!is.na(value)) %>%
+  spread(key = item, value = value) %>%
+  left_join(dem) %>%
+  write.csv(., file = "~/Documents/teaching/PSC290-cleaning-fall-2023/04-workshops/04-week4-readr/soep.csv", row.names = F)
+```
+
+## Workspace
+
+-   Download the following .zip file with an [R project](https://github.com/emoriebeck/psc290-data-FQ23/raw/main/04-workshops/04-week4-readr/04-week4-readr.zip)
+-   We're going to walk through this script, and then you will spend the rest of class working on your problem set, which basically does the same with your own data.
+
+### Packages
+
+```{r}
+library(psych)
+library(plyr)
+library(tidyverse)
+```
+
+### Codebook
+
+```{r}
+readxl::excel_sheets(path = "codebook.xlsx")
+
+codebook <- readxl::read_excel(path = "codebook.xlsx", sheet = "codebook") %>%
+  mutate(old_name = str_to_lower(old_name))
+
+key <- readxl::read_excel(path = "codebook.xlsx", sheet = "Key")
+traits   <- key %>% filter(category == "Big 5")
+outcomes <- key %>% filter(category == "out")
+covars   <- key %>% filter(category == "dem")
+```
+
+### Load in Data
+
+```{r}
+vars <- codebook$old_name
+soep <- read_csv(file = "https://github.com/emoriebeck/psc290-data-FQ23/raw/main/04-workshops/04-week4-readr/soep.csv") %>%
+  select(one_of(vars)) # keep vars from codebook
+head(soep)
+```
+
+## Data Cleaning
+
+-   Once I have my workspace setup, it's time to clean the data
+-   For the sake of time, I'm going to skip the descriptives we talked about last week, but we should be doing those in a real setting!
+-   I often have the following sections in my data cleaning section:
+    -   Rename Variables
+        -   Change to Long
+        -   Bring in Codebook
+    -   Recode Variables
+    -   Reverse Scoring
+    -   Predictors (In this case, personality)
+    -   Outcomes (In this case, life events)
+    -   Covariates / Demographics
+    -   \[any other variable categories you have\]
+-   I like to clean different categories of variables separately because I often clean them relatively similarly within categories. Differences within categories are generally captured via columns in my codebook
+
+### Rename Variables
+
+#### Change Data to Long
+
+-   To get our codebook to play nice with the data since our data are in wide form (including across years), we need to make the data long with at least one name that corresponds to the codebook
+-   In this case, we'll all the variables but the participant and household ID's long, and change the item name to old_name since it contains the original variable names.
+
+```{r}
+## change data to long format
+soep_long <- soep %>%
+  pivot_longer(
+    cols = c(-persnr, -hhnr)
+    , names_to = "old_name"
+    , values_to = "value"
+    , values_drop_na = T
+  ) %>%
+  rename(SID = persnr, HHID = hhnr)
+soep_long
+```
+
+#### Merge in Codebook
+
+-   Now, let's actually merge in the codebook. We'll use `left_join()` here becuase we want to keep all observations in our raw `soep_long` data frame.
+
+```{r}
+# merge in codebook
+soep_long <- soep_long %>% # long data
+  left_join( # keep all rows in long data
+    codebook %>% # merge in the following variables from the codebook
+      select(old_name, category, name, item_name, year, recode, 
+             reverse, mini, maxi, comp_rule, long_rule)
+  ) %>%
+  select(-old_name) # get rid of old_name because we're done with it
+```
+
+### Recode Variables
+
+-   Now that we've merged our codebook and raw data, we're ready to use the information in the codebook to:
+    -   recode (`recode`)
+    -   reverse score (`reverse`, `mini`, `maxi`)
+    -   composite (`comp_rule`, `long_rule`)
+-   I find the easiest way to recode variables, especially in projects where I may need to differently recode *hundreds or thousands* of different variables differently, is to write a little function that takes code chunks from my codebook and runs them.
+-   The function looks like this:
+
+```{r}
+recode_fun <- function(rule, y){
+  x <- y$value
+  if(!is.na(rule)){y$value <- eval(parse(text = rule))}
+  return(y)
+}
+
+```
+
+-   Now we're going to apply each rule to each chunk of the data that uses the same one
+-   To do this, we're going to use some functions from the purrr package that we won't talk about it this week.
+-   Don't worry too much about this. This is code you can copy paste or add to an R script you source across projects!
+
+```{r}
+soep_recode <- soep_long %>%
+  group_by(recode) %>% # group by the r code rule
+  nest() %>% # create a nested data frame
+  ungroup() %>% # ungroup() 
+  # apply the recode function
+  mutate(data = pmap(list(recode, data), recode_fun)) %>%
+  unnest(data) %>% # unnest the data to get back to a normal df
+  # change any negative, nan, or Inf values to NA
+  mutate(value = ifelse(value < 0 | is.nan(value) | is.infinite(value), NA, value)) %>%
+  select(-recode) # we're done with the recode column, so remove it
+soep_recode
+```
+
+### Reverse Coding
+
+-   Now we can reverse code our data. We'll use similar code to what I showed last week, but we're working on long-format data, so we'll use the `reverse` column to tell us which rows to reverse and what the `mini` and `maxi` scale values are.
+
+```{r}
+soep_recode <- soep_recode %>%
+  mutate(value = ifelse(reverse == "no", value, 
+         as.numeric(reverse.code(-1, value, mini = mini, maxi = maxi)))) %>%
+  select(-reverse, -mini, -maxi)
+soep_recode
+```
+
+### Composite Items
+
+-   Now that our data are recoded and reverse scored, we can clean each category of data:
+    -   Personality
+    -   Outcomes / Life Events
+    -   Demographics Covariates
+-   Then we'll merge them together
+
+### Personality
+
+-   For the Big Five, we want to get composites within years (2005, 2009, 2013)
+-   the `comp_rule` is average, so want to get the mean
+-   the `long_rule` is select because we'll choose what to do with each year
+
+```{r}
+soep_big5 <- soep_recode %>%
+  # keep Big Five & drop missings
+  filter(category == "Big 5" & !is.na(value)) %>%
+  # "split" the data by category, person, household, trait, item, and year
+  group_by(category, SID, HHID, name, item_name, year) %>%
+  # "apply" the mean function, collapsing within splits
+  summarize(value = mean(value)) %>%
+  # "split" the data by category, person, household, trait, and item
+  group_by(category, SID, HHID, name, year) %>%
+  # "apply" the mean function, collapsing within splits
+  summarize(value = mean(value)) %>%
+  # "combine" the data back together
+  ungroup()
+soep_big5
+```
+
+-   Below, you'll see an alternate way to do this that uses a function
+    -   We haven't learned `purrr` and functions yet, so we're not quite ready for this yet
+    -   But keep this code and see if you can figure it out because it's much more flexible and super useful in the case that you need to apply different rules to different variables (especially useful for covariates and moderators!!)
+
+```{r, eval = F}
+Mode <- function(x) {
+  ux <- unique(x)
+  ux <- ux[!is.na(ux)]
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+fun_call <- function(x, rule){
+    switch(rule,
+           average = mean(x, na.rm = T),
+           mode = Mode(x)[1],
+           sum = sum(x, na.rm = T),
+           skip = unique(x)[1],
+           select = unique(x)[1],
+           max = max(x, na.rm = T),
+           min = min(x, na.rm = T))
+}
+
+# compositing within years
+year_comp_fun <- function(df, rule){
+  df %>%
+    # group by person and item (collapse across age)
+    group_by(SID, HHID, long_rule, name, item_name, year) %>% 
+    summarize(value = fun_call(value, rule)) %>%
+    group_by(SID, HHID, long_rule, name, year) %>% 
+    summarize(value = fun_call(value, rule)) %>%
+    ungroup() %>% 
+    mutate(value = ifelse(is.infinite(value) | is.nan(value), NA, value))
+}
+
+soep_big5 <- soep_recode %>%
+  filter(category == "Big 5" & !is.na(value)) %>%
+  group_by(category, comp_rule) %>%
+  nest() %>%
+  ungroup() %>%
+  mutate(data = map2(data, comp_rule, year_comp_fun)) %>%
+  unnest(data) %>%
+  select(-comp_rule, -long_rule)
+soep_big5
+```
+
+### Outcomes
+
+-   Now onto life events
+-   For these data we want to get a single composite for each life event across all years (i.e. did they ever experience each event)
+-   Both the `comp_rule` and the `long_rule` are max
+
+```{r}
+soep_out <- soep_recode %>%
+  # keep Life events & drop missings
+  filter(category == "Life Event" & !is.na(value)) %>%
+  # "split" the data by category, person, household, event, and year
+  group_by(SID, HHID, category, name, year) %>% 
+  # "apply" the max function, collapsing within splits
+  summarize(value = max(value)) %>%
+  # "split" the data by category, person, household, event
+  group_by(SID, HHID, category, name) %>% 
+  # "apply" the max function, collapsing within splits
+  summarize(value = max(value)) %>%
+  # "combine" the data back together
+  ungroup()
+```
+
+-   As before, the more flexible way is below.
+
+```{r, eval = F}
+soep_out <- soep_recode %>%
+  filter(category == "Life Event" & !is.na(value)) %>%
+  group_by(category, comp_rule) %>%
+  nest() %>%
+  ungroup() %>%
+  mutate(data = map2(data, comp_rule, year_comp_fun)) %>%
+  unnest(data) %>%
+  select(-comp_rule)
+
+
+comp_fun <- function(data, rule){
+  data %>%
+    group_by(SID, HHID, name) %>%
+    summarize(value = fun_call(value, rule)) %>%
+    ungroup()
+}
+
+soep_out <- soep_out %>%
+  group_by(long_rule) %>%
+  nest() %>%
+  mutate(data = map2(data, long_rule, comp_fun)) %>%
+  unnest(data) %>%
+  select(-long_rule)
+```
+
+### Covariates
+
+-   Now let's do the covariates
+-   The `comp_rule` and `long_rule` columns tell us that the two variables actually have the same rule (mode), which make it easy to clean
+-   As before, the more flexible way is in the workbook, which is particularly useful for demographics and covariates that may be on super different scales
+
+```{r}
+Mode <- function(x) {
+  ux <- unique(x)
+  ux <- ux[!is.na(ux)]
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+soep_cov <- soep_recode %>%
+  # keep demographics & drop missings
+  filter(category == "Demographic" & !is.na(value)) %>%
+  # "split" the data by category, person, household, covariate, and year
+  group_by(category, SID, HHID, name, year) %>%
+  # "apply" the Mode function, collapsing within splits
+  summarize(value = Mode(value)) %>%
+  # "split" the data by category, person, household, and covariate
+  group_by(SID, HHID, name) %>%
+  # "apply" the Mode function, collapsing within splits
+  summarize(value = Mode(value)) %>%
+  # "combine" the data back together
+  ungroup() %>%
+  # pivot data wider so there are separate columns for each covariate
+  pivot_wider(
+    names_from = "name"
+    , values_from = "value"
+    )
+soep_cov
+```
+
+### Merge Data
+
+-   Lastly, let's re-merge the data to bring the information back together
+-   Because we want the crossings of traits and life events, we'll need to change the `name` and `value` columns to be specific to the variable categories
+-   We want the data to look like this:
+
+| SID | HHID | year | event | o_value | trait | p_value | sex | DOB |
+|-----|------|------|-------|---------|-------|---------|-----|-----|
+
+```{r}
+soep_clean <- soep_big5 %>%
+  # select key variables and rename for personality
+  select(SID, HHID, year, trait = name, p_value = value) %>%
+  # bring in matching rows (by SID and HHID)
+  inner_join(
+    soep_out %>%
+      # select key variables and rename for outcomes
+      select(SID, HHID, event = name, o_value = value)
+    ) %>%
+  # bring the covariates
+  left_join(soep_cov)
+soep_clean
+```
+
+### Save Your Data
+
+```{r save data}
+write.csv(
+  x = soep_clean
+  , file = sprintf("clean_data_%s.csv", Sys.Date())
+  , row.names = F
+  )
+```
+
+## Note: Why did we do the keys?
+
+```{r}
+soep_clean %>%
+  mutate(trait = factor(trait, levels = traits$name, labels = traits$long_name)
+         , event = factor(event, levels = outcomes$name, labels = outcomes$long_name))
+```
+
+```{r, fig.width=10, fig.height = 8}
+soep_clean %>%
+  mutate(trait = factor(trait, levels = traits$name, labels = traits$long_name)
+         , event = factor(event, levels = outcomes$name, labels = outcomes$long_name)
+         , o_value = factor(o_value, levels = c(0,1), labels = c("No Event", "Event"))) %>%
+  group_by(trait, event, o_value) %>%
+  summarize_at(vars(p_value), lst(mean, sd)) %>%
+  ungroup() %>%
+  ggplot(aes(x = o_value, y = mean)) + 
+    geom_errorbar(
+      aes(ymin = mean - sd, ymax = mean + sd)
+      , width = .1
+      , position = "dodge"
+      ) + 
+  geom_point(shape = "square") + 
+  facet_grid(trait ~ event) + 
+  theme_classic()
+```
