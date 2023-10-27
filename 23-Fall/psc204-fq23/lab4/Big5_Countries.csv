@@ -1,0 +1,601 @@
+E,A,C,N,O,Continent_Name,Country_Name
+4,3.9,3.7,3.6,4.1,Africa,"South Africa, Republic of"
+3.8,3.6,2.7,4.2,3.9,Africa,"Morocco, Kingdom of"
+3.4,4.8,3.9,1.6,4.5,Africa,"Angola, Republic of"
+2.5,2.8,4.3,3.8,4,Africa,"South Africa, Republic of"
+4.3,4.3,3.8,3.7,5,Africa,"South Africa, Republic of"
+4,4.4,4.3,2.8,4.3,Africa,"Mauritius, Republic of"
+2.8,3,3,2.9,2.9,Africa,"Morocco, Kingdom of"
+2.4,3,2.2,2,3.9,Africa,"Algeria, People's Democratic Republic of"
+3.5,4.1,2.5,2.3,4.6,Africa,"Kenya, Republic of"
+1.9,3,3.2,2.8,3,Africa,"Mauritius, Republic of"
+3,2.9,2.2,3.6,3.9,Africa,"Nigeria, Federal Republic of"
+2.2,3.1,2.1,2.2,3.9,Africa,"Algeria, People's Democratic Republic of"
+4.2,4.8,4.4,1.6,4.6,Africa,"Morocco, Kingdom of"
+4.1,4.2,2.8,3.8,3.4,Africa,"South Africa, Republic of"
+1.7,4.6,4.1,3.3,3.2,Africa,"South Africa, Republic of"
+3.5,4.5,4.9,3.4,4.4,Africa,"Kenya, Republic of"
+3.2,4.1,2.9,3.2,4.4,Africa,"Nigeria, Federal Republic of"
+2.8,4.8,3.9,3.3,4.1,Africa,"Nigeria, Federal Republic of"
+2.8,3.5,3.3,1.5,4.4,Africa,"Kenya, Republic of"
+3.4,4.5,3.3,2.3,4.2,Africa,"South Africa, Republic of"
+2.5,4.2,2.4,3.9,3.5,Africa,"South Africa, Republic of"
+3.7,4.6,4.3,1.6,4.3,Africa,"South Africa, Republic of"
+2.9,4.5,3.6,3,3.9,Africa,"Kenya, Republic of"
+3.2,4.1,2.5,2.7,4.2,Africa,"South Africa, Republic of"
+4,3.4,2.7,4.6,4.2,Africa,"South Africa, Republic of"
+3.5,4.4,4,3.3,4.1,Africa,"Uganda, Republic of"
+3.2,4.7,3.9,3.3,3.5,Africa,"South Africa, Republic of"
+3,3.8,3.1,3.7,3.1,Africa,"South Africa, Republic of"
+4.4,3.5,2.8,2.6,3.3,Africa,"Egypt, Arab Republic of"
+3,4,3.3,1.8,4.5,Africa,"Egypt, Arab Republic of"
+2.4,3.4,3.6,3.3,4,Africa,"South Africa, Republic of"
+3.9,4.5,2.6,3.7,2.8,Africa,"Kenya, Republic of"
+4.4,3.8,3.3,2.3,4.4,Africa,"South Africa, Republic of"
+2.8,3,3.9,2.4,3.4,Africa,"Nigeria, Federal Republic of"
+1.2,3.2,2.9,4.5,3,Africa,"Egypt, Arab Republic of"
+3.1,4,3.7,2.3,3,Africa,"Uganda, Republic of"
+2.6,4.5,3,4.2,5,Africa,"South Africa, Republic of"
+4,4.1,3.1,3.9,3.3,Africa,"Ghana, Republic of"
+3.2,4.5,2.7,2.5,3.8,Africa,"South Africa, Republic of"
+3.8,4.6,3.7,2.4,4,Africa,"Ghana, Republic of"
+3.1,2.9,3.1,2.6,2.8,Africa,"Ghana, Republic of"
+3.1,3.6,4.3,2,4.3,Africa,"South Africa, Republic of"
+3.6,4.5,3.4,3.5,4.3,Africa,"South Africa, Republic of"
+2.6,4.1,3.5,2.7,3.1,Africa,"South Africa, Republic of"
+2.1,3.8,4,4,3,Africa,"Ghana, Republic of"
+4.3,4.1,3.5,1.6,4.4,Africa,"Nigeria, Federal Republic of"
+2.3,4.4,4.5,3.8,3.7,Africa,"Nigeria, Federal Republic of"
+3.6,3.8,3.6,3.6,3.7,Africa,"South Africa, Republic of"
+3.9,3.4,2.6,2,3.2,Africa,"South Africa, Republic of"
+3.7,4.2,4,1.2,4.3,Africa,"Egypt, Arab Republic of"
+2.8,4.6,3,2.8,4.1,Africa,"Tanzania, United Republic of"
+1.8,3.2,2.6,3.8,3.8,Africa,"Egypt, Arab Republic of"
+3.2,3.4,3.8,2.9,3.3,Africa,"Uganda, Republic of"
+3.3,3.3,2.8,2.4,3.2,Africa,"South Africa, Republic of"
+2.8,4.8,3.7,3.1,3.7,Africa,"South Africa, Republic of"
+2.3,4.4,4.2,2.7,3.7,Africa,"South Africa, Republic of"
+1.6,2.2,2.3,4,2.3,Africa,"Egypt, Arab Republic of"
+2.3,3.9,3.8,3.4,4.8,Africa,"Nigeria, Federal Republic of"
+3.4,5,4.4,1.6,4.6,Africa,"South Africa, Republic of"
+2.1,4.3,4.4,2.4,3.8,Africa,"South Africa, Republic of"
+2.2,4.5,3.6,4.8,4.2,Africa,"South Africa, Republic of"
+2.5,3.6,3.1,3.1,2.6,Africa,"Rwanda, Republic of"
+3.9,4.8,3.4,2.2,4.1,Africa,"Nigeria, Federal Republic of"
+3.2,4,4.6,4.4,4.5,Africa,"Mozambique, Republic of"
+2.8,2.6,4.3,1.6,4.1,Africa,"South Africa, Republic of"
+2.8,3.9,3.5,3.2,4.2,Africa,"Morocco, Kingdom of"
+4.3,3.7,3.4,2.9,4.2,Africa,"Egypt, Arab Republic of"
+2.9,4.8,4,3.2,4.8,Africa,"Nigeria, Federal Republic of"
+4.1,4.6,4.2,3.5,4.4,Africa,"Nigeria, Federal Republic of"
+1.6,3.8,2.8,3.1,2.7,Africa,"South Africa, Republic of"
+2.1,4.2,2.8,3.6,3.9,Africa,"South Africa, Republic of"
+4.1,4.6,4,2.2,4,Africa,"South Africa, Republic of"
+2,2.4,2.6,4.6,3.8,Africa,"South Africa, Republic of"
+1.7,4.5,4.1,4.4,4.8,Africa,"South Africa, Republic of"
+2,2.5,4.2,2,4.1,Africa,"Ghana, Republic of"
+3.3,4.1,3.1,2.6,4.6,Africa,"South Africa, Republic of"
+3,4.2,5,1.8,3.8,Africa,"South Africa, Republic of"
+2.7,2.7,3.4,4.6,3.6,Africa,"South Africa, Republic of"
+3.2,4.8,4.7,3.8,3.3,Africa,"South Africa, Republic of"
+4.9,4.8,5,1.2,4.5,Africa,"Nigeria, Federal Republic of"
+1.9,3,2,3.5,4.4,Africa,"South Africa, Republic of"
+3.8,4.2,3.4,2.6,4.6,Africa,"Sudan, Republic of"
+4.8,4.1,2.2,3.9,4.9,Africa,"Kenya, Republic of"
+2.2,3.7,3.2,2.7,3.4,Africa,"South Africa, Republic of"
+3.3,3.8,3.4,3.1,3.8,Africa,"Egypt, Arab Republic of"
+2.1,3.6,3.8,3,3.9,Africa,"South Africa, Republic of"
+3.3,4.1,2.6,2,4.7,Africa,"South Africa, Republic of"
+3,4,4.3,2.1,4.1,Africa,"Ghana, Republic of"
+4.1,4.8,4.2,2.1,4.5,Africa,"Morocco, Kingdom of"
+1.5,3.3,4.1,3.6,3.1,Africa,"Kenya, Republic of"
+4.1,4.7,2,2.3,4.2,Africa,"South Africa, Republic of"
+3.9,4.1,3,3.5,4.3,Africa,"Egypt, Arab Republic of"
+3.9,4.4,2.8,3.2,4.5,Africa,"South Africa, Republic of"
+3.8,3.9,3.4,4,3.5,Africa,"Egypt, Arab Republic of"
+1.7,3.4,3.9,3.1,3.9,Africa,"Egypt, Arab Republic of"
+1.4,3.8,3.8,2.2,2.8,Africa,"Ghana, Republic of"
+1.6,3.3,2,3.5,3.1,Africa,"South Africa, Republic of"
+3.6,4.2,3.1,4.1,4.1,Africa,"South Africa, Republic of"
+4.6,4.6,5,1,4.6,Africa,"Nigeria, Federal Republic of"
+2.4,4,2.5,2.2,4.3,Africa,"Zimbabwe, Republic of"
+3.2,3.6,3.1,3.1,3.8,Asia,"India, Republic of"
+3.7,3.9,2.7,3.1,2.8,Asia,Taiwan
+3,4.3,3.3,4.6,3.2,Asia,United Arab Emirates
+3.7,3.8,2.7,3.5,3.1,Asia,Malaysia
+2.9,3.5,3.8,2.6,3.7,Asia,"Indonesia, Republic of"
+4.1,4.5,4.6,1.6,4.3,Asia,"India, Republic of"
+1.7,3.6,3.2,3.7,3,Asia,"Philippines, Republic of the"
+1.7,3.6,3.6,3.7,4,Asia,"India, Republic of"
+3.4,3.6,2.6,1.4,3.2,Asia,Kyrgyz Republic
+4.9,4.7,3,2,3.5,Asia,"India, Republic of"
+3.7,3.9,3.8,2.6,3.7,Asia,Japan
+3.2,2.4,2.2,3.4,5,Asia,"India, Republic of"
+3.2,4,3.9,3.1,3.3,Asia,"India, Republic of"
+2.1,3.6,3.3,3.6,4.3,Asia,"Philippines, Republic of the"
+3.4,3.6,3,3.8,3.1,Asia,"India, Republic of"
+2.9,4.6,3.3,2.9,4.4,Asia,"India, Republic of"
+2.9,2.3,3.4,3.9,4.6,Asia,Malaysia
+1.6,2.8,1.9,3.3,3.1,Asia,"Thailand, Kingdom of"
+3.3,2.9,3.6,4,3.6,Asia,"India, Republic of"
+2.2,4.7,4.2,3.9,5,Asia,"India, Republic of"
+4.1,4.2,3.8,3.8,1.8,Asia,"Pakistan, Islamic Republic of"
+2.9,4.1,3.4,3.3,3.6,Asia,"Philippines, Republic of the"
+3.7,4.1,3.1,4.3,4.9,Asia,"India, Republic of"
+2.1,2.9,2.6,2.9,3.5,Asia,"Philippines, Republic of the"
+2.9,3.7,3.5,3.9,3.8,Asia,"Philippines, Republic of the"
+1.4,4.1,4.5,2.6,3.7,Asia,"India, Republic of"
+1,5,2.6,5,2.5,Asia,"India, Republic of"
+2.6,2.8,2.5,2.7,2.8,Asia,"Philippines, Republic of the"
+2.2,3.5,3.9,2.8,3.8,Asia,"India, Republic of"
+3.8,4.8,3.1,3.6,3.7,Asia,"India, Republic of"
+1.3,4.8,3.1,2.9,3.5,Asia,"Singapore, Republic of"
+2,2.8,4,3.2,2.5,Asia,United Arab Emirates
+3,3.9,2.4,4,3.7,Asia,"India, Republic of"
+3.1,3.5,3.2,3.1,3.2,Asia,"India, Republic of"
+3.8,4,3.5,2.9,4,Asia,"India, Republic of"
+3.5,3.3,2.9,4.4,2.8,Asia,"Pakistan, Islamic Republic of"
+2.6,3.4,3.6,3.9,3.4,Asia,"Philippines, Republic of the"
+2.9,3.4,2.4,2.4,3.6,Asia,"Philippines, Republic of the"
+3,3.8,3.2,2.6,3.1,Asia,"Thailand, Kingdom of"
+2.4,4.3,3.3,2.5,3.5,Asia,"India, Republic of"
+2.2,3.7,3.2,2.9,4,Asia,"Vietnam, Socialist Republic of"
+2.6,3.6,3.5,3.2,3.3,Asia,"Indonesia, Republic of"
+2.4,3.3,3.6,3.1,3.5,Asia,"India, Republic of"
+4,4.1,2.8,2.9,4.1,Asia,"India, Republic of"
+2.3,3.4,4.5,3.7,4.3,Asia,"Philippines, Republic of the"
+3.6,4.4,4.1,2.4,4.5,Asia,"Philippines, Republic of the"
+2.8,3.3,4.1,2.4,4,Asia,"India, Republic of"
+3.2,4.2,3.7,4.1,3.6,Asia,"India, Republic of"
+3.5,4.2,4.2,2.5,3.7,Asia,"Indonesia, Republic of"
+2.2,3.7,3.9,4,3.3,Asia,"Singapore, Republic of"
+4.1,4.3,3.5,3,4.7,Asia,"India, Republic of"
+3.3,3.6,3.8,2.3,3.5,Asia,Malaysia
+3.3,3.7,2.7,3.9,3.5,Asia,"India, Republic of"
+2.6,4.4,3.8,4.2,3.5,Asia,"Pakistan, Islamic Republic of"
+2.6,4.1,3.8,2.8,4.2,Asia,"India, Republic of"
+3,2.8,4,2.7,4.2,Asia,"Pakistan, Islamic Republic of"
+3.4,4.1,4.5,2.4,4.5,Asia,"Philippines, Republic of the"
+3.7,4.5,3.1,3.4,4.4,Asia,"Philippines, Republic of the"
+2.2,2.4,2.7,4.5,3.1,Asia,"India, Republic of"
+3.5,4.7,3.4,3.5,4.3,Asia,"Philippines, Republic of the"
+4.4,3.4,2.4,2.7,4.2,Asia,"Turkey, Republic of"
+4.1,4.4,3.5,3.7,4.5,Asia,"India, Republic of"
+3.2,4,4,2.3,3.6,Asia,"Philippines, Republic of the"
+4.1,4.6,2.8,3.4,4.6,Asia,"India, Republic of"
+2.9,4.1,3.3,3.4,3.5,Asia,"India, Republic of"
+3.1,3.2,3.9,3.3,3,Asia,"India, Republic of"
+4.5,2.7,4.1,3.4,4.4,Asia,"Korea, Republic of"
+2.1,3.4,3.5,2.6,3.7,Asia,"Cambodia, Kingdom of"
+2.8,2.4,3.7,4.3,3.8,Asia,Japan
+3,4.8,4.1,2.5,4.3,Asia,"Pakistan, Islamic Republic of"
+4.2,3.9,2.7,2.5,3.7,Asia,"India, Republic of"
+2.6,4.1,2.7,3.1,3.4,Asia,"India, Republic of"
+2.2,3.8,3.6,3.4,4.3,Asia,"Philippines, Republic of the"
+3.5,4.2,4,2.7,3.6,Asia,"Philippines, Republic of the"
+2.1,3.7,1.4,3.9,4.6,Asia,"India, Republic of"
+4.8,4.5,3.3,3.9,3.4,Asia,"Pakistan, Islamic Republic of"
+3.5,3.8,3.4,2.6,3.1,Asia,"Philippines, Republic of the"
+2.3,3.1,2.5,3.2,3.4,Asia,"Philippines, Republic of the"
+2.6,4.4,2.8,3.7,3.2,Asia,"India, Republic of"
+2.3,3.2,3.5,4.4,3.6,Asia,"Singapore, Republic of"
+4,3.5,3.6,2.9,3.8,Asia,Taiwan
+2.2,3.8,4.2,3.1,3.7,Asia,"China, People's Republic of"
+3.3,4,3.2,3.8,3.1,Asia,"Philippines, Republic of the"
+2.9,3.5,3.9,2.3,3,Asia,"Philippines, Republic of the"
+1.2,2.8,3.8,2.6,3.9,Asia,"Philippines, Republic of the"
+2.2,4.2,3.5,3.6,3.6,Asia,"Philippines, Republic of the"
+2.4,4.1,2.5,3.8,3.6,Asia,"India, Republic of"
+3.3,3.5,2.7,3.8,2.9,Asia,"India, Republic of"
+4.3,4.3,2.5,2.5,2.9,Asia,"Pakistan, Islamic Republic of"
+1.8,3.9,3.6,2.1,3.1,Asia,"China, People's Republic of"
+3.5,3.8,4.7,2.1,3.3,Asia,"India, Republic of"
+3.6,3.9,3.5,2.2,3.9,Asia,"Indonesia, Republic of"
+2.8,3.9,3.7,2.7,3.4,Asia,"India, Republic of"
+3.7,5,4,3.5,4.4,Asia,"Philippines, Republic of the"
+2.5,4.1,3.8,2.9,4.6,Asia,"India, Republic of"
+4.6,4.9,4.2,1.2,4.5,Asia,"Indonesia, Republic of"
+2.8,3.7,3.5,2.5,2.7,Asia,"India, Republic of"
+1.1,3.5,2.6,4.4,4,Asia,"India, Republic of"
+3.4,4.4,4.7,3.3,4,Asia,United Arab Emirates
+3.7,4,3.4,2.8,3.5,Asia,"India, Republic of"
+1.2,2.2,3.3,3.9,2.9,Europe,United Kingdom of Great Britain & Northern Ireland
+2.6,4.1,4.4,2.6,4.2,Europe,"Denmark, Kingdom of"
+4.7,4.2,4.1,2.1,3.9,Europe,"Sweden, Kingdom of"
+4.3,4.2,3.8,4.1,4.6,Europe,United Kingdom of Great Britain & Northern Ireland
+1.8,2.5,2.7,2.6,3.8,Europe,United Kingdom of Great Britain & Northern Ireland
+2.7,3.7,2.3,2.1,5,Europe,"Denmark, Kingdom of"
+5,4.8,2.4,4.1,4.5,Europe,United Kingdom of Great Britain & Northern Ireland
+4.3,4.6,4.2,2.7,4.9,Europe,"Serbia, Republic of"
+1.8,3.1,3.2,3.6,3.4,Europe,Romania
+3.3,3.8,1.8,2.4,4.7,Europe,"Germany, Federal Republic of"
+3,2.5,2.6,2.9,3.8,Europe,United Kingdom of Great Britain & Northern Ireland
+3.7,4.6,4.2,4.4,4.1,Europe,"Sweden, Kingdom of"
+3.9,4,3.5,3.5,4.8,Europe,United Kingdom of Great Britain & Northern Ireland
+4.3,4.4,3.4,2.1,3.9,Europe,"Italy, Italian Republic"
+1.6,1.7,3.7,4,4.9,Europe,United Kingdom of Great Britain & Northern Ireland
+3.9,4.5,3,1.9,4.7,Europe,Romania
+2.7,3.7,3.2,4.3,3.6,Europe,United Kingdom of Great Britain & Northern Ireland
+4.5,4.9,4.1,1.2,4.8,Europe,"Sweden, Kingdom of"
+2.7,3.3,2.5,4.8,3.9,Europe,United Kingdom of Great Britain & Northern Ireland
+3.2,4.1,4.3,2.1,4.2,Europe,"Netherlands, Kingdom of the"
+2.1,3.7,1.9,3.7,4.3,Europe,United Kingdom of Great Britain & Northern Ireland
+3.7,4.8,3.6,2.3,4.1,Europe,United Kingdom of Great Britain & Northern Ireland
+4.5,2.7,2.5,2.8,2.5,Europe,United Kingdom of Great Britain & Northern Ireland
+2.6,4.2,4.2,3,4,Europe,"Portugal, Portuguese Republic"
+2.7,3.8,3.3,3.9,3.6,Europe,"Sweden, Kingdom of"
+1.4,4.3,3.8,2.6,3.5,Europe,"Sweden, Kingdom of"
+4.3,3.2,3.1,3,4.6,Europe,United Kingdom of Great Britain & Northern Ireland
+4.1,3.9,4.2,4,4.1,Europe,United Kingdom of Great Britain & Northern Ireland
+3.3,4.7,2.8,3.1,3.4,Europe,United Kingdom of Great Britain & Northern Ireland
+3.8,4.1,2,2.8,4.3,Europe,"Croatia, Republic of"
+3.4,4.3,4.1,3.6,4.1,Europe,"Greece, Hellenic Republic"
+4,4,3.6,2.4,4,Europe,Ireland
+3.8,3.5,3,3.9,3.2,Europe,"Sweden, Kingdom of"
+2.9,4.1,3.5,4.1,4.9,Europe,"Turkey, Republic of"
+1.6,2.6,2.7,2.2,2.8,Europe,"Sweden, Kingdom of"
+4.2,3.4,3.4,3,5,Europe,Russian Federation
+3.1,3.6,3.1,3.7,3.7,Europe,"Germany, Federal Republic of"
+2.4,4.1,3.5,2.5,3.8,Europe,"Greece, Hellenic Republic"
+3.4,4.3,4.3,2.7,4.1,Europe,Romania
+4.8,2.9,3.8,2.9,4.8,Europe,United Kingdom of Great Britain & Northern Ireland
+3.4,5,3.4,3.8,4.6,Europe,United Kingdom of Great Britain & Northern Ireland
+3.6,3.4,2.8,3.4,4.3,Europe,United Kingdom of Great Britain & Northern Ireland
+2.8,2.4,3.4,1.3,4.3,Europe,"Norway, Kingdom of"
+1.7,4.4,3.2,4.5,3.5,Europe,United Kingdom of Great Britain & Northern Ireland
+4.2,3.9,2.6,3.3,4.7,Europe,"Sweden, Kingdom of"
+3.9,4.1,2.6,2.6,4.6,Europe,Romania
+2.1,2.8,5,4.2,4.7,Europe,"Italy, Italian Republic"
+3.3,4,4.1,3.4,4.5,Europe,"France, French Republic"
+3.2,3.5,4,3.6,3.5,Europe,"Finland, Republic of"
+2.7,3.5,2.5,3.7,4.2,Europe,United Kingdom of Great Britain & Northern Ireland
+3.1,4.2,3.6,2.3,4.3,Europe,"Denmark, Kingdom of"
+2.3,3.8,3.5,3,4.2,Europe,"Austria, Republic of"
+2.7,3.6,3.4,3.3,3.4,Europe,Ireland
+3.1,3.1,3.1,3.5,3.8,Europe,"Croatia, Republic of"
+2.3,2.6,3.5,3.3,3.9,Europe,Ireland
+2.6,3.2,4,2.3,3.3,Europe,"Germany, Federal Republic of"
+4.4,1.6,2.8,2.3,3.2,Europe,"Norway, Kingdom of"
+2,4,1.7,3.9,3.8,Europe,"Sweden, Kingdom of"
+3.7,4.4,4.6,2.5,4.5,Europe,United Kingdom of Great Britain & Northern Ireland
+1.8,3.2,2.6,3,3.4,Europe,United Kingdom of Great Britain & Northern Ireland
+4.5,4.4,3.4,2.1,4.9,Europe,"Netherlands, Kingdom of the"
+3.5,3.8,2.7,2,4,Europe,United Kingdom of Great Britain & Northern Ireland
+3.8,2.2,2.7,3.2,4.6,Europe,United Kingdom of Great Britain & Northern Ireland
+2.4,3.4,4.3,3.1,4.1,Europe,Romania
+1.8,3.2,2.5,4.7,2.7,Europe,"France, French Republic"
+2.8,2.2,2.2,3.8,4.1,Europe,"Sweden, Kingdom of"
+2.7,2,2.5,4.4,3.7,Europe,United Kingdom of Great Britain & Northern Ireland
+3.9,4.1,3.3,2.8,3.2,Europe,United Kingdom of Great Britain & Northern Ireland
+2.4,3.8,3.8,2.6,3,Europe,"Germany, Federal Republic of"
+4.3,3.6,3.3,3,3.6,Europe,"Netherlands, Kingdom of the"
+2.4,3.4,3.4,4.7,4.9,Europe,United Kingdom of Great Britain & Northern Ireland
+2.2,3.1,2.7,3.9,2.4,Europe,United Kingdom of Great Britain & Northern Ireland
+1.6,3.6,4.3,4.7,3.2,Europe,United Kingdom of Great Britain & Northern Ireland
+1.3,2.9,3.3,2.6,4.4,Europe,United Kingdom of Great Britain & Northern Ireland
+2.1,3.3,3.6,2.9,4,Europe,United Kingdom of Great Britain & Northern Ireland
+4.6,4.3,3.7,2.1,4.7,Europe,"Belgium, Kingdom of"
+3.5,4.4,3.8,4.1,3.8,Europe,"Denmark, Kingdom of"
+2.9,4,2.9,2.6,3.6,Europe,"France, French Republic"
+3.3,4.1,4.5,2,3.9,Europe,"Turkey, Republic of"
+2.2,3.7,3.7,1.9,3.5,Europe,"Sweden, Kingdom of"
+3.6,3.2,3.4,4.2,3.9,Europe,"Germany, Federal Republic of"
+3.4,3.3,3,3.2,3.9,Europe,"Finland, Republic of"
+2.7,4.1,3.8,2.1,3.7,Europe,United Kingdom of Great Britain & Northern Ireland
+1.4,1.6,4.2,4.5,3.5,Europe,United Kingdom of Great Britain & Northern Ireland
+2.8,3.9,3.1,3.4,4.5,Europe,"Italy, Italian Republic"
+2.7,3.8,3.6,4.4,3.4,Europe,"Norway, Kingdom of"
+3.1,4,4.5,2.1,4.6,Europe,United Kingdom of Great Britain & Northern Ireland
+4.5,4.5,5,1.7,3.8,Europe,United Kingdom of Great Britain & Northern Ireland
+2.7,3.7,3.7,3.9,4.5,Europe,"France, French Republic"
+2.2,2.2,3.7,3.4,3,Europe,United Kingdom of Great Britain & Northern Ireland
+1.8,1.6,1.2,4.6,3.4,Europe,United Kingdom of Great Britain & Northern Ireland
+3.4,3.5,2.9,4,4.3,Europe,United Kingdom of Great Britain & Northern Ireland
+3.3,3.1,1.4,2.2,5,Europe,"Poland, Republic of"
+2.3,3.7,2.1,3.6,3.4,Europe,United Kingdom of Great Britain & Northern Ireland
+1,3,2.3,3.9,4.5,Europe,"Sweden, Kingdom of"
+1.5,3.9,4.1,3.2,3.8,Europe,United Kingdom of Great Britain & Northern Ireland
+3.4,4.1,3.1,2.2,4.3,Europe,Ireland
+2.9,3.5,3.7,2.9,3.6,Europe,"Italy, Italian Republic"
+1.5,3.7,2.3,4.1,4.1,Europe,"Finland, Republic of"
+1,5,2.6,2.2,5,Europe,United Kingdom of Great Britain & Northern Ireland
+4.8,4.4,3.2,1.5,4.6,North America,United States of America
+4,2.8,3.8,2.2,4,North America,United States of America
+3.1,3.2,3.2,3.5,2.9,North America,United States of America
+2.1,3.7,3.7,2,4.3,North America,United States of America
+3.7,4.8,2.2,2.7,4.7,North America,United States of America
+3.7,3.6,3.5,2.7,3.1,North America,United States of America
+1.9,2.6,2.3,1.7,4.8,North America,Canada
+3.6,3.6,4.1,3.3,3.3,North America,United States of America
+3.8,4.7,3.9,3.3,3.8,North America,United States of America
+1.3,3,3.1,4.6,3.7,North America,United States of America
+3.9,4.6,4.4,2.6,4.8,North America,Canada
+4.4,3.9,4.1,3.4,4.1,North America,United States of America
+4,4.2,2.2,2,4.6,North America,United States of America
+2.1,1.6,2.7,4.6,3.9,North America,United States of America
+3.7,3.8,2.6,4.7,4.8,North America,United States of America
+3.5,4.1,3.2,3.4,3.9,North America,United States of America
+2.3,3.4,2.8,2.8,4.6,North America,United States of America
+3.7,5,4.5,4.3,4.7,North America,United States of America
+2.7,3.3,3.6,3.8,4,North America,United States of America
+4.4,4.3,3.9,2.3,3.7,North America,United States of America
+4.3,4.8,3.2,1.7,2.8,North America,United States of America
+4,3.8,3.7,2.9,3.6,North America,United States of America
+4.5,3.3,2.9,3,4.3,North America,United States of America
+2.1,4.6,4.1,2.2,2.9,North America,United States of America
+2.1,4.3,2.3,4.5,4.3,North America,United States of America
+1.7,3.8,2.1,2.2,3.7,North America,United States of America
+2.8,3.5,3,2.7,4.1,North America,United States of America
+2.4,4.7,4.6,2.4,3.9,North America,United States of America
+3.6,5,4.1,3.8,4.2,North America,United States of America
+4.9,2.5,2.2,4.4,4.2,North America,United States of America
+2.2,2.7,2.1,1.3,5,North America,United States of America
+4.6,3.3,2.9,2,4.5,North America,United States of America
+4.9,3.7,3.4,3.5,4.1,North America,United States of America
+4.4,4.1,4.5,2.3,4.4,North America,United States of America
+3,3,3,3,3,North America,United States of America
+2.8,4.1,4.5,3.9,4.6,North America,United States of America
+3.1,4.1,2.2,3.6,4.3,North America,Canada
+3,3.5,3.8,3.6,3.5,North America,United States of America
+3,3.6,3.5,2.1,2.8,North America,United States of America
+3.5,3.6,4.7,3.4,4.4,North America,United States of America
+3,4.1,3.9,3,3.6,North America,United States of America
+1.4,4.7,4.2,4.2,3.3,North America,United States of America
+3.8,4.6,3.3,3.1,3.4,North America,United States of America
+2.3,3.9,4.3,3,4.1,North America,United States of America
+4.6,4.6,4.5,2.6,4.4,North America,United States of America
+2.3,3.3,3.4,3.3,3,North America,United States of America
+3.7,2.8,2.8,2.3,4.1,North America,United States of America
+3,4.2,4.2,3,3.4,North America,United States of America
+4,4.9,3.8,2.5,3.9,North America,United States of America
+1.5,4.3,3.1,3.9,3.1,North America,United States of America
+2.6,4.5,3.9,3.4,3.9,North America,United States of America
+3.9,3.1,4.3,2.6,3.9,North America,United States of America
+3.3,4.5,3.8,2.1,3.4,North America,United States of America
+2.7,3.8,3.8,3.6,4.3,North America,United States of America
+3.7,3.5,3.2,3.5,4.1,North America,"Mexico, United Mexican States"
+2.7,2.4,3.2,3,3.9,North America,United States of America
+3.3,3.9,2.7,2.7,4.1,North America,United States of America
+1.4,4.7,2.8,4.3,2,North America,United States of America
+3.3,2.4,2.9,3.2,4.3,North America,United States of America
+2.9,4.6,4.1,2.7,4.5,North America,United States of America
+4.4,3.7,4.1,3,4.5,North America,Dominican Republic
+3.4,2,2.5,2.9,4.5,North America,United States of America
+2.9,3.4,4.1,2.8,3.6,North America,United States of America
+3.1,4.9,3.8,2.1,4.1,North America,United States of America
+2.4,2.2,2.1,3.6,4.3,North America,United States of America
+2.8,2.8,3.5,3.5,4.9,North America,Canada
+2,3.8,2.1,3.9,3.4,North America,United States of America
+1.6,4.3,3.5,3.1,4,North America,United States of America
+3.4,4.6,4,1.7,4.8,North America,Canada
+3.3,4.9,5,3.6,3.3,North America,United States of America
+3.3,4.1,3.1,2.5,4.5,North America,United States of America
+2.3,3.7,3.5,2.9,3.4,North America,United States of America
+4.2,4.8,3,3.6,3.4,North America,United States of America
+3.1,4.3,2.9,3,4.5,North America,United States of America
+2.3,3.2,2,3.2,5,North America,United States of America
+4.1,3.7,4.2,2.8,4.3,North America,United States of America
+1.5,4.7,3.1,4.3,4.1,North America,United States of America
+3.5,3.9,3.6,3.2,3.8,North America,United States of America
+3.2,3.7,3.6,2.4,3.5,North America,United States of America
+2.3,4.2,2.7,3.8,4,North America,United States of America
+4.7,4.4,3,1,4.4,North America,United States of America
+3.5,3.5,4.1,3.7,3.5,North America,United States of America
+3,4.4,3.1,4.6,4.8,North America,United States of America
+2.4,1.5,3.4,3,4.2,North America,Canada
+4.5,4.6,4.1,2.2,4.4,North America,United States of America
+1.8,3.6,3.6,2.8,2.7,North America,United States of America
+2.8,4,3.6,3.9,3.4,North America,United States of America
+3.7,4.5,2.2,4.2,3.9,North America,United States of America
+1.5,3.7,3.7,4.2,4,North America,"Trinidad and Tobago, Republic of"
+3.9,2.1,2.4,2.8,4.9,North America,United States of America
+2.6,3.4,4.1,3.3,2.8,North America,United States of America
+3.9,4.8,4.3,2.6,2.7,North America,United States of America
+3.8,3.7,3.2,2.8,4.3,North America,United States of America
+2.6,4.2,2.8,4.1,4.5,North America,United States of America
+2.7,3.7,4,2.6,3.2,North America,United States of America
+2.4,2.1,4.2,3.2,4.5,North America,United States of America
+2.8,3.7,3.6,3.6,4.8,North America,United States of America
+3.9,3.7,2.7,3.8,3,North America,United States of America
+4.4,4.3,2.8,3.4,3.5,North America,United States of America
+3.8,3.2,2.2,3.9,3.5,North America,United States of America
+2.9,2.8,3.3,4.4,3.9,Oceania,"Australia, Commonwealth of"
+2.7,3.2,3.3,3.2,3.8,Oceania,"Australia, Commonwealth of"
+2.3,3.8,3.7,2.7,3,Oceania,"Australia, Commonwealth of"
+2.5,2.6,2.1,3.3,2.8,Oceania,"Australia, Commonwealth of"
+2.9,3.1,2.1,2.1,4.9,Oceania,"Australia, Commonwealth of"
+4.2,4.1,3.5,2.7,4.8,Oceania,New Zealand
+2.9,3.9,2.7,4.1,4.1,Oceania,"Australia, Commonwealth of"
+4.4,3.8,3.4,2.7,4.2,Oceania,"Australia, Commonwealth of"
+2.6,3.8,3.4,2.4,3.6,Oceania,"Australia, Commonwealth of"
+3.9,4.1,2.8,3.5,4.2,Oceania,"Australia, Commonwealth of"
+3.4,4.6,4,2.5,3.2,Oceania,"Australia, Commonwealth of"
+3.4,3.9,3.2,3.3,4.5,Oceania,New Zealand
+2.1,2.8,2.5,4.1,3.8,Oceania,"Australia, Commonwealth of"
+2.6,4.8,3.5,2.8,4.4,Oceania,"Australia, Commonwealth of"
+4.1,3.8,2,3.3,4.5,Oceania,"Australia, Commonwealth of"
+2.9,3.6,2.2,3.2,2.5,Oceania,"Australia, Commonwealth of"
+4.7,4.7,3.5,2.8,4.4,Oceania,"Australia, Commonwealth of"
+1.5,2.5,2.9,4.2,3.6,Oceania,"Australia, Commonwealth of"
+3.6,4,3.3,2.1,3.5,Oceania,"Australia, Commonwealth of"
+4,4.6,4.5,1.9,4.5,Oceania,New Zealand
+3.1,2.9,3.5,3.7,5,Oceania,"Australia, Commonwealth of"
+3.8,3.9,3.3,4.2,3.8,Oceania,"Australia, Commonwealth of"
+2.9,3.2,2.6,2.6,2.9,Oceania,"Australia, Commonwealth of"
+3.9,4.1,3.1,2.5,4.1,Oceania,"Australia, Commonwealth of"
+1.8,3.4,3.3,3.8,3.5,Oceania,"Australia, Commonwealth of"
+2.5,3.6,3.1,3.1,3.5,Oceania,"Australia, Commonwealth of"
+2.5,4.1,2.9,4.5,4,Oceania,"Australia, Commonwealth of"
+3.5,3.5,3.8,2.5,3.4,Oceania,"Australia, Commonwealth of"
+3.5,2.4,1.7,4.2,3.4,Oceania,"Australia, Commonwealth of"
+2.8,3.8,3.1,1.7,2.8,Oceania,"Australia, Commonwealth of"
+2.3,4,2.8,2.3,3.2,Oceania,"Australia, Commonwealth of"
+3.2,4.6,4.6,1.2,4.1,Oceania,"Australia, Commonwealth of"
+2.6,3.9,2,3.1,4.2,Oceania,"Australia, Commonwealth of"
+3.4,4.3,4.6,3,3.2,Oceania,"Australia, Commonwealth of"
+1.8,3.5,3.9,4,4.4,Oceania,"Australia, Commonwealth of"
+4.5,4.6,3.4,3.5,3.6,Oceania,"Australia, Commonwealth of"
+3.2,3.5,3.3,2.6,4.5,Oceania,"Australia, Commonwealth of"
+2,4.5,3,4.4,3.8,Oceania,"Australia, Commonwealth of"
+2.6,3.6,3.2,3.6,3.9,Oceania,"Australia, Commonwealth of"
+3.6,5,4.1,4,3.6,Oceania,"Australia, Commonwealth of"
+3.8,4.7,3.2,2.4,4.3,Oceania,"Australia, Commonwealth of"
+4,4.9,1.9,4.3,4.7,Oceania,New Zealand
+1.8,3.7,4.5,3.3,4.3,Oceania,"Australia, Commonwealth of"
+4.4,2.8,2.2,2.2,4.7,Oceania,"Australia, Commonwealth of"
+2.9,3.1,3.2,3.8,2.8,Oceania,"Australia, Commonwealth of"
+3.2,4.3,3.8,3.2,4.8,Oceania,"Australia, Commonwealth of"
+3,3.2,3.1,4.6,4.5,Oceania,"Australia, Commonwealth of"
+4.5,4.5,4,2.5,4,Oceania,"Australia, Commonwealth of"
+1.7,3.4,2.9,4.3,4.2,Oceania,"Australia, Commonwealth of"
+3.7,4.3,3.5,2.9,4.4,Oceania,"Australia, Commonwealth of"
+4.2,1.8,3.7,3.1,3.4,Oceania,"Australia, Commonwealth of"
+2.5,3.8,3.6,3.3,3.7,Oceania,"Australia, Commonwealth of"
+2.4,3.9,2.8,3.9,3.7,Oceania,"Australia, Commonwealth of"
+1.8,3.5,2.3,3.8,1.9,Oceania,"Australia, Commonwealth of"
+2,3.1,3,3.5,3.7,Oceania,"Australia, Commonwealth of"
+2.2,3.6,2.8,3.4,4.3,Oceania,"Australia, Commonwealth of"
+4.2,4.1,3.2,3.6,2.8,Oceania,"Australia, Commonwealth of"
+2.1,1.2,2.8,1.7,4.3,Oceania,"Australia, Commonwealth of"
+2.4,4,3.6,2.9,3.3,Oceania,"Australia, Commonwealth of"
+3,5,3.1,2.4,4.2,Oceania,"Australia, Commonwealth of"
+3.5,3.8,4.6,2.6,4.3,Oceania,"Australia, Commonwealth of"
+4.2,4.6,3.9,2.6,3.3,Oceania,"Australia, Commonwealth of"
+3.4,4,3.8,2.9,4.8,Oceania,"Australia, Commonwealth of"
+2.4,4,2.4,3.9,4.1,Oceania,"Australia, Commonwealth of"
+4,4.9,3.8,2.1,4.2,Oceania,"Australia, Commonwealth of"
+1.6,2.6,4,4.6,4.9,Oceania,"Australia, Commonwealth of"
+3.3,3.8,2.4,3.1,3.7,Oceania,New Zealand
+2.9,4.2,2.4,3.7,4.3,Oceania,"Australia, Commonwealth of"
+4,4.4,3.5,3.9,3.9,Oceania,New Zealand
+2.8,4,2.9,3.9,4.8,Oceania,"Australia, Commonwealth of"
+2.4,1.4,3.9,1.8,3.2,Oceania,"Australia, Commonwealth of"
+3,3.9,4.1,3.9,3.7,Oceania,"Australia, Commonwealth of"
+3.2,4,3,3.1,4,Oceania,"Australia, Commonwealth of"
+1.8,3.2,2.5,4.3,3.3,Oceania,"Australia, Commonwealth of"
+2.4,3.9,3.6,4.1,4.4,Oceania,"Australia, Commonwealth of"
+4,3.5,2.6,2.1,3.4,Oceania,"Australia, Commonwealth of"
+3.2,3.7,2.9,3.3,3.6,Oceania,"Australia, Commonwealth of"
+3.4,4,3.2,3.2,3.7,Oceania,"Australia, Commonwealth of"
+2.1,3,3.7,2.8,4.3,Oceania,"Australia, Commonwealth of"
+3,2.8,3.9,3.9,4.2,Oceania,"Australia, Commonwealth of"
+3.8,3.4,3.8,2.4,3.8,Oceania,"Australia, Commonwealth of"
+3.2,4.2,2.6,1,4.3,Oceania,"Australia, Commonwealth of"
+2.6,3.5,1.8,3.2,4.3,Oceania,"Australia, Commonwealth of"
+4.1,4,3.5,3.3,3.8,Oceania,"Australia, Commonwealth of"
+3.4,3.9,2.2,2.6,4.5,Oceania,"Australia, Commonwealth of"
+4.5,3.9,3.2,3,4.3,Oceania,"Australia, Commonwealth of"
+2.2,2.2,2.9,3.3,4.2,Oceania,"Australia, Commonwealth of"
+1.5,2.7,3.5,1.5,3.6,Oceania,"Australia, Commonwealth of"
+3.3,4.2,3.8,2.2,4.4,Oceania,New Zealand
+1.1,3.1,3.2,3.2,4.3,Oceania,"Australia, Commonwealth of"
+3.9,3.7,3.4,4,2.8,Oceania,"Australia, Commonwealth of"
+4.8,4.6,3.2,3,4.3,Oceania,New Zealand
+4,4.3,3.1,2.3,3.5,Oceania,"Australia, Commonwealth of"
+2.9,3.8,2.1,3.4,4.4,Oceania,"Australia, Commonwealth of"
+2.4,4.1,4.4,2.7,4.1,Oceania,"Australia, Commonwealth of"
+3,4.1,4.3,2.7,3.6,Oceania,"Australia, Commonwealth of"
+2.7,2.4,1.7,2.2,4.3,Oceania,New Zealand
+3.9,3.9,3.7,3.3,2.2,Oceania,"Australia, Commonwealth of"
+1.7,4,4.7,3.1,4,Oceania,"Australia, Commonwealth of"
+2.5,4,3.1,3.8,4.6,Oceania,"Australia, Commonwealth of"
+1.9,2.5,3.6,3.2,3.6,South America,"Brazil, Federative Republic of"
+1.6,2.7,2.8,2.5,4.4,South America,"Argentina, Argentine Republic"
+3.1,4.1,2,4.1,4.7,South America,"Brazil, Federative Republic of"
+1.8,3.2,1.8,3.7,4,South America,"Brazil, Federative Republic of"
+1.8,2.5,3,2.7,5,South America,"Colombia, Republic of"
+4.6,4.8,3.3,2.2,4.5,South America,"Brazil, Federative Republic of"
+2.6,3.5,2,3.1,4.8,South America,"Chile, Republic of"
+3,3.1,3.3,4.1,5,South America,"Brazil, Federative Republic of"
+3.2,3.4,4.4,1.9,4.8,South America,"Argentina, Argentine Republic"
+4.4,3,4.3,2.2,4.2,South America,"Colombia, Republic of"
+2.3,3.2,3.4,2.9,4.1,South America,"Brazil, Federative Republic of"
+1.5,2.6,3.2,3.5,4,South America,"Brazil, Federative Republic of"
+2.3,3.6,3.5,3.9,3.7,South America,"Brazil, Federative Republic of"
+2,4,2.3,2.8,4,South America,"Colombia, Republic of"
+2.2,4.2,3.9,4.8,4.9,South America,"Brazil, Federative Republic of"
+3.4,2.9,3.4,2.1,3.3,South America,"Brazil, Federative Republic of"
+1.4,3.9,2.4,2.7,3.2,South America,"Brazil, Federative Republic of"
+3.2,2.3,3.1,1.5,4.7,South America,"Argentina, Argentine Republic"
+2.9,3.8,3.1,2.8,4.2,South America,"Chile, Republic of"
+2.5,3.3,2.3,3.3,2.9,South America,"Brazil, Federative Republic of"
+1.1,3.8,4.5,2.7,3.9,South America,"Brazil, Federative Republic of"
+1.4,3.9,2,3.8,3.6,South America,"Brazil, Federative Republic of"
+3.5,5,3.9,1,4.6,South America,"Ecuador, Republic of"
+2.7,1.7,2.7,3.9,4.4,South America,"Brazil, Federative Republic of"
+2.3,3.2,2.8,3.2,3.7,South America,"Brazil, Federative Republic of"
+1.5,3.5,3.1,4.1,3.9,South America,"Brazil, Federative Republic of"
+2.7,4,3.8,2.4,4.9,South America,"Brazil, Federative Republic of"
+1.4,4.4,3.1,3.5,4.1,South America,"Venezuela, Bolivarian Republic of"
+3.2,3.6,2.8,3,4.4,South America,"Argentina, Argentine Republic"
+3.3,3.9,3.4,3.5,5,South America,"Brazil, Federative Republic of"
+2.4,3.5,4.3,1.6,4.3,South America,"Brazil, Federative Republic of"
+2.6,4.5,4.5,2.1,4.1,South America,"Brazil, Federative Republic of"
+1.4,2.6,3.1,2.9,3.3,South America,"Brazil, Federative Republic of"
+2.9,4.2,3.3,2.2,4.3,South America,"Brazil, Federative Republic of"
+2.4,4.3,3.6,4.7,4.2,South America,"Brazil, Federative Republic of"
+2.2,3.4,2.3,3,4.4,South America,"Brazil, Federative Republic of"
+2.1,4.4,4,4.1,3.1,South America,"Brazil, Federative Republic of"
+2.1,3.8,3.9,2.9,3.7,South America,"Brazil, Federative Republic of"
+1.2,2.4,2.4,3.3,3.4,South America,"Guyana, Co-operative Republic of"
+3.2,3.8,2.7,5,5,South America,"Brazil, Federative Republic of"
+2.8,2.8,3.5,1.6,4.4,South America,"Brazil, Federative Republic of"
+3,4.3,4.5,2.7,3.9,South America,"Colombia, Republic of"
+3.2,2.1,2.1,2.8,4.9,South America,"Bolivia, Republic of"
+2.6,3.1,2.2,3.7,4.4,South America,"Brazil, Federative Republic of"
+2,2.5,2.6,3.3,3.1,South America,"Brazil, Federative Republic of"
+4.4,3,2.4,4.5,4.7,South America,"Brazil, Federative Republic of"
+3.8,4,3.3,3.3,3.4,South America,"Peru, Republic of"
+1.3,2.5,3.3,3.7,4.4,South America,"Brazil, Federative Republic of"
+1,3.2,3.2,4.1,3.1,South America,"Brazil, Federative Republic of"
+2.8,2.2,2.2,3.5,4,South America,"Brazil, Federative Republic of"
+2.9,4.7,3.1,3.4,3.9,South America,"Bolivia, Republic of"
+2.6,4.1,3.6,2,4.8,South America,"Brazil, Federative Republic of"
+1.6,3.3,1.9,3.2,3.5,South America,"Brazil, Federative Republic of"
+1.4,3.5,2.3,4.4,4.5,South America,"Argentina, Argentine Republic"
+4.4,3.9,2.4,2.6,3.6,South America,"Brazil, Federative Republic of"
+1.9,4.2,3.5,2.7,4.8,South America,"Venezuela, Bolivarian Republic of"
+3.4,3.9,2.7,2.7,4.3,South America,"Colombia, Republic of"
+2.2,2,3.3,4.3,5,South America,"Brazil, Federative Republic of"
+2.8,4.6,2.8,4.9,3.5,South America,"Venezuela, Bolivarian Republic of"
+2.2,3.2,2.8,3.3,3.5,South America,"Peru, Republic of"
+2.7,2.7,3,2.9,2.8,South America,"Peru, Republic of"
+3.3,3.8,3.4,3.8,4.3,South America,"Brazil, Federative Republic of"
+3.4,3.7,3.5,3.8,3.5,South America,"Colombia, Republic of"
+2.2,3.4,3.8,3.6,3.8,South America,"Brazil, Federative Republic of"
+3.5,4.5,2.6,1.4,4.9,South America,"Colombia, Republic of"
+1.8,4.5,2,3.7,2.8,South America,"Venezuela, Bolivarian Republic of"
+3.4,3.7,3.8,2,4.6,South America,"Peru, Republic of"
+2.5,3.6,3.9,2.2,3.8,South America,"Chile, Republic of"
+2.4,4.1,1.9,3.9,5,South America,"Brazil, Federative Republic of"
+2.8,3.9,3.8,3.6,5,South America,"Venezuela, Bolivarian Republic of"
+1.9,3.4,3.6,3.9,4.3,South America,"Argentina, Argentine Republic"
+1.5,4,3.2,4.8,3.1,South America,"Argentina, Argentine Republic"
+2.1,3.4,3,2.7,4.5,South America,"Colombia, Republic of"
+1.9,2.9,3.1,2.1,3.9,South America,"Venezuela, Bolivarian Republic of"
+3.4,3.6,1.8,4.1,4.8,South America,"Venezuela, Bolivarian Republic of"
+1.9,3.4,2.7,3.8,3.8,South America,"Venezuela, Bolivarian Republic of"
+1.1,2.4,4.1,2.1,4.4,South America,"Brazil, Federative Republic of"
+2.5,3,4,3.7,3.3,South America,"Brazil, Federative Republic of"
+3.4,3.5,3.9,2.2,4,South America,"Brazil, Federative Republic of"
+2.5,3.9,2.6,2.2,4.8,South America,"Brazil, Federative Republic of"
+2.7,3.4,2.8,3.4,4.2,South America,"Chile, Republic of"
+3.9,4.5,3.5,3.4,4.6,South America,"Brazil, Federative Republic of"
+4.4,4,1.9,3.5,4.2,South America,"Argentina, Argentine Republic"
+2.8,3.2,2.9,2.8,4.1,South America,"Colombia, Republic of"
+1.3,1.8,3.7,2.6,4.7,South America,"Venezuela, Bolivarian Republic of"
+2.3,3.8,4,3.1,4.3,South America,"Ecuador, Republic of"
+1.7,4.5,2.5,2.9,5,South America,"Argentina, Argentine Republic"
+2.9,3.3,3.1,3.9,4.3,South America,"Brazil, Federative Republic of"
+1.5,2.3,3.5,4.2,4.3,South America,"Brazil, Federative Republic of"
+1.3,3.9,2.4,3.9,4.3,South America,"Brazil, Federative Republic of"
+2.5,3.8,3,2.7,4,South America,"Argentina, Argentine Republic"
+2.6,3.3,2.9,3.8,3.2,South America,"Brazil, Federative Republic of"
+2.8,3.4,2.6,3.5,3.9,South America,"Venezuela, Bolivarian Republic of"
+2.9,4.6,4.2,2,4.4,South America,"Brazil, Federative Republic of"
+2.1,3.9,3.1,3.3,3.9,South America,"Brazil, Federative Republic of"
+2.6,4.4,1.8,3.6,4,South America,"Argentina, Argentine Republic"
+3,4,3.8,3.2,3.4,South America,"Colombia, Republic of"
+2,3.2,3.4,3,4,South America,"Brazil, Federative Republic of"
+2.5,3.9,2.4,3.2,4.8,South America,"Brazil, Federative Republic of"
+4.1,3.7,3.1,2.8,3.7,South America,"Argentina, Argentine Republic"

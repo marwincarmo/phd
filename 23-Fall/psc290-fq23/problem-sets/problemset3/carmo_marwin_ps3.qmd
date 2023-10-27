@@ -3,13 +3,13 @@ title: "Problem Set #3"
 author: "Marwin Carmo"
 date: "10/20/2023"
 urlcolor: blue
-output: 
+format: 
   html:
     code-tools: false
     code-copy: false
     code-line-numbers: true
     code-link: true
-    theme: none
+    theme: united
     highlight-style: tango
     df-print: paged
     code-fold: show
@@ -17,7 +17,6 @@ output:
     toc-float: true
     self-contained: true
     number-sections: true
-    fontsize: 14
 ---
 
 ```{r setup, include=FALSE}

@@ -1,0 +1,245 @@
+---
+title: "Problem Set #4"
+author: "INSERT YOUR NAME HERE"
+date: "insert date here"
+urlcolor: blue
+format: 
+  html:
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    theme: united
+    highlight-style: tango
+    df-print: paged
+    code-fold: show
+    toc: true
+    toc-float: true
+    self-contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", highlight = TRUE)
+```
+
+In the previous week's problem sets, you used data I provided to complete your assignment. This week, I'd like you to use your own data. This problem set is more open ended. I will ask you to complete broadly the same steps we did in class for your data. Some steps won't be applicable, and that's fine. Do them to the best of your ability for your data. 
+# Packages 
+
+<!-- Load your packages here -->
+```{r}
+library(dplyr)
+```
+
+# Part 1: Codebooks  
+## Data Overview
+Provide an overview of your data set. What is it? How was it collected? 
+
+## Codebook 
+
+Using the codebook provided in class as a reference, document the variables (or a subset of the variables) for an ongoing (or completed) research project you are involved in. Please also make the "Key" and "Overview" sheets providing overviews of your study. 
+
+As a reminder, here's a description of the column names I traditionally use. Feel free to omit or add columns as you see fit: 
+
+1.  **dataset**: this column indexes the **name** of the dataset that you will be pulling the data from. This is important because we will use this info later on (see purrr tutorial) to load and clean specific data files. Even if you don't have multiple data sets, I believe consistency is more important and suggest using this.\
+2.  **category**: broad categories that different variables can be put into. I'm a fan of naming them things like "outcome", "predictor", "moderator", "demographic", "procedural", etc. but sometimes use more descriptive labels like "Big 5" to indicate the model from which the measures are derived.\
+3.  **name**: label is basically one level lower than category. So if the category is Big 5, the label would be, or example, "A" for Agreeableness, "SWB" for subjective well-being, etc. This column is most important and useful when you have multiple items in a scales, so I'll typically leave this blank when something is a standalone variable (e.g. sex, single-item scales, etc.).\
+4.  **item_name**: This is the lowest level and most descriptive variable. It indicates which item in scale something is. So it may be "kind" for Agreebleness or "sex" for the demographic biological sex variable.\
+5.  **old_name**: this column is the name of the variable in the data you are pulling it from. This should be exact. The goal of this column is that it will allow us to select() variables from the original data file and rename them something that is more useful to us.\
+6.  **item_text**: this column is the original text that participants saw or a description of the item.\
+7.  **scale**: this column tells you what the scale of the variable is. Is it a numeric variable, a text variable, etc. This is helpful for knowing the plausible range.
+8.  **recode_text**: sometimes, we want to recode variables for analyses (e.g. for categorical variables with many levels where sample sizes for some levels are too small to actually do anything with it). I use this column to note the kind of recoding I'll do to a variable for transparency.
+9. **recode**: I write the R code I'll parse by reading my codebook into R into this column. 
+
+Here are additional columns that will make our lives easier or are applicable to some but not all data sets:
+
+10. **reverse**: this column tells you whether items in a scale need to be reverse coded. I recommend coding this as 1 (leave alone) and -1 (reverse) for reasons that will become clear later.\
+11. **mini**: this column represents the minimum value of scales that are numeric. Leave blank otherwise.\
+12. **maxi**: this column represents the maximumv alue of scales that are numeric. Leave blank otherwise.\
+13. **year**: for longitudinal data, we have several waves of data and the name of the same item across waves is often different, so it's important to note to which wave an item belongs. You can do this by noting the wave (e.g. 1, 2, 3), but I prefer the actual year the data were collected (e.g. 2005, 2009, etc.)\
+14. **meta**: Some datasets have a meta name, which essentially means a name that variable has across all waves to make it clear which variables are the same. They are not always useful as some data sets have meta names but no great way of extracting variables using them. But they're still typically useful to include in your codebook regardless.
+
+# Part 2: Loading Your Data 
+
+Next, load your raw data into `R`. Don't make any transformations other than removing columns you aren't using (as I showed you in class) or you need to remove the first two rows if reading in a wonky qualtrics data set (`filter(df, !row_number() %in% 1:2)`). 
+
+```{r load data}
+# your code here
+```
+
+Now look at the descriptives using the `describe()` function or `tidyverse` functions. 
+
+```{r raw desc}
+# your code here
+```
+
+And the zero-order correlations:
+```{r raw cors}
+# your code here
+```
+
+
+
+# Part 3: Loading Your Codebook 
+
+Next, load in your codebook into `R`. Also create data frames with variable names for different categories like we did in class.
+
+```{r load codebook}
+# your code here
+```
+
+
+```{r create reference dfs}
+# your code here
+```
+
+# Part 4: Merge Your Data and Codebook 
+
+Merge the information from your codebook into your data using `left_join()` or `right_join()`. What variables did you merge? 
+
+```{r merge data and codebook}
+# your code here
+```
+
+# Part 5: Recoding and Transformations  
+
+Using your codebook as a reference, recode, reverse score, or otherwise transform your variables as we did in class
+
+## Recode 
+
+```{r recode}
+# your code here
+```
+
+Now look again at the descriptives using the `describe()` function or `tidyverse` functions. 
+
+```{r recode desc}
+# your code here
+```
+
+And the zero-order correlations:
+
+```{r recode cors}
+# your code here
+```
+
+## Reverse Score 
+
+```{r reverse}
+# your code here
+```
+
+Now look again at the descriptives using the `describe()` function or `tidyverse` functions. 
+
+```{r reverse desc}
+# your code here
+```
+
+And the zero-order correlations:
+
+```{r reverse cors}
+# your code here
+```
+
+# Part 6: Compositing and Creating Your Data 
+
+Now, let's create any composites and do final cleaning steps within each category of data. 
+
+## Covariates / Demographics / Moderators / etc. 
+
+```{r cov clean}
+# your code here
+```
+
+Now look again at the descriptives using the `describe()` function or `tidyverse` functions. 
+
+```{r cov desc}
+# your code here
+```
+
+And the zero-order correlations:
+
+```{r cov cors}
+# your code here
+```
+
+## Predictors / Independent Variables / etc. 
+
+Note: Feel free to make this into multiple different sets if needed.
+
+```{r pred clean}
+# your code here
+```
+
+Now look again at the descriptives using the `describe()` function or `tidyverse` functions. 
+
+```{r pred desc}
+# your code here
+```
+
+And the zero-order correlations:
+
+```{r pred cors}
+# your code here
+```
+
+## Outcomes / Dependent Variables / etc. 
+
+Note: Feel free to make this into multiple different sets if needed.
+
+```{r out clean}
+# your code here
+```
+
+Now look again at the descriptives using the `describe()` function or `tidyverse` functions. 
+
+```{r out desc}
+# your code here
+```
+
+And the zero-order correlations:
+
+```{r out cors}
+# your code here
+```
+
+## Combine Data 
+
+Combine data back together using whichever `_join()` functions best suit your needs. Remember to `select()`, `rename()`, `pivot_longer()`, or `pivot_wider()` as needed in order to get your data into the correct merge format. 
+
+```{r merge data}
+# your code here
+```
+
+Now look again at the descriptives using the `describe()` function or `tidyverse` functions. 
+
+```{r merge desc}
+# your code here
+```
+
+And the zero-order correlations other other appropriate descriptives:
+
+```{r merge cors}
+# your code here
+```
+
+And write an output of the data as an: 
+
+`.RData`: `save(obj, file = "your_path.RData")` 
+`.csv`: `write_csv(obj, file = your_path.csv")`
+
+```{r output data}
+# your code here
+```
+
+# Render to html and submit problem set  
+
+**Render to html** by clicking the "Render" button near the top of your RStudio window (icon with blue arrow) 
+
+-   Go to the Canvas --\> Assignments --\> Problem Set 4
+-   Submit both .qmd and .html files\
+-   Use this naming convention "lastname_firstname_ps#" for your .qmd and html files (e.g. beck_emorie_ps4.qmd & beck_emorie_ps4.html)
+

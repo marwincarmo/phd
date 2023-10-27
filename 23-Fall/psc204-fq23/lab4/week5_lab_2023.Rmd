@@ -1,0 +1,544 @@
+---
+title: "204A Lab Week 5"
+subtitle: "One-way ANOVA"
+author: "Rohit Batra"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+
+setwd("/Users/rbat/Library/CloudStorage/Box-Box/204A/Lab 5 (Rohit)")
+```
+
+
+# Load Packages
+
+```{r}
+suppressPackageStartupMessages({
+  library(ggplot2)
+  library(readr)
+  library(dplyr)
+})
+```
+
+Today, we're learning about ANOVA. ANOVA refers to more than one type of tests, but for today we'll be talking about the one-way ANOVA. We use one-way ANOVA test when we have more than 2 groups and we want to know if these groups have different means.
+
+This sounds familiar, right? It's sort of like a $t$-test. So why don't we just use a $t$-test? Well, we can't use a $t$-test when you have more than 2 groups, but an ANOVA doesn't have that limitation!
+
+# Load the Data
+
+First, let's load in our data for today and look at it.
+
+```{r, message=FALSE}
+df <- read_csv('Big5_Countries.csv') # remember to change the path to the folder 
+# where your dataset is!
+head(df)
+```
+
+You'll see the following variables:
+
+* E = extraversion
+* A = agreeableness
+* C = conscientiousness
+* N = neuroticism, or negative emotionality
+* O = openness to experience
+* Continent_Name = the continent where the participant was
+* Country_Name = the country where the participant was
+
+This is real dataset adapted from the website https://openpsychometrics.org/_rawdata/. The original dataset had 19,719 observations, from people who  volunteered to take this questionnaire: 
+https://openpsychometrics.org/tests/IPIP-BFFM/
+
+Let's look how many observations for each continent are in the dataset.
+
+```{r}
+table(df$Continent_Name)
+
+# Another way of doing this using dplyr:
+
+df %>%
+  group_by(Continent_Name) %>%
+  summarise("no. of people from each Continent" = n())
+```
+
+You'll notice that there are 100 observations per continent. That's because there were an unequal number of respondents
+in the full dataset, with most being from North America or Europe and a much smaller number from South America
+or Africa. To make things more equal, 100 observations were randomly selected from each continent to form our dataset.
+
+Today we're going to check if level of extraversion varies across continents. For example, do people in North America have a *significantly different* levels of extraversion compared to those in South America, Africa etc.?
+
+
+First, let's look at the descriptive statistics such as means and SDs for extraversion in each group.
+
+```{r}
+df |>
+  group_by(Continent_Name) |>
+  summarize(mean_extraversion = mean(E),
+            sd_extraversion = sd(E))
+```
+
+Look at the means. Are they close or far apart?
+
+Look at the SDs. What do they tell you?
+
+We can also plot these statistics (this uses ggplot2, another package in tidyverse. If you're loading packages individually,
+don't forget to add this one!)
+
+Don't worry if this plot code looks confusing, you won't need to know how to do this by yourself but if you're curious and do want to learn about this, there are several good resources, just shoot me an email!
+
+
+```{r}
+z95 <- qnorm(0.975) # we are saving the critical value for a 95% confidence interval
+n_per_group <- 100
+
+df |> 
+  ggplot() +
+  stat_summary(aes(x = Continent_Name, y = E, color = Continent_Name), # we are telling ggplot function to plot a statistical summary where x-axis is the groups and y-axis is the Extraversion numeric variable with different colors for each group
+               shape = 20, # shape is for the point in the middle and what it should look like
+               fun = mean, geom = "pointrange", # what function to plot for the summary - we choose mean and the range
+               fun.min = function(x) (mean(x) - z95*(sd(x)/sqrt(n_per_group))), # we define the min and max of the range
+               fun.max = function(x) (mean(x) + z95*(sd(x)/sqrt(n_per_group)))) +
+  theme_classic() +
+  ylim(1,5) +
+  theme(legend.position = "None") +
+  xlab("Continent") + ylab("extraversion")
+```
+
+What does this plot show us? 
+Each circle is the *mean* extraversion for everyone who took the test in each continent. The lines represent 95% confidence 
+intervals. 
+
+Ok, so we can see differences between these means but now we want to answer the question: 
+would we expect to see these differences due to chance alone? Or are these differences statistically significant for us to believe group differences in the populations of these continents?
+
+# One-Way ANOVA
+
+What are our null and alternative hypotheses? 
+
+
+$$H_0 : \mu_\text{africa} = \mu_\text{asia} = \mu_\text{europe} = \mu_\text{namerica} = \mu_\text{oceania} = \mu_\text{samerica}$$
+
+
+In words: The means for all groups are equal  
+     
+We need the alternative hypothesis to "catch" every other case, so
+$$H_1: \text{At least one group mean is different from another}$$
+
+This is not as easy to write in symbols, but it's easy to express in words. Please note that, to reject $H_0$, all you need is that one of the means be different from one other mean. 
+
+This brings us to one disadvantage of one-way ANOVA when compared to $t$-tests: If you reject the null, you find out that the means are NOT all the same but that doesn't tell you which one(s) are different! But we'll come back to this later.
+
+First, we'll learn to perform a one-way ANOVA step by step then we'll learn the function to do it in one step.
+But you should know how to do it both ways. It's important to know WHAT a test is doing, not just HOW to do it.
+
+Let's plot the means and CIs of extraversion for each group again but this time, let's also add the raw data, that is, a point for each observation in our dataset.
+
+```{r}
+
+df |> 
+  ggplot() +
+  geom_point(aes(x = Continent_Name, y = E)) + # plot the data points of each group
+  stat_summary(aes(x = Continent_Name, y = E, color = Continent_Name),
+               shape = 20,
+               size = 1,
+               fun = mean, 
+               geom = "pointrange",
+               fun.min = function(x) mean(x) - z95*(sd(x)/sqrt(n_per_group)), 
+               fun.max = function(x) mean(x) + z95*(sd(x)/sqrt(n_per_group))) +
+  theme_classic() +
+  theme(legend.position = "None") +
+  xlab("Continent") + ylab("extraversion")
+```
+
+There is a lot of variability and overlap of people's scores. We can add some jitter to these data points to see how people are spread out:
+
+```{r}
+
+df |> 
+  ggplot() +
+  geom_jitter(aes(x = Continent_Name, y = E), alpha = 0.2, width = 0.2) + # plot the data points of each group with some jitter
+  stat_summary(aes(x = Continent_Name, y = E, color = Continent_Name),
+               shape = 20,
+               size = 1,
+               fun = mean, 
+               geom = "pointrange",
+               fun.min = function(x) mean(x) - z95*(sd(x)/sqrt(n_per_group)), 
+               fun.max = function(x) mean(x) + z95*(sd(x)/sqrt(n_per_group))) +
+  theme_classic() +
+  theme(legend.position = "None") +
+  xlab("Continent") + ylab("extraversion")
+```
+
+Does this look surprising? The means can be a little misleading, because *within* each continent, people are all over the introvert-extravert spectrum! However, you will see that there are more points closer to the lower end for South America than Africa, for example.
+
+But there's also variation within each group, right? Our participants from Asia don't all have the same level of extraversion. 
+So we have variation both *within* a group (e.g., two people from the same group have different scores) and *between* groups (e.g., two groups have different average scores).
+
+An ANOVA calculates:
+
+1. how much of the total variance is due to groups (how much of the difference in extraversion between two people say, person 2 from one continent and person 2 from another continent, is because they come from different continents?)
+
+2. And then it calculates the amount of variance that is left -- within group variance (How much of the difference in extraversion between person 7 and person 13 is because they are different people within the same continent group?)
+
+3. And then it compares our two estimates of variance. How much of the variance is due to groups (how much of the difference is related to living in different continents) compared to how much variance is left (the variance that is 
+just due to these two people being different people).
+
+But if our null is false and the groups are truly different, then you expect the between-group variance to be larger than your within-group variance (that is, the variance due to being different people).
+
+If that sounded confusing, that's okay. Let's do some calculations and see if that helps!
+
+To make our `data.frame` easier to look at, lets first select the variables we care about--Continent_Name and E (extraversion)--and save them to a new dataframe, `ext` 
+
+```{r}
+ext <- df |>
+  select(Continent_Name, E)
+glimpse(ext)
+```
+
+Great, now let's calculate between and within group variances.
+
+## Calculate SSw
+
+Let's start with the within group variance
+
+The within group variance can be thought of as how far people's extraversion level is from *their* group's mean.
+
+How far are people in Africa away from their mean of 3.065? What about people in the other continents, from each continents mean? We can calculate this by subtracting each value from it's group mean (the within deviations).
+
+To do that, we need to add a new column to our dataframe that has the group mean extraversion for each group. We already know 
+how to calculate group means, but now we will learn to add that into a new column. As with everything in R, this can be done 
+several different ways, and they're all correct as long as they work :)
+
+Here, we'll use the tidyverse function *`mutate()`* (from the dplyr package) which is used to add a variable to your dataframe.
+
+```{r}
+ext <- ext |> 
+  group_by(Continent_Name) |> 
+  mutate(E_Group_Mean = mean(E, na.rm = T)) |> 
+  ungroup() # this is here to undo the group_by, 
+            # since we're done doing operations by group for now
+```
+
+What we did in the above code:
+
+1. `mutate()`, like all other tidyverse functions we learned about so far, expects a dataframe as the first argument, so we'll give it the one we are using that has all our variables.
+
+2. Because we want the means by group, we need to first use group_by so that all the calculations we do will happen for each group separately.
+
+3. Then, you need to tell it which variable to create. In this case, it's the mean of E which we call E_Group_Mean. And finally, save it to the same data.frame object, ext, so the new variable will stay in the current dataset.
+
+Let's check if it worked. Scroll down the data.frame and check that each continent has the same mean for all its observations, and that the means are different between groups. 
+
+```{r, eval=FALSE}
+View(ext) # Alternatively you can also click on the dataset under the Global Environment
+```
+
+Great, now that we have the mean for each group next to each observation, let's calculate the within group variance.
+To do that, we subtract the value of each observation from its group mean.
+
+```{r}
+ext$devs.from.group.means <- ext$E - ext$E_Group_Mean # make a new column of deviations
+```
+
+Next, let's square each of those deviations
+
+```{r}
+ext$squared.devs <- ext$devs.from.group.means^2
+```
+
+We can sum up those squared deviations to get one value that represents the within group variation. 
+This value is called the sum of squares within (SSw). 
+
+```{r}
+SSw <- sum(ext$squared.devs)
+```
+
+## Calculate SSb
+
+Okay, now we have to calculate the variance that is due to group differences
+
+Let's look back at our plot... We've already used the distance between individual data points and their group mean to quantify the amount of variance that cannot be attributed to group differences. 
+
+Now we want to quantify how much of the variance *is* due to group differences.
+
+How much of the variation in extraversion scores is due to the fact that different people live in different continents? 
+
+To calculate this we can use the distance between the group means and the grand mean. The grand mean is the mean of extraversion without breaking up the data into groups.
+
+```{r}
+GrandMean <- mean(ext$E) #2.965 is the grand mean
+```
+
+Let's look at our previous figure with GrandMean added to it as a black line.
+
+```{r}
+df |> 
+  ggplot(aes(x = Continent_Name, y = E)) +
+  geom_jitter(alpha = .2, width = .2 ) +
+  stat_summary(aes(x = Continent_Name, y = E, color = Continent_Name),
+               shape = 20,
+               fun = mean, geom = "pointrange",
+               fun.min = function(x) mean(x) - 1.96*(sd(x)/sqrt(100)), 
+               fun.max = function(x) mean(x) + 1.96*sd(x)/sqrt(100)) +
+  theme_classic() +
+  theme(legend.position = "None") +
+  xlab("Continent") + ylab("extraversion")+
+  geom_hline(yintercept = GrandMean) # Add Grand mean
+```
+
+Each of our group means are different than the grand mean but some of the group means are farther away from the grand mean
+In other words, their deviation is greater. We can quantify the amount of variance in Extraversion that is due to group 
+differences by looking at the deviation between the grand mean and the group means.
+
+Here's how we can calculate it:
+
+First, let's calculate the group means and save them to a small, new data.frame.
+
+```{r}
+GroupMeans <- ext |>
+  group_by(Continent_Name) |> 
+  summarize(GroupMean = mean(E, na.rm = T))
+
+GroupMeans # check it out!
+```
+
+Let's add a new column with our grand mean
+
+```{r}
+GroupMeans <- GroupMeans |>  # this time, we don't need groupby!
+  mutate(GrandMean = GrandMean) # We just gave it one value, 
+                                     # so the whole column will repeat this value
+```
+
+Now we calculate the deviations between each group mean and the grand mean... and then we square each of those 
+deviations
+
+```{r}
+GroupMeans <- GroupMeans |>
+  mutate(devs.from.grand.mean = GroupMean - GrandMean,
+         squared.devs.from.grand.mean = devs.from.grand.mean^2)
+
+```
+
+For the group calculations, we need to weight each value. We do this by multiplying each squared deviation by the number
+of people in that group. Let's remind ourselves of what that number is:
+
+```{r}
+table(ext$Continent_Name)
+
+GroupMeans$weighted.squared.devs <- GroupMeans$squared.devs.from.grand.mean * 100
+```
+
+Now that we have weighted squared deviations for each group mean, we can sum the weighted squared deviations to calculate the 
+variance in extraversion that is due to group differences.
+
+We call this sum the sum of squares between (SSb):
+
+```{r}
+SSb <- sum(GroupMeans$weighted.squared.devs)
+```
+
+## Degrees of Freedom
+
+Ok, so now that we have the sum of square for the between and the within it's pretty straightforward to calculate the ANOVA.
+
+For this test, we have two types of degrees of freedom:
+
+1. Degree of freedom for the between group = number of groups - 1
+
+2. Degree of freedom for within group = Sample size (total sample size) - number of groups 
+
+```{r}
+DFb <- 6 - 1 # (number of groups - 1)
+DFw <- 600 - 6 # (total sample size - number of groups)
+```
+
+## MSw and MSb
+
+MSb describes the amount of variance in extraversion that can be attributed to group differences and,
+
+MSw describes the amount of variance that is left (or the amount of variance in extraversion that cannot be described by group differences).
+
+Now we can estimate the mean square values by dividing the sum of squares value with the corresponding df
+
+```{r}
+MSw <- SSw/DFw 
+MSb <- SSb/DFb 
+```
+
+If the null hypothesis is correct and there is no difference between these groups, would we expect the MSb to be large or small compared to the MSw? 
+
+What about if the null hypothesis is incorrect? 
+
+We can calculate our test statistic the $F$-statistic by calculating the ratio of MSb/MSw
+```{r}
+F.stat <- MSb / MSw # intuition here? Likely to reject H0?
+F.stat
+```
+
+What's our next step to check our intuition? We use the `pf()` to calculate the p-value of this test statistic (similar to using `pnorm()`)
+
+```{r}
+pf(F.stat, # F-value
+   df1 = DFb, # Degree of freedom between - the numerator
+   df2 = DFw, # Degree of freedom within - the denominator
+   lower.tail = FALSE)
+```
+
+What are we comparing our p-value to?  Can we reject or retain $H_0$? 
+What does this tell us about our groups? Look at the next section!
+
+Let's summarize what we did for these hand calculations of the F statistic: 
+
+* Step 1: Calculate $SS_b$ and $SS_w$
+* Step 2: Calculate $df_b$ and $df_w$
+* Step 3: Calculate $MS_b = (SS_b/df_b)$ and $MS_w = (SS_w/df_w)$
+* Step 4: Calculate $F = (MS_b/MS_w)$
+* Step 5: Use `pf()` function to the $p$-value association with your $F$-value 
+* Step 6: Compare $p$-value to your alpha. 
+* Step 7: Decide whether to reject $H_0$
+
+Cool. Now you know how to calculate a really complicated statistical test. You may have guessed that there is a much much much simpler way to do it in R. 
+
+# ANOVA in R
+
+To run an ANOVA in R, we can use the `aov()` function. We only need to use two arguments in this function
+
+```{r}
+aov(formula =  E ~ Continent_Name, # outcome ~ group
+    data = df)  # dataframe 
+```
+
+Where's the $p$-value? 
+Where's the statistic? 
+Where's all the stuff that tells you whether you can reject or fail to reject $H_0$?
+
+When doing an ANOVA save the output of the `aov` function to an object:
+
+```{r}
+my.anova <- aov(formula = E ~ Continent_Name, data = df)
+```
+
+the `aov()` function does a lot of calculations for you so it's nice to save all the output to a label and you can access it later.
+
+To get the information we need to know if we can reject $H_0$, we can use the function `summary()` on our new anova object.
+
+```{r}
+summary(my.anova) # Pr(>F) is your p-value 
+                  # (Spoiler alert: it's in scientific notation because it's so so small)
+```
+
+Check our manually calculated values against the ones in the summary. Did we get it right?
+
+Should we reject or retain $H_0$? What can we conclude from that decision?
+
+Based on our $p$-value we rejected the $H_0$ this tells us that at least one of our group means is significantly 
+different from the others. And by looking at the figure we made, we can probably guess which one is significantly 
+different.
+
+But we don't know for sure.
+
+What if South America is significantly different from North America, but not from Europe? What if North America, the highest of all means, is actually different from Asia as well? What if all groups are significantly different?  
+
+# Post-hoc comparisons
+
+A significant ANOVA doesn't tell us more than "At least one of your groups are significantly different from the others". A test that compares a bunch of things at once like that, and gives us one answer, is called an *omnibus* test.
+
+If we want more information we have to find it elsewhere. One option is to run a lot of separate $t$-tests
+
+$t$-test number 1: Are Africa and Asia significantly different?
+$t$-test number 2: Are Africa and Europe significantly different?
+$t$-test number 3: Are Africa and North America significantly different?
+$t$-test number 4: Are Africa and Oceania significantly different?
+...and so on...
+
+You can tell there are a lot of them, right? You would need to
+do it for every pair. To do all of those tests at once, you can use
+the `pairwise.t.test` function:
+
+```{r}
+pairwise.t.test(x = df$E, # outcome variable
+                g = df$Continent_Name, # grouping variable
+                p.adjust.method = "none") # which correction? (we'll talk about this later)
+```
+The output gives us a table of p-values but before we interpret the p-values, we need to talk about corrections for multiple tests.
+
+There's a problem with running a bunch of t-tests. We've talked about it before in terms of researcher degrees of freedom, or "fishing expeditions". When we run a bunch of tests without theory motivating our tests (we're just trying everything), the chance of something being significant is high, even when the null hypothesis is true. In other words we are increasing our Type I error (probability of rejecting the null when null is true).
+
+Our Type I error only stays at 5% when we do *one* test (among other things)... 
+
+```{r}
+# (1 - probability of rejecting 0 tests) = 
+#  (probability of rejecting *at least*one test )
+1 - dbinom(0, size = 1, prob = 0.05)
+```
+
+
+As soon as we start doing more, the Type I error increases.
+
+```{r}
+1 - dbinom(0, size = 2, prob = 0.05) # type 1 error when 2 tests
+
+1 - dbinom(0, size = 15, prob = 0.05) # type 1 error when 15 tests
+```
+
+Each of the $t$-tests above had 5% Type I Error Rate and I ran 15 of those tests! Imagine what your Type I error rate would be if you had 45 groups!
+
+We want to know about potential group differences, but we don't want to increase our Type I error. What can we do? 
+
+We can run multiple "post-hoc" tests, we just have to adjust our p-value. This aims to control the total error across the "family" of tests.
+
+This correction is often called "correction for multiple comparisons" And there are a bunch of different kinds. We'll only see two here, the bonferroni correction.
+
+
+## Bonferonni
+
+Multiply your p-value by the number of tests you are doing... the result is your new p-value
+
+```{r}
+pairwise.t.test(x = df$E, g = df$Continent_Name, p.adjust.method = "bonferroni") 
+```
+
+All this did was multiply each $p$-value by the number of tests (15). Now you can compare the new $p$-value to the typical 0.05
+
+When we do that, we can see that South America looks like it's different from every other continent on its mean level of
+extraversion, but the other continents are not significantly different from one another. Maybe try running the One-way ANOVA again but without the South America group in it? Do you still find a significant F test?
+
+Note: You might have seen in notes or other texts that Bonferroni correction requires dividing the alpha level by the number of tests and then you compare the p-values of the comparisons to this new alpha level (for our example above, new alpha level will be .05 / 15). When you use it in the above `pairwise.t.test()` function, it just multiplies the number of tests to the p-values so we can compare it to the original alpha level.
+
+## Tukey's Honestly Significant Difference Test
+
+The Bonferroni correction is known actually be a little conservative (i.e., it increases Type II error), an alternative is to use Tukey's HSD test.
+
+```{r}
+TukeyHSD(my.anova, conf.level = 0.95)
+```
+
+
+This is just one way to run a contrast, there are more sophisticated ways to do this, but you guys will learn about them next week. 
+
+
+
+# Writing up our results
+
+Example: 
+
+> We ran a one-way ANOVA and found a significant differences in extraversion between continents, $F(5,594) = 6.73, p < .001$. Post-hoc tests (using the Bonferroni correction to adjust the $p$-values) indicated that South America ($M = 2.52, SD =.829$) had significantly lower extraversion on average compared to Asia ($M = 2.99, SD = 0.839, p = 0.002$), Europe ($M = 3.00, SD = 0.979, p = 0.002$), North America ($M = 3.17, SD = 0.912, p < .001$), and Oceania ($M = 3.05, SD = 0.848, p < .001$). We found no evidence of significant differences in extraversion between the other continents.
+
+
+# A Note On Inferences
+
+Given that these are real data from real people, we can actually believe our results! These data have been used to do real research and write real papers, based on analyses not very different from what we just did.
+
+However, there are several reasons to be skeptical of these results. The most glaring one is that this is a website on the internet written in English. This already limits who has access to it -- you need to have internet access, and be able to read and comprehend English. It's possible (even likely) that the people who meet those criteria, especially in parts of the world where English is not the first language, and where technology is not as widespread, are different from the majority of people in that country or continent. Second, participants volunteer to take this test, so people who willingly search for and take a personality test might not be representative of the entire population. A final and very important consideration is that this wasn't an experiment (people were not randomly assigned to continents), so even if extraversion and continent of origin actually are related, there's no way to know whether that is due to continents "changing" people's personalities, people moving to find continents that better fit their personality, or some other third factor that influences this in a more complicated way.
+ 
+
+# Your turn
+
+Choose one of the other 4 personality traits (Agreeableness, Conscientiousness, Neuroticism, Openness to Experience) and run an ANOVA (I recommend running it both the easy and the long way for practice!) to see if the means differ significantly by continent. If they do, follow that up with pairwise tests, then write it up! Did you find any differences? Did you expect them to be that way?
