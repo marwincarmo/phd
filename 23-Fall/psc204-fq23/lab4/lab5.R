@@ -61,3 +61,15 @@ pairwise.t.test(x = data$E,
 # One-way ANOVA without South America
 summary(aov(formula = E ~ Continent_Name, data = data[data$Continent_Name != "South America",]))
 
+# tukey's HSD
+
+TukeyHSD(extra_out)
+
+# ANOVA on consciouscesness
+
+cons_out <- aov(C ~ Continent_Name, data = data)
+summary(cons_out)
+
+qf(.05, 5, 594, lower.tail = FALSE)
+
+pairwise.t.test(data$C, data$Continent_Name, p.adjust.method = "bonferroni")
