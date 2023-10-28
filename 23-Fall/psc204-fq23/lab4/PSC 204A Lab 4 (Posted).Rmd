@@ -1,0 +1,1264 @@
+---
+title: "PSC 204A Lab 4 (Posted)"
+author: "Simran Johal"
+date: "2023-10-20"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+---
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+Week 4 Lab: z and t-tests
+
+# Overview
+
+1.  Z-test (comparing mean to population)
+2.  T-test: An Overview
+3.  Independent T-tests Also in this section: Making bar graphs with
+    standard error bars Reporting the results of a t-test
+4.  Dependent T-tests
+5.  One Sample T-tests
+6.  Saving T-tests as objects
+7.  Confidence intervals for a mean
+
+# Today's Lab Data
+
+Taken from the "Age, Religion, and Health Survey", waves 2001 and 2004
+(but primarily taken from wave 2004). Most variables are
+self-explanatory. Here is a description of the variables that are not
+self-explanatory that might be mentioned today:
+
+\- HowOftenChurch_04:  These variables are based on Likert-scale responses, with 1 being the lowest in frequency, and 8 being the highest in frequency or quality.
+
+\- RelationshipGod_04: A likert scale response ranging from 1-4 in
+response to the statement "I have a close personal relationship with God", with 1 being "Strongly Agree" and 4 being "Strongly Disagree".
+
+```{r, eval = FALSE}
+# To Install Packages, if needed
+install.packages("tidyverse")
+install.packages("ggplot2")
+install.packages("ggpubr")
+install.packages("data.table")
+install.packages("effectsize")
+```
+
+```{r, message = FALSE}
+# To load required packages
+require(tidyverse)
+require(ggplot2)
+require(ggpubr)
+require(data.table)
+require(effectsize)
+
+# To read in the data
+population_data <- read.csv("Age Religion Health.csv")
+
+## You may need to change the file path.
+
+```
+
+Today we will discuss z-tests and t-tests. Although the two tests might look different based on their formulas, they're really following the same underlying idea: how big is the difference in my observed mean and my expected mean, relative to how much sampling variability (or noise) I expect there to be. 
+
+If there's a lot of sampling variability, we might expect that sometimes a distribution with a hypothesized mean will give us a slightly bigger difference, compared to if we only expected a small amount of sampling variability and got that same difference. 
+
+# 1. Z-test to Compare Mean to Population
+
+## Introduction to pnorm()
+
+Before getting into how to conduct tests in R, I'm first going to introduce the pnorm() function, which can be used to calculate p-values, or any sort of probability for a distribution
+
+pnorm() has 4 main arguments, which we can see in the help file
+
+```{r}
+?pnorm
+```
+
+The first argument, q, is a numeric value, and we want R to tell us the probability of falling above or below that value on a normal distribution. Or in other words, what percent of the normal distribution falls above or below that value. 
+
+The second and third arguments, mean and sd, tell R the mean and standard deviation of the normal distribution you're putting that value on, so that R knows *which* normal distribution you're working with. By default, this is set to have mean 0 and SD 1, so that you're dealing with the standard normal distribution. 
+
+Finally, the last argument, lower.tail, tells R whether you want the probability of falling BELOW the value (lower.tail = TRUE) or ABOVE the value (lower.tail = FALSE). By default, this is set to TRUE, so that you're looking at the probability of being below a particular value. 
+
+So for example, if I did pnorm(2.4, mean = 3, sd = 1, lower.tail = TRUE), I am asking R "If I had a normal distribution with mean 3 and SD 1, what is the probability of having a value of 2.4 or less?". 
+
+```{r}
+pnorm(2.4, mean = 3, sd = 1, lower.tail = TRUE)
+```
+
+As a side note, remember that the total probability under a distribution has to add up to 1. So the probability of falling below a certain value and the probability of falling above that value must add up to 1.
+
+```{r}
+pnorm(2.4, mean = 3, lower.tail = TRUE) + pnorm(2.4, mean = 3, lower.tail = FALSE) # Sums to 1
+```
+
+So why is this useful? Because we can use pnorm() to obtain the probability of obtaining a given z test statistic under the null hypothesis. 
+
+For example, suppose we were performing a z-test and calculated the z-value of -2.7. To determine whether this sample mean was significantly different from the hypothesized population mean, we would need 3 things: the direction of our alternative hypothesis (do we think the population mean is larger, smaller, or different than the hypothesized value), the p-value, and the alpha value (which is usually set to .05). 
+
+## One-Tailed Tests
+
+I'll go over calculating z-values below, but for now, let's suppose we wanted to test $H0: \mu = 3$ versus HA: $\mu$ < 3, and we obtained the z-value of -2.7. This is a one-tailed test (there is a directional hypothesis), and pnorm() gives us one-tailed probability values, so the p-value is just whatever number we get from pnorm(), as long as we set the lower.tail argument correctly. 
+
+To know which way to set the lower.tail argument, just remember that it will always be in the direction of your alternative hypothesis. So if you hypothesize that $\mu$ is less than some value, you're conducting a lower-tailed test and set lower.tail = TRUE. If you hypothesize that $\mu$ is greater than some value, you're conducting an upper-tailed test and set lower.tail = FALSE. This is regardless of the sign of your z-value!
+
+So in our example, we're conducting a lower-tailed test ($\mu$ < 3), so our p-value is just:
+
+```{r}
+pnorm(-2.7, lower.tail = TRUE)
+# we can keep the default mean = 0 and sd = 1 because a z-statistic follows a standard normal distribution
+```
+This p-value means that, under the assumption of the null hypothesis that the true population mean is equal to 3, the probability of obtaining our sample mean or more extreme was only 0.3%. Since that probability is low (less than the traditional cut-off of alpha = .05), we would reject the null and say there is evidence that the population mean is actually less than 3.
+
+## Two-Tailed Tests
+
+Now, lets say that you have a two-tailed test. This means that we
+hypothesize that the sample mean will be different, but we are not committing to specific direction of differences. This requires an additional step for your p-value calculation, since pnorm() will only ever give the probability for one tail, but now you have two possibilities.
+
+Let's say that we were conducting the  hypothesis test H0: $\mu$ = 3 versus HA: $\mu \neq$ 3, and we have the same z-value of -2.7. How can we calculate the p-value for this?
+
+#### Option 1: Calculate the one-tailed p-value, but compare it to alpha/2 (e.g., .05/2 = .025) instead of alpha. This helps you make your statistical decision, but doesn't actually tell you the p-value of the test. 
+
+To calculate the p-value, set the lower.tail argument according to whatever sign your z-value is (i.e., set lower.tail = TRUE if your z-value is negative, and lower.tail = FALSE if your z-value is positive). 
+
+```{r}
+pnorm(-2.7, lower.tail = TRUE)
+
+# Now we compare this to .025, and would still reject H0
+```
+
+#### Option 2: To calculate the actual p-value for the two-tailed test, we can multiply the one-tailed p-value by 2
+
+This is because the normal distribution is symmetric, so the probability of falling below -z* is the same as the probability of being above z*. You still set the lower.tail argument based on the sign of your z-value. 
+
+```{r}
+2*pnorm(-2.7, lower.tail = TRUE)
+```
+
+#### Option 3: Use the absolute value of your z-value (set lower.tail = FALSE) and multiply by 2
+
+If you're concerned about messing up the lower.tail argument, then you can always take the absolute value of whatever z-value you get, and calculate the upper-tailed p-value (always set lower.tail = FALSE). We still need to multiply by 2 though, because otherwise you would only get  the upper-tailed probability! This might be the easiest option to avoid mistakes. 
+
+```{r}
+2*pnorm(abs(-2.7), lower.tail = FALSE)
+```
+
+## Conducting the Z test
+
+Alright, now that we know how to calculate the p-value for a z-test, how do we actually calculate a z-statistic? 
+
+Lets assume that the Age, Religion, and Health dataset I have represents my entire population, and I am interested in examining life satisfaction. Well, since my dataset represents my population, I know its mean and SD:
+
+```{r}
+mean(population_data$Satisfied_04, na.rm = TRUE) # mu = 9.15
+
+sd(population_data$Satisfied_04, na.rm = TRUE) # sigma = 3.19
+```
+
+So in the population, life satisfaction has a mean \mu of 9.15 and a standard deviation \sigma of 3.19. I'm going to store these values for later:
+
+```{r}
+satisfaction_mu = mean(population_data$Satisfied_04, na.rm = TRUE)
+
+satisfaction_sigma = sd(population_data$Satisfied_04, na.rm = TRUE)
+```
+
+Now suppose that I didn't have access to this population dataset, and all I could do was take a sample. 
+
+```{r}
+set.seed(1234) # this way, our random samples will be the same
+
+my_sample = population_data %>%
+  slice_sample(n = 200) # Take a random sample of 200 participants (200 rows)
+```
+
+Now I have this sample, and I am interested in whether the level of satisfaction in the population is equal to 9.2, or whether it is different from 9.2. Let's conduct the z-test!
+
+Steps for conducting a one-sample z-test:
+
+1.  State the null and alternative hypotheses.
+
+2.  Compute a z-value: $$\frac{\text{Sample Mean} - \text{Hypothesized Population Mean}}{\frac{\text{Population SD}}{\sqrt{\text{Sample Size}}}}$$
+
+3.  Compare your z-value to a critical z
+
+4.  Decide to reject or retain the null hypothesis.
+
+#### Step 1: State the hypotheses
+
+$$H0: \mu = 9.2$$
+$$HA: \mu \neq 9.2$$
+
+#### Step 2: Compute the z-value
+
+To compute the z-value, we need the sample mean, hypothesized population mean, population SD, and sample size. We already know the hypotehsized population mean is 9.2, and the population SD was calculated before as satisfaction_sigma. 
+
+```{r}
+sample_mean = mean(my_sample$Satisfied_04, na.rm = TRUE)
+
+sample_size = nrow(my_sample)
+
+# or
+
+sample_size = length(my_sample$Satisfied_04)
+
+```
+
+Now we can use the formula to calculate the z-value
+
+```{r}
+z_value = (sample_mean - 9.2)/(satisfaction_sigma/sqrt(sample_size))
+
+z_value
+```
+
+#### Step 3: Calculate the p-value
+
+```{r}
+# Our test is non-directional, so I am going to take the absolute value of my z-statistic, calculate an upper-tailed probability, and multiply by 2
+
+2*pnorm(abs(z_value), lower.tail = FALSE)
+
+# or, since my z-statistic is negative, I can take a lower-tailed probability and multiply by 2
+
+2*pnorm(z_value, lower.tail = TRUE)
+```
+
+#### Step 4: Make a decision
+
+Since our p-value is greater than the alpha of .05, we fail to reject H0. There is not convincing evidence that the population mean for satisfaction is different than 9.2 (is this surprising?).
+
+# 2. T-Tests: Overview
+
+Z-tests require that you know the population standard deviation, which is very unlikely in practice. More commonly, you have to estimate sigma using the sample standard deviation. However, when you use this estimate in the calculation of your test statistic, it no longer follows a standard normal (z) distribution, but a t-distribution. 
+
+A t-distribution, like the z-distribution, is symmetric and centered around 0. But we need an additional parameter to describe the t-distribution, which is the degrees of
+freedom (df). The smaller the degrees of freedom, the greater proportion of values in the tails of the distribution (to reflect our uncertainty). As sample size (and degrees of freedom) increases, the t-distribution begins to become more and more like the z-distribution, so at large samples, they should give approximately the same answer, even though we don't know sigma. 
+
+See the figure at this website for a visualization of the
+t-distribution:
+<http://www.real-statistics.com/students-t-distribution/t-distribution-basic-concepts/>
+
+Since t-tests are more likely to be run, we're going to be spending a lot of time going through the different possibilities for t-tests. 
+
+# 3. One-Sample t-test
+
+Just like we can calculate a one-sample z-test, we can conduct a one-sample t-test to test whether our population mean equals a hypotehsized value. However, in this case, we have to rely on the sample SD as an estimate of the population $\sigma$, which means we use a t-test instead of a z-test. 
+
+Let's return to our earlier sample, and suppose a researcher wanted to test whether population mean satisfaction was less than 10. Our step 1 (stating the hypotheses) will remain exactly the same. But now in Step 2, we need to calculate a t-statistic, which has the following formula: 
+
+$$\frac{\text{Sample Mean} - \text{Hypothesized Population Mean}}{\frac{\text{Sample SD}}{\sqrt{\text{Sample Size}}}}$$
+In our example, we still have the same sample mean and sample size as before, and the hypothesizded population mean is 10. But now we need to calculate the sample SD. 
+
+```{r}
+sample_sd = sd(my_sample$Satisfied_04, na.rm = TRUE)
+
+t_stat = (sample_mean - 10) / (sample_sd / sqrt(sample_size))
+
+t_stat 
+
+```
+
+This t-statistic follows a t-distribution with df = n - 1, or 199. 
+There is an equivalent function to pnorm(), called pt(), that can be used to calculate a p-value. But instead, we're going to use R's built in function to conduct the whole t-test for us. 
+
+Let's look at the t-test function. 
+
+```{r}
+?t.test
+```
+
+The arguments are:
+
+1. A vector of data values (or, when we move to two-sample tests, a formula)
+2. The direction of our alternative hypothesis (by default, "two.sided", which is non-directional)
+3. The hypothesized value for $\mu$ (by default, 0)
+
+```{r}
+# our data values are the sample responses on the satisfaction variable
+# our alternative is a lower-tailed test, so we want to specify alternative = "less"
+# our hypothesized value of mu is 10
+
+t.test(my_sample$Satisfied_04,
+       alternative = "less",
+       mu = 10)
+```
+
+Notice that the t-statistic matches what we calculated before, and we have a corresponding p-value for our test. R also tells us what the alternative hypothesis we tested is (check that it's what you intended!), the confidence interval for the mean, and the value(s) of the sample mean(s). 
+
+# 4. Independent t-test (Two-Sample t-test)
+
+Although one-sample t-tests are possible, it is more common that researchers are interested in testing whether the population mean in one group is the same as the population mean in a different group. This is known as a two-sample t-test, and there are two variations we will be talking about today:
+
+1. Independent t-test (the two groups are independent of each other, e.g., freshmen and seniors, tea-drinkers versus coffee-drinkers).  This can also be divided based on whether we can assume the population variances in each group are equal or not.
+
+2. Dependent t-test (the two groups depend on each other in some way, e.g., siblings, married couples, pre- and post-test scores)
+
+In our sample, let's say we were interested in comparing whether the life satisfaction of people who are married is different than the life satisfaction of people who are widowed. Our hypotheses are:
+
+$$H0: \mu_{married} = \mu_{widowed}$$
+$$HA: \mu_{married} \neq \mu_{widowed}$$
+
+OR:
+
+$$H0: \mu_{married} - \mu_{widowed} = 0$$
+$$HA: \mu_{married} -  \mu_{widowed} \neq 0$$
+
+The second notation makes it clear that our hypothesized difference between the groups is 0. 
+
+To conduct the test in R, let's first subset our data to just these two groups.
+
+```{r}
+my_sample_subset = my_sample %>% 
+  filter(married_04 == "Married" | married_04 == "Widowed")
+
+head(my_sample_subset)
+```
+
+We can use the t-test function for this, but now we are going to use the formula notation, which is used for many statistical tests in R, since these tests can be conceptualized as the dependent variable being a function of the independent variable(s). 
+
+You can write formulas in R using the tilde operator (\~). In general, these formulas are written like this:
+
+Dependent Variable \~ Independent Variable
+
+Continuous Variable \~ Grouping Variable
+
+In the above examples, you can read the \~ as "is predicted by", "as grouped by", or "is a function of".
+
+In our example, we would have the dependent variable (life satisfaction) before the tilde, and the grouping variable (marital status) after the tilde. Also, since we are now comparing whether the means of the two groups are equal or not, our hypothesized mean is 0. 
+
+```{r}
+t.test(my_sample_subset$Satisfied_04 ~ my_sample_subset$married_04, 
+       alternative = "two.sided",
+       mu = 0,
+       var.equal = FALSE)
+
+# or, you can just use the variable names and specify the dataset
+
+t.test(Satisfied_04 ~ married_04, 
+       data = my_sample_subset,
+       alternative = "two.sided",
+       mu = 0,
+       var.equal = FALSE)
+```
+
+Notice that above, I set var.equal = FALSE, and this assumes that the population variances in both groups are not equal to each other. This is the default argument in R, and performs what is known as Welch's t-test. How do our results change if I set this to TRUE?
+
+```{r}
+# Independent T-test (Equal Variance Assumed)
+
+t.test(Satisfied_04 ~ married_04, 
+       data = my_sample_subset,
+       alternative = "two.sided",
+       mu = 0,
+       var.equal = TRUE)
+```
+
+Notice that although our sample means and t-statistic are the same, our df have now changed. When we cannot assume that the population variances of the groups are equal (var.equal = FALSE), we have violated one of the two-sample t-test assumptions.  To correct up for this, Welch's t-test will adjust the degrees of freedom, which is also why our p-value changes. In this case, our sample-size is pretty large, so the df might not make a huge difference, but you can notice it in small sample sizes. 
+
+So which should you use? Well, you could test whether the variances in the two groups are equal. The null hypothesis is that the group variances are equal in the population, so if p < .05, we would reject the null and assume the variances are unequal. 
+
+```{r}
+
+var.test(Satisfied_04 ~ married_04, data = my_sample_subset)
+
+# In this case, we fail to reject the null, and so could set var.equal = TRUE
+```
+
+However, I would recommend always using Welch's t-test and setting var.equal = FALSE. Welch's t-test is a robust correction - if your variances were truly equal, it shouldn't overly affect your results. But fi they are unequal, you are able to correct for that difference. 
+
+## Effect sizes for independent t-test
+
+If you need an estimate of the effect size, you can use the cohen_d function from the effectsize package to get an estimate of Cohen's d.. Just use the exact same inputs as you used for the t.test() function. 
+
+```{r}
+
+
+cohens_d(Satisfied_04 ~ married_04,
+       data = my_sample_subset,
+       var.equal = FALSE)
+
+```
+
+Finally, if you were writing this up in a paper, you would probably want to graph the results as well. Here are some graphs you can do to display the results - both for how the variable is distributed in each group, as well as showing it side by side. 
+
+## Graphing the Results 
+
+```{r}
+# If you want to learn more about ggplot, there will be more information at the end of the lab
+
+## First, you might want to get an idea of how the raw data are distributed. This is similar to what we did last week in lab!
+
+## Box Plot:
+ggplot(data = my_sample_subset, 
+    aes(x = married_04, 
+        y = Satisfied_04)) +  
+    geom_boxplot() + 
+    theme_classic() 
+
+## Histogram:
+ggplot(data = my_sample_subset,
+       aes(x = Satisfied_04)) + 
+    geom_histogram(color = "black") + 
+    facet_wrap(~married_04, nrow = 2) + # This will panel the graph by groups
+    theme_classic()
+
+## Violin Plot:
+ggplot(data = my_sample_subset, 
+    aes(x = married_04, 
+        y = Satisfied_04)) +  
+    geom_violin() + 
+    theme_classic() 
+```
+
+```{r }
+# Next, you will probably want to graph the means for each group along with a measure of variance (usually SE). 
+
+## Bar Graph:
+### Note: To graph the means, I like to create a new data.frame with the means, SD, N, and SE calculated for each group. You can use dplyr's summarise to tabulate the mean, SD, and N, and you can use the dplyr function mutate() to create a new variable (this is the same as creating a new variable using the <- operator, except it allows you to do it all in one step).
+
+graph.data <- 
+    my_sample_subset %>% 
+    group_by(married_04) %>%  
+    summarise("mean.Satisfied_04" = mean(Satisfied_04, na.rm = T),
+              "sd.Satisfied_04" = sd(Satisfied_04, na.rm = T),
+              "N" = length(Satisfied_04)) %>% 
+    mutate("se.Satisfied_04" = sd.Satisfied_04 / sqrt(N))
+
+ggplot(data = graph.data,
+       aes(x = married_04, 
+           y = mean.Satisfied_04,
+           fill = married_04)) + 
+    geom_bar(stat = "identity",
+             color = "black") + 
+    scale_fill_manual(values = c("darkgreen", "skyblue"),
+                      "Marriage Status") +
+    geom_errorbar(width = .2, 
+                  aes(ymin = mean.Satisfied_04 - se.Satisfied_04, 
+                      ymax = mean.Satisfied_04 + se.Satisfied_04)) + 
+    labs(x = "Marriage Status",
+         y = "Mean Satisfaction with Life Scale (2004)",
+         title = "Life Satisfaction by Marriage Status") + 
+    theme_classic()
+
+### See the link below for possible ggplot colors:
+### http://sape.inf.usi.ch/quick-reference/ggplot2/colour
+```
+
+## Analyzing variables with missing data
+
+In the above example there were no missing values in the variables we analyzed. However, it is very common to have missing values in your data.
+
+For example, lets say we want to see if there are differences in SundaySchool_04 based on HeartHealth_04 (good vs poor) in the population data.
+
+First, lets take a look at the population_data. Notice that as you scroll through the data frame, you see that some cells have the value NA. This means that data are missing. This probably comes from people who did not answer this question, or perhaps this item was not on the survey for one cohort.
+
+```{r}
+
+View(population_data)
+
+```
+
+There are a few ways to see how much missing data you have.
+
+You could use is.na() to assess whether each value is NA or not, and then sum it. Remember, is.na() converts the data to a logical vector of TRUE (= 1) and FALSE (= 0), so when we sum it we will get a count of TRUE values (in this case, the number of NA values).
+
+```{r}
+sum(is.na(population_data$SundaySchool_04)) # There are 16 missing values
+sum(is.na(population_data$HeartHealth_04)) # There are 6 missing value
+```
+
+You could also use the table function, and se the useNA argument to "ifany". This will tabulate all the unique values, including the number of NA values in each variable.
+
+```{r}
+table(population_data$SundaySchool_04, useNA = "ifany")
+table(population_data$HeartHealth_04, useNA = "ifany")
+```
+
+Howo do missing values affect a t-test? The answer: they don't, because R will omit missing data behind the scenes for you! It's like when we did the z-test by hand, and used na.rm = TRUE. 
+
+```{r}
+
+t.test(SundaySchool_04 ~ HeartHealth_04,
+       data = my_sample_subset,
+       var.equal = TRUE)
+        ## There were no differences between people with good heart health and poor heart health in 
+        ## Sunday School 04 attendance (p = .20).
+```
+
+BUT! You need to be careful to address the missing values when you go to calculate the descriptive statistics / graph the data. For example, if I tried to make the graph data using the same steps as above, it gives you unexpected results.
+
+```{r}
+
+graph.data <- 
+    my_sample_subset %>%
+    group_by(HeartHealth_04) %>%
+    summarise(mean = mean(SundaySchool_04),
+              sd = sd(SundaySchool_04),
+              N = length(SundaySchool_04)) %>%
+    mutate(se = sd/sqrt(N))
+graph.data
+```
+
+What is happening here is (A) the NA values are being treated as their own group and (B) the mean and sd return errors because by default the functions don't know how to handle NA values.
+
+One solution is to exclude NA values in the mean and sd function. Note: the na.rm argument will not work in length().
+
+```{r}
+
+graph.data <- 
+    my_sample_subset %>%
+    group_by(HeartHealth_04) %>%
+    summarise(mean = mean(SundaySchool_04, na.rm = T),
+              sd = sd(SundaySchool_04, na.rm = T),
+              N = length(SundaySchool_04)) %>%
+    mutate(se = sd/sqrt(N))
+
+graph.data
+
+```
+
+We now have calculations for the mean and sd. But lets see what happens when we try to graph this:
+
+```{r}
+
+ggplot(data = graph.data,
+       aes(x = HeartHealth_04, 
+           y = mean,
+           fill = HeartHealth_04)) + 
+    geom_bar(stat = "identity",
+             color = "black") + 
+    scale_fill_manual(values = c("navyblue", "coral"),
+                      "Heart Health") +
+    geom_errorbar(width = .2, 
+                  aes(ymin = mean - se, 
+                      ymax = mean + se)) + 
+    labs(x = "Heart Health",
+         y = "Mean Sunday School 04 Attendance",
+         title = "Sunday School Attendance by Heart Health") + 
+    theme_classic()
+
+```
+
+This gives an extra bar for the people who were missing data for Heart Health. It is conceivable that you would be interested in this in some situations; for example, if there is something systematic about why people were missing heart health data, you might want to know if this matters for your outcome variable. But even still, this variable was not included in the analysis, and overall it is distracting. You will want to get rid of it.
+
+The easiest way to do this is to cut if out and the very start of the process of creating the graph data. While you are at it, it probably wouldn't hurt to also exclude the NA values in the outcome variable too. You can do this by using the filter() function when creating the graph.data.
+
+```{r}
+
+graph.data <- 
+    population_data %>%
+    filter(!is.na(HeartHealth_04), 
+           !is.na(SundaySchool_04)) %>% # This will exclude the NA values
+    group_by(HeartHealth_04) %>%
+    summarise(mean = mean(SundaySchool_04, na.rm = T),
+              sd = sd(SundaySchool_04, na.rm = T),
+              N = length(SundaySchool_04)) %>%
+    mutate(se = sd/sqrt(N))
+graph.data
+
+ggplot(data = graph.data,
+       aes(x = HeartHealth_04, 
+           y = mean,
+           fill = HeartHealth_04)) + 
+    geom_bar(stat = "identity",
+             color = "black") + 
+    scale_fill_manual(values = c("navyblue", "coral"),
+                      "Heart Health") +
+    geom_errorbar(width = .2, 
+                  aes(ymin = mean - se, 
+                      ymax = mean + se)) + 
+    labs(x = "Heart Health",
+         y = "Mean Sunday School 04 Attendance",
+         title = "Sunday School Attendance by Heart Health") + 
+    theme_classic()
+
+```
+
+You will need to redo this process for every pair of variables you analyzed. For example, if you wanted to check for differences in a different outcome variable, you would need to change every instance of SundaySchool_04 to your new outcome variable.
+
+One final note: Be very cautious with the na.omit() function, it will exclude any row in your data with missing data, REGARDLESS of if you even analyzed that variable. For example, notice how many rows remain when we just exclude the variables we analyzed vs when we use na.omit:
+
+```{r}
+
+my_sample_subset %>%
+    filter(!is.na(HeartHealth_04), !is.na(SundaySchool_04)) %>%
+    nrow()
+
+my_sample_subset %>%
+    na.omit() %>%
+    nrow()
+
+```
+
+## One-tailed Independent T-tests
+
+Let's return to our previous example comparing the life satisfaction of married versus widowed people. We were interested in whether there was *any* difference between the means, but suppose we wanted to see whether married people had *higher* life satisfaction than widowed people. In other words, our hypotheses are now:
+
+$$H0: \mu_{married} - \mu_{widowed} = 0$$
+$$HA: \mu_{married} -  \mu_{widowed} > 0$$
+
+Well this should be ok! We know that we can adjust the alternative argument in the t.test function to be "less" or "greater". 
+
+But the only thing you need to look out for is the ordering of your groups, or the ordering of your factor levels for the grouping variable. When doing a two-sample test, R will always compare group 1 to group 2, where group 1 is whichever group comes first in the factor levels. If you haven't recoded your factor levels, this is usually whichever group comes first alphabetically. So you would need to either figure out what your factor levels are and adjust your alternative hypothesis according to whichever group comes first, or reocde the factor levels to be in the order that you want. Because unlike in a two-tailed test, now it matters whether we're comparing married people - widowed people > 0 or widowed people - married people > 0. 
+
+First, let's make sure our grouping variable is a factor, and make it a factor if not. How do you check the class of a variable?
+
+```{r}
+
+class(my_sample_subset$married_04)
+my_sample_subset$married_04 <- factor(my_sample_subset$married_04,
+                             levels = c("Married", "Widowed"))
+
+# I am telling R to coerce the married variable into a factor with the first level being married and second level as widowed. 
+
+# Note that if you want to just check the levels of your factor without recoding, you can always check using levels(): 
+
+levels(my_sample_subset$married_04) # This will show the ordered levels of the factor, and so since Married comes first, R will treat the Married group as mean 1 and the Widowed group as mean2. 
+# Since my hypothesis was that the mean of married people is higher than that of widowed people, I set my alternative to "greater"
+
+t.test(Satisfied_04 ~ married_04,
+       data = my_sample_subset,
+       var.equal = FALSE,
+       alternative = "greater")
+
+```
+
+What if I wanted to test whether the mean satisfaction of widowed people was less than the mean satisfaction of married people? Well that's just another way of saying married people have higher life satisfaction, so I still set alternative to "greater"!
+
+Notice that the p-value in the 'greater' t.test (0.01824) is exactly half of the p value from the original standard t-test (0.03648). This is because previously in the two-tailed test the .05 criteria for significance was split between two tails, but now in the one-tailed test we are putting all .05 at one tail.
+
+If, for some reason, we wanted to have "Widowed" be mean1 and "Married" be mean2, we would need to reorder the factors by recoding the variable.
+
+```{r}
+
+my_sample_subset$married_04 <- factor(my_sample_subset$married_04,
+                             levels = c("Widowed", "Married"))
+
+```
+Now if I just did the exact same t-test as above without checking the order of my factor levels, notice how the results change
+
+```{r}
+t.test(Satisfied_04 ~ married_04,
+       data = my_sample_subset,
+       var.equal = FALSE,
+       alternative = "greater")
+```
+
+Whoops! Our p-value is different (and is now less, in this scenario) - although that didn't change our decision in this case, you could imagine a situation where the p-value is now below .05. 
+
+So if we still wanted to test the hypothesis that married people have a higher life satisfaction, we need to be careful and set alternative to "less" because we're saying group 1 (Widowed) has a lower mean that group 2 (Married)
+
+## Reporting the Results of a T-test
+
+This section covers how to report the results of an independent samples t-test. This general pattern can be applied to all the different types of t-tests that follow in this lab.
+
+For the purposes of this class, you will be given specific instructions for how to report the results of the tests that we perform.
+
+If you are just asked to "Interpret the results of the test" without a thorough write up, something like this would be acceptable:
+
+```{r}
+t.test(Satisfied_04 ~ married_04,
+       data = my_sample_subset,
+       var.equal = FALSE,
+       alternative = "two.sided")
+```
+
+People who were married did not significantly differ from people who were widowed in their life satisfaction (t(156.68) = 0.75, p = .45).
+
+Outside of this class, there are different conventions for reporting statistics. In general, follow these guidelines: 
+
+- State the hypothesis and statistical test used (if you did something that was not standard also report it; this would include if you did a one-tailed t-test, assumed unequal variances, or tested a custom hypothesis) 
+- Report the statistics (observed t-value, p value, and confidence intervals) 
+- Interpret the results (state which group had a higher or lower mean or whether the groups were not different) 
+- Comment on the original hypothesis (did the results of the test support your initial hypothesis?)
+
+Here is a more thorough example of a write up that you could do for an independent t-tests from the above chunk.
+
+A researcher hypothesized that individuals who are married would differ in satisfaction with life than individuals who are widowed. However, an independent samples t-test showed there was no significant effect of marital status on life satisfaction (t(156.68) = 0.75, p = .45, 95% CI = [-0.65, 1.46]).
+Individuals who were married did not have different life satisfaction (M = 9.04, SD = 3.64) than individuals who were widowed (M = 9.44, SD = 3.36). The hypothesis that these groups would differ was not supported. 
+
+# 5. Dependent T-test (paired samples t-test, matched samples t-test)
+
+We use the dependent t-test when we want to test whether there is a significant difference between two groups who are connected in some way, such as repeated measures (e.g., Depression
+at time 1 and at time 2) or matched samples (e.g., a person's depression and their sibling's depression).
+
+To do this we still use the t.test() function, but we set the 'paired' argument to TRUE (it is FALSE by default). 
+
+Lets say we are interested in whether the depression scores changed from 2001 to 2004. To do this lets work with the entire data set again (population data). 
+
+One way to conduct this test is o just set the x and y arguments to the values of the dependent variable for one group and the values of the dependent variable for the other group, since they're spread across two columns. 
+
+```{r}
+
+t.test(x = population_data$Depression_01,
+       y = population_data$Depression_04,
+       paired = TRUE) 
+```
+
+
+Or, you can convert your data into long format (each person has multiple rows) and use the same formula notation as before. I'm going to subset my data before showing this to just the depression variables to make some things easier to demonstrate
+
+```{r}
+
+long_data = population_data %>%
+  select(id, Depression_01, Depression_04) %>% # just choosing the variables I want to keep, plus the ID variable to link it all
+  pivot_longer(cols = c(Depression_01, Depression_04),
+               names_to = "Year", # what to name the column telling apart the waves
+               values_to = "Depression" ) # what to name the column with the values of the variable
+
+long_data
+# notice now each person has 2 rows - one with their score from 2001 and one with their score from 2004
+
+t.test(Depression ~ Year,
+       data = long_data,
+       paired = TRUE)
+
+```
+
+## Graphing the Data
+
+```{r}
+# To graph the Data, your data needs to be in long data format
+
+## Box Plot:
+ggplot(data = long_data, 
+       aes(x = Year, y = Depression)) + 
+    geom_boxplot() +
+    theme_classic() +
+    theme(axis.text = element_text(color = "black"))
+    ## Note: There appear to be some extreme values. These were likely missing data codes that were not cleaned up. 
+    ## Do not worry about these numbers for the sake of this lab or the homework, just treat the data as if they are real.
+
+## Bar Graph:
+graph.data2 <- 
+    long_data %>% 
+    group_by(Year) %>% 
+    summarise(
+        "mean.Depression" = mean(Depression, na.rm = T),
+        "sd.Depression" = sd(Depression, na.rm = T),
+        "N" = length(Depression)) %>% 
+    mutate("se.Depression" = sd.Depression / sqrt(N))
+
+ggplot(data = graph.data2, 
+       aes(x = Year, y = mean.Depression, fill = Year)) + 
+    geom_bar(stat = "identity",
+             color = "black") + 
+    scale_fill_manual(values = c("grey20", "grey90"),
+                      "Year") + 
+    geom_errorbar(width = .2, 
+                  aes(ymin = mean.Depression - se.Depression, 
+                      ymax = mean.Depression + se.Depression))  + 
+    labs(x = "Year of Data Collection",
+         y = "Mean Depression Score",
+         title = "Depression Across Study Waves") + 
+    theme_classic() +
+    theme(axis.text = element_text(color = "black"))
+
+## Means with Points:
+ggplot(data = graph.data2, 
+       aes(x = Year, y = mean.Depression, fill = Year)) + 
+    geom_errorbar(width = .2, 
+                  aes(ymin = mean.Depression - se.Depression, 
+                      ymax = mean.Depression + se.Depression)) + 
+    geom_point(shape = 21,
+               size = 10) + 
+    scale_fill_manual(values = c("grey20", "grey90"),
+                      "Year")+ 
+    labs(x = "Year of Data Collection",
+         y = "Mean Depression Score",
+         title = "Depression Across Study Waves") + 
+    theme_classic() +
+    theme(axis.text = element_text(color = "black"))
+```
+
+# 6. Tweaking the t-test arguments 
+
+## Hypothesized Value
+
+So far, we have only tested the hypotheses that the means of the two groups (independent or not) are equal or are different in some way, or that the hypothesized difference is or is not 0. But suppose you had reason to believe the hypothesized difference was equal to a specific value - you could test that by changing the mu argument. 
+
+In our case, suppose we thought people's depression scores were at least 1 point higher in 2004 than they were in 2001.
+
+$$H0: \mu_{2004} - \mu_{2001} = 1$$
+$$HA: \mu_{2004} - \mu_{2001} > 1$$
+
+To do this in R, we just need to change the mu argument to our hypothesized mean (make sure your group ordering is approriate for your question!)
+
+```{r}
+
+class(long_data$Year)
+
+long_data$Year = factor(long_data$Year,
+                        levels = c("Depression_04", "Depression_01"))
+
+t.test(Depression ~ Year,
+       data = long_data,
+       alternative = "greater",
+       mu = 1,
+       paired = TRUE)
+
+## Depression scores in 2004 are not significantly different than 1 unit difference than depression scores in 2001.
+```
+
+In this example, there is no particular reason why I tested for a difference greater than 1. It was arbitrary. But there could be a valid reason why you might want to test a custom hypothesis. For example, if I was therapist or clinician and my outcome variables were some kind of diagnostic survey or scale, there may be clinical cutoffs that I want to test against (for example, perhaps there is something meaningful about a difference of 1 unit).
+
+## Alpha Level
+
+We can also adjust the alpha level to be something other than .05. To do this, we adjust the conf.level argument, which is equal to 1-alpha. 
+
+Suppose we wanted to set our alpha to 0.01. So then our conf.level would be 1 - 01, or 0.99. 
+
+```{r}
+
+t.test(Satisfied_04 ~ married_04,
+       data = my_sample_subset,
+       var.equal = FALSE,
+       conf.level = 0.99)
+
+```
+Notice that nothing changes except for the confidence intervals. This is because the p-value is calculated independently of the alpha criterion. However, the critical t-value is determined based on the alpha criterion, and the critical t-value is what is used to calculate the confidence intervals (we will go over this below).
+
+Note on graphing: - No matter how you tweak the t-test, the sample means and SE do not change; the only thing changing is how we interpret the results (for example, at a different alpha criterion, or with a custom hypothesis). The graph would not change.
+
+# 7. Saving Model objects and calling data from t-test models
+
+It is possible to save the results of a t-test as a model, and access certain information. This can be useful if you are trying to make a table, or if you are performing serveral functions iteratively in R and want to extract only certain elements of the t-test from each analysis.
+
+```{r Saving T tests as objects}
+# Lets return to the independent t test example:
+
+t1 <- t.test(Satisfied_04 ~ married_04,
+       data = my_sample_subset,
+       var.equal = FALSE)
+
+# This creates an "htest" class object:
+class(t1)
+
+# This class is just a list, and each element of the object can be accessed like a list using the $ operator:
+t1$statistic
+t1$parameter
+t1$p.value
+```
+
+# 8. Confidence Interval for a Mean
+
+Thus far the confidence intervals have been calculated for us by
+default. But if we want to calculate them for a mean of a single
+variable, we could. To do this we need to know the t-critical value, which is not returned by the t-test function.
+
+Confidence Intervals are calculated as:
+$$ \text{CI} = \text{Sample Mean} ± \text{Critical Value}*\text{SE} $$
+Remember, SE is the SD of the sampling distribution. If we know the population SD, we can use that in the calculation of the SE, and then our critical value is based on a z distribution. Otherwise, we will need to use the SD of the sample and the critical value is based on the t-distribution. For now, I will assume you don't know the population SD. 
+
+Lets manually calculate the 95% confidence intervals for the mean number of doctor visits of the participants.
+
+```{r}
+# Set alpha level
+alpha <- .05
+```
+
+To determine t-critical value, we use the qt() function. 
+This function takes a given p value and number of degrees of freedom, and returns the corresponding t-critical value from the the t-table. Remember, we must divide .05 by 2 because we are using a two-tailed test. We will set lower.tail to false so that we get a positive t-critical value 
+
+```{r}
+tcritical <- qt(p = alpha/2, 
+                df = nrow(population_data) - 1,
+                lower.tail = F)
+tcritical
+```
+
+```{r}
+# To determine se:
+se = sd(population_data$SeeDr90Days_04) / sqrt(length(population_data$SeeDr90Days_04)) 
+
+# To calculate the CI:
+lower.bound <- mean(population_data$SeeDr90Days_04) - (tcritical * se)
+upper.bound <- mean(population_data$SeeDr90Days_04) + (tcritical * se)
+
+print(paste0("95% CI: [",round(lower.bound,2),", ",round(upper.bound,2),"]"))
+
+## Notice that these values are the same as the ones returned by the t.test() function:
+
+t.test(population_data$SeeDr90Days_04)
+```
+
+# 9. Graphing with ggplot
+
+ggplot2 works by layering graph elements on top of each other. What follows is a simple way to think of the ggplot functions (although there are other ways as well, so find what works for you!)
+
+Note: The graphs look a bit extreme / ugly, for the sake of
+demonstrating how the functions work. These should not be used as good examples of presentable graphs.
+
+```{r}
+# We will work with this data
+
+graph.data <- 
+    my_sample_subset %>% 
+    group_by(married_04) %>% 
+    summarise("mean" = mean(Satisfied_04, na.rm = T),
+              "sd" = sd(Satisfied_04, na.rm = T),
+              "n" = length(Satisfied_04)) %>% 
+    mutate("se" = sd / sqrt(n))
+```
+
+To make a ggplot graph, you first start with the ggplot() function. This is the "base" of the graph. Anything that is specified in this function will be automatically applied to everything that follows. The two important arguments for this function are 'data' and 'aes' (stands for aesthetics). 
+
+The data argument is the data that you want to graph
+
+The aes function tells ggplot what variables are going on what axis, and what variables are being used to group the data in different ways (if applicable)
+
+his is the base. Notice that it just pulls up an empty graph. This is because we haven't layered anything on to it yet.
+
+```{r}
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean))
+```
+
+Once you have your base, you then use the + to add graph layers (called "geoms"). For example, we could add:
+
+```{r}
+
+# Points:
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean)) +
+    geom_point()
+
+# Bars:
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean)) +
+    geom_bar(stat = "identity") 
+    # For bar plots, by default the function will try to aggregate your data somehow 
+    # You will usually get an error if you don't tell it the "stat" function
+    # In our case, we already aggregated the data when we created graph.data
+    # We can specify stat = "identity" to tell geom_bar() to use the actual values in the data 
+
+# Error Bars:
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean)) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se)) 
+    # For error bars, you need to specify the "ymin" and "ymax" or you will get an error
+    # This is done inside a new aes() function, inside geom_errorbar
+```
+
+Within each geom, you can specify additional parameters like color, fill, size, shape, width, and linetype (depending on the geom, some of these can't be adjusted). Notice how the different settings affect the different geoms:
+
+```{r}
+
+# Points
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean)) +
+    geom_point(fill = "red",
+               color = "blue",
+               shape = 21,
+               size = 3)
+
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean)) +
+    geom_point(fill = "red",
+               color = "blue",
+               shape = 3,
+               size = 3)
+    
+    ## Notice how the different shapes affect the graphs
+
+    ## For shapes 21-25, "color" changes the outline and "fill" changes the inside. 
+    ## For shapes 1-20, "fill" has no effect, and "color" changes the color of the entire shape.
+
+    ## For a list of all the different shape codes in ggplot2, see: 
+    ## http://www.sthda.com/english/wiki/ggplot2-point-shapes
+    
+
+# Bar:
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean)) +
+    geom_bar(stat = "identity",
+             fill = "dodgerblue",
+             color = "black",
+             linewidth = .5) 
+    
+## Shape does not do anything for bar plots
+## For geom_bar(), size affects outline thickness
+
+
+# Error Bar:
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean)) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                  color = "black",
+                  size = .5,
+                  width = .3)
+
+    ## Shape and fill are not needed for geom_errorbar()
+    ## We can specify width to change how wide the error bars are. 
+    ## Width does nothing for geom_point() and geom_bar()
+    
+
+# Try changing the different settings and seeing how it affects the graph.
+```
+
+You can add more than one geom. Note, the order matters (each layer goes on to the graph in the order it is added)
+
+```{r}
+
+# Bar Plots with Error Bars
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean)) +
+    geom_bar(stat = "identity",
+             fill = "dodgerblue",
+             color = "black",
+             size = .5) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                  color = "black",
+                  size = .5,
+                  width = .3)
+
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean)) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                  color = "black",
+                  size = .5,
+                  width = .3) +
+    geom_bar(stat = "identity",
+             fill = "dodgerblue",
+             color = "black",
+             size = .5) 
+```
+
+Notice how the error bars are in front or behind the bars, depending on the order of the geoms.
+
+If you want the graph to have different colors based on different groups, you have the specify the grouping in the aes() function, and not in the geom_() function. If you want the color coding to apply to all groups, you can put it in the parent ggplot() aes():
+
+```{r}
+
+# Points
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, fill = married_04)) +
+    geom_point(color = "blue",
+               shape = 21,
+               size = 3)
+    
+    ## Remember to set a shape between 21 - 25 to fill points different colors
+    ## Notice that I took out the "fill = red" argument from geom_point(). 
+    ## If we left it in it would override the fill = married_04 argument in the parent function.
+
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, fill = married_04)) +
+    geom_point(color = "blue",
+               fill = "red",
+               shape = 21,
+               size = 3)
+
+## With Points, you can also do this with the color argument, and setting the shape between 1 - 20.
+
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, color = married_04)) +
+    geom_point(shape = 18,
+               size = 8)
+
+
+# Bars
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, fill = married_04)) +
+    geom_bar(stat = "identity",
+             color = "black",
+             size = .5) 
+
+
+# Error Bars
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, color = married_04)) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                  size = .5,
+                  width = .3)
+
+    ## Notice I had to specify color = married_04, instead of fill = married_04. 
+    ## This is because fill does not apply to error bars.
+
+```
+
+Coloring by Group when there are more than one geom:
+
+If you specify a color or fill asthetic in the parent ggplot() function, it will apply to all of the geoms that follow.
+
+```{r}
+
+## For example, a Point Plot with Error Bars
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, color = married_04)) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                  size = .5,
+                  width = .3) +
+    geom_point(shape = 18,
+               size = 8)
+```
+
+If we only wanted one of the geoms to inherit the aesthetic from the parent function, we can overwrite the inheritance within the geom we don't want to inherit. For example, notice how specifying a color within the different geoms changes the resulting plot:
+
+```{r}
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, color = married_04)) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                  color = "black", # Adding color argument here
+                  size = .5,
+                  width = .3) +
+    geom_point(shape = 18,
+               size = 8)
+
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, color = married_04)) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                  size = .5,
+                  width = .3) +
+    geom_point(color = "black", # Adding color argument here
+               shape = 18,
+               size = 8)  
+```
+
+Alternatively, we can take the color asthetic out of the parent function, and only put it inside of the geoms that we want it to apply to. The code below will produce the same two graphs:
+
+```{r}
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean)) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                  size = .5,
+                  width = .3) +
+    geom_point(aes(color = married_04), # Adding color asthetic here
+               shape = 18,
+               size = 8)
+
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean)) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se, color = married_04), # Adding color asthetic here
+                  size = .5,
+                  width = .3) +
+    geom_point(shape = 18,
+               size = 8)
+
+```
+
+Note: Be aware of whether you are specifying fill or color, because some do not apply to all geoms. For example, look at what happens when we specify fill for a bar plot with errorbars:
+
+```{r}
+
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, fill = married_04))  +
+    geom_bar(stat = "identity",
+             color = "black",
+             size = .5)  +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                  size = .5,
+                  width = .3)
+```
+
+Notice that the error bars turn out black, but the bars are colored differently. This is because geom_errorbar cannot be modified by fill. 
+
+Look at what happens when we specify color, instead (I took out the color argument from geom_bar above, so the color argument in the parent function won't be overwritten).
+
+```{r}
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, color = married_04))  +
+    geom_bar(stat = "identity",
+             size = .5)  +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                  size = .5,
+                  width = .3)
+```
+
+Now the color element (the line colors) are being modified for both features. The code in this section would also be applicable to geom_point() plots with shapes 21-25.
+
+To change which colors are used for the different groups, use scale_fill_manual()
+
+```{r}
+
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, fill = married_04))  +
+    geom_bar(stat = "identity",
+             color = "black",
+             size = .5)  +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+                  size = .5,
+                  width = .3) +
+    scale_fill_manual(values = c("snow", "dodgerblue"))
+
+## You can also use this to rename your legend:
+ggplot(data = graph.data,
+       aes(x = married_04, y = mean, fill = married_04)) +
+    geom_bar(stat = "identity",
+             color = "black",
+             size = 1) +
+    geom_point(color = "blue",
+               shape = 21,
+               size = 3) +
+    scale_fill_manual(values = c("snow", "dodgerblue"),
+                      "Marriage Status")
+
+
+## Here is a nice guide for the different colors that are available in ggplot:
+## http://sape.inf.usi.ch/quick-reference/ggplot2/colour
+```
+
+You can use more than one asthetic. For this example, we will switch to the larger data set. Let's start with this base graph:
+
+```{r}
+
+ggplot(data = population_data,
+       aes(x = Weight_04, y = FearDeath_04)) +
+    geom_point()
+```
+
+Now lets color by Sex:
+
+```{r}
+ggplot(data = population_data,
+       aes(x = Weight_04, y = FearDeath_04, color = sex)) +
+    geom_point()
+```
+
+Now lets also change the shape, according to sex:
+
+```{r}
+ggplot(data = population_data,
+       aes(x = Weight_04, y = FearDeath_04, color = sex, shape = sex)) +
+    geom_point()
+```
+
+Alternatively, we could do different shapes by sex, and color by a different variable:
+
+```{r}
+ggplot(data = population_data,
+       aes(x = Weight_04, y = FearDeath_04, color = married_04, shape = sex)) +
+    geom_point()
+    ## This graph is pretty awful!
+```
+
+You can also create different panels for different groups by using facet_wrap(). Take a look at the different ways we could facet the data; which one do you think looks best?
+
+```{r}
+
+ggplot(data = population_data,
+       aes(x = Weight_04, y = FearDeath_04, color = married_04, shape = sex)) +
+    geom_point() +
+    facet_wrap(~married_04)
+
+ggplot(data = population_data,
+       aes(x = Weight_04, y = FearDeath_04, color = married_04, shape = sex)) +
+    geom_point() +
+    facet_wrap(~sex)
+
+ggplot(data = population_data,
+       aes(x = Weight_04, y = FearDeath_04, color = married_04, shape = sex)) +
+    geom_point() +
+    facet_wrap(sex~married_04)
+
+ggplot(data = population_data,
+       aes(x = Weight_04, y = FearDeath_04, color = sex, shape = sex)) +
+    geom_point() +
+    facet_wrap(~married_04)
+```
+
+This is by no means a comprehensive explanation of ggplot, this is just a demonstration for how the layering works. We will go over other types of graphs in future labs.
