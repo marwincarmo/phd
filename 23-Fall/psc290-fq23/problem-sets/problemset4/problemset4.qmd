@@ -31,7 +31,7 @@ In the previous week's problem sets, you used data I provided to complete your a
 
 <!-- Load your packages here -->
 ```{r}
-library(dplyr)
+library(tidyverse)
 ```
 
 # Part 1: Codebooks  
@@ -67,18 +67,18 @@ Here are additional columns that will make our lives easier or are applicable to
 Next, load your raw data into `R`. Don't make any transformations other than removing columns you aren't using (as I showed you in class) or you need to remove the first two rows if reading in a wonky qualtrics data set (`filter(df, !row_number() %in% 1:2)`). 
 
 ```{r load data}
-# your code here
+data <- readr::read_csv("data.csv")
 ```
 
 Now look at the descriptives using the `describe()` function or `tidyverse` functions. 
 
 ```{r raw desc}
-# your code here
+psych::describe(data[,-c(1, 2, 4, 5)])
 ```
 
 And the zero-order correlations:
 ```{r raw cors}
-# your code here
+psych::cor.plot(data[,-c(1, 2, 4, 5)], diag = F)
 ```
 
 
@@ -88,12 +88,27 @@ And the zero-order correlations:
 Next, load in your codebook into `R`. Also create data frames with variable names for different categories like we did in class.
 
 ```{r load codebook}
-# your code here
+readxl::excel_sheets(path = "codebook.xlsx")
+
+codebook <- readxl::read_excel(path = "codebook.xlsx", sheet = "codebook") %>%
+  mutate(old_name = str_to_lower(old_name))
+
+key <- readxl::read_excel(path = "codebook.xlsx", sheet = "Key")
+dbas   <- key %>% filter(category == "pred")
+outcomes <- key %>% filter(category == "out")
+covars   <- key %>% filter(category %in% c("dem", "cov"))
 ```
 
 
 ```{r create reference dfs}
-# your code here
+data_long <- data |> 
+  tidyr::pivot_longer(
+    cols = -c(record_id),
+    names_to = "old_name",
+    values_to = "value",
+    values_drop_na = T
+  )
+
 ```
 
 # Part 4: Merge Your Data and Codebook 
@@ -101,7 +116,13 @@ Next, load in your codebook into `R`. Also create data frames with variable name
 Merge the information from your codebook into your data using `left_join()` or `right_join()`. What variables did you merge? 
 
 ```{r merge data and codebook}
-# your code here
+data_2 <- data_long |> 
+  dplyr::left_join( 
+    codebook |> 
+      dplyr::select(old_name, category, name, item_name, recode, 
+             reverse, mini, maxi, comp_rule, long_rule)
+  ) |> 
+  dplyr::select(-old_name)
 ```
 
 # Part 5: Recoding and Transformations  
@@ -111,19 +132,42 @@ Using your codebook as a reference, recode, reverse score, or otherwise transfor
 ## Recode 
 
 ```{r recode}
-# your code here
+recode_fun <- function(rule, y){
+  x <- y$value
+  if(!is.na(rule)){y$value <- eval(parse(text = rule))}
+  return(y)
+}
+
+data_recode <- data_2 %>%
+  group_by(recode) %>% # group by the r code rule
+  nest() %>% # create a nested data frame
+  ungroup() %>% # ungroup() 
+  # apply the recode function
+  mutate(data = pmap(list(recode, data), recode_fun)) |> 
+  unnest(data) |> 
+    select(-recode)
 ```
 
 Now look again at the descriptives using the `describe()` function or `tidyverse` functions. 
 
 ```{r recode desc}
-# your code here
+data_recode |> 
+  dplyr::select(record_id, item_name, value) |> 
+  tidyr::pivot_wider(names_from = item_name,
+                     values_from = value) |> 
+  dplyr::select(-1) |> 
+  psych::describe()
 ```
 
 And the zero-order correlations:
 
 ```{r recode cors}
-# your code here
+data_recode |> 
+  dplyr::select(record_id, item_name, value) |> 
+  tidyr::pivot_wider(names_from = item_name,
+                     values_from = value) |> 
+  dplyr::select(-1) |> 
+  psych::cor.plot()
 ```
 
 ## Reverse Score 

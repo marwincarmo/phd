@@ -77,3 +77,11 @@ long_data |>
     legend.text = element_text(size = 10)
   )
 
+# Extra question ----------------------------------------------------------
+
+hyp_mean <- 5
+sample_sd <- 1.4
+sample_size <- 32
+t_stat <- 2.83
+sample_mean = (t_stat * (sample_sd / sqrt(sample_size))) + hyp_mean
+
