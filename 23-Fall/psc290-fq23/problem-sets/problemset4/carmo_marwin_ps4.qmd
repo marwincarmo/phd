@@ -1,7 +1,7 @@
 ---
 title: "Problem Set #4"
-author: "INSERT YOUR NAME HERE"
-date: "insert date here"
+author: "Marwin Carmo"
+date: "10/30/2023"
 urlcolor: blue
 format: 
   html:
@@ -38,6 +38,8 @@ library(tidyverse)
 ## Data Overview
 Provide an overview of your data set. What is it? How was it collected? 
 
+The data used in this study comes from a randomized controlled trial that aimed to compare the effectiveness of two types of therapy for insomnia - Acceptance and Commitment Therapy and Cognitive Behavioral Therapy. The data was collected online using REDCap. For this particular study, we selected a subset of variables from the baseline measurements, including age, sex, marital status, insomnia severity, anxiety, depression, and dysfunctional beliefs and attitudes about sleep. Our focus was on examining the relationship between dysfunctional beliefs and attitudes about sleep and insomnia severity.
+
 ## Codebook 
 
 Using the codebook provided in class as a reference, document the variables (or a subset of the variables) for an ongoing (or completed) research project you are involved in. Please also make the "Key" and "Overview" sheets providing overviews of your study. 
@@ -67,7 +69,7 @@ Here are additional columns that will make our lives easier or are applicable to
 Next, load your raw data into `R`. Don't make any transformations other than removing columns you aren't using (as I showed you in class) or you need to remove the first two rows if reading in a wonky qualtrics data set (`filter(df, !row_number() %in% 1:2)`). 
 
 ```{r load data}
-data <- readr::read_csv("data.csv")
+data <- readr::read_csv("act_subset.csv")
 ```
 
 Now look at the descriptives using the `describe()` function or `tidyverse` functions. 
@@ -162,10 +164,12 @@ data_recode |>
 And the zero-order correlations:
 
 ```{r recode cors}
-data_recode |> 
+data_clean <- data_recode |> 
   dplyr::select(record_id, item_name, value) |> 
   tidyr::pivot_wider(names_from = item_name,
-                     values_from = value) |> 
+                     values_from = value)
+
+data_clean |> 
   dplyr::select(-1) |> 
   psych::cor.plot()
 ```
@@ -276,7 +280,8 @@ And write an output of the data as an:
 `.csv`: `write_csv(obj, file = your_path.csv")`
 
 ```{r output data}
-# your code here
+save(data_clean, file = "output/data_clean.RData")
+write_csv(data_clean, file = "output/data_clean.csv")
 ```
 
 # Render to html and submit problem set  
