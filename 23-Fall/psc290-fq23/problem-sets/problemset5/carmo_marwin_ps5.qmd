@@ -1,7 +1,7 @@
 ---
 title: "Problem Set #5"
-author: "INSERT YOUR NAME HERE"
-date: "insert date here"
+author: "Marwin Carmo"
+date: "11/03/2023"
 urlcolor: blue
 format: 
   html:
@@ -32,7 +32,7 @@ In last week's problem set, you used your own data for the first time. This week
 ## Packages 
 
 ```{r load packages}
-# your code here
+library(dplyr)
 ```
 
 # Codebooks  
@@ -41,19 +41,22 @@ In last week's problem set, you used your own data for the first time. This week
 Load your codebook from last week: 
 
 ```{r load codebook}
-# your code here
+codebook <- readxl::read_xlsx("../problemset4/codebook.xlsx")
 ```
 
 And create reference data frames (if applicable)
 
 ```{r create reference dfs}
-# your code here
+key <- readxl::read_excel(path = "../problemset4/codebook.xlsx", sheet = "Key")
+dbas   <- key  |>  filter(category == "pred")
+outcomes <- key  |>  filter(category == "out")
+covars   <- key |>  filter(category %in% c("dem", "cov"))
 ```
 
 ## Load Data 
 
 ```{r load data}
-# your code here
+data <- readr::read_csv("../problemset4/act_subset.csv")
 ```
 
 # Part 1: Using Functions
@@ -64,14 +67,27 @@ Functions are really useful when you have to do something many times.
 Write a function to z-standardize data ((observed - mean)/standard deviation). Apply it to at least 3 variables in your data.
 
 ```{r z-scoring}
-# your code here
+z_score <- function(x) (x - mean(x, na.rm = T))/sd(x, na.rm = T)
+
+data_z <- data |> 
+  dplyr::mutate(
+    dplyr::across(c(isi_total, hads_anxiety, hads_depression),
+                  z_score)
+  )
 ```
 
 Now look at your descriptives, do the descriptives suggest your function worked correctly? 
 
 ```{r z-desc}
-# your code here
+data_z |> 
+  dplyr::select(isi_total, hads_anxiety, hads_depression) |> 
+  tidyr::pivot_longer(cols = everything(), values_to = "z_score", names_to = "var") |> 
+  dplyr::with_groups(var, summarise,
+                     mean = mean(z_score, na.rm=TRUE),
+                     sd = sd(z_score, na.rm=TRUE))
 ```
+
+We can confirm the function worked by observing the mean of approximately zero and standard deviation of 1.
 
 # Part 2: Iteration
 
@@ -85,25 +101,77 @@ psych::bfi %>%
 1. Using at least two methods of iteration, apply a function to multiple columns, subsets (e.g., participants, stimuli, waves, etc.). For example, as above use two methods to mutate multiple columns (hint: see `?apply` or `?map_dbl`) or to calculate descriptives, correlations, etc. (hint: see `?lappy` and `?map). 
 
 ```{r method 1}
-# your code here
+# DBAS-16 mean item score
+data |> 
+  dplyr::summarise(
+      dplyr::across(
+        paste0("dbas16_", 1:16), 
+        ~mean(.x, na.rm = TRUE)
+        )
+      ) |> 
+  tidyr::pivot_longer(cols = dplyr::everything(), 
+                      names_to = "item", 
+                      values_to = "mean_score")
 ```
 
 ```{r method 2}
-# your code here
+# DBAS-16 mean item score
+
+purrr::map_df(data[,30:45], 
+              ~mean(.x, na.rm=TRUE)) |> 
+  tidyr::pivot_longer(cols = dplyr::everything(), 
+                      names_to = "item", 
+                      values_to = "mean_score")
 ```
 
 Do you get the same results? If not, why? 
+
+Yes.
 
 2. Write a function that estimates multiple descriptives (mean, median, sd, min, max, n, n missing). Using any form of iteration, apply that function to all continuous variables in your data frame. (Hints: you could (1) pivot your data to long and `group_by()` item, either nesting and applying your function or writing a data frame function or (2) use a function like apply() or across to estimate them. Note the format challenges you experience [e.g., errors, your data are super wide].)
 
 Ultimately, you want to end up with a data frame with items / indicators, etc. as rows (indexed by a column) and columns for each of the descriptives. 
 
+```{r}
+descriptives <- function(x) {
+  x |> 
+    dplyr::select(
+      dplyr::where(
+        is.double
+      )
+  ) |> 
+    tidyr::pivot_longer(
+      cols = dplyr::everything(),
+      names_to = "variable",
+      values_to = "val"
+    ) |> 
+    dplyr::with_groups(variable,
+                       summarise,
+                       mean = mean(val, na.rm = TRUE),
+                       sd = sd(val, na.rm = TRUE),
+                       min = min(val, na.rm = TRUE),
+                       max = max(val, na.rm = TRUE),
+                       n = length(val),
+                       n_missing = sum(is.na(val))
+                       )
+}
+
+descriptives(data)
+```
+
+
 # Part 3: More practice
 
-1. Write `both_na()`, a summary function that takes two vectors of the same length and returns the number of positions that have an `NA` in both vectors. Use it to test whehter any rows in two columns of your choosing from your data are both `NA`. 
+1. Write `both_na()`, a summary function that takes two vectors of the same length and returns the number of positions that have an `NA` in both vectors. Use it to test whether any rows in two columns of your choosing from your data are both `NA`. 
 
 ```{r}
+both_na <- function(x, y) {
+  
+  sum(is.na(x) & is.na(y))
+  
+}
 
+both_na(data$dbas16_1, data$hads_1)
 ```
 
 2. Read the source code for each of the following two functions, puzzle out what they do, and then brainstorm better names.
@@ -117,6 +185,10 @@ f3 <- function(x, y) {
   rep(y, length.out = length(x))
 }
 ```
+
+- The function `f1` checks whether the prefix of a string matches the given prefix. It could be called `prefix_match()`.
+
+- The function `f3` repeats a value the specified number of times, given by the lenght of the vector in `x`. A better name for `f3` could be `repeat()`
 
 # Render to html and submit problem set  
 
