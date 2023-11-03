@@ -1,0 +1,128 @@
+---
+title: "Problem Set #5"
+author: "INSERT YOUR NAME HERE"
+date: "insert date here"
+urlcolor: blue
+format: 
+  html:
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    theme: united
+    highlight-style: tango
+    df-print: paged
+    code-fold: show
+    toc: true
+    toc-float: true
+    self-contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", highlight = TRUE)
+```
+
+In last week's problem set, you used your own data for the first time. This week, we build on that. As with Week 4, this problem set is more open ended. I will ask you to complete broadly defined steps with your data using the skills we are focusing this week (iteration, functions, lists, list columns, etc.). Some steps won't be applicable, and that's fine. Do them to the best of your ability for your data. 
+
+# Workspace 
+## Packages 
+
+```{r load packages}
+# your code here
+```
+
+# Codebooks  
+## Codebook 
+
+Load your codebook from last week: 
+
+```{r load codebook}
+# your code here
+```
+
+And create reference data frames (if applicable)
+
+```{r create reference dfs}
+# your code here
+```
+
+## Load Data 
+
+```{r load data}
+# your code here
+```
+
+# Part 1: Using Functions
+
+Functions are really useful when you have to do something many times. 
+
+## Practicing Function Writing 
+Write a function to z-standardize data ((observed - mean)/standard deviation). Apply it to at least 3 variables in your data.
+
+```{r z-scoring}
+# your code here
+```
+
+Now look at your descriptives, do the descriptives suggest your function worked correctly? 
+
+```{r z-desc}
+# your code here
+```
+
+# Part 2: Iteration
+
+In class, we talked about iteration as `for` loops, `lapply()`, and `purrr:::map()`. But we've actually been doing iteration for weeks using functions like `mutate_at()` and `mutate_all()`. Another alternative is using `mutate(across())`, which works similar to `mutate_at()` but is more generic. So for example the code below reverse scores the BFI items that are negatively keyed: 
+
+```{r, eval = F}
+psych::bfi %>%
+  mutate(across(c(A1, C4, C5, E1, E2, O2, O5), ~6 - .))
+```
+
+1. Using at least two methods of iteration, apply a function to multiple columns, subsets (e.g., participants, stimuli, waves, etc.). For example, as above use two methods to mutate multiple columns (hint: see `?apply` or `?map_dbl`) or to calculate descriptives, correlations, etc. (hint: see `?lappy` and `?map). 
+
+```{r method 1}
+# your code here
+```
+
+```{r method 2}
+# your code here
+```
+
+Do you get the same results? If not, why? 
+
+2. Write a function that estimates multiple descriptives (mean, median, sd, min, max, n, n missing). Using any form of iteration, apply that function to all continuous variables in your data frame. (Hints: you could (1) pivot your data to long and `group_by()` item, either nesting and applying your function or writing a data frame function or (2) use a function like apply() or across to estimate them. Note the format challenges you experience [e.g., errors, your data are super wide].)
+
+Ultimately, you want to end up with a data frame with items / indicators, etc. as rows (indexed by a column) and columns for each of the descriptives. 
+
+# Part 3: More practice
+
+1. Write `both_na()`, a summary function that takes two vectors of the same length and returns the number of positions that have an `NA` in both vectors. Use it to test whehter any rows in two columns of your choosing from your data are both `NA`. 
+
+```{r}
+
+```
+
+2. Read the source code for each of the following two functions, puzzle out what they do, and then brainstorm better names.
+
+```{r}
+f1 <- function(string, prefix) {
+  str_sub(string, 1, str_length(prefix)) == prefix
+}
+
+f3 <- function(x, y) {
+  rep(y, length.out = length(x))
+}
+```
+
+# Render to html and submit problem set  
+
+**Render to html** by clicking the "Render" button near the top of your RStudio window (icon with blue arrow) 
+
+-   Go to the Canvas --\> Assignments --\> Problem Set 5
+-   Submit both .qmd and .html files\
+-   Use this naming convention "lastname_firstname_ps#" for your .qmd and html files (e.g. beck_emorie_ps5.qmd & beck_emorie_ps5.html)
+
