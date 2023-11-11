@@ -1,0 +1,163 @@
+﻿dataset,old_name,item_text,scale,category,label,item_name,year,new_name,reverse,mini,maxi,recode,lavaan_name
+,PERSNR,Never Changing Person ID,,Procedural,,SID,0,Proc_SID,1,,,,
+,hhnr,household ID,,Procedural,,household,0,Proc_HHID,1,,,,
+ppfad,gebjahr,Year of Birth,numeric,Demographic,,DOB,0,Demo_dob,1,,,,
+ppfad,sex,Sex,"
+1 [1] Male
+2 [2] Female
+-1 [-1] No Answer
+-2 [-2] Does not apply
+-3 [-3] Answer improbable
+-4 [-4] Inadmissible multiple response
+-5 [-5] Not included in this version of the questionnaire
+-6 [-6] Version of questionnaire with modified filtering
+56186 57630 24 0 0 0 0 0",Demographic,,Sex,0,Demo__sex,1,,,,
+vp,VP12501 ,Thorough Worker,,big5,C,thorough,2005,big5_C_thorough_2005,1,1,7,,I1
+zp,ZP12001 ,Thorough Worker,,big5,C,thorough,2006,big5_C_thorough_2006,1,1,7,,I1
+bdp,BDP15101 ,Thorough Worker,,big5,C,thorough,2013,big5_C_thorough_2013,1,1,7,,I1
+vp,VP12502,Am communicative ,,big5,E,communic,2005,big5_E_communic_2005,1,1,7,,I1
+zp,ZP12002,Am communicative ,,big5,E,communic,2009,big5_E_communic_2009,1,1,7,,I1
+bdp,BDP15102,Am communicative ,,big5,E,communic,2013,big5_E_communic_2013,1,1,7,,I1
+vp,VP12503,Am sometimes too coarse with others ,,big5,A,coarse,2005,big5_A_coarse_2005,-1,1,7,,I1
+zp,ZP12003,Am sometimes too coarse with others ,,big5,A,coarse,2009,big5_A_coarse_2009,-1,1,7,,I1
+bdp,BDP15103,Am sometimes too coarse with others ,,big5,A,coarse,2013,big5_A_coarse_2013,-1,1,7,,I1
+vp,VP12504,Am original ,,big5,O,original,2005,big5_O_original_2005,1,1,7,,I1
+zp,ZP12004,Am original ,,big5,O,original,2009,big5_O_original_2009,1,1,7,,I1
+bdp,BDP15104,Am original ,,big5,O,original,2013,big5_O_original_2013,1,1,7,,I1
+vp,VP12505,Worry a lot ,,big5,N,worry,2005,big5_N_worry_2005,-1,1,7,,I1
+zp,ZP12005,Worry a lot ,,big5,N,worry,2009,big5_N_worry_2009,-1,1,7,,I1
+bdp,BDP15105,Worry a lot ,,big5,N,worry,2013,big5_N_worry_2013,-1,1,7,,I1
+vp,VP12506,Able to forgive ,,big5,A,forgive,2005,big5_A_forgive_2005,1,1,7,,I2
+zp,ZP12006,Able to forgive ,,big5,A,forgive,2009,big5_A_forgive_2009,1,1,7,,I2
+bdp,BDP15106,Able to forgive ,,big5,A,forgive,2013,big5_A_forgive_2013,1,1,7,,I2
+vp,VP12507,Tend to be lazy ,,big5,C,lazy,2005,big5_C_lazy_2005,-1,1,7,,I2
+zp,ZP12007,Tend to be lazy ,,big5,C,lazy,2009,big5_C_lazy_2009,-1,1,7,,I2
+bdp,BDP15107,Tend to be lazy ,,big5,C,lazy,2013,big5_C_lazy_2013,-1,1,7,,I2
+vp,VP12508,Am sociable ,,big5,E,sociable,2005,big5_E_sociable_2005,1,1,7,,I2
+zp,ZP12008,Am sociable ,,big5,E,sociable,2009,big5_E_sociable_2009,1,1,7,,I2
+bdp,BDP15108,Am sociable ,,big5,E,sociable,2013,big5_E_sociable_2013,1,1,7,,I2
+vp,VP12509,Value artistic experiences,,big5,O,artistic,2005,big5_O_artistic_2005,1,1,7,,I2
+zp,ZP12009,Value artistic experiences,,big5,O,artistic,2009,big5_O_artistic_2009,1,1,7,,I2
+bdp,BDP15109,Value artistic experiences,,big5,O,artistic,2013,big5_O_artistic_2013,1,1,7,,I2
+vp,VP12510,Somewhat nervous,,big5,N,nervous,2005,big5_N_nervous_2005,-1,1,7,,I2
+zp,ZP12010,Somewhat nervous,,big5,N,nervous,2009,big5_N_nervous_2009,-1,1,7,,I2
+bdp,BDP15110,Somewhat nervous,,big5,N,nervous,2013,big5_N_nervous_2013,-1,1,7,,I2
+vp,VP12511,Carry out tasks efficiently,,big5,C,efficient,2005,big5_C_efficient_2005,1,1,7,,I3
+zp,ZP12011,Carry out tasks efficiently,,big5,C,efficient,2009,big5_C_efficient_2009,1,1,7,,I3
+bdp,BDP15111,Carry out tasks efficiently,,big5,C,efficient,2013,big5_C_efficient_2013,1,1,7,,I3
+vp,VP12512,Reserved,,big5,E,reserved,2005,big5_E_reserved_2005,-1,1,7,,I3
+zp,ZP12012,Reserved,,big5,E,reserved,2009,big5_E_reserved_2009,-1,1,7,,I3
+bdp,BDP15112,Reserved,,big5,E,reserved,2013,big5_E_reserved_2013,-1,1,7,,I3
+vp,VP12513,Friendly with others,,big5,A,friendly,2005,big5_A_friendly_2005,1,1,7,,I3
+zp,ZP12013,Friendly with others,,big5,A,friendly,2009,big5_A_friendly_2009,1,1,7,,I3
+bdp,BDP15113,Friendly with others,,big5,A,friendly,2013,big5_A_friendly_2013,1,1,7,,I3
+vp,VP12514,Have a lively imagination,,big5,O,imagin,2005,big5_O_imagin_2005,1,1,7,,I3
+zp,ZP12014,Have a lively imagination,,big5,O,imagin,2009,big5_O_imagin_2009,1,1,7,,I3
+bdp,BDP15114,Have a lively imagination,,big5,O,imagin,2013,big5_O_imagin_2013,1,1,7,,I3
+vp,VP12515,Deal well with stress,,big5,N,dealStress,2005,big5_N_dealStress_2005,1,1,7,,I3
+zp,ZP12015,Deal well with stress,,big5,N,dealStress,2009,big5_N_dealStress_2009,1,1,7,,I3
+bdp,BDP15115,Deal well with stress,,big5,N,dealStress,2013,big5_N_dealStress_2013,1,1,7,,I3
+vp,VP15307,Child Born,,le,ChldBrth,ChldBrth,2005,le_ChldBrth_ChldBrth_2005,1,,,1 = experienced; 0 = did not experience,
+wp,WP14107,Child Born,,le,ChldBrth,ChldBrth,2006,le_ChldBrth_ChldBrth_2006,1,,,1 = experienced; 0 = did not experience,
+xp,XP14807,Child Born,,le,ChldBrth,ChldBrth,2007,le_ChldBrth_ChldBrth_2007,1,,,1 = experienced; 0 = did not experience,
+yp,YP15407,Child Born,,le,ChldBrth,ChldBrth,2008,le_ChldBrth_ChldBrth_2008,1,,,1 = experienced; 0 = did not experience,
+zp,ZP15607,Child Born,,le,ChldBrth,ChldBrth,2009,le_ChldBrth_ChldBrth_2009,1,,,1 = experienced; 0 = did not experience,
+bap,BAP15907,Child Born,,le,ChldBrth,ChldBrth,2010,le_ChldBrth_ChldBrth_2010,1,,,1 = experienced; 0 = did not experience,
+bbp,BBP15110,Child Born,,le,ChldBrth,ChldBrth,2011,le_ChldBrth_ChldBrth_2011,1,,,1 = experienced; 0 = did not experience,
+bcp,BCP15010,Child Born,,le,ChldBrth,ChldBrth,2012,le_ChldBrth_ChldBrth_2012,1,,,1 = experienced; 0 = did not experience,
+bdp,BDP15710,Child Born,,le,ChldBrth,ChldBrth,2013,le_ChldBrth_ChldBrth_2013,1,,,1 = experienced; 0 = did not experience,
+bep,BEP15010,Child Born,,le,ChldBrth,ChldBrth,2014,le_ChldBrth_ChldBrth_2014,1,,,1 = experienced; 0 = did not experience,
+bfp,BFP17310,Child Born,,le,ChldBrth,ChldBrth,2015,le_ChldBrth_ChldBrth_2015,1,,,1 = experienced; 0 = did not experience,
+vp,VP15310,Child Moved Out,,le,ChldMvOut,ChldMvOut,2005,le_ChldMvOut_ChldMvOut_2005,1,,,1 = experienced; 0 = did not experience,
+wp,WP14110,Child Moved Out,,le,ChldMvOut,ChldMvOut,2006,le_ChldMvOut_ChldMvOut_2006,1,,,1 = experienced; 0 = did not experience,
+xp,XP14813,Child Moved Out,,le,ChldMvOut,ChldMvOut,2007,le_ChldMvOut_ChldMvOut_2007,1,,,1 = experienced; 0 = did not experience,
+yp,YP15413,Child Moved Out,,le,ChldMvOut,ChldMvOut,2008,le_ChldMvOut_ChldMvOut_2008,1,,,1 = experienced; 0 = did not experience,
+zp,ZP15613,Child Moved Out,,le,ChldMvOut,ChldMvOut,2009,le_ChldMvOut_ChldMvOut_2009,1,,,1 = experienced; 0 = did not experience,
+bap,BAP15913,Child Moved Out,,le,ChldMvOut,ChldMvOut,2010,le_ChldMvOut_ChldMvOut_2010,1,,,1 = experienced; 0 = did not experience,
+bbp,BBP15116,Child Moved Out,,le,ChldMvOut,ChldMvOut,2011,le_ChldMvOut_ChldMvOut_2011,1,,,1 = experienced; 0 = did not experience,
+bcp,BCP15016,Child Moved Out,,le,ChldMvOut,ChldMvOut,2012,le_ChldMvOut_ChldMvOut_2012,1,,,1 = experienced; 0 = did not experience,
+bdp,BDP15716,Child Moved Out,,le,ChldMvOut,ChldMvOut,2013,le_ChldMvOut_ChldMvOut_2013,1,,,1 = experienced; 0 = did not experience,
+bep,BEP15016,Child Moved Out,,le,ChldMvOut,ChldMvOut,2014,le_ChldMvOut_ChldMvOut_2014,1,,,1 = experienced; 0 = did not experience,
+bfp,BFP17316,Child Moved Out,,le,ChldMvOut,ChldMvOut,2015,le_ChldMvOut_ChldMvOut_2015,1,,,1 = experienced; 0 = did not experience,
+vp,VP15316,Divorced,,le,Divorce,Divorce,2005,le_Divorce_Divorce_2005,1,,,1 = experienced; 0 = did not experience,
+wp,WP14116,Divorced,,le,Divorce,Divorce,2006,le_Divorce_Divorce_2006,1,,,1 = experienced; 0 = did not experience,
+xp,XP14819,Divorced,,le,Divorce,Divorce,2007,le_Divorce_Divorce_2007,1,,,1 = experienced; 0 = did not experience,
+yp,YP15419,Divorced,,le,Divorce,Divorce,2008,le_Divorce_Divorce_2008,1,,,1 = experienced; 0 = did not experience,
+zp,ZP15619,Divorced,,le,Divorce,Divorce,2009,le_Divorce_Divorce_2009,1,,,1 = experienced; 0 = did not experience,
+bap,BAP15919,Divorced,,le,Divorce,Divorce,2010,le_Divorce_Divorce_2010,1,,,1 = experienced; 0 = did not experience,
+bbp,BBP15122,Divorced,,le,Divorce,Divorce,2011,le_Divorce_Divorce_2011,1,,,1 = experienced; 0 = did not experience,
+bcp,BCP15022,Divorced,,le,Divorce,Divorce,2012,le_Divorce_Divorce_2012,1,,,1 = experienced; 0 = did not experience,
+bdp,BDP15722,Divorced,,le,Divorce,Divorce,2013,le_Divorce_Divorce_2013,1,,,1 = experienced; 0 = did not experience,
+bep,BEP15022,Divorced,,le,Divorce,Divorce,2014,le_Divorce_Divorce_2014,1,,,1 = experienced; 0 = did not experience,
+bfp,BFP17322,Divorced,,le,Divorce,Divorce,2015,le_Divorce_Divorce_2015,1,,,1 = experienced; 0 = did not experience,
+vp,VP15322,Father Died,,le,DadDied,DadDied,2005,le_DadDied_DadDied_2005,1,,,1 = experienced; 0 = did not experience,
+wp,WP14122,Father Died,,le,DadDied,DadDied,2006,le_DadDied_DadDied_2006,1,,,1 = experienced; 0 = did not experience,
+xp,XP14825,Father Died,,le,DadDied,DadDied,2007,le_DadDied_DadDied_2007,1,,,1 = experienced; 0 = did not experience,
+yp,YP15425,Father Died,,le,DadDied,DadDied,2008,le_DadDied_DadDied_2008,1,,,1 = experienced; 0 = did not experience,
+zp,ZP15625,Father Died,,le,DadDied,DadDied,2009,le_DadDied_DadDied_2009,1,,,1 = experienced; 0 = did not experience,
+bap,BAP15925,Father Died,,le,DadDied,DadDied,2010,le_DadDied_DadDied_2010,1,,,1 = experienced; 0 = did not experience,
+bbp,BBP15128,Father Died,,le,DadDied,DadDied,2011,le_DadDied_DadDied_2011,1,,,1 = experienced; 0 = did not experience,
+bcp,BCP15028,Father Died,,le,DadDied,DadDied,2012,le_DadDied_DadDied_2012,1,,,1 = experienced; 0 = did not experience,
+bdp,BDP15728,Father Died,,le,DadDied,DadDied,2013,le_DadDied_DadDied_2013,1,,,1 = experienced; 0 = did not experience,
+bep,BEP15028,Father Died,,le,DadDied,DadDied,2014,le_DadDied_DadDied_2014,1,,,1 = experienced; 0 = did not experience,
+bfp,BFP17328,Father Died,,le,DadDied,DadDied,2015,le_DadDied_DadDied_2015,1,,,1 = experienced; 0 = did not experience,
+bbp,BBP15101,Got Together with a New Partner,,le,NewPart,NewPart,2011,le_NewPart_NewPart_2011,1,,,1 = experienced; 0 = did not experience,
+bcp,BCP15001,Got Together with a New Partner,,le,NewPart,NewPart,2012,le_NewPart_NewPart_2012,1,,,1 = experienced; 0 = did not experience,
+bdp,BDP15701,Got Together with a New Partner,,le,NewPart,NewPart,2013,le_NewPart_NewPart_2013,1,,,1 = experienced; 0 = did not experience,
+bep,BEP15001,Got Together with a New Partner,,le,NewPart,NewPart,2014,le_NewPart_NewPart_2014,1,,,1 = experienced; 0 = did not experience,
+bfp,BFP17301,Got Together with a New Partner,,le,NewPart,NewPart,2015,le_NewPart_NewPart_2015,1,,,1 = experienced; 0 = did not experience,
+vp,VP15301,Married,,le,Married,Married,2005,le_Married_Married_2005,1,,,1 = experienced; 0 = did not experience,
+wp,WP14101,Married,,le,Married,Married,2006,le_Married_Married_2006,1,,,1 = experienced; 0 = did not experience,
+xp,XP14801,Married,,le,Married,Married,2007,le_Married_Married_2007,1,,,1 = experienced; 0 = did not experience,
+yp,YP15401,Married,,le,Married,Married,2008,le_Married_Married_2008,1,,,1 = experienced; 0 = did not experience,
+zp,ZP15601,Married,,le,Married,Married,2009,le_Married_Married_2009,1,,,1 = experienced; 0 = did not experience,
+bap,BAP15901,Married,,le,Married,Married,2010,le_Married_Married_2010,1,,,1 = experienced; 0 = did not experience,
+bbp,BBP15104,Married,,le,Married,Married,2011,le_Married_Married_2011,1,,,1 = experienced; 0 = did not experience,
+bcp,BCP15004,Married,,le,Married,Married,2012,le_Married_Married_2012,1,,,1 = experienced; 0 = did not experience,
+bdp,BDP15704,Married,,le,Married,Married,2013,le_Married_Married_2013,1,,,1 = experienced; 0 = did not experience,
+bep,BEP15004,Married,,le,Married,Married,2014,le_Married_Married_2014,1,,,1 = experienced; 0 = did not experience,
+bfp,BFP17304,Married,,le,Married,Married,2015,le_Married_Married_2015,1,,,1 = experienced; 0 = did not experience,
+vp,VP15325,Mother Died,,le,MomDied,MomDied,2005,le_MomDied_MomDied_2005,1,,,1 = experienced; 0 = did not experience,
+wp,WP14125,Mother Died,,le,MomDied,MomDied,2006,le_MomDied_MomDied_2006,1,,,1 = experienced; 0 = did not experience,
+xp,XP14828,Mother Died,,le,MomDied,MomDied,2007,le_MomDied_MomDied_2007,1,,,1 = experienced; 0 = did not experience,
+yp,YP15428,Mother Died,,le,MomDied,MomDied,2008,le_MomDied_MomDied_2008,1,,,1 = experienced; 0 = did not experience,
+zp,ZP15628,Mother Died,,le,MomDied,MomDied,2009,le_MomDied_MomDied_2009,1,,,1 = experienced; 0 = did not experience,
+bap,BAP15928,Mother Died,,le,MomDied,MomDied,2010,le_MomDied_MomDied_2010,1,,,1 = experienced; 0 = did not experience,
+bbp,BBP15131,Mother Died,,le,MomDied,MomDied,2011,le_MomDied_MomDied_2011,1,,,1 = experienced; 0 = did not experience,
+bcp,BCP15031,Mother Died,,le,MomDied,MomDied,2012,le_MomDied_MomDied_2012,1,,,1 = experienced; 0 = did not experience,
+bdp,BDP15731,Mother Died,,le,MomDied,MomDied,2013,le_MomDied_MomDied_2013,1,,,1 = experienced; 0 = did not experience,
+bep,BEP15031,Mother Died,,le,MomDied,MomDied,2014,le_MomDied_MomDied_2014,1,,,1 = experienced; 0 = did not experience,
+bfp,BFP17331,Mother Died,,le,MomDied,MomDied,2015,le_MomDied_MomDied_2015,1,,,1 = experienced; 0 = did not experience,
+vp,VP15304,Moved In Together,,le,MoveIn,MoveIn,2005,le_MoveIn_MoveIn_2005,1,,,1 = experienced; 0 = did not experience,
+wp,WP14104,Moved In Together,,le,MoveIn,MoveIn,2006,le_MoveIn_MoveIn_2006,1,,,1 = experienced; 0 = did not experience,
+xp,XP14804,Moved In Together,,le,MoveIn,MoveIn,2007,le_MoveIn_MoveIn_2007,1,,,1 = experienced; 0 = did not experience,
+yp,YP15404,Moved In Together,,le,MoveIn,MoveIn,2008,le_MoveIn_MoveIn_2008,1,,,1 = experienced; 0 = did not experience,
+zp,ZP15604,Moved In Together,,le,MoveIn,MoveIn,2009,le_MoveIn_MoveIn_2009,1,,,1 = experienced; 0 = did not experience,
+bap,BAP15904,Moved In Together,,le,MoveIn,MoveIn,2010,le_MoveIn_MoveIn_2010,1,,,1 = experienced; 0 = did not experience,
+bbp,BBP15107,Moved In Together,,le,MoveIn,MoveIn,2011,le_MoveIn_MoveIn_2011,1,,,1 = experienced; 0 = did not experience,
+bcp,BCP15007,Moved In Together,,le,MoveIn,MoveIn,2012,le_MoveIn_MoveIn_2012,1,,,1 = experienced; 0 = did not experience,
+bdp,BDP15707,Moved In Together,,le,MoveIn,MoveIn,2013,le_MoveIn_MoveIn_2013,1,,,1 = experienced; 0 = did not experience,
+bep,BEP15007,Moved In Together,,le,MoveIn,MoveIn,2014,le_MoveIn_MoveIn_2014,1,,,1 = experienced; 0 = did not experience,
+bfp,BFP17307,Moved In Together,,le,MoveIn,MoveIn,2015,le_MoveIn_MoveIn_2015,1,,,1 = experienced; 0 = did not experience,
+vp,VP15319,Partner Died,,le,PartDied,PartDied,2005,le_PartDied_PartDied_2005,1,,,1 = experienced; 0 = did not experience,
+wp,WP14119,Partner Died,,le,PartDied,PartDied,2006,le_PartDied_PartDied_2006,1,,,1 = experienced; 0 = did not experience,
+xp,XP14822,Partner Died,,le,PartDied,PartDied,2007,le_PartDied_PartDied_2007,1,,,1 = experienced; 0 = did not experience,
+yp,YP15422,Partner Died,,le,PartDied,PartDied,2008,le_PartDied_PartDied_2008,1,,,1 = experienced; 0 = did not experience,
+zp,ZP15622,Partner Died,,le,PartDied,PartDied,2009,le_PartDied_PartDied_2009,1,,,1 = experienced; 0 = did not experience,
+bap,BAP15922,Partner Died,,le,PartDied,PartDied,2010,le_PartDied_PartDied_2010,1,,,1 = experienced; 0 = did not experience,
+bbp,BBP15125,Partner Died,,le,PartDied,PartDied,2011,le_PartDied_PartDied_2011,1,,,1 = experienced; 0 = did not experience,
+bcp,BCP15025,Partner Died,,le,PartDied,PartDied,2012,le_PartDied_PartDied_2012,1,,,1 = experienced; 0 = did not experience,
+bdp,BDP15725,Partner Died,,le,PartDied,PartDied,2013,le_PartDied_PartDied_2013,1,,,1 = experienced; 0 = did not experience,
+bep,BEP15025,Partner Died,,le,PartDied,PartDied,2014,le_PartDied_PartDied_2014,1,,,1 = experienced; 0 = did not experience,
+bfp,BFP17325,Partner Died,,le,PartDied,PartDied,2015,le_PartDied_PartDied_2015,1,,,1 = experienced; 0 = did not experience,
+vp,VP15313,Separated From Partner,,le,SepPart,SepPart,2005,le_SepPart_SepPart_2005,1,,,1 = experienced; 0 = did not experience,
+wp,WP14113,Separated From Partner,,le,SepPart,SepPart,2006,le_SepPart_SepPart_2006,1,,,1 = experienced; 0 = did not experience,
+xp,XP14816,Separated From Partner,,le,SepPart,SepPart,2007,le_SepPart_SepPart_2007,1,,,1 = experienced; 0 = did not experience,
+yp,YP15416,Separated From Partner,,le,SepPart,SepPart,2008,le_SepPart_SepPart_2008,1,,,1 = experienced; 0 = did not experience,
+zp,ZP15616,Separated From Partner,,le,SepPart,SepPart,2009,le_SepPart_SepPart_2009,1,,,1 = experienced; 0 = did not experience,
+bap,BAP15916,Separated From Partner,,le,SepPart,SepPart,2010,le_SepPart_SepPart_2010,1,,,1 = experienced; 0 = did not experience,
+bbp,BBP15119,Separated From Partner,,le,SepPart,SepPart,2011,le_SepPart_SepPart_2011,1,,,1 = experienced; 0 = did not experience,
+bcp,BCP15019,Separated From Partner,,le,SepPart,SepPart,2012,le_SepPart_SepPart_2012,1,,,1 = experienced; 0 = did not experience,
+bdp,BDP15719,Separated From Partner,,le,SepPart,SepPart,2013,le_SepPart_SepPart_2013,1,,,1 = experienced; 0 = did not experience,
+bep,BEP15019,Separated From Partner,,le,SepPart,SepPart,2014,le_SepPart_SepPart_2014,1,,,1 = experienced; 0 = did not experience,
+bfp,BFP17319,Separated From Partner,,le,SepPart,SepPart,2015,le_SepPart_SepPart_2015,1,,,1 = experienced; 0 = did not experience,
