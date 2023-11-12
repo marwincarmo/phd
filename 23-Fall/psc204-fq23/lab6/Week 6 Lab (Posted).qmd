@@ -1,0 +1,861 @@
+---
+title: "Lab Week 6"
+subtitle: "Orthogonal Contrasts + Factorial ANOVA"
+format: 
+  pdf:
+    toc: true
+    colorlinks: true
+    linkcolor: blue
+    toccolor: blue
+execute:
+  cache: true
+---
+
+```{r}
+# # Install the following packages if you do not already have them installed:
+# install.packages("ggplot2")
+# install.packages("dplyr")
+# install.packages("car")
+# install.packages("patchwork")
+```
+
+```{r message=FALSE, warning=FALSE}
+# Once installed, load the packages:
+
+# for plotting
+library(ggplot2)
+# for combining plots
+library(patchwork)
+# for manipulating data
+library(dplyr)
+```
+
+Today we will continue using the Age Religion Health survey (the same one used in the Week 4 lab).
+
+```{r}
+lab_data_full <- read.csv("age_religion_health.csv") 
+
+# Let's just keep a few of the columsn from the dataset
+lab_data <-
+  lab_data_full %>% 
+  dplyr::select(Overallhealth_04, school, Pray_04, HeartHealth_04, 
+         Depression_04, sex, SundaySchool_04, RespitoryHealth_04, SelfWorth_04, RelationshipGod_04) %>%
+  na.omit()
+  
+head(lab_data) # Lets look at the data
+```
+
+We are going to create some grouping variables in the data before moving on. We will use these variables later. The general process we will use in class is as follows:
+
+1.  Create a new column in your dataframe using the mutate() function
+2.  Use the case_when() function within mutate() to create groups
+
+The case_when function is just like a series of ifelse() statements (but perhaps a little neater to look at then multiple ifelse statements!). In the case when function, you put a condition on the left hand side, then a \~, and then what you want the new column value to be based on that condition. R will go through each of the conditions in order: it first checks if Condition 1 is met, before checking that Condition 2 is met, etc.
+
+```{r}
+
+lab_data = lab_data %>%
+  mutate("school_groups" = case_when( # create a new col called school_groups, and its values are based on the case_when() function
+  school <= 12 ~ "HS or less",
+  school > 16 ~ "Graduate school",
+  school > 12 & school <= 16 ~ "College"
+  ))
+
+head(lab_data %>% dplyr::select(school, school_groups))
+
+```
+
+Another, slightly messier way to do this, is just use a series of nested ifelse statements. This checks each condition, and then if it's met, gives the column the value in quotation marks. If the condition is not met, it uses another ifelse() statement. This is basically what case_when is doing, just neater and less likely for you to get confused.
+
+Or, if you're condensing multiple groups into fewer groups, or renaming current variables, you can use the recode() function. However, this does not work if you are trying to create groups from a continuous variable, because you would then have to name each possible value to recode it.
+
+```{r, eval = FALSE}
+
+lab_data$school_groups = ifelse(lab_data$school <= 12, "HS or less", 
+               ifelse(lab_data$school > 16, "Graduate school", 
+              ifelse(lab_data$school > 12 & lab_data$school <= 16, "College", NA)))
+
+```
+
+```{r}
+# To create a 4-level grouping variable for frequency of praying:
+
+lab_data = lab_data %>%
+  mutate("pray_groups" = case_when(
+      Pray_04 >=  7 ~ "Daily",
+  Pray_04 >= 5 & Pray_04 < 7 ~ "Often",
+  Pray_04 >= 3 & Pray_04 < 5 ~ "Occasionally",
+  Pray_04 < 3 ~ "Rarely"
+  ))
+
+head(lab_data %>% dplyr::select(Pray_04, pray_groups))
+
+```
+
+# Orthogonal Contrasts with 3 levels
+
+Orthogonal contrasts are one type of post-hoc test we can do on ANOVA to assess which groups differ from each other.
+
+Orthogonal contrasts re-partition the variance between groups to test specific hypotheses about group differences. For the contrasts to be orthogonal, we cannot test all possible hypotheses (i.e., we cannot test for differences between all possible groups and/or group combinations). We will need to pick the groups that we cant to compare, following the rules for orthogonal contrasts.
+
+First, lets do an ANOVA. We will test whether there are differences in Overall Health rating based on Educational Status.
+
+Remember, to do an ANOVA in R, we first use the `aov()`function to create an ANOVA object. We can then use the `summary()` function to extract the parameters of the ANOVA.
+
+```{r}
+# Is there an effect of school_groups (High School or Less, College, Graduate School) on Overallhealth_04?
+analysis1 <- aov(Overallhealth_04 ~ school_groups, data = lab_data)
+
+summary(analysis1)
+```
+
+This output should look familiar. In this case, `school_groups` represents the "between" level, and `Residuals` represents the "within" level. The "total" level is not shown, but could easily be calculated by summing the between and within values together.
+
+So, we have a significant effect of `school_groups` on `Overallhealth_04` ($F(2, 817) = 13.51, p < .001$). We can conclude that there are differences somewhere between groups. But we do not know where. Based only on the ANOVA above, this is all that we can conclude.
+
+Let's graph the means before going forward.
+
+```{r}
+# To create a separate data frame with the means and SE:
+graph_data = 
+  lab_data %>% 
+  group_by(school_groups) %>%
+  summarise(mean = mean(Overallhealth_04),
+            sd = sd(Overallhealth_04),
+            N = n(),
+            se = sd / sqrt(N))
+
+# To create the graph:
+ggplot(data = graph_data, 
+       aes(x = school_groups, y = mean)) + 
+  geom_col(aes(fill = school_groups)) + 
+  geom_errorbar(width = .3, 
+                aes(ymin = mean - se, 
+                    ymax = mean + se)) + 
+  theme_classic() + 
+  labs(y = "Mean Overall Health", 
+       x = "Level of Education", 
+       title = "Self-Reported Health by Education Status")
+```
+
+## Running the Contrasts
+
+Today, we are using the orthogonal contrasts as a post-hoc test to explore a significant ANOVA effect. However, depending on your hypotheses, you could potentially start with orthogonal contrasts.
+
+Orthogonal contrasts partition variance so that each comparison is orthogonal to the other. However, you are limited on the number of comparisons you can make. Specifically, you can make ($j - 1$) orthogonal comparisons where
+
+-   $j =$ number of groups/conditions
+
+In this example we have 3 conditions, so we can only run 2 contrasts.\
+\
+\
+Recall that the contrasts must sum to 0 within a contrast, and the sum of the product across contrasts must also sum to 0:
+
+|         | Group 1 | Group 2 | Group 3 | Sum |
+|---------|--------:|--------:|--------:|----:|
+| C1      |       1 |    -0.5 |    -0.5 |   0 |
+| C2      |       0 |       1 |      -1 |   0 |
+| Product |       0 |    -0.5 |     0.5 |   0 |
+
+We could put either of our 3 groups (High School or Less, College, Graduate School) in any position, depending on what we wanted to test.
+
+For this example, let's test the following contrasts: - High School or Less (Group 1) compared to College & Graduate School (Groups 2 & 3). - College (Group 2) compared to Graduate School (Group 3).
+
+So, in this case:
+
+|         | HS or less | College | Graduate | Sum |
+|---------|-----------:|--------:|---------:|----:|
+| C1      |          1 |    -0.5 |     -0.5 |   0 |
+| C2      |          0 |     1.0 |     -1.0 |   0 |
+| Product |          0 |    -0.5 |      0.5 |   0 |
+
+Running orthogonal contrasts can be a little tedious, so we'll do our best to go through it step by step.
+
+### 1. Make sure our grouping variable is a `factor`
+
+To get our contrasts going, we first need to make sure our data are of the type `factor`
+
+-   In R, factors are a class of categorical data, where the categories are recognized
+
+```{r}
+# right now, school_grups is a characters
+class(lab_data$school_groups)
+```
+
+```{r}
+# the levels() function tells us the unique categories
+# in a categorical variable, but it only works for factors
+levels(lab_data$school_groups)
+```
+
+```{r}
+lab_data$school_groups <- factor(lab_data$school_groups)
+class(lab_data$school_groups)
+levels(lab_data$school_groups)
+```
+
+### 2. Set up the contrast matrix
+
+The way we tell R which contrasts we want to do, is by first setting up the contrast matrix.
+
+The following code creates our contrast matrix. Notice how it visually matches the contrast matrix above
+
+```{r}
+contrasts1 <- cbind(
+  c1 = c(1, -0.5, -0.5),
+  c2 = c(0,    1,   -1)
+)
+```
+
+In an abstract sense, this is the anatomy of the contrast matrix code
+
+``` r
+contrast_object <- cbind(
+  name_of_contrast1 = c(contrast_values),
+  name_of_contrast2 = c(contrast_values)
+)
+```
+
+### 3. Assign contrasts to our data
+
+Now that we have set up our contrast matrix, we can proceed to tell R we want to apply these contrasts to our data
+
+We first should check a few things...
+
+First, in our contrast matrix, the order of our columns goes "HS or less", "College", and then "Graduate school", but if we check the order in R, it won't (necessarily) be the same
+
+```{r}
+levels(lab_data$school_groups)
+```
+
+R automatically orders our categories alphanumerically, so we have to get the order to match our contrast matrix. We did this in a previous lab, using the factor() function.
+
+```{r}
+lab_data$school_groups = factor(lab_data$school_groups,
+                                levels = c("HS or less",
+                                           "College",
+                                           "Graduate school"))
+
+levels(lab_data$school_groups) # now this matches what we wanted to do
+```
+
+Finally, we can assign our contrasts to our data
+
+```{r}
+contrasts(lab_data$school_groups) <- contrasts1
+```
+
+### 4. Executing the contrast analyses
+
+Okay, now that we have our "mise en place", we can run our ANOVA in similar fashion to above.
+
+```{r}
+analysis2 <- aov(Overallhealth_04 ~ school_groups, data = lab_data)
+summary(analysis2)
+```
+
+Unfortunately, this still doesn't contain the output we are looking for. We want information about our planned conrasts, and this is just the same ANOVA that we conducted earlier.
+
+To get that information we have to
+
+1.  Use a function called `summary.aov()`, instead of just `summary()`
+2.  Specify an argument called `split`, e.g., `summary.aov(analysis2, split = a_list)`
+
+-   This argument takes a `list` as input
+-   Each argument in this `list` *is another* `list`
+
+```{r}
+# note that school_groups is the same name
+# as the variable in our ANOVA
+split_list <- list(
+  school_groups = list("HS vs College/Grad" = 1, "College vs. Grad" = 2)
+  )
+
+# reminder: this is how we defined our contrast matrix!
+# contrasts1 <- cbind(
+#   c1 = c(1, -0.5, -0.5),
+#   c2 = c(0,    1,   -1)
+# )
+```
+
+The anatomy of the `split_list` code is as follows:
+
+``` r
+list_object <- list(name_of_contrast_variable = list("A name you pick" = contrast_number))
+```
+
+FINALLY, we can use the `summary.aov()` function (the `.aov` part is important) to run our planned contrasts!!!
+
+```{r}
+summary.aov(analysis2, split = split_list)
+```
+
+Now, we have a SS (and F statistic, and p-value) for each of our planned contrasts. Based on this, we see that the first contrast is significant (HS versus College/Grad), but the second contrast (College versus Grad) is not. Therefore, although those with a high school education or less have an average health that is different from the average health of those with a college or graduate education, there is no difference in average health between those with a college education and those with a graduate education. To see how high school group differs from the college/grad group, we would need to look at the means.
+
+## Graphing the contrasts
+
+Okay, so now we want to visually display these contrasts. We used the first one to compare the "HS or less" group versus "College" and "Graduate school". That means we need a variable that represents "HS or less" as one group and the "College" and "Graduate school" as another group.
+
+```{r}
+# make two groups
+
+lab_data = lab_data %>% mutate(
+  "hs_vs_rest" = case_when(
+  school_groups != "HS or less" ~ "College/Grad",
+  TRUE ~ as.character(school_groups)
+))
+
+# Here, the TRUE just means that whichever rows don't meet any of the conditions in 
+# case_when() get assigned this value
+```
+
+Now that we have our new grouping variable, we can use it with `group_by()` to create our necessary summary statistics and graph them
+
+```{r}
+graph_data <- 
+  lab_data |>
+  group_by(hs_vs_rest) |>
+  summarise(mean = mean(Overallhealth_04),
+            sd = sd(Overallhealth_04),
+            N = n(),
+            se = sd / sqrt(N))
+
+
+
+g1 <-
+  ggplot(data = graph_data, aes(x = hs_vs_rest, y = mean)) + 
+  geom_col(fill = "lightgray") + 
+  geom_errorbar(width = .3, 
+                aes(ymin = mean - se, 
+                    ymax = mean + se)) + 
+  theme_classic() + 
+  labs(y = "Mean Overall Health", 
+       x = "Level of Education", 
+       title = "Contrast 1") +
+  lims(y = c(0, 3))
+
+g1
+```
+
+```{r}
+graph_data <-
+  lab_data |>
+  filter(school_groups != "HS or less")  |>
+  group_by(school_groups) |>
+  summarise(mean = mean(Overallhealth_04),
+            sd = sd(Overallhealth_04),
+            N = n(),
+            se = sd / sqrt(N))
+g2 <-
+  ggplot(data = graph_data, aes(x = school_groups, y = mean)) + 
+  geom_col(fill = "lightgray") + 
+  geom_errorbar(width = .3, 
+                aes(ymin = mean - se, 
+                    ymax = mean + se)) + 
+  theme_classic() + 
+  labs(y = "Mean Overall Health", 
+       x = "Level of Education", 
+       title = "Contrast 2") +
+  lims(y = c(0, 3))
+
+g2
+```
+
+Using the `patchwork` package, we can put together our `ggplot`s
+
+```{r}
+# Side by side
+g1 + g2
+```
+
+## Example of How to Interpret the Analysis:
+
+A one-way ANOVA revealed a significant effect of educational status on self-reported Overall Health, $F(2, 802) = 12.91, p < .001$. Orthogonal contrasts showed that those who had only completed high school reported higher overall health compared to those who attained any level of higher education after high school $F(1, 802) = 12.42, p < .001$. Additionally, those who only attended college had better overall health than those who went to graduate school, $F(1, 802) = 13.40, p < .001$.
+
+-   Note: If you have the statistics reported in a table, you may not need to report them in text (but in text statistics are still common). In this situation you should cite the specific table where the statistics come from.
+
+## What do you do with more than 3 groups?
+
+Suppose you had more than 3 groups, and you wanted to run some orthogonal contrasts. Figuring out the values for the contrasts might be a little more complicated now, because you have more than 2 possible contrasts. This means (1) the values for each contrast have to sum to 0 and (2) the values for each *pairwise* product of contrast values (e.g., Contrast 1 vs Contrast 2, Contrast 2 vs Contrast 3, and Contrast 1 vs Contrast 3) have to sum to 0.
+
+To figure out which contrast matrices are possible when there are 4 or 5 groups, you can visit this link: https://www.southampton.ac.uk/\~cpd/anovas/datasets/Orthogonal%20contrasts.htm
+
+This might come in handy for the homework!
+
+Then, to actually run the contrasts in R, you can just follow the same steps as above:
+
+1.  Create a contrast matrix with the contrast values
+
+2.  Make sure your grouping variable is in the correct order, based on the contrasts you want to conduct and the order of your contrast values. Use factor() if necessary to change the order of the levels
+
+3.  Assign the contrasts to your data, using contrasts(grouping variable) = contrast_object
+
+4.  Create the split_list object
+
+5.  Conduct the ANOVA, either in two steps like we did before or summary.aov(aov(DV \~ IV, data = data), split = split_list) (fill in as necessary)
+
+6.  Report your results!
+
+Here's an example, where we see whether Self Worth differs across the 4 levels of Prayer Frequency ("Rarely", "Occasionally", "Often", "Daily"). First, let's run the ANOVA:
+
+```{r}
+prayer_anova = aov(SelfWorth_04 ~ pray_groups,
+                   data = lab_data)
+
+summary(prayer_anova)
+```
+
+Now, let's say we were interested in the following 3 contrasts:
+
+-   Daily versus (Rarely & Often & Occasionally)
+-   Often versus (Occasionally & Rarely)
+-   Rarely versus Occasionally
+
+This would correspond to the first contrast matrix in the link above, where Daily = Group 1, Often = Group 2, Occasionally = Group 3, Rarely = Group 4. Let's change our factor to match this order, and create a contrast matrix.
+
+```{r}
+lab_data$pray_groups = factor(lab_data$pray_groups,
+                      levels = c("Daily", "Often",
+                                 "Occasionally",
+                                 "Rarely"))
+
+contrasts2 = cbind(
+  c1 = c(3, -1, -1, -1),
+  c2 = c(0, 2, -1, -1),
+  c3 = c(0, 0, 1, -1)
+)
+
+# assign the contrasts to the data
+contrasts(lab_data$pray_groups) = contrasts2
+
+```
+
+We can make the split_list and run the analysis.
+
+```{r}
+split_list = list(
+  pray_groups = list(
+    "Daily versus rest" = 1,
+    "Often vs Less Often" = 2,
+    "Occasionally vs Rarely" = 3
+  )
+)
+
+summary.aov(prayer_anova, split = split_list)
+```
+
+Based on the results of this analysis, we can see that those who pray Often have a self-worth that differs, on average, from those who prayer Occasionally or Rarely. However, none of the other contrasts differ.
+
+We can graph these contrasts:
+
+```{r}
+# let's make the grouping variables to summarise later
+
+lab_data = lab_data %>%
+  mutate("daily.vs.rest" = case_when(
+          pray_groups == "Daily" ~ "Daily", 
+         TRUE ~ "Often, Occ, Rarely"),
+    "often.vs.occ_rare" = case_when(
+           pray_groups == "Often" ~ "Often",
+           pray_groups == "Occasionally" | pray_groups == "Rarely" ~ "OccRare", TRUE ~ NA_character_))
+
+# Contrast 1: Daily versus Rest
+
+graph_data_c1 = lab_data %>%
+  group_by(daily.vs.rest) %>%
+  summarise(mean = mean(SelfWorth_04, na.rm = TRUE),
+            sd = sd(SelfWorth_04, na.rm = TRUE),
+            n = length(SelfWorth_04)) %>%
+  mutate(se = sd/sqrt(n))
+
+graph_c1 = ggplot(data = graph_data_c1,
+                  aes(x = daily.vs.rest,
+                      y = mean))+
+  geom_bar(stat = "identity",
+           color = "black", fill = "peachpuff4")+
+  geom_errorbar(width = .3, aes(ymin = mean - se,
+                                ymax = mean + se))+
+  theme_classic()+
+  labs(x = "Frequency of Prayer",
+       y = "Average Self-Worth",
+       title = "Contrast 1")
+
+# Contrast 2: Often vs (Occasionally & Rarely)
+
+graph_data_c2 = lab_data %>%
+  filter(!is.na(often.vs.occ_rare)) %>% # note that we filtered out the NA in the grouping variable
+  group_by(often.vs.occ_rare) %>%
+  summarise(mean = mean(SelfWorth_04, na.rm = TRUE),
+            sd = sd(SelfWorth_04, na.rm = TRUE),
+            n = length(SelfWorth_04)) %>%
+  mutate(se = sd/sqrt(n))
+
+graph_c2 = ggplot(data = graph_data_c2,
+                  aes(x = often.vs.occ_rare,
+                      y = mean))+
+  geom_bar(stat = "identity",
+           color = "black", fill = "peachpuff4")+
+  geom_errorbar(width = .3, aes(ymin = mean - se,
+                                ymax = mean + se))+
+  theme_classic()+
+  labs(x = "Frequency of Prayer",
+       y = "Average Self-Worth",
+       title = "Contrast 2")
+
+# Contrast 3: Occasionally vs Rarely
+
+graph_data_c3 = lab_data %>%
+  filter(pray_groups == "Occasionally" | pray_groups == "Rarely") %>%
+  group_by(pray_groups) %>%
+  summarise(mean = mean(SelfWorth_04, na.rm = TRUE),
+            sd = sd(SelfWorth_04, na.rm = TRUE),
+            n = length(SelfWorth_04)) %>%
+  mutate(se = sd/sqrt(n))
+
+graph_c3 = ggplot(data = graph_data_c3,
+                  aes(x = pray_groups,
+                      y = mean))+
+  geom_bar(stat = "identity",
+           color = "black", fill = "peachpuff4")+
+  geom_errorbar(width = .3, aes(ymin = mean - se,
+                                ymax = mean + se))+
+  theme_classic()+
+  labs(x = "Frequency of Prayer",
+       y = "Average Self-Worth",
+       title = "Contrast 3")
+
+graph_c1 + graph_c2 + graph_c3
+
+```
+
+# Two Way ANOVA
+
+The two-way ANOVA is an ANOVA with two independent variables (it may or may not include the interaction between those variables). A two-way factorial ANOVA is an ANOVA that has two independent variables, plus an additional variable to test the interaction between the two independent variables. An interaction means that the effect of one IV on the DV depends upon a second IV. Most of the time when people say "Two-Way ANOVA" they usually mean an ANOVA with two IVs and the interaction between them.
+
+Interactions can happen between any combination of continuous and/or categorical variables. When a categorical and a continuous variable are involved, the analysis is sometimes called an ANCOVA. For now, we will only be focusing on categorical variables.
+
+To do this analysis in `R` we use the same functions and format that we have been using for the one-way ANOVA, but we will introduce other variables.
+
+## Two-Way ANOVA Example
+
+Let's investigate whether sex and self-reported heart-health are associated with Sunday School attendance.
+
+```{r}
+lab_data %>% group_by(HeartHealth_04) %>%
+  summarise(mean(SundaySchool_04))
+
+lab_data %>% group_by(sex) %>%
+  summarise(mean(SundaySchool_04))
+```
+
+If we did this without an interaction, and just the main effects, we would just have to add our grouping variables together in the ANOVA.
+
+```{r}
+summary(aov(SundaySchool_04 ~ HeartHealth_04 + sex,
+            data = lab_data))
+```
+
+But what if we think that the relation between heart health and sunday school attendance depends on a participant's gender?
+
+```{r}
+lab_data %>%
+  group_by(HeartHealth_04, sex) %>%
+  summarise(mean(SundaySchool_04))
+```
+
+A visual inspection shows that the relation might be flipped - among those with good heart health, females seem to attend Sunday School slightly more often than males. But among those with poor heart health, males might be attending more often than females.
+
+To test this interaction in R, we can use a multiplication sign \* among our grouping variables. This will also consider both main effects.
+
+```{r}
+anova_interaction <- aov(SundaySchool_04 ~ HeartHealth_04*sex, data = lab_data)
+
+# note that this is the same as:
+#aov(SundaySchool_04 ~ HeartHealth_04 + sex + HeartHealth_04:sex, data = lab_data)
+
+# Now lets finish the two way ANOVA:
+summary(anova_interaction)
+```
+
+In this case, it looks like neither of the main effects (`HeartHealth_04`, `sex`) had a significant effect on SundaySchool_04. However, the interaction between `HeartHealth_04` and `sex` had a significant effect. That is all that we can conclude based on this analysis. We will need to do follow up analyses to explore this effect.
+
+### Side Note: Degrees of freedom
+
+For a two-way ANOVA, Degrees of freedom are calculated as such:
+
+-   Between (Main Effect 1): $A - 1$
+-   Between (Main Effect 2): $B - 1$
+-   Between (Interaction): $[A - 1] \times [B - 1]$
+-   Within: $N - [A \times B]$
+-   Total: $N - 1$
+
+Where:
+
+-   $A$ is the number of groups in Main Effect 1
+-   $B$ is the number of groups in Main Effect 2
+-   $N$ is the sample size (number of rows)
+
+Hence:
+
+-   `RespitoryHealth_04`: 2 - 1 = 1
+-   `sex`: 2 - 1 = 1
+-   `RespitoryHealth_04 * sex`: (2 - 1) \* (2 - 1) = 1
+-   Residuals: 781 - 4 = 777
+-   Total: 816 - 1 = 780
+
+### Simple Effect Analyses (follow up from Significant Interaction)
+
+Let's take a peek at our ANOVA results
+
+```{r}
+summary(anova_interaction)
+```
+
+If the interaction effect (`HeartHealth_04:sex`) is significant, it does not matter whether the main effects are significant. The next step is to do simple effects testing. We will learn more about this next week, but essentially what you do is you break down the two-factor ANOVA into a one-way ANOVA testing one of the independent variables at each level of the other independent variable. So, in our example here we could test for sex differences in prayer frequency at each level of heart health status, or test for heart health differences in males and females.
+
+Lets do it both ways, for the sake of demonstration.
+
+```{r}
+# Sex differences at each level of HeartHealth_04
+
+summary(aov(SundaySchool_04 ~ sex, 
+            data = lab_data %>% filter(HeartHealth_04 == "Good")))
+
+# or: 
+summary(aov(SundaySchool_04 ~ sex, data = lab_data, subset = HeartHealth_04 == "Good"))
+```
+
+```{r}
+summary(aov(SundaySchool_04 ~ sex, 
+            data = lab_data %>% filter(HeartHealth_04 == "Poor")))
+
+
+summary(aov(SundaySchool_04 ~ sex, data = lab_data, subset = HeartHealth_04 == "Poor"))
+```
+
+In this case, there are sex differences in Sunday School attendance among those with good self-reported heart health, but no sex differences among those with poor self-reported heart health. Note: These analyses are not technically orthogonal, and some people argue that you should apply a p value correction to these results (like Bonferroni) / you should correct your alpha criterion for the number of follow up analyses you do (i.e., because we did 2 analyses, .05/2 = .025, so only p values \< .025 would be considered significant). However, it is traditionally accepted that IF you found a significant interaction in the Two Way ANOVA, the correlated testing is justified because it is based on your hypotheses. Regardless of what you choose to do, the p values are the p values, and regardless of how you publish your results, people may still interpret your results one way or the other.
+
+What if we did it the other way?
+
+```{r}
+# Heart Health differences at each level of sex
+summary(aov(SundaySchool_04 ~ HeartHealth_04, data = lab_data %>% filter(sex == "Male")))
+
+summary(aov(SundaySchool_04 ~ HeartHealth_04, data = lab_data %>% filter(sex == "Female")))
+```
+
+In this case, among Males, there are differences in Sunday School attendance between those reporting good and poor heart health. There are no differences between those with good and poor heart health among females.
+
+Generally speaking, you would not do what I just did (these analyses were NOT orthogonal, meaning I have run the risk of inflating type I error if I choose to interpret BOTH simple effect analyses). You would generally decide which way is the most justified based on your hypotheses, and stick with that one.
+
+### Graphing the data
+
+```{r}
+graph_data <- 
+  lab_data |> 
+  group_by(HeartHealth_04, sex) |> 
+  summarise(mean = mean(SundaySchool_04),
+            sd = sd(SundaySchool_04),
+            N = length(SundaySchool_04),
+            se = sd / sqrt(N))
+
+# If we wanted to emphasize Heart Health differences among males:
+ggplot(data = graph_data, 
+       aes(sex, mean, fill = HeartHealth_04)) + 
+  geom_col(position = "dodge") + 
+  geom_errorbar(width = .5, 
+                aes(ymin = mean - se, ymax = mean + se),
+                position = position_dodge(.9)) +
+  theme_classic() + 
+  labs(y = "Sunday School Frequency", 
+       x = "Sex", 
+       title = "Prayer Frequency by Sex and Self-Reported Heart Health") 
+
+# If we wanted to emphasize Sex differences among Good Heart Health:
+ggplot(data = graph_data, 
+       aes(x = HeartHealth_04, y = mean, fill = sex)) + 
+  geom_bar(stat="identity", color = "black", position = position_dodge()) + 
+  geom_errorbar(width = .5, 
+                aes(ymin = mean - se, ymax = mean + se),
+                position = position_dodge(.9)) + 
+  theme_classic() + 
+  labs(y = "Sunday School Frequency", 
+       x = "Heart Health", 
+       title = "Prayer Frequency by Sex and Self-Reported Heart Health") 
+```
+
+Example Interpretation: A two-way factorial ANOVA with Sunday Scholl attendance as the dependent variable showed a significant interaction between sex and heart health status, $F(1, 777) = 6.25, p = 0.01$. Simple effects analyses showed that among males there were significant differences in Sunday School attendance between men reporting "good" and "poor" heart health, $F(1, 289) = 9.24, p = .003$. Men that reported having good heart health attended Sunday School less frequently than men who reported poor heart health. There were no differences in Sunday School attendance in females based on heart health, $F(1, 488) = 0.1, p = .74$.
+
+-   NOTE: We can infer this because there are only two groups in this factor, but if there were more than two groups we would need to do a post-hoc analysis and report it here.
+
+Alternatively: A two-way factorial ANOVA with Sunday School attendance as the dependent variable showed a significant interaction between sex and heart health status $F(1, 777) = 6.25, p = 0.01$. Simple effect analyses showed that, among those with Good heart health, males attended Sunday School less frequently than females, $F(1, 469) = 6.88, p = .009$. There were no sex differences in Sunday School attendance in those with Poor heart health $F(1, 308) = 1.13, p = .329$.
+
+## Note on Sum of Squares
+
+Before moving forward, we need to address an important note about the different ways Sum of Squares can be calculated.
+
+When there is only one IV in an ANOVA, there is only one way that SS is calculated.
+
+When there is more than one IV in an ANOVA, there are different ways to calculate the SS. The type that you use (Type I, II, or III) will depend on your hypothesis about how the variables you are testing relate to each other. For now, you just need to have a basic understanding of what the different types are, and what defaults these functions are using in `R`to calculate the SS.
+
+When you use the the summary() wrapper to extract information about an ANOVA object, the default is Type I SS (sequential calculation of the SS). Basically, what this means is that SS are calculated for the variable you put in the model first, and then whatever is put second, variance between groups is assessed based on the residual variance of the first group. This means that the order you put the terms in the model matters and will change the results for the lower order main effects. For example, compare these two ANOVA output calculated using Type I SS:
+
+```{r}
+example1 <- aov(SundaySchool_04 ~ sex + HeartHealth_04 + sex*HeartHealth_04, data = lab_data)
+summary(example1)
+
+
+example2 <- aov(SundaySchool_04 ~ HeartHealth_04 + sex + sex*HeartHealth_04, data = lab_data)
+summary(example2)
+```
+
+Notice that the SS (and hence the MS, F, and p values) are different for the main effects of `HeartHealth_04` and `sex` in the two analyses.
+
+Fortunately, the order you put the terms in the model will not affect the SS (and hence the MS, F, and p values) for the interaction. This is because it is the highest order term.
+
+For this lab (and for the homework), you will just use Type I SS, for simplicity's sake. But, if you are interested, here is how the other SS calculations work. You will need to use the `Anova()` function from the `car` package to use type 2 or type 3 SS.
+
+Type 2 SS calculates the SS for each main effect after controlling for the other main effect (but not controlling for the interaction effect), regardless of the order the variables are entered. Notice how the p values for each effect are the same, regardless
+
+```{r}
+library(car)
+Anova(aov(example1), type = 2)
+
+Anova(aov(example2), type = 2)
+```
+
+Type 3 SS calculates the SS for each main effect after controlling for the other main effect AND after controlling for the interaction effect, regardless of the order the variables are entered. Notice how the p values for each effect are the same, regardless:
+
+```{r}
+Anova(aov(example1), type = 3)
+
+Anova(aov(example2), type = 3)
+```
+
+You will note that when we asked for Type 3 SS we were also given an Intercept estimate, and it is significant. We do not care about the Intercept in this case.
+
+Notice that when we used Type 3 SS, the main effect of sex is now significant.
+
+THE MAIN TAKE AWAYS: - Notice that regardless of which SS calculation was used, the interaction effect did not change at all. - Remember, when there is a significant interaction, we don't interpret the main effects (because they cannot be interpreted on their own; the interaction effect tells us that the main effect depends on another variable). So, in this example, we do not care if sex is or is not significant, when the interaction between sex and HeartHealth_04 is significant.
+
+For more info on SS, see [this blog](https://towardsdatascience.com/anovas-three-types-of-estimating-sums-of-squares-don-t-make-the-wrong-choice-91107c77a27a)
+
+For the sake of this lab, we will just move forward with Type 1 SS, and we will put `HeartHealth_04` in the model first.
+
+## Two Way ANOVA With sig interaction, 4x3 design
+
+Let's do a more complicated Two Way ANOVA, and test whether people's relationship with God differs depending on their frequency of prayer (pray.groups) and level of education.
+
+```{r}
+summary(aov(RelationshipGod_04 ~ pray_groups*school_groups, data = lab_data))
+```
+
+Thus, it seems there is both a significant main effect of prayer frequency, and a significant interaction. Since the interaction is significant, we cannot (or should not) interpret the main effect in isolation, but instead at the different levels of education.
+
+We can graph this to get an idea of what could be driving the interaction:
+
+```{r}
+# Interaction:
+## To create the means data
+graph_data <- 
+  lab_data |> 
+  filter(!is.na(RelationshipGod_04), !is.na(pray_groups), !is.na(school_groups)) |>
+  group_by(pray_groups, school_groups) |> 
+  summarise(mean = mean(RelationshipGod_04),
+            sd = sd(RelationshipGod_04),
+            N = length(RelationshipGod_04),
+            se = sd / sqrt(N))
+
+## To recode and reorder the groups:
+graph_data$pray_groups <- 
+  factor(graph_data$pray_groups,
+         levels = c("Daily","Often","Occasionally","Rarely"))
+
+## To make the graphs:
+ggplot(data = graph_data, 
+       aes(x = pray_groups, y = mean, fill = school_groups)) + 
+  geom_bar(stat="identity", 
+           color = "black", 
+           position = position_dodge()) + 
+  geom_errorbar(width = .5, 
+                aes(ymin = mean - se, ymax = mean + se),
+                position = position_dodge(.9)) + 
+  theme_classic() + 
+  labs(y = "Relationship with God", x = "Prayer Freq")  
+
+# If you were interested, you could switch this and have education level on the x-axis.
+ggplot(data = graph_data, 
+       aes(x = school_groups, y = mean,fill = pray_groups)) +
+  geom_bar(stat="identity", 
+           color = "black", 
+           position = position_dodge()) + 
+  geom_errorbar(width = .5, 
+                aes(ymin = mean - se, ymax = mean + se),
+                position = position_dodge(.9)) + 
+  theme_classic() +
+  labs(y = "Relationship with God", x = "Education Level")
+```
+
+Next, we would need to do simple effect analyses. Lets look for differences in prayer frequency at different levels of school group.
+
+Simple Effects Analysis:
+
+```{r}
+summary(aov(RelationshipGod_04 ~ pray_groups, 
+          data = lab_data %>% filter(school_groups == "College")))
+
+summary(aov(RelationshipGod_04 ~ pray_groups, 
+          data = lab_data %>% filter(school_groups == "Graduate school")))
+
+summary(aov(RelationshipGod_04 ~ pray_groups, 
+          data = lab_data %>% filter(school_groups == "HS or less")))
+```
+
+It looks like there is an effect of prayer frequency at all three levels of school group.
+
+The next step would be to do orthogonal contrasts. Because we had three significant one-way ANOVAs, we will need to do three orthogonal contrast analyses. Fortunately we only need to create the contrast coefficients once.
+
+Lets use the following structure:
+
+|         | Rarely | Occasionally | Often | Daily | Sum |
+|---------|-------:|-------------:|------:|------:|----:|
+| C1      |      3 |           -1 |    -1 |    -1 |   0 |
+| C2      |      0 |            2 |    -1 |    -1 |   0 |
+| C3      |      0 |            0 |     1 |    -1 |   0 |
+| Product |      0 |            0 |     1 |    -1 |   0 |
+
+Orthogonal Contrasts for Each Level
+
+```{r}
+contrast_matrix <- cbind(
+    c(3, -1, -1, -1),
+    c(0,  2, -1, -1),
+    c(0,  0,  1, -1)
+)
+
+lab_data$pray_groups <- factor(lab_data$pray_groups,
+                                    levels = c("Daily","Often","Occasionally","Rarely"))
+
+contrasts(lab_data$pray_groups) <- contrast_matrix
+
+contr_list <- list(pray_groups = list("Rarely vs. all" = 1,
+                                           "Occasionally vs. Often/Daily" = 2,
+                                           "Often vs. Daily" = 3))
+
+# orthogonal contrast of prayer group for people who completed HS or less
+analysis_c1 <- aov(RelationshipGod_04 ~ pray_groups, 
+                data = lab_data %>% filter(school_groups == "HS or less"))
+summary.aov(analysis_c1, split = contr_list)
+
+# orthogonal contrast of prayer group for people who completed grad school
+analysis_c2 <- aov(RelationshipGod_04 ~ pray_groups, 
+                data = lab_data %>% filter(school_groups == "College"))
+summary.aov(analysis_c2, split = contr_list)
+
+# orthogonal contrast of prayer group for people who completed only college
+analysis_c3 <- aov(RelationshipGod_04 ~ pray_groups, 
+                data = lab_data %>% filter(school_groups == "Graduate school"))
+summary.aov(analysis_c3, split = contr_list)
+```
+
+Among participants with a high school education, all 3 contrasts were significant. However, among those with a college education, there was no difference among those who prayed occasionally versus those who prayed often or daily. Finally, among those with a graduate school education, there was no difference comparing those who prayed rarely to those who prayed at any other frequency, or those who prayed occasionally compared to those who prayed often or daily.
