@@ -1,0 +1,316 @@
+---
+title: "Problem Set #7"
+author: "Marwin Carmo"
+date: "11-17-2023"
+urlcolor: blue
+format: 
+  html:
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    theme: united
+    highlight-style: tango
+    df-print: paged
+    code-fold: show
+    toc: true
+    toc-float: true
+    self-contained: true
+---
+
+
+
+# Overview:  
+
+In this problem set, you will be using the **stringr** package (part of tidyverse) to work with strings, and the **lubridate** package for working with dates and times. We will ask you to load Twitter data that is saved as an .Rdata file.  
+
+# Question 1: Working with strings
+
+1. Load the following packages in the code chunk below: `tidyverse` and `lubridate`.
+
+
+```{r, message=F}
+library(tidyverse)
+library(lubridate)
+```
+
+
+
+2. Using `str_c()` and the following objects as input, create the string: `"Roses are red, Violets are blue"`  
+
+    - We encourage you to first sketch out what you want to do on some scratch paper.
+    - Recall from the lecture example on "Using str_c() on vectors of different lengths", when multiple vectors of different length are provided in the str_c() function, the elements of shorter vectors are recycled. See below.
+    
+
+```{r eval=FALSE}
+str_c("@", c("emorie ", "sgtpepper ", "apple "), sep = "", collapse = ",")
+
+#[1] "@emorie ,@sgtpepper ,@apple "
+```
+
+    
+    - Now try it yourself.
+
+```{r}
+vec_1 <- c("Roses", "Violets")
+vec_2 <- c("red", "blue")
+
+str_1 <- "are"
+
+# Write your code here
+
+str_c(vec_1, str_1, vec_2, sep = " ", collapse = ", ")
+
+```
+
+
+
+3. [Pig Latin](https://en.wikipedia.org/wiki/Pig_Latin) is a language game in which the first consonant of each word is moved to the end of the word, then `"ay"` is appended to create a suffix. For example, the word `"Wikipedia"` would become `"Ikipediaway"`.
+
+    - Using `str_c()` and `str_sub()`, turn the given `pig_latin` vector into the string: `"igpay atinlay"`
+    - We encourage you to first sketch out what you want to do on some scratch paper.
+        - First, think about what the final outcome will look like.
+        - Then, think about how you can get there. Play around with the `str_sub()` function. What happens when you include different values in the `str_sub()` function?  
+    - this is low-key the trickiest question in the problem set. So if you get stuck, ask a question to your group or github and move on. and come back to it later.
+
+
+```{r}
+pig_latin <- c('pig', 'latin')
+
+# Write your code here
+
+pigLatin <- function(x) {
+  
+  str_sub(x, start = 2) |> 
+  str_c(str_sub(x, end = 1)) |> 
+  str_c("ay")
+}
+
+pigLatin(pig_latin)
+
+```
+
+
+
+4. Using `str_c()` and `str_sub()`, decode the given `secret_message`. Your output should be a string.  
+
+    - Follow the same logic from above.
+    - Sketch out what you want to do on some scratch paper. Break it down step by step. Play around with different values for the `str_sub()` function. 
+    
+
+```{r}
+secret_message <- c('ollowfay', 'ouryay', 'earthay')
+
+# Write your code here
+
+
+str_sub(secret_message, start = -3, end = -3) |> 
+  str_c(str_sub(secret_message, end = -4)) |> 
+  str_c(collapse = " ")
+
+
+```
+
+
+
+# Question 2: Working with Twitter data  
+
+
+1. You will be using Twitter data we fetched from the following Twitter handles: `UniNoticias`, `FoxNews`, and `CNN`.  
+
+    - This data has been saved as an Rdata file.
+    - Use the `load()` and `url()` functions to download the `news_df` dataframe from the url: `https://github.com/emoriebeck/psc290-data-FQ23/raw/main/05-assignments/07-ps7/twitter_news.RData`
+    - Report the dimensions of the `news_df` data frame (rows and columns). Use the `dim()` function.  
+
+
+
+```{r}
+load(url("https://github.com/emoriebeck/psc290-data-FQ23/raw/main/05-assignments/07-ps7/twitter_news.RData"))
+
+dim(news_df)
+```
+
+
+
+2. Subset your dataframe `news_df` and create a new dataframe called `news_df2` keeping only the following variables: `user_id`, `status_id`, `created_at`, `screen_name`, `text`, `followers_count`, `profile_expanded_url`.  
+
+    - Note in the following questions we will ask you to create a new column and that means you have to assign `<-` the new changes you are making to the existing dataframe `news_df2`. Ex. `news_df2 <- news_df %>% mutate(newvar = mean(oldvar))`
+
+
+```{r}
+news_df2 <- news_df |> 
+  dplyr::select(user_id, status_id, created_at, screen_name, text, followers_count, profile_expanded_url)
+news_df2
+```
+
+
+
+3. Create a new column in `news_df2` called `text_len` that contains the length of the character variable `text`.
+
+    - What is the `class` and `type` of this new column? Make sure to include your code in the code chunk below.
+      - __ANSWER__: Class and type are equal to "integer"
+    
+
+```{r}
+news_df2 <- news_df2 |> 
+  dplyr::mutate(text_len = stringr::str_length(text))
+class(news_df2$text_len)
+typeof(news_df2$text_len)
+```
+
+
+
+4. Create an additional column in `news_df2` called `handle_followers` that stores the twitter handle and the number of followers associated with that twitter handle in a string. For example, the entries in the `handle_followers` column should look like this: `@[twitter_handle] has [number] followers.`
+
+    - What is the `class` and `type` of this new column? Make sure to include your code in the code chunk below.
+      - __ANSWER__: Class and type are equal to "character"
+
+
+```{r}
+news_df2 <- news_df2 |> 
+  dplyr::mutate(
+    handle_followers = stringr::str_c(
+      "@", screen_name, " has ", followers_count, " followers.", sep = ""))
+
+class(news_df2$handle_followers)
+typeof(news_df2$handle_followers)
+```
+
+
+
+5. Lastly, create a column in `news_df2` called `short_web` that contains a short version of the `profile_expanded_url` without the `http://www.` part of the url. For example, the entries in that column should look something like this: `nytimes.com`.
+
+
+```{r}
+news_df2 <- news_df2 |> 
+  dplyr::mutate(
+    short_web = stringr::str_sub(profile_expanded_url, start = 12)
+  )
+dplyr::count(news_df2, short_web)
+```
+
+
+# Question 3: Working with dates/times
+
+1. Using the column `created_at`, create a new column in `news_df2` called `dt_chr` that is a character version of `created_at`.
+
+    - What is the `class` of the `created_at` and `dt_chr` columns? Make sure to include your code in the code chunk below.
+      - __ANSWER__: `created_at` is of class "POSIXct" "POSIXt", and `dt_chr` is of class "character".
+
+
+```{r}
+news_df2 <- news_df2 |> 
+  dplyr::mutate(dt_chr = as.character(created_at))
+class(news_df2$created_at)
+class(news_df2$dt_chr)
+```
+
+
+
+2. Create another column in `news_df2` called `dt_len` that stores the length of `dt_chr`.
+
+
+```{r}
+news_df2 <- news_df2 |> 
+  dplyr::mutate(
+    dt_len = stringr::str_length(dt_chr)
+  )
+news_df2
+```
+
+
+
+3. Next, create additional columns in `news_df2` for each of the following date/time components:
+
+    a. Create a new column `date_chr` for date (e.g. `2020-03-26`) using the column `dt_chr` and the `str_sub()` function.
+    a. Do the same for year `yr_chr` (e.g. `2020`).
+    a. Do the same for month `mth_chr` (e.g. `03`).
+    a. Do the same for day `day_chr` (e.g. `26`).
+    a. Do the same for time `time_chr` (e.g. `22:41:09`).  
+
+
+```{r}
+news_df2 <- news_df2 |> 
+  dplyr::mutate(
+    date_chr = stringr::str_sub(dt_chr, start = 1, end = 10),
+    yr_chr = stringr::str_sub(dt_chr, start = 1, end = 4),
+    mth_chr = stringr::str_sub(dt_chr, start = 6, end = 7),
+    day_chr = stringr::str_sub(dt_chr, start = 9, end = 10),
+    time_chr = stringr::str_sub(dt_chr, start = 12)
+  )
+news_df2 |> 
+  dplyr::select(dt_chr, date_chr, yr_chr, mth_chr, day_chr, time_chr)
+```
+
+
+
+4. Using the column we created in the previous question `time_chr`, create additional columns in `news_df2` for the following time components: 
+
+    a. Create a new column `hr_chr` for hour (e.g. `22`) using the column `time_chr` and the `str_sub()` function.
+    a. Do the same for minutes `min_chr` (e.g. `41`).
+    a. Do the same for seconds `sec_chr` (e.g. `09`).
+
+
+```{r}
+news_df2 <- news_df2 |>
+  dplyr::mutate(
+    hr_chr = stringr::str_sub(time_chr, start = 1, end = 2),
+    min_chr = stringr::str_sub(time_chr, start = 4, end = 5),
+    sec_chr = stringr::str_sub(time_chr, start = 7)
+  )
+news_df2
+```
+
+
+
+
+5. Now let's get some practice with the `lubridate` package.  
+
+    a. Using the `year()` function from the `lubridate` package, create a new column in `news_df2` called `yr_num` that contains the year (e.g. `2020`) extracted from `date_chr`.
+    a. Do the same for month `mth_num`.
+    a. Do the same for day `day_num`.
+    a. Do the same for hour `hr_num`, but extract from `created_at` column instead of `date_chr`.
+    a. Do the same for minutes `min_num`. 
+    a. Do the same for seconds `sec_num`.
+
+
+```{r}
+news_df2 <- news_df2 |> 
+  dplyr::mutate(
+    yr_num = lubridate::year(date_chr),
+    mth_num = lubridate::month(date_chr),
+    day_num = lubridate::day(date_chr),
+    hr_num = lubridate::hour(created_at),
+    min_num = lubridate::minute(created_at),
+    sec_num = lubridate::second(created_at),
+  )
+news_df2
+```
+
+
+
+
+6. Using the **new numeric columns** (e.g. day_num, mth_num) you've created in the previous step, reconstruct the date and datetime columns. Namely, add the following columns to `news_df2`:
+
+    a. Use `make_date()` to create new column called `my_date` that contains the date (year, month, day).
+    a. Use `make_datetime()` to create new column called `my_datetime` that contains the datetime (year, month, day, hour, minutes, seconds).
+    
+    - What is the `class` of your `my_date` and `my_datetime` columns? Make sure to include your code in the code chunk below.
+      - __ANSWER__: 
+
+
+```{r}
+
+```
+
+
+
+# Render to html and submit problem set  
+
+**Render to html** by clicking the "Render" button near the top of your RStudio window (icon with blue arrow) 
+
+-   Go to the Canvas --\> Assignments --\> Problem Set 7
+-   Submit both .qmd and .html files\
+-   Use this naming convention "lastname_firstname_ps#" for your .qmd and html files (e.g. beck_emorie_ps7.qmd & beck_emorie_ps7.html)
+
+
