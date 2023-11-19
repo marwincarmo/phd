@@ -1,0 +1,27 @@
+---
+title: "Final Project Proposal"
+author: "Marwin Carmo"
+subtitle: "Reproducible script for cleaning and analysis"
+format: 
+  pdf:
+    toc: false
+    colorlinks: true
+    linkcolor: blue
+    toccolor: blue
+execute:
+  cache: true
+---
+
+# Background
+
+This project aims to produce an integrated project of the pipeline of a scale validation process. The object of this study is the Sleep Acceptance Scale, an instrument developed to assess the acceptance of sleep problems. Data was collected online via REDCap from adults of age between 18 and 59 years, living in Brazil. 
+
+# Approach
+
+The final product will be a `.qmd` file and the rendered `.html` file presenting every step of the process, from data cleaning to the final analysis. The scripts of the analysis as well as raw and transformed data and external files will be organized in folders within the project directory. The goal is that this project is uploaded to an open platform such as [osf.io](https://osf.io/) so it can be accessed and reproduced by other researchers. 
+
+# Motivation
+
+This project is motivated by a collective effort to make psychology a science more open and transparent. Although the development of the SAS was not preregistred, by sharing the analysis code and data we can make at least the final stages of this process open to the scrutiny of scientific community. Moreover, the `.html` file containing the protocol used in the analysis should make it easier even for readers without knowledge of R programming. 
+
+# Challenges 
