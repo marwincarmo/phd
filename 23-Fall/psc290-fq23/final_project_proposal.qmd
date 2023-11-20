@@ -14,14 +14,16 @@ execute:
 
 # Background
 
-This project aims to produce an integrated project of the pipeline of a scale validation process. The object of this study is the Sleep Acceptance Scale, an instrument developed to assess the acceptance of sleep problems. Data was collected online via REDCap from adults of age between 18 and 59 years, living in Brazil. 
+This project aims to create a comprehensive pipeline for validating the Sleep Acceptance Scale (SAS), an instrument designed to evaluate people's acceptance of sleep problems. The data for this project come from adults between 18 and 59 living in Brazil who were surveyed online using REDCap. 
 
 # Approach
 
-The final product will be a `.qmd` file and the rendered `.html` file presenting every step of the process, from data cleaning to the final analysis. The scripts of the analysis as well as raw and transformed data and external files will be organized in folders within the project directory. The goal is that this project is uploaded to an open platform such as [osf.io](https://osf.io/) so it can be accessed and reproduced by other researchers. 
+The end product will consist of a `.qmd` file and a rendered `.html` file. These files will present every process step, from data cleaning to the final analysis. All analysis scripts, raw and transformed data, and external files will be organized in folders within the project directory. Our ultimate goal is to upload this project to an open platform such as [osf.io](https://osf.io/) so other researchers can easily access and reproduce it.
 
 # Motivation
 
-This project is motivated by a collective effort to make psychology a science more open and transparent. Although the development of the SAS was not preregistred, by sharing the analysis code and data we can make at least the final stages of this process open to the scrutiny of scientific community. Moreover, the `.html` file containing the protocol used in the analysis should make it easier even for readers without knowledge of R programming. 
+This project is motivated by a collective effort to promote transparency in the field of psychology. Although we did not pre register the development of the SAS, we are sharing the analysis code and data to allow the scientific community to scrutinize the final stages of the process. Furthermore, the ".html" file that contains the protocol used in the analysis should make it easier for readers without R programming knowledge to understand.
 
 # Challenges 
+
+This project involves multiple analyses that use different packages and create various objects in the work environment. The main challenge is creating a report file that can be seamlessly executed and easily understandable by machines and humans.
