@@ -1,0 +1,253 @@
+---
+title: "PSC 204A Lab 8 - ANCOVA"
+format: 
+  html:
+    toc: true
+    toc-location: left
+editor: visual
+---
+
+Some packages that we will need for today:
+
+```{r, eval = FALSE, echo = FALSE}
+install.packages('MASS') install.packages('car')  install.packages('psych')
+```
+
+```{r, message = FALSE}
+library(psych)
+library(dplyr)
+library(ggplot2)
+library(car)
+library(ggpubr)
+```
+
+We will use the Age Religion Health data set for this lab.
+
+```{r}
+lab.data <- read.csv("Age Religion Health.csv")
+```
+
+We will also quickly create a three-level grouping variable for education:
+
+```{r}
+lab.data = lab.data %>%
+  mutate(
+    "school.group" = case_when(
+      school <= 12 ~ "HighSchool",
+      school > 12 & school <= 16 ~ "Undergraduate",
+      school > 16 ~ "Graduate"
+    )
+  )
+```
+
+# ANCOVA
+
+In the simplest ANCOVA models, there are 3 variables:
+
+1.  A continuous dependent variable
+
+2.  A categorical independent variable
+
+3.  A continuous independent variable
+
+ANCOVA models can be factorial (i.e., they can have an interaction between the categorical and continuous variable), but they are not always. The type of model we use depends on the research questions we are asking with the ANCOVA.
+
+-   At least one of the independent variables in an ANCOVA is the variable of interest.
+
+-   Sometimes we are only interested in group differences, and want to control for a continuous variable.
+
+-   Sometimes the continuous variable is the variable of interest, and we want to see if it is related to the dependent variable controlling for a categorical variable.
+
+-   Sometimes the continuous variable is the variable of interest, and we want to see if the continuous variable is correlated differently with the dependent variable across different groups.
+
+-   Sometimes both the categorical and continuous variable are of interest.
+
+We will go through a few examples of each of these instances.
+
+Also a side note on "control": What does it mean when we say we are examining the relation between an independent variable (X1) and dependent variable (Y), controlling for another variable (X2)? Essentially what it means is that we are looking at the relation between X1 and Y\*, where Y\* is the part of Y that is not explained by X2. Or in other words, after you've removed the effect of X2 on Y, what is the effect of X1 on what is leftover?
+
+## ANCOVA Controlling for a Continuous Variable
+
+Lets start with an example of looking for group differences, controlling for a continuous variable. In this case we have one categorical independent variable, and one continuous covariate.
+
+Let's say we were interested in the weight differences between those with diabetes and those without diabetes. There are different ways to test this (e.g., t-test, ANOVA, or linear regression), but we will do a t-test:
+
+```{r}
+t.test(Weight_04 ~ Diabetes_04, data = lab.data, var.equal = F)
+```
+
+We can also graph this result:
+
+```{r, message = F, warning = F}
+graph.data <- lab.data %>%
+  filter(!is.na(Diabetes_04)) %>%
+  group_by(Diabetes_04) %>% 
+  summarise(mean = mean(Weight_04, na.rm = T), sd = sd(Weight_04, na.rm = T), N = length(Weight_04)) %>% 
+  mutate(se = sd / sqrt(N))
+
+ggplot(data = graph.data, aes(x = Diabetes_04, y = mean)) + geom_bar(stat="identity", color = "black", position = position_dodge(), fill = "lightblue") + geom_errorbar(width = .5, aes(ymin = mean - se, ymax = mean + se), position = position_dodge(.9)) + theme_classic() + labs(y = "Av Weight", x = "Diabetes Status")
+```
+
+Now let's see if this difference is still significant after controlling for the number of cigarettes smoked per week. This is where the ANCOVA comes in.
+
+### An Important Side Note on Type of SS
+
+This is also where the type of SS comes in:
+
+-   In Type I SS, the order of testing is sequential, so the order that you enter your variables into the aov() function matters. aov(DV \~ Factor1 + Factor2) will first test the main effect of Factor1 on the DV, and then will test the main effect of Factor2 on whatever part of the DV was not explained by Factor1. Thus, you are testing the main effect of Factor2 controlling for the effect of Factor1. This would be important when wanting to control for some sort of baseline level, but not wanting the effect of the baseline level to be affected by your other factor. **It is important to note that Type I SS is the default in the summary() and anova() functions.**
+
+-   In Type II SS, the order of testing for main effects does not matter. aov(DV \~ Factor1 + Factor2) will test for the main effect of Factor1 on the DV, controlling for Factor2, and the main effect of Factor2 on the DV, controlling for Factor1. Since both directions are controlled for, it does not matter whether you write Factor1 + Factor2 or Factor2 + Factor1. However, if there is an interaction term in the model, like aov(DV \~ Factor1 + Factor2 + Factor1:Factor2), then the main effects will only be calculated after controlling for other main effects, not the interaction. **You can get Type II SS using the Anova() function around your aov() object, or the summary() function around an lm() object that has no interaction.**
+
+-   In Type III SS, you test the effect of each factor (including interaction terms) after controlling for all other factors (including interaction terms) in the model. So the biggest difference between this and Type II SS is that the main effects will be controlled for the interaction. In other words, if my model was aov(DV \~ Factor1 + Factor2 + Factor1:Factor2) and I used Type III SS, then the main effect of Factor1 controls for both Factor2 **and** Factor1:Factor2. **You can get Type III SS using Anova() around an aov() or lm() object, but write type = 3. For example, Anova(aov(), type = 3)**
+
+### Back to Example:
+
+So we want to see if the difference in weight between those with and without diabetes is still significant after controlling for the number of cigarettes smoked per week.
+
+Here, the decision to use Type I versus Type II SS just depends on how much we care about the effect of cigarettes smoked. If we want to know the effect of cigarettes smoked *after controlling* for diabetes status, we would use Type II SS. If not, and all we care about is the effect of diabetes after controlling for number of cigarettes smoked, then we would use Type I SS. I'll use Type II SS since I don't have enough substantive knowledge to know which one is more important, but I'll show how you would have written it for the Type I SS as well.
+
+```{r}
+
+Anova(aov(Weight_04 ~ Diabetes_04 + CigWeek_04, data = lab.data), type = 2)
+
+# If we had wanted to use Type I SS, and control for number of cigarettes per week, we would need to put diabetes second:
+
+summary(aov(Weight_04 ~ CigWeek_04 + Diabetes_04, data = lab.data))
+
+# Notice how the main effect of diabetes is the same, but the effect of cigarettes is different!
+
+```
+
+The output shows that, even when CigWeek_04 is controlled for, Diabetes_04 has a significant effect on Weight_04. We can conclude that there are differences in weight between smokers and non-smokers even when cigarettes smoked per week is controlled for. We would also conclude that when Diabetes_04 is accounted for, CigWeek_04 is not correlated with Weight_04.
+
+Example of Write Up:
+
+A researcher investigated whether there were differences between people with and without diabetes in weight. An initial t-test revealed that individuals with a diabetes diagnosis weighed more than those without a diagnosis (t(332.42) = -7.27, p \< .001). To assess whether this this difference remained significant when controlling for how many cigarettes were smoked each week, a follow up ANCOVA was performed with weight as the dependent variable, diabetes status as the independent variable, and cigarettes smoked per week as a covariate. The analysis showed that the differences between those with and without diabetes in average weight remained significant (F(1, 799) = 50.05, p \< .001) even when number of cigarettes smoked per week was controlled for. Cigarettes per week was not a significant covariate (F(1, 799) = 0.27, p = .61).
+
+## ANCOVA: Post-hoc testing when Controlling for a Continuous Variable
+
+In the previous example there were only two levels of Diabetes, so we could infer that the two groups were different. What if we had a variable with more than 2 levels? If there is a main effect of this variable, we would perform post-hoc testing with the covariate included in the model.
+
+The chunk below gives an example using school group to predict Depression_04, controlling for baseline Depression in 2001.
+
+For this example we will use Type I SS (i.e., we control for the baseline, and then test whether there are differences based on school.group), because this would be more appropriate for our hypothesis. It will also make the post-hoc test work out better.
+
+```{r }
+# The analysis:
+
+summary(aov(Depression_04 ~ Depression_01 + school.group, data = lab.data)) 
+
+# We put Depression_01 first because the order matters with Type I SS, and we want to control for baseline depression
+## We use summary() with aov() because that uses Type I SS by default.
+```
+
+We would conclude that there are significant differences in Depression_04 based on school.group, after Depression_01 was controlled for. But we do not know where those differences were.
+
+To do post hoc testing, we could do orthogonal contrasts. We would just keep the covariate in the model.
+
+Lets do the following contrasts:
+
+| Contrast   | High School or Less | Undergraduate | Graduate |
+|------------|---------------------|---------------|----------|
+| Contrast 1 | 0                   | 1             | -1       |
+| Contrast 2 | 1                   | -0.5          | -0.5     |
+
+Remember our steps from 2 weeks ago for creating orthogonal contrasts:
+
+-   Make sure our grouping variable is a factor
+-   Set up the contrast matrix
+-   Assign the contrasts to the data
+-   Execute the contrast analysis
+
+```{r}
+# Step 1: is school.group a factor?
+
+class(lab.data$school.group) # nope
+
+lab.data$school.group = factor(lab.data$school.group, levels = c("HighSchool", "Undergraduate", "Graduate"))
+
+# Step 2: Contrasts Matrix
+
+contrasts1 = cbind(
+  c1 = c(0, 1, -1),
+  c2 = c(1, -0.5, -0.5)
+)
+
+# Step 3: Assign the contrasts to our data
+
+contrasts(lab.data$school.group) = contrasts1
+
+# Step 4: Execute the contrast analysis
+
+split_list = list(
+  school.group = list("Undergrad vs Grad" = 1,
+                      "HS vs Rest" = 2)
+)
+
+# Run the ANOVA, but with the covariate!
+summary.aov(aov(Depression_04 ~ Depression_01 + school.group, data = lab.data), split = split_list)
+
+```
+
+We would conclude that the second contrast, comparing High School to the other two groups combined, was significant. We would need to look at the means to know which group was higher in Depression.
+
+## ANCOVA with a significant interaction
+
+Now lets do an example of a research question pertaining to whether a relation is different between two groups (i.e., a moderation analysis). Lets say we believe the relation between Depression and SelfWorth differs between males and females.
+
+We can do it with the following model. Note that we will use Type II SS to maximize our power to detect main effects, since we will not be controlling for the interaction when calculating the main effects.
+
+```{r}
+Anova(aov(Depression_04 ~ SelfWorth_04*sex, data = lab.data), type = 2) 
+```
+
+The output shows that each main effect and the interaction are significant. The next step is to perform simple effects analysis. We will do this by running the analysis for males and females separately. If there was more than one level of the analysis we would do the analysis for each level of the factor.
+
+Since this examines the relation between two continuous variables, this is technically more in the regression realm than ANCOVA (although there's a lot of overlap!). Therefore we will use the lm() function, which has the same format as the aov() function.
+
+lm(DV \~ IVs, data = dataset.name)
+
+And you can get the coefficient information using the summary() function around lm().
+
+```{r }
+summary(lm(Depression_04 ~ SelfWorth_04, data = lab.data %>% filter(sex == "Male")))
+
+summary(lm(Depression_04 ~ SelfWorth_04, data = lab.data %>% filter(sex == "Female")))
+```
+
+To visualize these associations:
+
+```{r , message = F, warning = F}
+#Colored by group: 
+
+ggplot(data = lab.data, aes(x = SelfWorth_04, y = Depression_04, color = sex)) + geom_smooth(method = "lm", fullrange = T) + geom_point(alpha = .4) + theme_classic()
+
+## Paneled by group:
+
+ggplot(data = lab.data, aes(x = SelfWorth_04, y = Depression_04, fill = sex)) + geom_smooth(method = "lm", fullrange = T, color = "black") + geom_point(shape = 21, alpha = .4) + theme_classic() + facet_wrap(~sex) 
+```
+
+Example Write Up:
+
+A researcher investigated whether the association between Depression and Self Worth differed between males and females. To test this hypothesis, a ANCOVA model was performed, with Depression as the dependent variable and with Self Wroth, sex, and the interaction between these variables as independent variables. The analysis revealed a significant interaction between self worth and sex (F(1, 834) = 7.65, p = .01). To assess how the association between self worth and depression differed between the sexes, follow up simple effect analyses were performed using simple regression, with depression as the dependent variable and self worth as the independent variable, and separate analyses being performed for each sex. Although the analyses revealed a significant association between self worth and depression in both males and females (p \< .001), the association was much stronger in males (b = 1.33) than it was in females (b = .68). This may suggest that individuals with high self worth are more susceptible to depression, and particularly so for males.
+
+## ANCOVA with a Nonsignificant Interaction Term
+
+Now I will show you an example of what it looks like when the interaction is not significant. We will assess whether the fear of death is correlated with praying frequency, and whether the association is the same in males and females.
+
+```{r}
+
+Anova(aov(Pray_04 ~ sex*FearDeath_04, data = lab.data), type = 2)
+```
+
+```{r, message = F, warning = F}
+# Presenting the results: 
+# In an ideal scenario, when there is no interaction we would expect the slopes of the lines to be parallel. Although the lines here are not exactly parallel, the nonsignificant interaction means that any difference in the slopes is not large or significant
+
+ggplot(data = lab.data, aes(x = FearDeath_04, y = Pray_04, color = sex))+
+  geom_smooth(method = "lm", color = "black") + geom_point(shape = 21, size = 2, alpha = .5) + theme_classic() + facet_wrap(~sex)
+```
+
+Example Write Up:
+
+A researcher investigated whether the fear of death was associated with frequency of prayer, and whether this association differed between males and females. To test this hypothesis, an ANCOVA was performed with prayer frequency as the dependent variable and with sex, fear of death, and the interaction between sex and fear of death included as independent variables. The analysis did not reveal a significant interaction between sex and the fear of death (F(1, 819) = 1.29, p = 0.26). The main effects of both sex (F(1, 819) = 63.07, p \< .001) and (F(1, 819) = 4.93, p = .03).

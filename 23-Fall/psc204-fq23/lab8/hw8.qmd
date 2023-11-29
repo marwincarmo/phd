@@ -1,0 +1,115 @@
+---
+title: "PSC 204A - Homework 8"
+format: 
+  html:
+    toc: true
+    toc-location: left
+editor: visual
+---
+
+
+```{r, message = FALSE}
+library(psych)
+library(dplyr)
+library(ggplot2)
+library(car)
+library(ggpubr)
+```
+
+```{r}
+lab.data <- read.csv("Age Religion Health.csv")
+```
+
+```{r}
+lab.data = lab.data %>%
+  mutate(
+    "school.group" = case_when(
+      school <= 12 ~ "HighSchool",
+      school > 12 & school <= 16 ~ "Undergraduate",
+      school > 16 ~ "Graduate"
+    )
+  )
+```
+
+# Q1
+
+## A
+
+```{r}
+ovrhlt_aov <- aov(Overallhealth_04 ~ school.group, data = lab.data)
+summary.aov(ovrhlt_aov)
+```
+
+## B
+```{r}
+ovrhlt_aov2 <- aov(Overallhealth_04 ~ SeeDr90Days_04 + school.group , data = lab.data)
+Anova(ovrhlt_aov, type= 2)
+```
+
+## C
+
+```{r}
+
+lab.data$school.group = factor(lab.data$school.group, levels = c("HighSchool", "Undergraduate", "Graduate"))
+
+# Step 2: Contrasts Matrix
+
+contrasts1 = cbind(
+  c1 = c(0, 1, -1),
+  c2 = c(1, -0.5, -0.5)
+)
+
+# Step 3: Assign the contrasts to our data
+
+contrasts(lab.data$school.group) = contrasts1
+
+# Step 4: Execute the contrast analysis
+
+split_list = list(
+  school.group = list("Undergrad vs Grad" = 1,
+                      "HS vs Rest" = 2)
+)
+
+# Run the ANOVA, but with the covariate!
+summary.aov(aov(Overallhealth_04 ~ SeeDr90Days_04 + school.group , data = lab.data), split = split_list)
+
+```
+# 2
+
+## A
+
+```{r}
+Anova(aov(SeeDr90Days_04~Overallhealth_04 * HeartHealth_04, data = lab.data), type = 2) 
+```
+## B
+
+```{r }
+summary(lm(SeeDr90Days_04 ~ Overallhealth_04, data = lab.data %>% filter(HeartHealth_04 == "Good")))
+
+summary(lm(SeeDr90Days_04 ~ Overallhealth_04, data = lab.data %>% filter(HeartHealth_04 == "Poor")))
+```
+
+## C
+
+```{r }
+lab.data |> 
+  dplyr::filter(!is.na(HeartHealth_04)) |> 
+  ggplot( aes(x = Overallhealth_04, y = SeeDr90Days_04, fill = HeartHealth_04)) +
+  geom_smooth(method = "lm", fullrange = T, color = "black") + 
+  geom_point(shape = 21, alpha = .4) + 
+  theme_bw() + 
+  facet_wrap(~HeartHealth_04) +
+  ylim(0, 20)
+```
+
+## Extra
+
+```{r}
+ovrhlt_aov <- aov(Overallhealth_04 ~ SeeDr90Days_04 + school.group , data = lab.data)
+Anova(ovrhlt_aov, type=2)
+```
+
+```{r}
+summary(aov(Overallhealth_04 ~ SeeDr90Days_04 +school.group , data = lab.data))
+```
+

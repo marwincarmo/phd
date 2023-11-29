@@ -2,7 +2,7 @@
 title: "Problem Set #8"
 author: "Marwin Carmo"
 urlcolor: blue
-date: "insert date here"
+date: "11/26/2023"
 format: pdf
 ---
 
