@@ -1,0 +1,505 @@
+---
+title: "204A Lab 9"
+subtitle: "Correlation and Regression"
+author: "Rohit Batra"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+urlcolor: blue
+---
+
+# Install/Load Packages and Data
+
+We will install some new packages that are needed for this lab:
+
+```{r eval = F, echo = F}
+remove(list = ls())
+install.packages('car')
+install.packages('visreg')
+install.packages('rgl')
+install.packages('psych')
+```
+
+```{r message = F}
+# Another way of loading the packages is library() function:
+
+require(psych)
+require(dplyr)
+require(ggplot2)
+require(car)
+require(ggpubr)
+require(visreg)
+require(rgl)
+```
+
+We will use the Age Religion Health data set again for this lab:
+
+```{r}
+lab.data <- read.csv("/Users/rbat/Library/CloudStorage/Box-Box/204A/Lab 9 (Rohit)/Age Religion Health.csv")
+
+# Review of the dataset and its variables
+
+# Taken from the "Age, Religion, and Health Survey", waves 2001 and 2004
+# (but primarily taken from wave 2004). Most variables are
+# self-explanatory. Here is a description of the variables that are not
+# self-explanatory: - school: number of years of school completed
+# 
+# \- Sunday.school_04, HowOftenChurch_04, Pray_04, Bible_04: These
+# variables are based on Likert-scale responses, with 1 being the lowest
+# in frequency, and 8 being the highest in frequency or quality.
+# 
+# \- RelationshipGod_04: A likert scale response ranging from 1-4 in
+# response to the statement "I have a close personal relationship with
+# God", with 1 being "Strongly Agree" and 4 being "Strongly Disagree".
+# 
+# \- Overallhealth_04: "How would you rate your own health", with 1 being
+# excellent and 4 being poor.
+```
+
+# Correlation
+
+Correlation analyses assess linear associations between two continuous variables. Pearson correlation is one of the most common types of correlation analyses we can do.
+
+## Correlation using Base R
+One way to do correlations in R is to use the `cor()` function. This is one of the basic built-in functions in r. Suppose we want to find the correlation of how often someone prays and how often they study the bible:
+
+```{r}
+cor(x = lab.data$Bible_04, y = lab.data$Pray_04) # this gives NA because there are NA values in the two variables that we have selected
+
+cor(x = lab.data$Bible_04, y = lab.data$Pray_04, use = "complete.obs") # You can use = "complete.obs" if you have missing data.
+```
+
+This gives you the pearson r but it does not give you a p-value (test if the correlation is significant or not for our sample size). By default, the method argument is "pearson" but you can get the Spearman or Kendall coefficients if you change the method argument:
+
+```{r}
+cor(x = lab.data$Bible_04, y = lab.data$Pray_04, use = "complete.obs", method = "spearman") # a slightly different value than the pearson correlation
+```
+
+
+## Correlation using Psych Package
+
+An alternate way to do correlation analysis is with the `corr.test()` function from the psych package. I prefer this method because it gives you a little more information. To use this function, you have to provide the data in a data.frame or matrix, like such:
+
+```{r}
+corr.test(lab.data[ ,c("Bible_04","Pray_04")])
+```
+This gives us three matrices; the first is for pearson r, the second is for sample size, and the third is for p values. Note: p values of '0' are not actually 0, they are just really small and are being truncated. We can also save the `corr.test()` object and then pull out these matrices and you can see how small these values are:
+
+```{r}
+cor_bp <- corr.test(lab.data[ ,c("Bible_04","Pray_04")])
+
+cor_bp$r # A matrix with the correlation coefficients
+cor_bp$n # A matrix with the n of each correlation
+cor_bp$p # A matrix with the p value of each comparison
+```
+Similar to the `cor()` function, you can get Spearman or Kendall correlation coefficients by specifying these with the methods argument in the `corr.test()` function.
+
+```{r eval = FALSE}
+corr.test(lab.data[,c("Bible_04","Pray_04")], method = "spearman")
+```
+But these were just two variables. We can select as many variables as we want and calculate the correlation between them (they just have to be numeric variables!). Let's select some and see their correlation matrix:
+
+```{r}
+c2 <- lab.data %>% 
+  select(SundaySchool_04,
+         HowOftenChurch_04,
+         RelationshipGod_04,
+         Bible_04,
+         Pray_04,
+         Weight_04) %>%
+  corr.test()
+
+c2
+```
+
+## Visualizing Correlation Matrices
+
+Here are some functions for visualizing correlation matrices:
+
+```{r}
+cor.plot(c2$r)
+
+corrplot::corrplot(c2$r)
+
+# For more info on how to manipulate these graphs, feel free to look 
+# up the documentation.
+?cor.plot()
+?corrplot::corrplot()
+```
+There is another function that can help you visualize the relationship between variables along with their correlation and individual distributions. This can come in handy when you want to see why the two variables have low correlation?
+
+```{r}
+pairs.panels(c2$r)
+```
+
+# Simple Regression
+
+Simple regression is when you have one continuous dependent variable predicted by one independent variable. In R, we do regressions with the lm() function.
+
+```{r }
+# Lets re-do the correlation between Bible_04 and Pray_04 as a regression.
+
+lm(Bible_04 ~ Pray_04, data = lab.data)
+```
+We can represent the output as an equation for a line (Y = a + bx):
+
+$$\widehat{Bible04} = -0.5040 + 0.7747*Pray04$$
+
+This is the line of best fit where, b is the slope (0.7747), and a is the intercept (-0.5040). x is a given value of Pray_04. What this formula is saying is that for every one unit change in Pray04, there is a predicted change in Bible04 by 0.7747 units. Lets look at this graphically.
+
+```{r, message = F, warning = F}
+# To graph the regression:
+ggplot(data = lab.data, 
+       aes(x = Pray_04, y = Bible_04)) +
+  geom_smooth(method = "lm") + 
+  geom_point(shape = 21, 
+             size = 3,
+             fill ="grey10", 
+             alpha = .3) + 
+  scale_x_continuous(breaks = c(1:8)) + 
+  scale_y_continuous(breaks = c(1:8)) +
+  theme_classic()
+
+## Note: I set alpha = .3 in the geom_point() to make the points only 30% opaque
+## (i.e., 70% transparent). I did this because there are many overlapping data
+## points (this is common when you have Likert scale variables), and so by 
+## making the points transparent you get a better sense of how many data points
+## are at each X-Y pairing. 
+```
+The regression line that we see in this plot is the predicted score. For example, what our regression model is saying is that when Pray_04 is 5 (for example), the predicted value of Bible_04 is -0.5040 + 0.7747\*(5) = 3.3695:
+
+```{r, message = F, warning = F}
+ggplot(data = lab.data, 
+       aes(x = Pray_04, y = Bible_04)) +
+  geom_smooth(method = "lm") + 
+  geom_point(shape = 21, 
+             size = 3,
+             fill ="grey10", 
+             alpha = .3) + 
+  scale_x_continuous(breaks = c(1:8)) + 
+  scale_y_continuous(breaks = c(1:8)) +
+  geom_vline(xintercept = 5, linetype = "dashed") +
+  geom_hline(yintercept = (-0.5040 + 0.7747*(5)), linetype = "dashed") +
+  theme_classic()
+```
+One this to remember: the values are not standardized and are in the original metric of the data. Both variables in this case are on a Likert scale from 1 (Never) to 8 (Several Time Daily) and this is why the points are in such organized array. 
+
+We can get a little more information out of this regression model using the `summary()` function:
+
+```{r}
+lm(Bible_04 ~ Pray_04, data = lab.data) %>% 
+  summary()
+```
+
+This output shows us a few things.
+
+-   Call: this is the code that generated the regression.
+
+-   Residuals: This gives us some information about our residuals (how "off" we are with our predicted values). The statistics shown above tell us about how our residuals are distributed. One of the assumptions of regression is that the residuals are normally distributed. So, if the residuals are normally distributed, we would expect that the the 1Q and 3Q are approximately equidistant from the median, and the same for the min and max. You will learn a lot more about this if you take PSC204B, but for now, just know that this info here is a "at a glance" summary.
+
+-   Coefficients: These are the same coefficients give in the previous output, with a little bit of extra information. We now get a SE, t-value, and p value for each coefficient. In this case, we don't usually care about the p-value for the intercept coefficient, and instead just care about the p value for the variable of interest (more on this in PSC204B). We can interpret the coefficient for Pray_04 as follows: For every one-unit increase in Pray_04, there is a 0.7747 unit increase in Bible_04.
+
+-   Residual standard error: We get a residual SE, which tells us how much variability we have in the residuals. 
+    
+-   Multiple R-squared: We get a multiple R squared, which tells us how much total variability is accounted for by our model (this is usually more important when we have more than one predictor in the model; since we have only one predictor in the model, the Multiple R-squared would just be the same as the R squared for Pray_04). 
+
+- We also get an F-statistic for the overall model (which in this case is significant).
+
+You can also save the summary of regression models as an object and extract specific information from it. For example:
+
+```{r}
+s1 <- lm(Bible_04 ~ Pray_04, data = lab.data) %>% summary()
+
+# We could extract specific parts of this output:
+
+## To extract the estimates (slopes), SE, t value, and p values:
+s1$coefficients # This returns a matrix that can be further subsetted. For example:
+s1$coefficients[2, 1] # This gives the second row, first column (i.e., the slope of Pray_04)
+s1$coefficients["Pray_04", "Estimate"] # You could get the same thing this way
+```
+
+```{r}
+# You could also get the estimates using the coef() function. This is helpful 
+# if you don't want to save the summary as its own object.
+
+coef(s1)
+```
+
+```{r}
+## Other helpful things you can extract:
+s1$r.squared # This returns the model R squared.
+s1$fstatistic # This returns the model F statistic
+```
+
+```{r, eval = F}
+# If you want to see what else you can extract from this summary, 
+# put your cursor on the right side of the $ below and press tab.
+# This will pull up a list of everything that is saved. 
+s1$
+```
+
+## Standardized Beta Weights
+
+Beta Weights are standardized (z-scored) regression coefficients. They typically range from -1 to 1. Beta weights allow us to compare the relative contribution of each predictor in the model, as all the variables are put on the same scale. Regression coefficients are called beta when they are standardized and are called 'b slope' when they are in the original metric of the predictor.
+
+To obtain the beta weight, you need to z-score (standardize) each variable using the scale() function and then use the scaled variables in the regression model:
+
+```{r}
+summary(lm(scale(Bible_04) ~ scale(Pray_04), data = lab.data))
+
+# Remember: Standardizing a variable means making it's mean 0 and variance 1. You can also check this!
+```
+Previously, the b slope for Pray_04 was 0.77. Now, the beta for Pray_04 is 0.56. According to Cohen's Guidelines, this is a moderate correlation.
+
+The way we interpret the standardized beta weight is the same as we previously interpreted the slope. For example, we could say "for every one unit change in Bible_04, there is a 0.56 SD change in Pray_04."
+
+Interesting Fact: For a simple linear regression, the beta weight will always be equal to the Pearson correlation. Compare the estimate to the correlation we calculated at the start of this lab!
+
+> Example Write Up: A simple regression revealed that prayer frequency significantly predicted bible reading frequency ($\beta$ = 0.56, p \< .001). Individuals that prayed more frequently also tended to read the bible more frequently.
+
+If we were to graph the data and their simple regression model for both unstandardized b slope and for the standardized beta weight, we'll get the same output:
+
+```{r, message = F, warning = F}
+g1.original.metric <- 
+  ggplot(data = lab.data,
+       aes(x = Pray_04, y = Bible_04)) +
+  geom_point(size = 3,
+             alpha = .3) +
+  geom_smooth(method = "lm")  + 
+  scale_x_continuous(breaks = c(1:8)) + 
+  scale_y_continuous(breaks = c(1:8)) +
+  labs(title = "Original Metric") +
+  theme_classic()
+
+g2.standardized <-
+  ggplot(data = lab.data,
+       aes(x = scale(Pray_04), y = scale(Bible_04))) +
+  geom_point(size = 3,
+             alpha = .3) +
+  geom_smooth(method = "lm") +
+  labs(title = "Standardized (Z-scored)") +
+  theme_classic()
+
+ggarrange(g1.original.metric, g2.standardized, nrow = 1)
+```
+Note: You typically would not graph the data on the z-score scale. You would z-score the variables for the analysis, but you would usually just graph the original, untransformed data.
+
+# Multiple Regression
+
+Multiple regression is when one continuous dependent variable is predicted by at least two variables. In most cases, at least one of these predictor variables is continuous, but sometimes categorical variables can be used (similar scenario to ANCOVA).
+
+Your hypothesis and research question will dictate what you should present as your final model. Sometimes when you do multiple regression you are interested in one variable and want to control for another variable. Other times you will be interested in several variables, and its not about "controlling" for variables, but instead you want to test which variable is the best predictor. In this case, it would probably be best to present the model with both variables as the final model, regardless of which variable(s) are significant or not.  
+
+## Multiple Regression with Two Variables
+
+Let's say we want to predict how often you read the bible with how often you pray and how often you go to the church. Then we can fit the following linear model:
+
+```{r}
+lm(Bible_04 ~ Pray_04 + HowOftenChurch_04, data = lab.data) %>% summary()
+```
+We can write the equation of the predicted model:
+
+$$ \widehat{Bible04} = -0.63798 + (0.58615 * Pray04) + (0.25953 * HowOftenChurch04)$$
+We would interpret these estimates as such: 
+
+- For each one-unit increase in Pray_04 there is a predicted 0.58615 unit increase in Bible_04 when HowOftenChurch04 is controlled (or kept constant). In this case, the increase is significant at .05 level of significance.
+
+- For each one-unit change in HowOftenChurch_04, there is a predicted 0.25953 unit increase in Bible_04 when Pray_04 is held constant (or 0). This increase is also significant at .05 level of significance.
+
+**Can we say anything about which variable is a better predictor of Bible_04?** The answer is no, at least not with the current output. This is because the variables are not on the same scale. If we wanted to compare the predictors, we would need to standardize everything (i.e., get the beta weights).
+
+```{r}
+# To get standardized beta weights, we put all variables in the scale() function:
+summary(lm(scale(Bible_04) ~ scale(Pray_04) + scale(HowOftenChurch_04), data = lab.data))
+```
+We could make the following conclusions based on this output:
+
+-   Pray_04 is significantly and positively associated with Bible_04 (when HowOftenChurch_04 is controlled).
+
+-   HowOftenChurch_04 is significantly and positively associated with Bible_04 (when Pray_04 is controlled).
+
+-   Pray_04 is a stronger predictor of Bible_04 than HowOftenChurch_04.
+
+Note: When there are two or more predictors in the regression (i.e., you did a multiple regression), the beta weights will not be exactly
+equivalent to Pearson r as in the case of simple regression. You can think of beta-weights as "corrected correlations" between the predictor and the DV, when all other variables in the model are accounted for. Beta-weights are useful for comparing the relative contribution of each variable in the model, and can be interpreted using Cohen's (or other's) guidelines for effect sizes.
+
+Based on the output with the beta weights, we could conclude that, when both independent variables are accounted for, Pray_04 and
+HowOftenChurch_04 are both significantly correlated with Bible_04. We could also conclude that, when both variables are accounted for, Pray_04 is a stronger predictor of Bible_04 than HowOftenChurch_04.
+
+### Comparing models
+Sometimes it is helpful to track how your regressions change when you add predictors.
+
+For example, lets see how the regression model changed between the simple regression with Pray_04 and the multiple regression we just did
+adding HowOftenChurch_04. To do this we will save each regression model as an object so we can call and compare specific model parameters:
+
+```{r}
+m1 <- summary(lm(scale(Bible_04) ~ scale(Pray_04), data = lab.data))
+
+m2 <- summary(lm(scale(Bible_04) ~ scale(Pray_04) + scale(HowOftenChurch_04), data = lab.data))
+```
+
+We can compare the R square:
+
+```{r}
+
+m1$r.squared # Model 1, Simple Regression with Pray_04
+m2$r.squared # Model 2, Multiple Regression adding HowOftenChurch_04
+```
+
+Compared to the original simple regression the R squared increased from 0.32 to 0.39. This indicates that together, Pray_04 and HowOftenChurch_04 account for 39% of the variance in Bible_04. By adding HowOftenChurch_04 to the model, we accounted for an extra 7% of the variance in the Bible_04 variable.
+
+Now, let's compare the beta weight for Pray_04:
+
+```{r}
+# Model 1, Simple Regression with Pray_04
+m1$coefficients["scale(Pray_04)", "Estimate"]
+
+# Model 2, Multiple Regression adding HowOftenChurch_04
+m2$coefficients["scale(Pray_04)", "Estimate"] 
+```
+
+The beta-weight changed from 0.56 to 0.42. This is likely because HowOftenChurch_04 is correlated with Pray_04, and so some of the
+variance that Pray_04 was accounting for in Bible_04 was better accounted for by HowOftenChurch_04 (this is called suppression). The
+more correlated two predictor variables are, the more the beta-weight of the first predictor tends to decrease when the second predictor is added (think of overlapping venn diagrams).
+
+### Visualizing Multiple Regression Models (with two predictors)
+
+With a multiple regression we often just report the results in a table, as it is difficult to graph a correlation with one variable controlling for the other. But, if you really want graphs you have a few options.
+
+One option is to just graph each independent variable against the dependent variable:
+```{r}
+g1 <- ggplot(data = lab.data, aes(x = Pray_04, y = Bible_04)) + 
+  geom_smooth(method = "lm") + 
+  geom_point(shape = 21,
+             size = 3,
+             fill = "grey10", 
+             alpha = .3) +
+  theme_classic()
+
+
+g2 <- ggplot(data = lab.data, 
+       aes(x = HowOftenChurch_04, y = Bible_04)) + 
+  geom_smooth(method = "lm") + 
+  geom_point(shape = 21, 
+             size = 3,
+             fill = "grey10", 
+             alpha = .3) + 
+  theme_classic()
+
+ggarrange(g1, g2, nrow = 1)
+```
+Another method is using the visreg2d() function from the 'visreg' package:
+
+```{r}
+visreg2d(lm(Bible_04 ~ Pray_04 + HowOftenChurch_04, data = lab.data),
+         "Pray_04", 
+         "HowOftenChurch_04", 
+         plot.type = "persp")
+
+## If you have the 'rgl' package installed, you can also make it interactive:
+visreg2d(lm(Bible_04 ~ Pray_04 + HowOftenChurch_04, data = lab.data),
+         "Pray_04", 
+         "HowOftenChurch_04", 
+         plot.type = "rgl")
+```
+Example Write Up (from a "controlling for a second variable" framework):
+
+A multiple regression showed that, with church attendance held constant, there was a significant positive association between prayer frequency and bible reading ($\beta$ = 0.42, p \< .001). Individuals that prayed more frequently also tended to read the bible more frequently. The covariate of church attendance was also significant ($\beta$ = 0.30, p \< .001), with individuals who attended church more frequently also reading the bible more frequently.
+
+Example Write Up (from a "both variables are of interest" framework):
+
+A multiple regression model showed that both prayer frequency ($\beta$ = 0.42, p \< .001) and church attendance ($\beta$ = 0.30, p \< .001) were significantly associated with bible reading. Those who prayed frequently and attended church frequently also read the bible frequently.
+
+Notice the difference between the two write ups:
+
+-   When a variable is controlled for, we often call it a "covariate"
+
+-   In the first write up, the prayer variable is the primary emphasis, and the church variable is not as strongly emphasized (but it is mentioned!)
+
+## Multiple Regression with Three Variables
+
+Lets say, now we want to add SundaySchool_04 (how frequently do participants in the study go to Sunday School) as another predictor of how frequently they study the bible.
+
+```{r}
+m3 <- 
+  summary(lm(scale(Bible_04) ~ 
+               scale(Pray_04) + 
+               scale(HowOftenChurch_04) +
+               scale(SundaySchool_04), 
+             data = lab.data))
+m3
+```
+We can write this as an equation but now with three predictors:
+
+$$ \widehat{Bible04} = 0.0054 + (0.4179 * Pray04) + (0.1133 * HowOftenChurch04) + (0.2861*SundaySchool04)$$
+We notice that SundaySchool_04 is also a significant predictor of Bible_04
+
+```{r}
+# Lets see how this affected R squared:
+
+m1$r.squared # Model 1, Simple Regression with Pray_04
+m2$r.squared # Model 2, Multiple Regression adding HowOftenChurch_04
+m3$r.squared # Model 3, Multiple Regression adding SundaySchool_04
+
+```
+
+In general, the more predictors you add, the more variability you tend to account for. But, adding bad predictors does not usually increase the amount of variability you account for. Note: Each predictor takes up a degree of freedom, so if you include many bad predictors, you increase the likelihood of type II error (i.e., you decrease power).
+
+Lets see how adding Sunday School affected the beta-weight of Pray_04:
+
+```{r}
+# Model 1, Simple Regression with Pray_04
+m1$coefficients["scale(Pray_04)", "Estimate"] 
+
+# Model 2, Multiple Regression adding HowOftenChurch_04
+m2$coefficients["scale(Pray_04)", "Estimate"] 
+
+# Model 3, Multiple Regression adding SundaySchool_04
+m3$coefficients["scale(Pray_04)", "Estimate"] 
+```
+
+It looks like the beta weight of Pray_04 was not affected too much. Now, lets check if adding SundaySchool_04 affected the beta-weight of HowOftenChurch_04?
+
+```{r}
+
+# Model 2, Multiple Regression adding HowOftenChurch_04
+m2$coefficients["scale(HowOftenChurch_04)", "Estimate"] 
+
+# Model 3, Multiple Regression adding SundaySchool_04
+m3$coefficients["scale(HowOftenChurch_04)", "Estimate"] 
+```
+
+Yes, the beta-weight was drastically reduced. This suggests HowOftenChurch_04 and SundaySchool_04 are co-linear, and more co-linear than either of these variables are with Pray_04 (as this beta-weight did not change very much). [you can check this by running the `cor()` function between all these variables and see if they are correlated!]
+
+Example Write Up: A researcher investigated whether Bible reading was predicted by a variety of other religious behaviors, including the frequency of praying, attending church, and attending sunday school. A multiple regression was performed with bible reading as the dependent variable and each religious behavior as independent variables. The overall regression model was significant (F(3, 778 = 206.9), p \< .001, R\^2 = 0.44). Each religious behavior significantly (p \< .05) and positively predicted bible reading ($\beta_{prayer}$ = 0.42; $\beta_{church attendance}$ = 0.11; $\beta_{sunday school attendance}$ = 0.29).
+
+## Regression with Categorical Variables
+
+We will go over this a lot more in PSC204B, but I will give a brief introduction to regression with categorical variables. For variables with only two levels (like sex), we can code one level as 0, and the other variable as 1. This allows us to use this variable in a regression.
+
+```{r}
+# lets recode sex with females = 0 and males = 1.
+lab.data$sex.code <- ifelse(lab.data$sex == "Male", 1, 0)
+```
+
+Now, lets do a regression looking for sex differences in how often they study the bible:
+
+```{r}
+
+summary(lm(Bible_04 ~ sex.code, data = lab.data))
+```
+
+We can interpret this output as such: For every one-unit change in sex (i.e., going from 0 to 1, or from female to male), there is a 1.568 unit decrease in their level of bible reading. In other words, on average, males had 1.568 lower bible reading frequency compared to females. This difference is significant at .05 level of significance.
+
+This looks similar to how we would run a t-test where we compare two groups (male and female) and if they are significantly different in their frequency of reading the bible.
+```{r}
+t.test(Bible_04 ~ sex.code, data = lab.data, var.equal = T)
+```
+
+Notice that we get similar results when we run a t.test: The t-value is exactly the same (although it is positive, based on which group was treated as the first and second group). 
+
+If you subtract the means from each other, you will get the exact same value as the estimate (just a different sign because of group ordering: 5.3215 - 3.7533 = 1.5682
+
