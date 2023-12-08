@@ -22,11 +22,17 @@ get_line_color <- function(lm_model) {
   summary(lm_model)$coefficients[2, 4] < 0.05
 }
 
-data |> 
+long_data <- data |> 
   dplyr::select(Depression_04, Satisfied_04, SelfWorth_04, FearDeath_04) |> 
   tidyr::pivot_longer(cols = -FearDeath_04,
                       names_to = "variable",
-                      values_to = "value") |> 
+                      values_to = "value")
+
+long_data |> 
+  tidyr::nest(data = -variable) |>
+  
+  purrr::map(variable, ~lm(FearDeath_04 ~ value, data = .))
+
   ggplot(aes(x = value, y = FearDeath_04)) +
   geom_point(alpha = 0.5) +
   facet_wrap(~variable) +
