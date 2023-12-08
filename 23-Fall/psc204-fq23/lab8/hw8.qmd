@@ -7,7 +7,6 @@ format:
 editor: visual
 ---
 
-
 ```{r, message = FALSE}
 library(psych)
 library(dplyr)
@@ -41,6 +40,7 @@ summary.aov(ovrhlt_aov)
 ```
 
 ## B
+
 ```{r}
 ovrhlt_aov2 <- aov(Overallhealth_04 ~ SeeDr90Days_04 + school.group , data = lab.data)
 Anova(ovrhlt_aov, type= 2)
@@ -74,6 +74,7 @@ split_list = list(
 summary.aov(aov(Overallhealth_04 ~ SeeDr90Days_04 + school.group , data = lab.data), split = split_list)
 
 ```
+
 # 2
 
 ## A
@@ -81,6 +82,7 @@ summary.aov(aov(Overallhealth_04 ~ SeeDr90Days_04 + school.group , data = lab.da
 ```{r}
 Anova(aov(SeeDr90Days_04~Overallhealth_04 * HeartHealth_04, data = lab.data), type = 2) 
 ```
+
 ## B
 
 ```{r }
@@ -112,4 +114,3 @@ Anova(ovrhlt_aov, type=2)
 ```{r}
 summary(aov(Overallhealth_04 ~ SeeDr90Days_04 +school.group , data = lab.data))
 ```
-
