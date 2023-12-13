@@ -28,15 +28,25 @@ long_data <- data |>
                       names_to = "variable",
                       values_to = "value")
 
-long_data |> 
+long_data_plot <- long_data |> 
   tidyr::nest(data = -variable) |>
-  
-  purrr::map(variable, ~lm(FearDeath_04 ~ value, data = .))
+  dplyr::mutate(
+    fit = purrr::map(data, ~lm(FearDeath_04 ~ value, data=.) |> broom::tidy())
+  ) |> 
+  tidyr::unnest(fit) |> 
+  dplyr::filter(term != "(Intercept)") |> 
+  tidyr::unnest(data)
 
+long_data_plot |>   
   ggplot(aes(x = value, y = FearDeath_04)) +
   geom_point(alpha = 0.5) +
   facet_wrap(~variable) +
-  geom_smooth(method = "lm", fullrange = T, color = "green") +
+  geom_smooth(method = "lm", fullrange = T) +
   labs(x = NULL) +
   xlim(0, 40) +
   theme_bw()
+
+# Q5 ----------------------------------------------------------------------
+
+mod5 <- lm(FearDeath_04 ~ Depression_04 + Satisfied_04 + SelfWorth_04, data = data)
+summary(mod5)$r.squared
