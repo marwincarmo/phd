@@ -7,6 +7,7 @@
 library(dplyr)
 library(readr)
 library(ggplot2)
+library(car)
 
 # Question 1 --------------------------------------------------------------
 
@@ -84,4 +85,43 @@ head(social)
 ## B ----
 
 aov_social <- aov(psa ~ sports + female + sports:female, data = social)
-summary(aov_social)
+Anova(aov_social, type=2)
+
+# Simple effects
+
+# Males
+Anova(aov(psa ~ sports, data = dplyr::filter(social, female == 0)))
+
+# Females
+Anova(aov(psa ~ sports, data = dplyr::filter(social, female == 1)))
+
+# Other activities
+Anova(aov(psa ~ female, data = dplyr::filter(social, sports == 0)))
+
+# Sports
+Anova(aov(psa ~ female, data = dplyr::filter(social, sports == 1)))
+
+## Plot
+
+graph_data <- social |> 
+  dplyr::with_groups(c(female, sports), summarise,
+                     mean = mean(psa, na.rm=TRUE),
+                     sd = sd(psa, na.rm=TRUE),
+                     N = length(psa),
+                     se = sd / sqrt(N)) |> 
+  dplyr::mutate(female = ifelse(female == 0, "Male", "Female"),
+                sports = ifelse(sports == 0, "Other", "Sports"))
+
+ggplot(data = graph_data, 
+       aes(x = female, y = mean, color = sports)) + 
+  geom_point(size=2.5) +
+  #geom_bar(stat="identity", color = "black", position = position_dodge()) + 
+  geom_errorbar(width = .1, size=1,
+                aes(ymin = mean - se, ymax = mean + se),
+                #position = position_dodge(.9)
+                ) + 
+  theme_bw() + 
+  labs(y = "Social Acceptance", 
+       color = "Extracurricular Activities",
+       x = "Biological sex", 
+       title = "Social Acceptance by Extracurricular Activities and Sex")
