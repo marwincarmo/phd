@@ -23,8 +23,9 @@ temp_long <- tempmood |>
 
 ggplot(data = temp_long, aes(x = temp, y = mood, color =participant, fill = participant)) +
   geom_smooth(method = "lm", fullrange = T) +
+  geom_point(alpha=.3)+
   theme_minimal(12) +
-  labs(x = "Temperature", colour = "Participant") +
+  labs(x = "Temperature (F)", y="Mood", colour = "Participant", fill = "Participant") +
   theme(axis.title.y=element_blank(),
         #axis.text.y=element_blank(), 
         axis.ticks.y=element_blank(),
@@ -36,7 +37,14 @@ ggplot(data = temp_long, aes(x = temp, y = mood, color =participant, fill = part
 psych::describe(tempmood)
 
 ## C ----
+crossprod(temp_long$temp)
 
+cp <- function(x, y) {
+  sum((x-mean(x))*(y-mean(y)))
+}
+
+cp(temp_long$temp, temp_long$mood)
+cov(temp_long$temp, temp_long$mood)
 ## D ----
 
 cor.test(temp_long$temp, temp_long$mood)
