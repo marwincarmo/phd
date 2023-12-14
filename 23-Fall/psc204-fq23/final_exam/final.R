@@ -21,8 +21,8 @@ temp_long <- tempmood |>
                       names_to = "participant",
                       values_to = "mood") 
 
-ggplot(data = temp_long, aes(x = temp, y = mood, color = participant)) +
-  geom_line(linewidth = 0.8) +
+ggplot(data = temp_long, aes(x = temp, y = mood, color =participant, fill = participant)) +
+  geom_smooth(method = "lm", fullrange = T) +
   theme_minimal(12) +
   labs(x = "Temperature", colour = "Participant") +
   theme(axis.title.y=element_blank(),
