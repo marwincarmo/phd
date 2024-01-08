@@ -1,0 +1,74 @@
+---
+title: "PSC 103B - Lab 1 Assignment"
+author: "WRITE YOUR NAME HERE"
+date: "insert date here"
+format: pdf
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Instructions
+
+Please use R/RStudio to complete the following questions. You will submit your filled-out version of this document as a PDF on Canvas. Make sure your PDF looks as expected before submitting. Please include the code you used to generate your answer for each question (when relevant) as well as the final answer and/or relevant output. It’s a good idea to organize your R code in the R script and save it, so if you need to modify or recalculate one of the questions, that’s easy to do (see the R script provided for tips on how to organize your code). If you copy and paste code or output into this document (screenshots are also acceptable), please format the code using a fixed-width font (e.g., Courier) so it’s easier to read.
+
+You may consult with your classmates while working on the assignment, but you must do all the work yourself – everything you turn in must be your own code and words. Academic dishonesty will not be tolerated.
+
+Please submit a pdf version of this document with your answers on Canvas by 2:00pm on Friday, January 20th (before lab).
+
+------------------------------------------------------------------------
+
+# Question 1
+
+| Video Game (hours) | Aggression Score | Visuospatial Cognition |
+|:------------------:|:----------------:|:----------------------:|
+|         4          |        58        |           79           |
+|         3          |        52        |           20           |
+|         7          |        63        |           82           |
+|         6          |        54        |           81           |
+|         3          |        59        |           79           |
+|         6          |        55        |           79           |
+|         6          |        61        |           81           |
+|         7          |        58        |           83           |
+|         6          |        60        |           80           |
+|         5          |        67        |           83           |
+
+Enter the dataset into R, so that you have a dataframe object with the variables “VideoGames”, “Aggression”, and “Cognition”. Show your code. (1 pt)
+
+```{r}
+df <- data.frame("VideoGames" = c(4, 3, 7, 6, 3, 6, 6, 7, 6, 5),
+"Aggression" = c(58, 52, 63, 54, 59, 55, 61, 58, 60, 67),
+"Cognition" = c(79, 20, 82, 81, 79, 79, 81, 83, 80, 83))
+
+```
+
+# Question 2
+
+Find the mean and standard deviation of each variable. Show your code. (2 pts)
+
+```{r}
+lapply(df, mean)
+lapply(df, sd)
+
+```
+
+# Question 3
+
+What do you think is the most appropriate measure of central tendency for the variable “Cognition”? Why? (1 pt)
+
+
+Plot VideoGames and Aggression as a scatterplot where the hours of each participant spending on VideoGames display on x-axis and their Aggression scores displays on y-axis. Make sure your axes are appropriately labeled and include a title (put whatever you think make sense).  Show your code. (1 pt)
+
+```{r}
+
+
+plot(x = df$VideoGames, y = df$Aggression,
+     xlab = "Hours Spent Playing Video Games",
+     ylab = "Aggression Score",
+     main = "Relation Between Time Spent Playing \nVideo Games and Aggression")
+
+```
+
+
+
