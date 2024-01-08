@@ -1,8 +1,9 @@
 ---
-title: "Week 1 - R and stats recap"
+title: "Week 1 - R and Stats recap"
 author: "Marwin Carmo"
 format: 
   revealjs:
+    scrollable: true
     #chalkboard: true
     incremental: true
     code-tools: true
@@ -129,7 +130,6 @@ Parentheseis, exponents, multiplication, division, addition, subraction from lef
 -   Think of an object as a label for a piece of information
 -   We can save information as variables by using the assignment operator: `<-` or `=`
 -   General pattern:
-    -   `a <- 2 + 2`
 
 ::: fragment
 ```{r, echo = T}
@@ -209,7 +209,8 @@ Character data types must be surrounded by quotation marks
 ```{r, echo = T}
 "student"
 
-"myFirstCharacter"
+myFirstCharacter <- "myFirstCharacter"
+myFirstCharacter
 ```
 
 - What happens if you don't surround a character data type with quotation marks?
@@ -221,7 +222,7 @@ student
 ```
 :::
 
-- Without quotation marks, R thinks this is a object label.
+- Without quotation marks, R thinks this is an object label.
 
 ## Logical
 
@@ -254,6 +255,13 @@ c(1, 2, 3, 4)
 ```
 :::
 
+::: fragment
+```{r, echo = T, eval=FALSE}
+(1, 2, 3, 4)
+# Error: unexpected ',' in "(1,"
+```
+:::
+
 ## Vectors
 
 - We can save these pieces of information to an object
@@ -282,7 +290,7 @@ class(first_vector)
 
 ## Vectors
 
-- We saved four pieces of information (for numbers) to the vector
+- We saved four pieces of information (four numbers) to the vector
 
 - We can check the number of elements in a vector with the `lenght()` function
 
@@ -318,10 +326,9 @@ class(second_vector)
 
 - To pull out one element from a vector that has multiple elements, we need to subset the vector
 
-  - Square brackets `[]`
-  - `subset()`
+- Use square brackets `[]` after the label name with the element number we would like to recover inside the brackets
 
-- Use `[]` after the label name with the element number we would like to recover inside the brackets
+- `myvector[1]`
 
 ## Subsetting vectors
 
@@ -338,6 +345,7 @@ second_vector[3]
 ::: fragment
 ```{r, echo = T}
 third_element <- second_vector[3]
+third_element
 ```
 :::
 
@@ -365,7 +373,7 @@ second_vector[c(2, 3, 4)]
 
 ## Functions in R
 
-- What if first_vector had 100 numbers not 4? 
+- What if `first_vector` had 100 numbers not 4? 
 
 - Or what if you had 100 vectors and wanted to calculate the means of each one
 
@@ -681,3 +689,287 @@ median(netflix, na.rm = TRUE)
 :::
 
 ## Central tendency: Mean, Median, and Mode
+
+- Sometimes, we can't do arithmetic on the data we have
+
+- If we had asked our 15 participants what their favorite flavor of ice cream was, we would not be able to describe that distribution using a mean or a median. We would have to use the **mode**
+
+- The mode is just the most frequent value
+
+## Central tendency: Mean, Median, and Mode
+
+- R doesn't have a function for because it is not very frequently used, so we use the `table()` function
+
+- `table()` gives you the number of times each element shows up in an object
+
+::: fragment
+```{r, echo = T}
+table(netflix)
+```
+:::
+
+- You can use the `sort()` function on the result of the table function to order it
+
+::: fragment
+```{r, echo = T}
+sort(table(exercise))
+```
+:::
+
+## Spread: Variance and Standard Deviation
+
+- Do all the students exercise about the same? Or do some students exercise a lot while others don't?
+
+- How are the observations spread out around the mean or median?
+
+- We're gonna look at two different kinds that are related: **Variance** and **standard deviation**
+
+## Spread: Variance
+
+1. Calculate the mean
+
+::: fragment
+```{r, echo = T}
+mean(exercise, na.rm = TRUE)
+```
+:::
+
+2. Find the distance from each observation to the mean
+
+::: fragment
+```{r, echo = T}
+exercise - mean(exercise, na.rm = TRUE)
+```
+:::
+
+- Let's save that!
+
+::: fragment
+```{r, echo = T}
+diffs <- exercise - mean(exercise, na.rm = TRUE)
+```
+:::
+
+## Spread: Variance
+
+3. Square the differences
+
+::: fragment
+```{r, echo = T}
+diffs_sq <- diffs^2
+```
+:::
+
+4. Sum everything and divide by N-1 
+
+::: fragment
+```{r, echo = T}
+sum(diffs_sq)/(length(exercise) - 1)
+```
+:::
+
+- We can check our answers using `var()`
+
+::: fragment
+```{r, echo = T}
+var(exercise, na.rm = TRUE)
+```
+:::
+
+## Spread: Standard deviation
+
+- To get the **standard deviation**, we just get the square root of the variance:
+
+::: fragment
+```{r, echo = T}
+ex_var <- var(exercise, na.rm = TRUE)
+sqrt(ex_var)
+```
+:::
+
+- Or, R has a `sd()` function:
+
+::: fragment
+```{r, echo = T}
+sd(exercise, na.rm = TRUE)
+```
+:::
+
+- We often prefer to use the standard deviation, because its units are the same units of our variable
+
+## Relationships between variables: correlation and covariance
+
+- In our imaginary example, each person gave us two bits of information, exercise and netflix hours
+
+- Let's organize our data into a dataframe to better keep track of it:
+
+::: fragment
+```{r, echo = T}
+df <- data.frame(Netflix = netflix, 
+                 Exercise = exercise, 
+                 stringsAsFactors = FALSE) 
+df
+```
+:::
+
+---
+
+If you are in RStudio, you can look at df by clicking on it, using `View()`, typing it in the console or using functions like `head()` and `tail()`. Can you tell what those do?
+
+::: columns
+::: {.column width="50%"}
+::: fragment
+```{r, echo = T}
+head(df)
+```
+:::
+:::
+
+::: {.column width="50%"}
+::: fragment
+```{r, echo = T}
+tail(df)
+```
+:::
+:::
+:::
+
+---
+
+It's also a good idea to plot your data
+
+- This helps you get a general idea for what your data looks like, and to see if there is anything weird going on
+
+- To make a scatterplot, we can use `plot()` function in R
+
+::: fragment
+```{r, echo = T}
+plot(x = df$Netflix, y = df$Exercise)
+```
+:::
+
+---
+
+We can make our plot look prettier changing the axis labels, and even giving our plot a title
+
+```{r, echo = T}
+plot(df$Netflix, df$Exercise, xlab = "Hours Spent Watching Netflix", #changes the x-axis label
+     ylab = "Hours Spent Exercising", # changes the y-axis label
+     main = "Plot of Time Spent Watching Netflix vs. Exercising over Break") # gives your plot a title
+```
+
+## Covariance
+
+- What if we wanted to quantify this relation? We can use the covariance and correlation!
+
+- The **covariance** between two variables is a measure of how the two variables change together
+
+- It only makes sense if there's some connection between the two variables
+
+- It resembles the variance, but instead of squared differences from the mean, we multiply these differences from the mean by each other
+
+## Covariance
+
+1. Get the differences from the mean for each variable:
+
+::: fragment
+```{r, echo = T}
+diff_nfx <- df$Netflix - mean(df$Netflix, na.rm = TRUE)
+diff_ex <- df$Exercise - mean(df$Exercise, na.rm = TRUE)
+# you can check this is right -- the differences will sum to 0 (or very close to it)
+sum(diff_ex)
+```
+:::
+
+2. Multiply them by each other
+
+::: fragment
+```{r, echo = T}
+mult_diffs <- diff_nfx * diff_ex
+```
+:::
+
+## Covariance
+
+3. Sum all these multiplied differences
+
+::: fragment
+```{r, echo = T}
+sum_diffs <- sum(mult_diffs, na.rm = TRUE)
+```
+:::
+
+4. Divide by N - 1
+
+::: fragment
+```{r, echo = T}
+cov_NetEx <- sum_diffs/14
+cov_NetEx
+```
+:::
+
+- We see that the covariance is **negative**, indicating that the Netflix and Exercise variables are **inversely related** to each other
+
+## Covariance
+
+- You can verify this yourself by using the cov() function
+
+::: fragment
+```{r, echo = T}
+cov_NetEx_2 <- cov(df$Netflix, df$Exercise, use = "complete.obs")
+cov_NetEx_2
+```
+:::
+
+-  For `cov()`, the `use = "complete.obs"` argument acts similarly to `na.rm = TRUE`: it will only use data from people who gave an answer to both Netflix and exercise
+
+## Correlation
+
+- We don't know how strong is this association because covariances have **arbitrary** scales based on the scales of the original variables
+
+-  We don't know how big they could get so we don't know if this value is large or small
+
+- **Correlations** can only range between **-1** and **1**, so they're easier to interpret
+
+## Correlation
+
+- We'll standardize the covariance to get a correlation
+
+- Standardizing in this case means dividing by the variables' standard deviations:
+
+::: fragment
+```{r, echo = T}
+sd_N <- sd(df$Netflix, na.rm = TRUE)
+sd_E <- sd(df$Exercise, na.rm = TRUE)
+```
+:::
+
+- We divide the covariance by the product of the variances to get a correlation:
+
+::: fragment
+```{r, echo = T}
+cov_NetEx/(sd_N*sd_E)
+```
+:::
+
+- And we can check this using the cor() function:
+
+::: fragment
+```{r, echo = T}
+cor(df$Netflix, df$Exercise, use = "complete.obs")
+```
+:::
+
+---
+
+```{r, echo = T}
+cor(df$Netflix, df$Exercise, use = "complete.obs")
+```
+
+Since the correlation ranges between -1 and 1, we can say something about the strength of this relation
+
+- Based on some rules of thumb we can say there is a weak negative relation between watching Netflix and exercise
+
+- What is considered strong vs. weak can **depend on the area of research** you're in
+
+- Next week: statistical test to see whether this correlation is significantly different from 0 or not!
