@@ -583,7 +583,7 @@ dat <- 	data.frame(
 
 ## Subsetting Two-Dimensional Objects
 
-- If I want to subset the element in from 3 and column 2
+- If I want to subset the element in row 3 and column 2
 
 ::: fragment
 ```{r, echo = T}
