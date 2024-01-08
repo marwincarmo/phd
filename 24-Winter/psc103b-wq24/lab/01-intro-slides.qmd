@@ -1,5 +1,5 @@
 ---
-title: "Week 1 - R recap & Quarto"
+title: "Week 1 - R and stats recap"
 author: "Marwin Carmo"
 format: 
   revealjs:
@@ -24,20 +24,20 @@ format:
     # height: 900
     footer: "PSC 103B - Statistical Analysis of Psychological Data"
     logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
-editor: visual
+editor: source
 editor_options: 
   chunk_output_type: console
 ---
 
 ## Who am I
 
-- 1st Year Graduate Student in Quantitative Psychology
+-   1st Year Graduate Student in Quantitative Psychology
 
-- MSc in Psychiatry at University of Sao Paulo, Brazil
+-   MSc in Psychiatry at University of Sao Paulo, Brazil
 
-- Advised by Dr. Philippe Rast
+-   Advised by Dr. Philippe Rast
 
-- Studying intraindividual variability
+-   Studying intraindividual variability
 
 ## More info
 
@@ -49,14 +49,13 @@ editor_options:
 
 ### Common mathematic operations in R:
 
-- `+` :      addition
-- `-` :      subtraction
-- `/` :      division
-- `*` :      multiplication
-- `^` :      exponent
-- `sqrt()` : square root
-- `exp()` :  exponential function
-
+-   `+` : addition
+-   `-` : subtraction
+-   `/` : division
+-   `*` : multiplication
+-   `^` : exponent
+-   `sqrt()` : square root
+-   `exp()` : exponential function
 
 ## R as a calculator
 
@@ -76,9 +75,9 @@ sqrt(16)
 
 ## R as a calculator
 
-- To run a line of code just use CTRL + ENTER (that's COMMAND + ENTER if you're on a Mac)
+-   To run a line of code just use CTRL + ENTER (that's COMMAND + ENTER if you're on a Mac)
 
-- How would I ask R to divide 10 by 2? 
+-   How would I ask R to divide 10 by 2?
 
 ::: fragment
 ```{r, echo = T}
@@ -86,7 +85,7 @@ sqrt(16)
 ```
 :::
 
-- How would I ask R to calculate 5 to the 4th power? 
+-   How would I ask R to calculate 5 to the 4th power?
 
 ::: fragment
 ```{r, echo = T}
@@ -114,8 +113,8 @@ Parentheseis, exponents, multiplication, division, addition, subraction from lef
 
 ## Commenting
 
-- Anything that you type after the "#" will be disregarded by R
-- You can make notes to yourself and it will not interfere with your code
+-   Anything that you type after the "\#" will be disregarded by R
+-   You can make notes to yourself and it will not interfere with your code
 
 ::: fragment
 ```{r, echo = T}
@@ -126,11 +125,11 @@ Parentheseis, exponents, multiplication, division, addition, subraction from lef
 
 ## Creating Objects
 
-- We use objects to store any kind of information in R
-- Think of an object as a label for a piece of information
-- We can save information as variables by using the assignment operator: `<-` or `=`
-- General pattern:
-  - `a <- 2 + 2`
+-   We use objects to store any kind of information in R
+-   Think of an object as a label for a piece of information
+-   We can save information as variables by using the assignment operator: `<-` or `=`
+-   General pattern:
+    -   `a <- 2 + 2`
 
 ::: fragment
 ```{r, echo = T}
@@ -138,7 +137,7 @@ a <- 2 + 2
 ```
 :::
 
-- Now we can access this piece of information by 'calling' `a`
+-   Now we can access this piece of information by 'calling' `a`
 
 ::: fragment
 ```{r, echo = T}
@@ -148,7 +147,7 @@ a
 
 ## Creating Objects
 
-- R is case sensitive 
+-   R is case sensitive
 
 ::: fragment
 ```{r, echo = T, eval=FALSE}
@@ -157,7 +156,7 @@ A
 ```
 :::
 
-- Objects can be overwritten
+-   Objects can be overwritten
 
 ::: fragment
 ```{r, echo = T}
@@ -168,8 +167,7 @@ a
 
 ## Labeling conventions
 
-:::: {.columns}
-
+::: columns
 ::: {.column width="50%"}
 Bad
 
@@ -191,17 +189,495 @@ Better
 
 `aObject <- 3`
 :::
+:::
 
-::::
+# Data Types
 
-## Data Types
-
-### Numeric
+## Numeric
 
 ```{r, echo = T}
+class(18.9)
 my_number <- 13
-class(18)
 class(my_number)
 is.numeric(my_number)
 ```
 
+## Character
+
+Character data types must be surrounded by quotation marks
+
+```{r, echo = T}
+"student"
+
+"myFirstCharacter"
+```
+
+- What happens if you don't surround a character data type with quotation marks?
+
+::: fragment
+```{r, echo = T, eval=FALSE}
+student
+# Error: object 'student' not found
+```
+:::
+
+- Without quotation marks, R thinks this is a object label.
+
+## Logical
+
+- There are only two options `TRUE` and `FALSE`
+
+- They must be in all caps
+
+::: fragment
+```{r, echo = T}
+true <- FALSE
+true == TRUE
+```
+:::
+
+- You could also abbreviate `TRUE` to `T` and `FALSE` to `F` (not recommended)
+
+## Vectors
+
+- Vectors allow saving multiple pieces of information to an object
+
+- The individual values within a vector are called "elements"
+
+- To do this we can use the `c()` function
+
+- This function combines different pieces of information together
+
+::: fragment
+```{r, echo = T}
+c(1, 2, 3, 4)
+```
+:::
+
+## Vectors
+
+- We can save these pieces of information to an object
+
+::: fragment
+```{r, echo = T}
+first_vector <- c(1, 2, 3, 4)
+```
+:::
+
+- We can look at this object by calling it through the object label
+
+::: fragment
+```{r, echo = T}
+first_vector
+```
+:::
+
+- Can you guess the class of `first_vector`?
+
+::: fragment
+```{r, echo = T}
+class(first_vector)
+```
+:::
+
+## Vectors
+
+- We saved four pieces of information (for numbers) to the vector
+
+- We can check the number of elements in a vector with the `lenght()` function
+
+::: fragment
+```{r, echo = T}
+length(first_vector)
+```
+:::
+
+- A vector is a **one-dimensional** collection of information 
+
+- All the elements must be the **same type**
+
+::: fragment
+```{r, echo = T}
+second_vector <- c(1, 2, 3, "four")
+```
+:::
+
+::: fragment
+```{r, echo = T}
+second_vector
+```
+:::
+
+::: fragment
+```{r, echo = T}
+class(second_vector)
+```
+:::
+
+## Subsetting vectors
+
+- To pull out one element from a vector that has multiple elements, we need to subset the vector
+
+  - Square brackets `[]`
+  - `subset()`
+
+- Use `[]` after the label name with the element number we would like to recover inside the brackets
+
+## Subsetting vectors
+
+- What if I want to pull out the third element from a vector? 
+
+::: fragment
+```{r, echo = T}
+second_vector[3]
+```
+:::
+
+- We can save this as a new object
+
+::: fragment
+```{r, echo = T}
+third_element <- second_vector[3]
+```
+:::
+
+- We can also pull out multiple elements at once
+
+::: fragment
+```{r, echo = T}
+second_vector[c(2, 3, 4)]
+```
+:::
+
+## Functions in R
+
+- Functions are pre-written pieces of code that accomplish some task
+
+- Rather than writing out the code to do this task, we can call a function by its label and it will complete that task
+
+- Let's say I wanted to calculate the mean (or average) of our numeric vector 
+
+::: fragment
+```{r, echo = T}
+(1 + 2 + 3 + 4) / 4 
+```
+:::
+
+## Functions in R
+
+- What if first_vector had 100 numbers not 4? 
+
+- Or what if you had 100 vectors and wanted to calculate the means of each one
+
+- We could use the `sum()` function and the `length()` function 
+  - `sum()` will add up all the numbers in a vector
+  - `length()` tells you how many elements are in a vector
+
+::: fragment
+```{r, echo = T}
+sum(first_vector)/length(first_vector)
+```
+:::
+
+- Or we could use the `mean()` function 
+
+::: fragment
+```{r, echo = T}
+mean(first_vector)
+```
+:::
+
+## Functions in R
+
+### Arguments
+
+- Arguments are the information we give the function so it can carry out its task
+
+- A function can have multiple arguments
+
+- `functionLabel(argument1, argument2, argument3)` 
+
+- For the `mean()` function, the first argument was the data or the number we wanted the mean of
+
+## Functions in R
+
+- `round()` will round whatever number you give in the first argument
+
+::: fragment
+```{r, echo = T}
+round(3.666)
+```
+:::
+
+- What if I want it to round the number to the second decimal point?
+
+- We can add another argument
+
+::: fragment
+```{r, echo = T}
+round(3.666, 2) 
+# The second argument tells it how many decimal points to round to
+```
+:::
+
+## Functions in R
+
+- Each argument has a label
+
+- Sometimes we don't use them for convenience, but it is helpful specially if you're dealing with a function with many arguments
+
+::: fragment
+```{r, echo = T}
+round(x = 3.666, digits = 2)
+```
+:::
+
+- If you use labels, the order of the arguments don't matter
+
+::: fragment
+```{r, echo = T}
+round(digits = 2, x = 3.666)
+```
+:::
+
+## Functions in R
+
+- What happens if we write the digits argument first without the labels?
+
+::: fragment
+```{r, echo = T}
+round(2, 3.666)
+```
+:::
+
+- When you don't use labels, the order **really** matters
+
+- To learn more about a pre-built function and its arguments, type `?function_name()` in the console (e.g., `?round()`) to find the help page of that function
+
+- Or you can press tab once your cursor is within the function parenthesis
+
+## Functions in R
+
+-  Another useful function is `class()`
+
+- The class function will tell you what kind of data type
+
+::: fragment
+```{r, echo = T}
+class(first_vector)
+class(second_vector)
+```
+:::
+
+# Data Structures
+
+## Types of data structure
+
+1- Vector
+
+2- Matrix
+
+3- Array
+
+4- Data frame
+
+5- List
+
+## Matrix
+
+- Two-dimensional dataset (has columns and rows) of **one data type**
+
+- `matrix(data, nrow, ncol, byrow)`
+
+::: fragment
+```{r, echo = T}
+m <- matrix(data = c(1:6), # The matrix will contain elements 1, 2, 3, 4, 5, 6
+            nrow = 2, # this matrix will have two rows
+            ncol = 3, # this matrix will have three columns
+            byrow = TRUE) # we fill the elements by the row
+m
+```
+:::
+
+- What happens if you change `byrow = FALSE` ?
+
+## Matrix
+
+- `dim()` tells you the dimension of a matrix
+
+- First element is number of rows, second element is number of columns
+
+::: fragment
+```{r, echo = T}
+dim(m)
+```
+:::
+
+## Matrix
+
+- We can also create a matrix by combining vectors
+
+::: fragment
+```{r, echo = T}
+vec1 <- 1:5
+vec2 <- 6:10
+```
+:::
+
+- We can use the `cbind()` function to make each vector their own column in a matrix
+
+::: fragment
+```{r, echo = T}
+col_matrix <- cbind(vec1, vec2)
+col_matrix
+```
+:::
+
+## Matrix
+
+- Or we can use the `rbind()` function to make each vector their own row in a matrix
+
+::: fragment
+```{r, echo = T}
+row_matrix <- rbind(vec1, vec2)
+row_matrix
+```
+:::
+
+## Data frames
+
+- Allow you to have **multiple** data types
+
+- We can use the `data.frame()` function to create a data frame
+
+- Each argument is a different column
+
+- We can also add labels to each column
+
+::: fragment
+```{r, echo = T}
+dat <- 	data.frame(
+  schoolyear = c("Freshman", "Sophomore","Freshman"), 
+  height = c(152, 171.5, 165), 
+  weight = c(81,93, 78),
+  age = c(18,20,19)
+)
+```
+:::
+
+## Subsetting Two-Dimensional Objects
+
+- We've used square brackets `[]` to subset vectors 
+
+- We can use square brackets `[]` to subset two-dimensional objects like a matrix or data frame
+
+- `twoDimObject[row#, column#]`
+
+## Subsetting Two-Dimensional Objects
+
+- If I want to subset the element in from 3 and column 2
+
+::: fragment
+```{r, echo = T}
+dat[3, 2]
+```
+:::
+
+- If I want to subset the entire 3rd column
+
+::: fragment
+```{r, echo = T}
+dat[, 3]
+```
+:::
+
+## Subsetting Two-Dimensional Objects
+
+- I could also subset by column name
+
+::: fragment
+```{r, echo = T}
+dat[, "weight"] # this subsets all the rows from the weight column
+
+dat[1, "weight"] # this subsets the first row from the weight column
+```
+:::
+
+- If we just want to subset a column we can use the `$` operator: `twoDimObject$ColumnName`
+
+::: fragment
+```{r, echo = T}
+dat$schoolyear
+```
+:::
+
+# Review of Statistical Concepts
+
+## Central tendency: Mean, Median, and Mode
+
+- These are the 3 **most common** measures of central tendency
+
+- They are used to **describe a distribution of observations** (e.g., all the grades on an exam) in one number that best represents that distribution
+
+- Suppose we asked a bunch of UC Davis students how many hours per week they spent watching Netflix, and how many hours they spent exercising during Winter break:
+
+::: fragment
+```{r, echo = T}
+netflix <- c(2, 6, 1, 7, 2, 4, 11, 40, 7, 0, 3, 4, 5, 2, 15)
+exercise <- c(2, 2, 6, 2, 12, 45, 8, 3, 2, 6, 4, 0, 1, 3, 0)
+```
+:::
+
+## Central tendency: Mean, Median, and Mode
+
+- How many observations are in each variable?
+
+::: fragment
+```{r, echo = T}
+length(netflix)
+length(exercise)
+```
+:::
+
+- Let's take a look at the average time each student spent on these activities:
+
+::: fragment
+```{r, echo = T}
+mean(netflix, na.rm = TRUE) # use the argument na.rm = TRUE to ignore missing values 
+mean(exercise, na.rm = TRUE)
+```
+:::
+
+- Unsurprisingly, students exercised less than they watched netflix, on average.
+
+## Central tendency: Mean, Median, and Mode
+
+- But is the mean a good representation of these data?
+
+- Take a look again at the values and see if you find something odd
+
+::: fragment
+```{r, echo = T}
+netflix
+exercise
+```
+:::
+
+- One person is watching Netflix 40h a week
+
+- Another exercised 45h per week
+
+## Central tendency: Mean, Median, and Mode
+
+- When we have **outliers**, sometimes the **median** is a better representation of  the data
+
+- Remember, the median is the **middle value** of your data, after you have ordered it 
+
+::: fragment
+```{r, echo = T}
+median(exercise, na.rm = TRUE)
+median(netflix, na.rm = TRUE)
+```
+:::
+
+## Central tendency: Mean, Median, and Mode
