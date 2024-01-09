@@ -46,19 +46,17 @@ editor_options:
 
 - Assignments are released after Lab and are due before next lab session
 
-- The instructor/TA will post an answer key to the course website on the due date
+- The instructor/TA will post an answer key to the course website on the due date. For this reason, **late homework will not be accepted**
 
-- For this reason, **late homework will not be accepted**
+- Use the homework template to write your answers and submit a **pdf** version on Canvas. Paste your code when required
 
-- Use the homework template to write your answers and submit a **pdf** version on Canvas
+- Office hours on Thursday 3-5PM at Young Hall 266
 
-- Paste your code when required
+- Questions via email at mmcarmo@ucdavis.edu
 
 ## Credits
 
-The materials used in the lab and the homework rely heavily on the work done by previous TAs Paprika Jiang and Simran Johal
-
-- 
+The lab and homework materials heavily rely on the work of previous 103B TAs, Paprika Jiang and Simran Johal.
 
 # R Basics
 
