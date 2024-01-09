@@ -40,11 +40,31 @@ editor_options:
 
 -   Studying intraindividual variability
 
-## More info
+## Lab and homework dynamics
+
+- All analyses will use the R computing language
+
+- Assignments are released after Lab and are due before next lab session
+
+- The instructor/TA will post an answer key to the course website on the due date
+
+- For this reason, **late homework will not be accepted**
+
+- Use the homework template to write your answers and submit a **pdf** version on Canvas
+
+- Paste your code when required
+
+## Credits
+
+The materials used in the lab and the homework rely heavily on the work done by previous TAs Paprika Jiang and Simran Johal
+
+- 
 
 # R Basics
 
 ## The RStudio environment
+
+![Source: YaRrr! The Pirate’s Guide to R](img/r_console.png)
 
 ## R as a calculator
 
