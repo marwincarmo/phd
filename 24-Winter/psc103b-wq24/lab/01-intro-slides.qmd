@@ -52,7 +52,7 @@ editor_options:
 
 - Office hours on Thursday 3-5PM at Young Hall 266
 
-- Questions via email at mmcarmo@ucdavis.edu
+- Questions via email at [mmcarmo@ucdavis.edu](mailto:mmcarmo@ucdavis.edu)
 
 ## Credits
 
@@ -78,7 +78,7 @@ The lab and homework materials heavily rely on the work of previous 103B TAs, Pa
 
 ## R as a calculator
 
-::: fragment
+
 ```{r, echo = T}
 2 + 2
 
@@ -90,7 +90,7 @@ The lab and homework materials heavily rely on the work of previous 103B TAs, Pa
 
 sqrt(16)
 ```
-:::
+
 
 ## R as a calculator
 
