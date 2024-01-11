@@ -1,0 +1,32 @@
+---
+title: "Lab 2: Testing correlations"
+subtitle: "PSC 103B - Winter 2024"
+format: pdf
+---
+
+## Read in Data
+
+For today's class, we're going to use a fake dataset that I created looking at the relation between temperature (in Fahrenheit), ice cream sales, and pool accidents .
+
+```{r}
+#| echo: true
+icecream <- read.csv("data/IceCreamSales.csv")
+```
+
+
+## Running Cod 
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this 
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
