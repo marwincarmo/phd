@@ -48,13 +48,13 @@ lapply(df, sd)
 
 What do you think is the most appropriate measure of central tendency for the variable "Cognition"? Why? (1 pt)
 
-`Median, due to presence of an outlier value (20)`
+[Median, due to presence of an outlier value (20).]{color=#b22222}
 
 # Question 4
 
 How are variance and standard deviation related? Why might we prefer to use the standard deviation? (1 pt)
 
-`Standard deviation is the square root of variance. We might prefer to use standard deviation because its units match the units of our variable, making it easier to interpret (variance has units that are the squared units of our variable)`
+[Standard deviation is the square root of variance. We might prefer to use standard deviation because its units match the units of our variable, making it easier to interpret (variance has units that are the squared units of our variable).]{color=#b22222}
 
 # Question 5
 
@@ -77,10 +77,15 @@ Calculate the covariance between `VideoGames` and `Aggression`. What does this t
 cov(df$VideoGames, df$Aggression)
 ```
 
-`This covariance tells us that there is a positive relation between amount of time spent playing video games and aggression scores – the more time people spent playing video games, the higher their aggression score was.  We cannot use the covariance to tell us anything about the strength of this relation because the scale of the covariance is arbitrary, and depends on the scale of our variables.`
+[This covariance tells us that there is a positive relation between amount of time spent playing video games and aggression scores – the more time people spent playing video games, the higher their aggression score was.  We cannot use the covariance to tell us anything about the strength of this relation because the scale of the covariance is arbitrary, and depends on the scale of our variables.]{color=#b22222}
 
 # Question 7
 
-Test [red]{color="green"}
+Calculate the correlation between VideoGames and Aggression. What does this correlation tell you about their relation (i.e., direction and strength)? Show your code. (2 pt)
 
-[test]{color=#b22222}
+```{r}
+cor(df$VideoGames, df$Aggression)
+```
+
+
+[The correlation is 0.27. This tells us that there is a positive, medium linear relation between the 2 variables.]{color=#b22222}
