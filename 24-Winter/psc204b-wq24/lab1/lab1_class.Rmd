@@ -1,0 +1,53 @@
+---
+title: "Untitled"
+output: pdf_document
+date: "2024-01-12"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## Packages
+
+```{r}
+library(dplyr)
+# Data handling
+library(foreign)
+# Reading in SPSS data
+library(ggplot2)
+# Graphing
+library(ggpubr)
+# Graphing (arranging plots)
+library(psych)
+# For correlation test
+library(DescTools)
+# Summary statistics
+library(kableExtra) # Table outputs for Markdown
+```
+
+## Load in data
+
+```{r}
+phobia <- foreign::read.spss("phobiasocial.sav", to.data.frame = TRUE)
+```
+
+## Linear regression
+
+```{r}
+# Step 1: Save the linear model as an object
+model1 <- lm(SPAI_SP ~ FNE, data = phobia)
+# Step 2: Ask for a summary
+summary(model1)
+```
+
+```{r}
+model2 <- lm(SPAI_SP ~ SAD, data = phobia)
+summary(model2)
+```
+
+```{r}
+# Estimated SPAI_SP for a SAD score of 10
+43.68 + 4.33*10
+```
+
