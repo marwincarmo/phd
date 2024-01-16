@@ -18,6 +18,7 @@ For today's class, we're going to use a fake dataset looking at the relation bet
 ```{r}
 #| echo: true
 icecream <- read.csv("https://raw.githubusercontent.com/marwincarmo/phd/main/24-Winter/psc103b-wq24/lab/data/IceCreamSales.csv")
+icecream
 ```
 
 # Covariance and Correlation Review
