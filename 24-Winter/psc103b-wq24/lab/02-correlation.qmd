@@ -67,6 +67,8 @@ First, let's plot our data -- we want to make sure that using the correlation to
 
 ```{r , fig.height=4, fig.width=6}
 #| label: fig-temp-sales
+#| fig-cap: "Scatterplot of Ice cream sales and temperature."
+
 plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", ylab = "Ice cream Sales")
 ```
 
@@ -109,13 +111,13 @@ of the standard error of the correlation
 Let's calculate that separately since it's a bit long
 
 ```{r}
-cor_se = sqrt((1 - cor_estimate^2) / (sample_size - 2))
+cor_se <- sqrt((1 - cor_estimate^2) / (sample_size - 2))
 ```
 
 Now our test statistic
 
 ```{r}
-t_stat = cor_estimate / cor_se
+t_stat <- cor_estimate / cor_se
 ```
 
 So we now have our test statistic
@@ -240,6 +242,9 @@ $$
 Now we can also add this regression line to our plot:
 
 ```{r}
+#| label: fig-temp-sales-reg
+#| fig-cap: "Simple linear regression of Ice cream sales predicted by temperature."
+
 plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", 
      ylab = "Ice cream Sales")
 abline(a = b0_estimate, b = b1_estimate, col = "red") 
@@ -346,10 +351,10 @@ Of course, we don't need to do all these calculations by hand. The standard erro
 To get the 95%CI we have to estimate $\pm \ t_{crit} \times \mathrm{SE}$ where $t_{crit}$ is the critical value that cuts off the upper 2.5% of a t-distribution with N - 2 df:
 
 ```{r}
-t_crit = qt(.025, nrow(icecream) - 2, lower.tail = FALSE)
+t_crit <- qt(.025, nrow(icecream) - 2, lower.tail = FALSE)
 
-lower_limit = b1_estimate - t_crit * 1.592
-upper_limit = b1_estimate + t_crit * 1.592
+lower_limit <- b1_estimate - t_crit * 1.592
+upper_limit <- b1_estimate + t_crit * 1.592
 
 lower_limit
 upper_limit

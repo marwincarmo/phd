@@ -1,0 +1,36 @@
+---
+title: "W2D1"
+author: "Philippe Rast"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+# Amsterdam Data:
+
+```{r}
+age <- c(56, 57, 58, 61, 63, 72, 73, 75, 76, 83)
+educ <- c( 9, 13, 11,  9, 12,  8, 10,  8, 11, 12)	
+ps <- c(25, 34, 31, 19, 38, 21, 23, 16, 18, 17)
+
+# Design Matrix, comprisign: intercept, age, education
+X <- cbind(rep(1,10), age, educ)
+solve( t(X) %*% X ) %*% t(X) %*% ps
+
+## with lm()
+fit <- lm( ps ~ age + educ )
+summary(fit)
+
+```
+
+Mean center predictors `age` and `educ` and re-fit the model
+```{r}
+
+age_c <- age - mean(age)
+educ_c <- educ - mean(educ)
+
+fit_c <- lm( ps ~ age_c + educ_c )
+summary(fit_c)
+```
