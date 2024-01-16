@@ -89,9 +89,13 @@ to be in.
 
 In order to calculate our test statistic, we just need
 two things: the sample estimate of the correlation
-and the sample size.
+and the sample size. Recall that the formula to obtain the test statistic for the correlation estimate is given as
 
-Let's get those things!
+$$
+t_{N-2} = \frac{r_{xy}}{\sqrt{(1-r_{xy}^2)/(N-2)}}
+$$
+
+Now, let's get those things!
 
 ```{r}
 cor_estimate <- cor(icecream$Temperature, icecream$Sales)
@@ -134,6 +138,19 @@ I'll calculate the *p*-value.
 Notice that I'm multiplying my *p*-value by 2
 because we're doing a two-sided test.
 
+```{r fig-tdist, echo = TRUE, out.width='100%'}
+#| fig-cap: "A *t*-distribution with 10 degrees of freedom."
+
+x <- seq(-5, 5, length = 100)
+plot(x, dt(x, df = 10), col = "black", type = "l", xlab = "t-value", ylab = "Density", main = "t-distribution", lwd = 2)
+x <- seq(2.5175, 5, length = 100)
+z <- (dt(x, df = 10))
+polygon(c(2.5175, x, 8), c(0, z, 0), col = rgb(1, 0, 0, 0.5))
+x <- seq(-5, -2.5175, length = 100)
+z <- (dt(x, df = 10))
+polygon(c(-8, x, -2.5175), c(0, z, 0), col = rgb(1, 0, 0, 0.5))
+```
+
 What do we conclude?
 
 And here is how we could do it in one line of R code:
@@ -150,12 +167,7 @@ Here is an example of how we could write up our results:
 
 [We examined the relation between temperature and 
 ice cream sales in a sample of 12 days using a Pearson's
-correlation coefficient test. There was a significant
-positive correlation between temperature 
-and ice cream sales, *r*(10) = 0.96, *p* < .001. ]{color=#b22222}
-
-Note that we report the correlation coefficient, not
-the test statistic; and that we use *r* before the df!
+correlation coefficient test. There was a positive, statistically significant, and large between temperature and ice cream sales, *r* = 0.96, *t*(10) = 10.50, *p* < .001.]{color=#b22222}
 
 # Simple Linear Regression
 
@@ -190,7 +202,7 @@ plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", ylab = "Ice
 What is the equation for the regression line?
 
 $$
-\hat{Y} = b_0 + b_1 \times X_1
+\hat{Y_i} = b_0 + b_1 X_{1i}
 $$
 
 This gives us the predicted value of our outcome
@@ -206,8 +218,8 @@ their formulas:
 
 $$
 \begin{aligned}
-b_0 &= \bar{Y} - b_1 \times \bar{X}\\
-b_1 &= \frac{\mathrm{Cov}(X, Y)}{\mathrm{Var}(X)}
+b_1 &= \frac{\mathrm{Cov}(X, Y)}{\mathrm{Var}(X)}\\
+b_0 &= \bar{Y} - b_1 \bar{X}
 \end{aligned}
 $$
 
@@ -217,8 +229,10 @@ b0_estimate <- mean(icecream$Sales) - b1_estimate * mean(icecream$Temperature)
 
 b1_estimate
 b0_estimate
+
 ```
-Let's write out our regRession line:
+
+Let's write out our regression line:
 
 $$
 Sales_i = -694.37 + 16.72 \times Temperature_i
@@ -254,7 +268,7 @@ summary(simple_regression)
 You'll notice that we can get estimates for $b_0$ (`(Intercept)`) and for $b_1$ (`Temperature`). Do those match what we calculated before? How do we interpret these values?
 
 Our intercept is the expected value of the dependent variable
-when the independent variable is 0
+when the independent variable is 0.
 This means that when the temperature is 0 degrees Fahrenheit
 we expect to make -694 dollars in ice cream sales.
 
@@ -281,7 +295,7 @@ the parameter is equal to 0 versus the alternative
 that it's not equal to 0.
 
 Although we get this test for the intercept as well
-that's typically not very interesting to us
+that's typically not very interesting to us.
 Instead, we're more interested in the test for the slope
 Because that tells us whether the predictor is useful
 in predicting the outcome; otherwise, the slope is no
@@ -299,14 +313,37 @@ for our example?
 
 Based on our `summary()` output, do we reject or fail to reject the null hypothesis? What does that tell us?
 
-We could also create a confidence interval around our estimate of the slope using the information provided.
-Recall that the formula for a CI is:
+We could also create a confidence interval around our estimate of the slope using the information provided. Recall that the formula for a CI is:
 
 $$
 \mathrm{CI}_{95\%} = \hat{b_1} \pm t_{crit} \times \mathrm{SE}
 $$
 
-Estimate $\pm \ t_{crit} \times \mathrm{SE}$ where $t_{crit}$ is the critical value that cuts off the upper 2.5% of a t-distribution with N - 2 df:
+In a simple linear regression, we can get the standard error for the slope as:
+
+$$
+\mathrm{SE}_{b_1} = \frac{s_\varepsilon}{SS_X}
+$$
+
+where,
+
+$$
+\begin{aligned}
+s_\varepsilon &= \sqrt{\frac{1}{N-2}\sum_{i=1}^N (Y_i-\hat{Y_i})^2},\\
+SS_X &= \sum_{i=1}^N (X_i - \bar{X})^2
+\end{aligned}
+$$
+
+As R code:
+
+```{r}
+sd_error <- sqrt( (1/(sample_size - 2)) * sum((icecream$Sales - predict(simple_regression))^2) )
+ss_x <- sum((icecream$Temperature - mean(icecream$Temperature))^2)
+se_b1 <- sd_error/sqrt(ss_x)
+```
+Of course, we don't need to do all these calculations by hand. The standard error for the slope is given in the output when we call the `summary()` function on our model. Take a look at it again and try to find it!
+
+To get the 95%CI we have to estimate $\pm \ t_{crit} \times \mathrm{SE}$ where $t_{crit}$ is the critical value that cuts off the upper 2.5% of a t-distribution with N - 2 df:
 
 ```{r}
 t_crit = qt(.025, nrow(icecream) - 2, lower.tail = FALSE)
@@ -317,6 +354,13 @@ upper_limit = b1_estimate + t_crit * 1.592
 lower_limit
 upper_limit
 ```
+
+We can also obtain the 95% CI using the `confint()` function:
+
+```{r}
+confint(object = simple_regression, level = 0.95)
+```
+
 ## R-Squared
 
 One other piece of useful information that you get from
@@ -349,10 +393,9 @@ to report both the regression coefficients and $R^2$.
 
 Here's what that write-up could look like:
 
-[We ran a simple linear regression to determine whether
-temperature predicts ice cream sales
-Temperature did significantly predict
-ice cream sales (*b* = 16.72, *p* < .001). Temperature
+[We ran a simple linear regression to determine whether temperature predicts ice cream sales.
+The effect of Temperature is statistically significant and positive (*b* = 16.72, 95% CI
+[13.17, 20.26], *t*(10) = 10.50, *p* < .001). Temperature
 explained 91.68% of the total variability in ice cream sales.]{color=#b22222}
 
 ## Your Turn
