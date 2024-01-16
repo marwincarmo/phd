@@ -1,14 +1,19 @@
 ---
 title: "Lab 2: Testing correlations"
 subtitle: "PSC 103B - Winter 2024"
-format: pdf
+format: 
+  pdf:
+    include-in-header:
+      - text: |
+          \usepackage{fvextra}
+          \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
 filters:
   - ../homework/color.lua
 ---
 
 # Read in Data
 
-For today's class, we're going to use a fake dataset that I created looking at the relation between temperature (in Fahrenheit), ice cream sales, and pool accidents .
+For today's class, we're going to use a fake dataset looking at the relation between temperature (in Fahrenheit), ice cream sales, and pool accidents .
 
 ```{r}
 #| echo: true
@@ -21,7 +26,7 @@ Last week, we talked about how to calculate the covariance and correlation betwe
 
 However, we're often working with more than 2 variables, and are interested in getting a quick summary of their pairwise relationships at once, rather than calculating each covariance or correlation individually.
 
-Luckily, we can do this using the exact same functions we usedlast week! The only difference is that instead of inputting our data as `cov(x = , y = )` or `cor(x = , y = )`, we have just one data argument, which is our entire data frame. According to `cor()` documentation, `x` can be a numeric vector, matrix or data frame. By specifying only `x`, R understands that we want the covariance between all columns in the data frame.
+Luckily, we can do this using the exact same functions we used last week! The only difference is that instead of inputting our data as `cov(x = , y = )` or `cor(x = , y = )`, we have just one data argument, which is our entire data frame. According to `cor()` documentation, `x` can be a numeric vector, matrix or data frame. By specifying only `x`, R understands that we want the covariance between all columns in the data frame.
 
 Let's do this for the covariance first:
 
@@ -31,19 +36,13 @@ cov(x = icecream, use = "complete.obs")
 
 The output of this is called a [variance-covariance matrix](https://www.cuemath.com/algebra/covariance-matrix/) and it describes (as the name suggests) the variances and covariances of the variables in your dataset.
 
-The diagonal elements of the variance-covariance matrix are the variances of the variables
-Why? Because the way that a variable relates to itself is just its spread; you can use the covariance equation to see how it becomes the variance formula when the variable is the same.
+The diagonal elements of the variance-covariance matrix are the variances of the variables. Why? Because the way that a variable relates to itself is just its spread; you can use the covariance equation to see how it becomes the variance formula when the variable is the same.
 
-The off-diagonal elements are the covariances between each pair of variables
-Notice that this matrix is symmetric. The covariance between, say, temperature and ice cream sales is the same as the covariance of ice cream sales and temperature.
+The off-diagonal elements are the covariances between each pair of variables Notice that this matrix is symmetric. The covariance between, say, temperature and ice cream sales is the same as the covariance of ice cream sales and temperature.
 
-How can we interpret these values? For example, the covariance between temperature and sales is 871.37 - what does this tell us about their relation?
+How can we interpret these values? For example, the covariance between temperature and sales is `r round(cov(icecream$Temperature, icecream$Sales),2)` -- what does this tell us about their relation?
 
-Right, we can only tell that the relation between the two
-is positive - that is, the higher the temperature, the more
-ice cream is sold. But is this relation really strong? 
-That's not something we can get from the covariance, and
-is why we turn to correlation instead!
+Right, we can only tell that the relation between the two is **positive** -- that is, the higher the temperature, the more ice cream is sold. But is this relation really strong?  That's not something we can get from the covariance, and is why we turn to correlation instead!
 
 To get the correlation matrix, we just use the `cor()` function.
 
@@ -51,37 +50,23 @@ To get the correlation matrix, we just use the `cor()` function.
 cor(icecream, use = "complete.obs")
 ```
 
-Now let's look at these values - what are they
-telling us about the relations between our variables
-Which relations appear to be strong? Which ones
-appear to be weak?
+Now let's look at these values -- what are they telling us about the relations between our variables? Which relations appear to be strong? Which ones appear to be weak?
 
 # Significance Testing for a Correlation
 
 So even though we were able to calculate our
 correlations, we aren't really able to tell whether
 any of these values are representing significant
-relations - significant meaning that the correlation
-coefficient is different from 0.
+relations -- significant meaning that the correlation
+coefficient is different from 0. 
 
-Since a correlation coefficient of 0 means that
-there is no significant linear relation between the variables.
+Since a correlation coefficient of 0 means that there is no significant linear relation between the variables, let's test if there is a significant correlation between ice cream sales and temperature.
 
-Let's test if there is a significant correlation
-between ice cream sales and temperature.
+First, let's plot our data -- we want to make sure that using the correlation to quantify the relationship between the variables is suitable. We wouldn't want to use correlation to measure what looks like a non-linear relation, because correlation and covariance can only capture linear relations. We also don't want to necessarily use correlation if there are strong outliers in our data, as those outliers can change the value of our correlation coefficient.
 
-First, let's plot our data - we want to make sure
-that using the correlation to quantify the relationship
-between the variables is suitable 
-We wouldn't want to use correlation to measure what
-looks like a non-linear relation, because correlation
-and covariance can only capture linear relations
-We also don't want to necessarily use correlation if
-there are strong outliers in our data, as those
-outliers can change the value of our correlation coefficient.
-
-```{r}
-plot(icecream$Temperature, icecream$Sales)
+```{r , fig.height=4, fig.width=6}
+#| label: fig-temp-sales
+plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", ylab = "Ice cream Sales")
 ```
 
 Does this relation look linear?
@@ -96,7 +81,7 @@ Our null and alternative hypotheses are:
 - $H_0$: $\rho$ = 0
 - $H_1$: $\rho \neq$ 0
 
-Notice that this is a two-sided test - either there
+Notice that this is a **two-sided test** -- either there
 is a relation or there isn't a relation, but we're
 not specifying which direction we expect that relation
 to be in.
@@ -134,18 +119,18 @@ with df = N - 2
 
 What is the df for our test? 10 (12 - 2)
 
-if we wanted to see whether we reject or fail to
+If we wanted to see whether we reject or fail to
 reject our null hypothesis, we could calculate the critical
 value of our distribution and see if our value is larger
-or calculate the p-value.
+or calculate the *p*-value.
 
-I'll calculate the p-value.
+I'll calculate the *p*-value.
 
 ```{r}
 2 * pt(t_stat, df = sample_size - 2, lower.tail = FALSE)
 ```
 
-Notice that I'm multiplying my p-value by 2
+Notice that I'm multiplying my *p*-value by 2
 because we're doing a two-sided test.
 
 What do we conclude?
@@ -157,32 +142,32 @@ cor.test(icecream$Temperature, icecream$Sales, method = "pearson")
 ```
 
 Since there are a few different ways to calculate
-correlation coefficients, we had to specify method = "pearson"
+correlation coefficients, we had to specify `method = "pearson"`
 because that is the method we've learned in class.
 
 Here is an example of how we could write up our results:
-We examined the relation between temperature and 
+
+[We examined the relation between temperature and 
 ice cream sales in a sample of 12 days using a Pearson's
 correlation coefficient test. There was a significant
 positive correlation between temperature 
-and ice cream sales, r(10) = 0.96, p < .001. 
+and ice cream sales, *r*(10) = 0.96, *p* < .001. ]{color=#b22222}
 
 Note that we report the correlation coefficient, not
-the test statistic; and that we use r before the df!
+the test statistic; and that we use *r* before the df!
 
 # Simple Linear Regression
 
 In our discussion of covariance and correlation,
 we've only talked about whether the two variables
-are associated with each other - asking if there's an association
+are associated with each other -- asking if there's an association
 between temperature and sales, which is the same as asking if
-there's an association between sales and temperature
+there's an association between sales and temperature.
 None of this looks at whether one variable has an effect 
 on the other variable.
 
-That's where linear regression comes in - now we're
-looking at the relation between a dependent
-variable and at least one predictor variable, so we've
+That's where linear regression comes in -- now we're
+looking at the relation between a **dependent variable** and at least one **predictor variable**, so we've
 moved to the context of the predictor variable having
 an effect on the dependent variable.
 
@@ -198,20 +183,20 @@ ice cream sales.
 Let's plot our data again:
 
 ```{r}
-plot(icecream$Temperature, icecream$Sales)
+plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", ylab = "Ice cream Sales")
 ```
 
 What is the equation for the regression line?
 
 $$
-\hat{y} = b_0 + b_1 \times x_1
+\hat{Y} = b_0 + b_1 \times X_1
 $$
 
 This gives us the predicted value of our outcome
-for a given value of $x$.
+for a given value of $X$.
 $b_0$ represents the intercept, which is the value of 
-the outcome when the predictor is 0
-$b_1$ represents the slope. It represents the expected
+the outcome when the predictor is 0.
+$b_1$ represents the slope -- the expected
 amount of change in our outcome when our predictor
 increases by 1 unit.
 
@@ -220,16 +205,19 @@ their formulas:
 
 $$
 \begin{aligned}
-b_0 &= \bar{y} - b_1 \times \bar{x}\\
-b_1 &= \frac{\mathrm{Cov}(x, y)}{\mathrm{Var}(x)}
+b_0 &= \bar{Y} - b_1 \times \bar{X}\\
+b_1 &= \frac{\mathrm{Cov}(X, Y)}{\mathrm{Var}(X)}
 \end{aligned}
 $$
 
 ```{r}
-(b1_estimate = cov(icecream$Temperature, icecream$Sales)/var(icecream$Temperature))
-(b0_estimate = mean(icecream$Sales) - b1_estimate * mean(icecream$Temperature))
+b1_estimate <- cov(icecream$Temperature, icecream$Sales)/var(icecream$Temperature)
+b0_estimate <- mean(icecream$Sales) - b1_estimate * mean(icecream$Temperature)
+
+b1_estimate
+b0_estimate
 ```
-Let's write out our rergession line:
+Let's write out our regRession line:
 
 $$
 Sales_i = -694.37 + 16.72 \times Temperature_i
@@ -237,7 +225,8 @@ $$
 Now we can also add this regression line to our plot:
 
 ```{r}
-plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", ylab = "Ice cream Sales")
+plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", 
+     ylab = "Ice cream Sales")
 abline(a = b0_estimate, b = b1_estimate, col = "red") 
 # abline() is a function to add a straight line to a plot
 ```
@@ -246,12 +235,12 @@ Of course, rather than calculating the values by hand, we can simply do it in R.
 
 We use the `lm()` function (lm stands for "linear model")
 And the function arguments are as follows:
-`lm(dependent variable ~ independent variable, data = data_name)`
+`lm(dependent_variable ~ independent_variable, data = data_name)`.
 This might look familiar - it's pretty similar to how we
 conducted our t-tests in R!
 
 ```{r}
-simple_regression = lm(Sales ~ Temperature, data = icecream)
+simple_regression <- lm(Sales ~ Temperature, data = icecream)
 
 ```
 
@@ -300,24 +289,23 @@ relation between X and Y that we can use to predict Y.
 
 The hypotheses for this test are:
 
-$$
-H_0: b_1 = 0\\
-H_1: b_1 \neq 0
-$$
+- $H_0$: $b_1$ = 0
+- $H_1$: $b_1 \neq$ 0
 
 The t-statistic in this test is distributed as
-a t-dsitribution with N - 2 df. What is the df
+a t-distribution with N - 2 df. What is the df
 for our example?
 
 Based on our `summary()` output, do we reject or fail to reject the null hypothesis? What does that tell us?
 
-We could also create a confidence interval around our estimate of the slope using the information provided
+We could also create a confidence interval around our estimate of the slope using the information provided.
 Recall that the formula for a CI is:
 
 $$
 \mathrm{CI}_{95\%} = \hat{b_1} \pm t_{crit} \times \mathrm{SE}
 $$
-Estimate $\pm t_{crit} \times \mathrm{SE}$ where $t_{crit}$ is the critical value that cuts off the upper 5% of a t-distribution with N - 2 df:
+
+Estimate $\pm \ t_{crit} \times \mathrm{SE}$ where $t_{crit}$ is the critical value that cuts off the upper 2.5% of a t-distribution with N - 2 df:
 
 ```{r}
 t_crit = qt(.025, nrow(icecream) - 2, lower.tail = FALSE)
@@ -325,33 +313,34 @@ t_crit = qt(.025, nrow(icecream) - 2, lower.tail = FALSE)
 lower_limit = b1_estimate - t_crit * 1.592
 upper_limit = b1_estimate + t_crit * 1.592
 
-lower_limit; upper_limit
+lower_limit
+upper_limit
 ```
 ## R-Squared
 
 One other piece of useful information that you get from
-the summary() output is R-squared, also called
-the coefficient of determination
+the `summary()` output is R-squared, also called
+the coefficient of determination.
 R-squared is the proportion of total variability in our
 outcome that is explained by our predictor(s)
 This is calculated as sum of squares regression 
-divided by total sum of squares: $\frac{SS{reg}}{SS_{total}}$
-OR: 1 - (SSresid / SStotal) $1 - (SS{resid} / SS_{total})$
+divided by total sum of squares: $SS_{reg}/SS_{total}$
+**or** $1 - (SS_{resid} / SS_{total})$
 
-You could manually calculate SSresid and SStotal, but
+You could manually calculate $SS_{resid}$ and $SS_{total}$, but
 I'm not going to bother with that
-You can see the $R^2$ value in the summary() output, and
+You can see the $R^2$ value in the `summary()` output, and
 that value is 0.9168. This means that almost 92% of the
 variation in ice cream sales is explained by temperature.
 
 You'll notice that there is also an adjusted $R^2$
 This is more important in the context of multiple regression
 because as you add more predictors to the model, your
-R^2 will typically increase even if the added predictors
+$R^2$ will typically increase even if the added predictors
 are just explaining noise; therefore, adjusted $R^2$ corrects
 for the number of predictors in the model.
 
-Why do we care about R^2? Because  it may be the case
+Why do we care about $R^2$? Because  it may be the case
 that we have a significant predictor, but it doesn't
 actually explain a whole lot of the total variance
 So that's why in our write-up of the results, we'd want
