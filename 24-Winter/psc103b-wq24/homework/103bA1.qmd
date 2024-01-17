@@ -31,7 +31,7 @@ Enter the dataset into R, so that you have a dataframe object with the variables
 df <- data.frame("VideoGames" = c(4, 3, 7, 6, 3, 6, 6, 7, 6, 5),
 "Aggression" = c(58, 52, 63, 54, 59, 55, 61, 58, 60, 67),
 "Cognition" = c(79, 20, 82, 81, 79, 79, 81, 83, 80, 83))
-
+df
 ```
 
 # Question 2

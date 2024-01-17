@@ -4,7 +4,7 @@
 #                 &                 ## 
 ##      Simple Linear Regression    ##
 ##                                  ##
-##          Spring 2022             ##
+##          Winter 2024             ##
 ######################################
 
 # setwd("Desktop/School/Graduate School/Administrative/Employment/Winter 2023 (PSC 103B)/Labs/Lab 2/")
@@ -15,7 +15,7 @@
 # looking at the relation between temperature (in Fahrenheit), 
 # ice cream sales, and pool accidents
 
-icecream = read.csv("lab/data/IceCreamSales.csv")
+icecream = read.csv("https://raw.githubusercontent.com/marwincarmo/phd/main/24-Winter/psc103b-wq24/lab/data/IceCreamSales.csv")
 
 
 ## Covariance and Correlation Review
