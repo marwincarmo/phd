@@ -47,7 +47,7 @@ library(DescTools)
 ```{r echo = F, message = F}
 # Read in the data 
 
-#hw2 = read.csv("hw2data.csv", header = TRUE)
+hw1 = read.csv("hw1data.csv", header = TRUE)
 ```
 
 # Question 1 **(2 points)**
@@ -56,13 +56,13 @@ Fit a simple linear regression model using biological sex (*sex*; 0 = male; 1 = 
 
 ```{r message = F}
 ## Code
-
-
+mod1 <- lm(CESD ~ sex, data = hw1)
+summary(mod1)
 ```
 
--   **Equation**: $\widehat{Depression_i} = WRITE.EQUATION.HERE$
--   **(Intercept)**: WRITE ANSWER HERE
--   **Sex**: WRITE ANSWER HERE
+-   **Equation**: $\widehat{Depression_i} = 9.79 + 2.45 \times Sex_i$
+-   **(Intercept)**: The expected value of depression is 9.79 when sex is male.
+-   **Sex**: Females are predicted to have 2.45 more units of depression than males. This slope is significantly different from 0, indicating that Depression and sex are significantly associated.
 
 # Question 2 **(6.5 points)**
 
@@ -72,28 +72,29 @@ Fit a simple linear regression model using neuroticism (*N*) to predict stress (
 
 ```{r message = F}
 ## Code
-
+mod2 <- lm(Stress ~ N, data = hw1)
+summary(mod2)
 ```
 
--   **Equation**: $\widehat{Stress_i} = WRITE.EQUATION.HERE$
+-   **Equation**: $\widehat{Stress_i} = -2.66 + 0.36 \times Neuroticism_i$
 
--   **(Intercept)**: WRITE ANSWER HERE
+-   **(Intercept)**: The expected value of stress is -2.27 when Neuroticism is equal 0.
 
--   **N**: WRITE ANSWER HERE
+-   **N**: An one-unit increase in Neuroticism is associated with a 0.36 increase in Stress. This slope is significantly different from 0, indicating that Stress and Neuroticism are significantly associated.
 
 ## Part b) **(1 point)**
 
 Plot the model diagnostic plots, and assess whether the assumptions of linearity, homogeneity of variances, and normality of residuals are met. Explain your reasoning. 
 
 ```{r, message = FALSE}
-# Code
+plot(mod2)
 ```
 
-- **Linearity**:
+- **Linearity**: The predicted line of the Residuals vs. Fitted plot is expected to be flat to indicate zero correlation between the predicted and residual values. The assumption of linearity in this model is well met.
 
-- **Homogeneity of Variances**:
+- **Homogeneity of Variances**: We can also use the Residuals vs. Fitted plot to investigate the homogeneity of variances. Different from the random pattern expected when the variance is homogeneous, we observe a peculiar pattern, indicating heterocedasticity.
 
-- **Normality of Residuals**: 
+- **Normality of Residuals**: The normality of residuals can be assessed with the QQ Plot. All of the points are expected to fall on the diagonal line. In this model, we observe an expressive departure from normality for the residuals since the standardized residuals greater than zero show a positive slope, deviating from the reference dotted line. 
 
 ## Part c) **(2.5 points)**
 
