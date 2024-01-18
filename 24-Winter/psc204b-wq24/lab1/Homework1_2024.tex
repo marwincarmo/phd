@@ -241,19 +241,22 @@ Explain your reasoning.
 
 \begin{itemize}
 \item
-  \textbf{Linearity}: The predicted line of Residuals vs Fitted values
-  is expected to be flat to indicate zero correlation between the
+  \textbf{Linearity}: The predicted line of the Residuals vs.~Fitted
+  plot is expected to be flat to indicate zero correlation between the
   predicted and residual values. The assumption of linearity in this
-  model appears to be meeting the assumption of linearity well.
+  model is well met.
 \item
-  \textbf{Homogeneity of Variances}:
+  \textbf{Homogeneity of Variances}: We can also use the Residuals
+  vs.~Fitted plot to investigate the homogeneity of variances. Different
+  from the random pattern expected when the variance is homogeneous, we
+  observe a peculiar pattern, indicating heterocedasticity.
 \item
   \textbf{Normality of Residuals}: The normality of residuals can be
   assessed with the QQ Plot. All of the points are expected to fall on
   the diagonal line. In this model, we observe an expressive departure
   from normality for the residuals since the standardized residuals
-  greater than zero show a positive slope, deviating from the dotted
-  reference line.
+  greater than zero show a positive slope, deviating from the reference
+  dotted line.
 \end{itemize}
 
 \hypertarget{part-c-2.5-points}{%
@@ -270,16 +273,49 @@ parameter changed from the original analysis, and why or why not.}
 \begin{Shaded}
 \begin{Highlighting}[]
 \DocumentationTok{\#\# Code}
+\NormalTok{hw1}\SpecialCharTok{$}\NormalTok{N\_c }\OtherTok{\textless{}{-}} \FunctionTok{scale}\NormalTok{(hw1}\SpecialCharTok{$}\NormalTok{N, }\AttributeTok{scale =} \ConstantTok{FALSE}\NormalTok{)}
+
+\NormalTok{mod3 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(Stress }\SpecialCharTok{\textasciitilde{}}\NormalTok{ N\_c, }\AttributeTok{data =}\NormalTok{ hw1)}
+\FunctionTok{summary}\NormalTok{(mod3)}
 \end{Highlighting}
 \end{Shaded}
 
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Stress ~ N_c, data = hw1)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -15.333  -4.139  -1.027   2.943  26.207 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 17.43544    0.09499  183.54   <2e-16 ***
+## N_c          0.35698    0.01026   34.79   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.97 on 3948 degrees of freedom
+## Multiple R-squared:  0.2346, Adjusted R-squared:  0.2345 
+## F-statistic:  1210 on 1 and 3948 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
 \begin{itemize}
 \item
-  \textbf{Equation}: \(\widehat{Stress_i} = WRITE.EQUATION.HERE\)
+  \textbf{Equation}:
+  \(\widehat{Stress_i} = 17.44 + 0.36 \times Neuroticism_{c_i}\)
 \item
-  \textbf{(Intercept)}: WRITE ANSWER HERE
+  \textbf{(Intercept)}: The predicted value of stress is 17.44 when
+  Neuroticism at its mean level. By centering the predictor variable the
+  value of the intercept also changed because now we've changed the
+  reference point for the Neuroticism.
 \item
-  \textbf{N}: WRITE ANSWER HERE
+  \textbf{N}: The predicted value of \(N_c\) does not differ from the
+  predicted value of \(N\) because centering the preditor does not alter
+  its linear relationship with the outcome. It still means that an
+  one-unit increase in Neuroticism is associated with a 0.36 increase in
+  Stress. The statistical significance of the slope also did not change.
 \end{itemize}
 
 \hypertarget{part-d-0.5-points}{%
@@ -292,8 +328,14 @@ who scores 1.5 points \emph{above the mean}?
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# Code}
+
+\FloatTok{17.44} \SpecialCharTok{+} \FloatTok{0.36} \SpecialCharTok{*} \FloatTok{1.5}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## [1] 17.98
+\end{verbatim}
 
 \hypertarget{question-3-1.5-points}{%
 \section{\texorpdfstring{Question 3 \textbf{(1.5
@@ -311,8 +353,32 @@ have the same x-axis and y-axis range.
 \begin{Shaded}
 \begin{Highlighting}[]
 \DocumentationTok{\#\# Code}
+
+\CommentTok{\# Original, uncentered Data}
+\NormalTok{g1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(}\AttributeTok{data =}\NormalTok{ hw1, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ Stress, }\AttributeTok{x =}\NormalTok{ N)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{\textquotesingle{}Neuroticism\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{\textquotesingle{}Stress\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{\textquotesingle{}lm\textquotesingle{}}\NormalTok{, }\AttributeTok{se =}\NormalTok{ F) }\SpecialCharTok{+}
+  \FunctionTok{geom\_vline}\NormalTok{(}\AttributeTok{xintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_cartesian}\NormalTok{(}\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{25}\NormalTok{, }\DecValTok{35}\NormalTok{))}
+
+\CommentTok{\# Mean{-}centered FNE}
+\NormalTok{g2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(}\AttributeTok{data =}\NormalTok{ hw1, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ Stress, }\AttributeTok{x =}\NormalTok{ N\_c)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{\textquotesingle{}Centered Neuroticism\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{\textquotesingle{}Stress\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{\textquotesingle{}lm\textquotesingle{}}\NormalTok{, }\AttributeTok{se =}\NormalTok{ F) }\SpecialCharTok{+}
+  \FunctionTok{geom\_vline}\NormalTok{(}\AttributeTok{xintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_cartesian}\NormalTok{(}\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{25}\NormalTok{, }\DecValTok{35}\NormalTok{))}
+  
+\FunctionTok{ggarrange}\NormalTok{(g1, g2, }\AttributeTok{nrow =} \DecValTok{2}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+\includegraphics{Homework1_2024_files/figure-latex/unnamed-chunk-10-1.pdf}
 
 \hypertarget{extra-credit-1-point}{%
 \section{\texorpdfstring{Extra Credit \textbf{(1
@@ -327,14 +393,61 @@ to something since it has been centered.
 \begin{Shaded}
 \begin{Highlighting}[]
 \DocumentationTok{\#\# Code}
+
+\NormalTok{hw1}\SpecialCharTok{$}\NormalTok{N\_min }\OtherTok{\textless{}{-}}\NormalTok{ hw1}\SpecialCharTok{$}\NormalTok{N }\SpecialCharTok{{-}} \FunctionTok{min}\NormalTok{(hw1}\SpecialCharTok{$}\NormalTok{N)}
+\NormalTok{hw1}\SpecialCharTok{$}\NormalTok{Stress\_med }\OtherTok{\textless{}{-}}\NormalTok{ hw1}\SpecialCharTok{$}\NormalTok{Stress }\SpecialCharTok{{-}} \FunctionTok{median}\NormalTok{(hw1}\SpecialCharTok{$}\NormalTok{Stress)}
+
+\NormalTok{mod4 }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(Stress }\SpecialCharTok{\textasciitilde{}}\NormalTok{ N\_min, }\AttributeTok{data =}\NormalTok{ hw1)}
+\FunctionTok{summary}\NormalTok{(mod4)}
 \end{Highlighting}
 \end{Shaded}
 
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Stress ~ N_min, data = hw1)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -15.333  -4.139  -1.027   2.943  26.207 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  5.89164    0.34513   17.07   <2e-16 ***
+## N_min        0.35698    0.01026   34.79   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.97 on 3948 degrees of freedom
+## Multiple R-squared:  0.2346, Adjusted R-squared:  0.2345 
+## F-statistic:  1210 on 1 and 3948 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
 \begin{itemize}
 \item
-  \textbf{Report the value of the intercept}: WRITE ANSWER HERE
+  \textbf{Report the value of the intercept}: -10.11
 \item
-  \textbf{Interpret the intercept}: WRITE ANSWER HERE
+  \textbf{Interpret the intercept}: The intercept now represents the
+  predicted median of the outcome variable when the predictor variable
+  is at its minimum value.
 \end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(}\AttributeTok{data =}\NormalTok{ hw1, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ Stress\_med, }\AttributeTok{x =}\NormalTok{ N\_min)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{\textquotesingle{}Centered Neuroticism\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{\textquotesingle{}Stress\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{\textquotesingle{}lm\textquotesingle{}}\NormalTok{, }\AttributeTok{se =}\NormalTok{ F) }\SpecialCharTok{+}
+  \FunctionTok{geom\_vline}\NormalTok{(}\AttributeTok{xintercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{) }\CommentTok{\#+ coord\_cartesian(xlim = c({-}25, 35))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `geom_smooth()` using formula = 'y ~ x'
+\end{verbatim}
+
+\includegraphics{Homework1_2024_files/figure-latex/unnamed-chunk-12-1.pdf}
 
 \end{document}
