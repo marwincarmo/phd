@@ -327,7 +327,7 @@ $$
 In a simple linear regression, we can get the standard error for the slope as:
 
 $$
-\mathrm{SE}_{b_1} = \frac{s_\varepsilon}{SS_X}
+\mathrm{SE}_{b_1} = \frac{s_\varepsilon}{\sqrt{SS_X}}
 $$
 
 where,
