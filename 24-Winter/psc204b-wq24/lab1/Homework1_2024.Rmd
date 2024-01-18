@@ -1,0 +1,149 @@
+---
+title: "PSC 204B Homework 1"
+date: "Due Date: January 19, 2024"
+output:
+  pdf_document:
+    toc: no
+---
+
+```{r echo = F, warning = F, message = F}
+# The following packages are needed to complete this homework assignment. The following code checks whether the packages are already installed, if not they will be installed. 
+if (!require("dplyr")) install.packages("dplyr")
+if (!require("ggplot2")) install.packages("ggplot2")
+if (!require("ggpubr")) install.packages("ggpubr")
+if (!require("psych")) install.packages("psych")
+if (!require("DescTools")) install.packages("DescTools")
+```
+
+```{r echo = F, message = F}
+# Load the required packages 
+
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(psych)
+library(DescTools)
+```
+
+```{r echo = F}
+# The data you will be using for this Homework Assignment is from the study below:
+ 
+# Kim, S. E., Kim, H. N., Cho, J., Kwon, M. J., Chang, Y., et al. (2016) Correction: Direct and indirect effects of five factor personality and gender on depressive symptoms mediated by perceived stress. *PLOS ONE, 11*: e0157204.
+
+# The data file can be found on Canvas under the Assignments tab -> Week 2 -> Homework -> hw2data.csv
+
+# The `hw2data.csv` file contains the following variables:
+
+#  Stress: Total perceived stress score from self-reported stress questionnaire 
+#  CESD: Total depression score for the Center for Epidemiological Studies Depression Scale
+#  N: Total score on Neuroticism from the Revised NEO Personality Inventory
+#  E: Total score on Extroversion from the Revised NEO Personality Inventory
+#  O: Total score on Openness to Experience from the Revised NEO Personality Inventory
+#  A: Total score on Agreeableness from the Revised NEO Personality Inventory
+#  C: Total score on Contentiousness from the Revised NEO Personality Inventory
+#  sex: Binary variable representing biological sex (0 = male; 1 = female)
+```
+
+```{r echo = F, message = F}
+# Read in the data 
+
+#hw2 = read.csv("hw2data.csv", header = TRUE)
+```
+
+# Question 1 **(2 points)**
+
+Fit a simple linear regression model using biological sex (*sex*; 0 = male; 1 = female) to predict depression (*CESD*). Write out the predicted regression equation using R markdown equation notation in the space below (see the lab), and interpret each parameter (see the lab for what is expected). Round all numbers to two decimal places.
+
+```{r message = F}
+## Code
+
+
+```
+
+-   **Equation**: $\widehat{Depression_i} = WRITE.EQUATION.HERE$
+-   **(Intercept)**: WRITE ANSWER HERE
+-   **Sex**: WRITE ANSWER HERE
+
+# Question 2 **(6.5 points)**
+
+## Part a) **(2.5 points)**
+
+Fit a simple linear regression model using neuroticism (*N*) to predict stress (*Stress*). Write out the predicted regression equation and interpret each of the parameters found in the regression model.
+
+```{r message = F}
+## Code
+
+```
+
+-   **Equation**: $\widehat{Stress_i} = WRITE.EQUATION.HERE$
+
+-   **(Intercept)**: WRITE ANSWER HERE
+
+-   **N**: WRITE ANSWER HERE
+
+## Part b) **(1 point)**
+
+Plot the model diagnostic plots, and assess whether the assumptions of linearity, homogeneity of variances, and normality of residuals are met. Explain your reasoning. 
+
+```{r, message = FALSE}
+# Code
+```
+
+- **Linearity**:
+
+- **Homogeneity of Variances**:
+
+- **Normality of Residuals**: 
+
+## Part c) **(2.5 points)**
+
+Repeat the regression analysis above in Part a, but using mean-centered Neuroticism (*N*) to predict *Stress*. Call the mean-centered Neuroticism variable *N_c*. Write out the predicted regression equation and interpret each of the parameters found in the regression model. **In each of your interpretations, comment on whether the parameter changed from the original analysis, and why or why not.**
+
+```{r message = F}
+## Code
+
+
+```
+
+-   **Equation**: $\widehat{Stress_i} = WRITE.EQUATION.HERE$
+
+-   **(Intercept)**: WRITE ANSWER HERE
+
+-   **N**: WRITE ANSWER HERE
+
+## Part d) **(0.5 points)**
+
+Using the model from part (b), what is the predicted score for someone who scores 1.5 points *above the mean*?
+
+```{r}
+# Code
+```
+
+
+
+
+# Question 3 **(1.5 points)**
+
+Create two scatter plots to illustrate the relation between Stress and Neuroticism in the two analyses performed in Question 2. Arrange the graphs in two rows. Stress should be on the y axis in both graphs. In the first row, show the relationship between Stress and uncentered Neuroticism (*N*). In the second row, show the relationship between Stress and mean-centered Neuroticism (*N_c*). On each graph, add a line of best. Be sure to label your axes, and make sure that all graphs have the same x-axis and y-axis range.
+
+
+```{r message = F}
+## Code
+
+
+
+```
+
+# Extra Credit **(1 point)**
+
+Conduct a regression to assess whether min-centered Neuroticism (*N_min*) predicts **median-centered** *Stress* (*Stress_med*). In the space below, report and interpret the intercept. Keep in mind that the value of the intercept is now relative to something since it has been centered. 
+
+```{r message = F}
+## Code
+
+
+```
+
+-   **Report the value of the intercept**: WRITE ANSWER HERE
+
+-   **Interpret the intercept**: WRITE ANSWER HERE
