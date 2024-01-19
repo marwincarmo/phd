@@ -94,7 +94,7 @@ plot(mod2)
 
 - **Homogeneity of Variances**: We can also use the Residuals vs. Fitted plot to investigate the homogeneity of variances. Different from the random pattern expected when the variance is homogeneous, we observe a peculiar pattern, indicating heterocedasticity.
 
-- **Normality of Residuals**: The normality of residuals can be assessed with the QQ Plot. All of the points are expected to fall on the diagonal line. In this model, we observe an expressive departure from normality for the residuals since the standardized residuals greater than zero show a positive slope, deviating from the reference dotted line. 
+- **Normality of Residuals**: The normality of residuals can be assessed with the QQ Plot. All of the points are expected to fall on the diagonal line. In this model, we observe an expressive departure from normality of the residuals since the standardized residuals greater than zero show a positive slope, deviating from the reference dotted line. 
 
 ## Part c) **(2.5 points)**
 
@@ -144,7 +144,7 @@ g1 <- ggplot(data = hw1, aes(y = Stress, x = N)) +
   ylab('Stress') +
   geom_smooth(method = 'lm', se = F) +
   geom_vline(xintercept = 0, linetype = "dashed") +
-  coord_cartesian(xlim = c(-25, 35))
+  coord_cartesian(xlim = c(-32, 94))
 
 # Mean-centered FNE
 g2 <- ggplot(data = hw1, aes(y = Stress, x = N_c)) +
@@ -154,7 +154,7 @@ g2 <- ggplot(data = hw1, aes(y = Stress, x = N_c)) +
   ylab('Stress') +
   geom_smooth(method = 'lm', se = F) +
   geom_vline(xintercept = 0, linetype = "dashed") +
-  coord_cartesian(xlim = c(-25, 35))
+  coord_cartesian(xlim = c(-32, 94))
   
 ggarrange(g1, g2, nrow = 2)
 ```
@@ -169,22 +169,22 @@ Conduct a regression to assess whether min-centered Neuroticism (*N_min*) predic
 hw1$N_min <- hw1$N - min(hw1$N)
 hw1$Stress_med <- hw1$Stress - median(hw1$Stress)
 
-mod4 <- lm(Stress ~ N_min, data = hw1)
+mod4 <- lm(Stress_med ~ N_min, data = hw1)
 summary(mod4)
 
 ```
 
 -   **Report the value of the intercept**: -10.11
 
--   **Interpret the intercept**: The intercept now represents the predicted median of the outcome variable when the predictor variable is at its minimum value.
+-   **Interpret the intercept**: The intercept now represents the predicted level of median-centered Stress when Neuroticism is at its minimum value.
 
 ```{r}
 ggplot(data = hw1, aes(y = Stress_med, x = N_min)) +
   geom_point() +
   theme_classic() +
-  xlab('Centered Neuroticism') +
-  ylab('Stress') +
+  xlab('Minimum centered Neuroticism') +
+  ylab('Median centered Stress') +
   geom_smooth(method = 'lm', se = F) +
-  geom_vline(xintercept = 0, linetype = "dashed") #+ coord_cartesian(xlim = c(-25, 35))
+  geom_vline(xintercept = 0, linetype = "dashed")
 ```
 
