@@ -1,0 +1,116 @@
+---
+title: "Week 3 - Simple and multiple linear regression"
+subtitle: "PSC 103B"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    #chalkboard: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    #css: custom.css
+    #theme: psc290-23
+    # highlight-style: atom-one-dark
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    # height: 900
+    footer: "PSC 103B - Statistical Analysis of Psychological Data"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r packages, echo=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+## Today's dataset
+
+```{r, echo=TRUE}
+reading <- read.csv("data/Lab3Data.csv", header = TRUE)
+```
+
+
+## Simple linear regression
+
+```{r, echo=FALSE}
+
+literacy_age <- lm(OverallLiteracy ~ ChildAge, data = reading)
+```
+
+::: columns
+::: {.column width="50%"}
+- Regression examine the relation between an outcome variable and a set of *q* predictor variables.
+
+- In simple linear regression there is only one predictor
+
+- $y_i = b_0 + b_1x_1 + \epsilon_i$
+:::
+
+::: {.column width="50%"}
+::: fragment
+```{r, message=FALSE}
+ggplot(data = reading, aes(y = OverallLiteracy, x = ChildAge)) + 
+  geom_point(alpha = .5) +
+  theme_classic() +
+  ylab('Literacy') +
+  xlab('Child age (month)') +
+  geom_smooth(method = 'lm', se = F, fullrange = TRUE) +
+  geom_vline(xintercept = 0, linetype = "dashed") + 
+  geom_segment(aes(xend = ChildAge, yend = literacy_age$fitted.values), color = "red",linetype = "dashed", alpha=.3 ) +
+  coord_cartesian(xlim = c(0, 66))
+```
+:::
+:::
+:::
+
+## Simple linear regression
+
+- In R we use the `lm()` to estimate a regression model
+
+- `lm(dependent_variable ~ independent_variable, data = data_name)`
+
+- Fit a linear model with the `lm()` function predicting `OverallLiteracy` from `ChildAge` and save to an object called `literacy_age`. 
+
+::: fragment
+```{r, echo=TRUE}
+literacy_age <- lm(OverallLiteracy ~ ChildAge, data = reading)
+```
+:::
+
+- What function can we use to see the results of the regression analysis?
+
+## The `lm()` output
+
+::: fragment
+```{r, echo=TRUE}
+summary(literacy_age)
+```
+:::
+
+---
+```{r}
+literacy_parent <-  lm(OverallLiteracy ~ ParentChildAct, data = reading)
+```
+
+Now fit a linear model predicting `OverallLiteracy` from `ParentChildAct`.
+
+- What is the estimate of the y-intercept for the model, rounded to three decimal places?
+
+- If the GLM for this model is $OverallLiteracy_i = b_0 + b_1 \times ParentChildAct_i + \epsilon_i$, then $b_1$ is? What does it mean?
+
+- Is the overall model significant?
+
+- What proportion of the variance does the model explain?
