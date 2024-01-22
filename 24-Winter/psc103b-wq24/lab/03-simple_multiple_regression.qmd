@@ -25,8 +25,6 @@ format:
 editor: source
 editor_options: 
   chunk_output_type: console
-filters:
-  - ../homework/color.lua
 ---
 
 ```{r packages, echo=FALSE}
@@ -45,7 +43,9 @@ reading <- read.csv("data/Lab3Data.csv", header = TRUE)
 
 `ChildAge`: The child's age in months.
 
+::: {.fragment .semi-fade-out}
 Five measures of literacy and language skills: `PrintKnowledge`, `ReadingInterest`, `EmergentWriting`, `ExpressLang`, and `ReceptiveLang`.
+:::
 
 `OverallLiteracy`: A composite measure averaging the 5 measures of literacy/language.
 
@@ -58,11 +58,14 @@ literacy_age <- lm(OverallLiteracy ~ ChildAge, data = reading)
 
 ::: columns
 ::: {.column width="50%"}
-- Regression examine the relation between an outcome variable and a set of *q* predictor variables.
+- Regression examines the relation between an outcome variable and a set of *q* predictor variables.
 
-- In simple linear regression there is only one predictor
+- In simple linear regression there is only one predictor:
 
 - $y_i = b_0 + b_1x_1 + \epsilon_i$
+  - $b_0$ = intercept;
+  - $b_1$ = slope;
+  - $\epsilon_i$ = residuals.
 :::
 
 ::: {.column width="50%"}
@@ -88,7 +91,11 @@ ggplot(data = reading, aes(y = OverallLiteracy, x = ChildAge)) +
 
 - `lm(dependent_variable ~ independent_variable, data = data_name)`
 
-- Fit a linear model with the `lm()` function predicting `OverallLiteracy` from `ChildAge` and save to an object called `literacy_age`. 
+::: fragment
+:::{.callout-caution title="Exercise"}
+Fit a linear model with the `lm()` function predicting `OverallLiteracy` from `ChildAge` and save to an object called `literacy_age`. 
+:::
+:::
 
 ::: fragment
 ```{r, echo=TRUE}
@@ -100,10 +107,12 @@ literacy_age <- lm(OverallLiteracy ~ ChildAge, data = reading)
 
 ## The `lm()` output
 
-::: fragment
 ```{r, echo=TRUE}
 summary(literacy_age)
 ```
+
+::: {.notes}
+What are the value of the intercept, slope and R-squared? Are the coefficients statistically significant?
 :::
 
 ---
@@ -111,25 +120,36 @@ summary(literacy_age)
 literacy_parent <-  lm(OverallLiteracy ~ ParentChildAct, data = reading)
 ```
 
-Now fit a linear model predicting `OverallLiteracy` from `ParentChildAct`.
-
-
-- What is the estimate of the y-intercept for the model, rounded to two decimal places? What does this number mean?
-
-::: {.fragment .fade-in}
-[13.27. This means that when the parent and child activity is 0 we expect the child's literacy score to be 13.27.]{color=#b22222}
+:::{.callout-caution title="Exercise"}
+Now fit a linear model predicting `OverallLiteracy` from `ParentChildAct`. 
 :::
 
-- If the GLM for this model is $OverallLiteracy_i = b_0 + b_1 \times ParentChildAct_i + \epsilon_i$, then $b_1$ is? What does it mean?
+::: {.panel-tabset}
+
+### Q1
+
+What is the estimate of the y-intercept for the model, rounded to two decimal places? What does this number mean?
 
 ::: {.fragment .fade-in}
-$b_1$ = 0.21. For each minute increase in parent and child activity, the child literacy is expected to increase by 0.21 units.
+> 13.27. This means that when the parent and child activity is 0 we expect the child's literacy score to be 13.27.
 :::
 
-- Is the overall model significant? If so, what proportion of the variance does the model explain?
+### Q2
+
+If the GLM for this model is $OverallLiteracy_i = b_0 + b_1 \times ParentChildAct_i + \epsilon_i$, then $b_1$ is? What does it mean?
 
 ::: {.fragment .fade-in}
-The model is statistically significant and and explains 11% of the total variance ($R^2$ = 0.11, *F*(1, 148) = 18.00, *p* < .001).
+> $b_1$ = 0.21. For each minute increase in parent and child activity, the child literacy is expected to increase by 0.21 units.
+:::
+
+### Q3
+
+Is the overall model significant? If so, what proportion of the variance does the model explain?
+
+::: {.fragment .fade-in}
+> The model is statistically significant and and explains 11% of the total variance ($R^2$ = 0.11, *F*(1, 148) = 18.00, *p* < .001).
+
+:::
 :::
 
 ## Confidence intervals for the estimates
@@ -144,14 +164,24 @@ confint(object = literacy_parent, level = 0.95)
 
 - If we were to collect another sample size of 150, measure Parent-child activity and a Literacy score, and estimate $b_1$ over and over again, 95% of the intervals would cover the true value – and 5% would miss it.
 
+## Write-up the results
+
+> We ran a simple linear regression to determine whether Parent and Child activity predicts child reading literacy.
+The effect of Parent and Child activity is statistically significant and positive (*b* = 0.21, 95% CI
+[0.11, 0.31], *t*(148) = 4.24, *p* < .001). Parent and Child activity explained 11% of the total variability in child reading literacy.
+
 ## Confidence Limits on Y
 
-- This is analogous to calculating a confidence interval for each of the predicted values $\hat{Y}_i$.
+::: columns
+::: {.column width="50%"}
+This is analogous to calculating a confidence interval for each of the predicted values $\hat{Y}_i$.
 
-- Given our model, where would we expect to see future observations fall?
+Given our model, where would we expect to see future observations fall?
+:::
 
-```{r, fig.align="center", fig_width = "800px"}
-
+::: {.column width="50%"}
+```{r}
+#| fig-align: "center"
 
 ggplot(data = reading, aes(y = OverallLiteracy, x = ParentChildAct)) + 
   geom_point() +
@@ -160,7 +190,8 @@ ggplot(data = reading, aes(y = OverallLiteracy, x = ParentChildAct)) +
   ylab('Overall Literacy') +
   geom_smooth(method = 'lm', se = TRUE)
 ```
-
+:::
+:::
 
 ## Confidence Limits on Y
 
@@ -176,7 +207,7 @@ $$
 ### Step 1: calculate $\hat{Y}*$
 
 ```{r, echo=TRUE}
-pred_literacy <- 13.24 + 0.21*20
+pred_literacy <- 13.27 + 0.21*20
 pred_literacy
 ```
 
@@ -186,9 +217,9 @@ pred_literacy
 
 ::: fragment
 
-### Step 2: calculate $s_{\hat{Y}*}$
+### Step 2: calculate $s_{\hat{Y}^*}$
 
-- $s_{\hat{Y}*} = s_\epsilon\sqrt{\frac{1}{N}+\frac{(X*-\bar{X})^2}{SS_X}}$
+- $s_{\hat{Y}^*} = s_\epsilon\sqrt{1+\frac{1}{N}+\frac{(X^*-\bar{X})^2}{SS_X}}$
 
 - $s_\epsilon$:
 :::
@@ -212,25 +243,67 @@ ss_x <- sum((reading$ParentChildAct - mean(reading$ParentChildAct))^2)
 
 ## Confidence Limits on Y
 
+
+### Step 2: calculate $s_{\hat{Y}^*}$
+
+$s_{\hat{Y}*} = s_\epsilon\sqrt{1+\frac{1}{N}+\frac{(X*-\bar{X})^2}{SS_X}}$
+
 ```{r, echo=TRUE}
-s_y <- s_epsilon * sqrt( (1/nrow(reading)) + (( (20 - mean(reading$OverallLiteracy))^2 ) / ss_x))
+s_y <- s_epsilon * sqrt( 1+(1/nrow(reading)) + (( (20 - mean(reading$OverallLiteracy))^2 ) / ss_x))
 ```
+
+## Confidence Limits on Y
+
+### Step 3: Calculate the 95% P.I. for $\hat{Y}^*$
+
 
 ```{r, echo=TRUE}
 t_crit <- qt(.025, nrow(reading) - 2, lower.tail = FALSE)
+
 ```
 
+Lower confidence limit:
+
+$\hat{Y}^* - t_{crit}(s_{\hat{Y}^*})$
 
 ```{r, echo=TRUE}
-pred_literacy + t_crit*s_y
+pred_literacy - (t_crit*s_y)
 ```
 
+Upper confidence limit:
 
-## Write-up the results
+$\hat{Y}^* + t_{crit}(s_{\hat{Y}^*})$
 
-We ran a simple linear regression to determine whether Parent and Child activity predicts child reading literacy.
-The effect of Parent and Child activity is statistically significant and positive (*b* = 0.21, 95% CI
-[0.11, 0.31], *t*(148) = 4.24, *p* < .001). Parent and Child activity explained 11% of the total variability in child reading literacy.
+```{r, echo=TRUE}
+pred_literacy + (t_crit*s_y)
+```
+
+## Now you try
+
+:::{.callout-caution title="Exercise"}
+Go back to the estimates given by the model `literacy_age`. Find the 95% Prediction Interval for `OverallLiteracy` for a child of 36 months of age.
+:::
+
+```{r}
+pred_literacy_age <- 10.33 + 0.20 * 36
+s_epsilon <- summary(literacy_age)$sigma
+ss_x <- sum((reading$ChildAge - mean(reading$ChildAge))^2)
+s_y <- s_epsilon * sqrt( 1+(1/nrow(reading)) + (( (20 - mean(reading$OverallLiteracy))^2 ) / ss_x))
+t_crit <- qt(.025, nrow(reading) - 2, lower.tail = FALSE)
+
+upper_limit <- pred_literacy_age + (t_crit*s_y)
+lower_limit <- pred_literacy_age - (t_crit*s_y)
+```
+
+- If we sample several children from the population, and all of them age 36 months, we expect 95% to have a Overall Literacy test score between `r round(lower_limit, 2)` and `r round(upper_limit, 2)`.
+
+::: fragment
+```{r, echo=TRUE}
+predict(object = literacy_age, newdata = data.frame( ChildAge=36), level = 0.95, interval = "predict")
+```
+:::
+
+# Multiple Regression
 
 
 ## Multiple Regression
@@ -246,17 +319,18 @@ The effect of Parent and Child activity is statistically significant and positiv
 
 - To run it in R, we just have to add on the predictor to our model
 
+::: fragment
+
 ```{r, echo=TRUE}
 literacy_multiple <- lm(OverallLiteracy ~ ChildAge + ParentChildAct, data = reading)
-
 ```
-
 
 ```{r}
-summary(literacy_multiple)
-# broom::tidy(literacy_multiple) |> 
-#   kableExtra::kbl()
+broom::tidy(literacy_multiple) |>
+  kableExtra::kbl()
 ```
+:::
+
 
 ## Multiple Regression - coefficients
 
@@ -264,15 +338,17 @@ summary(literacy_multiple)
 
 - Like before, the intercept is the expected value of our outcome when *all* predictors are 0.
 
-- when a child is 0 months old, and a parent spends 0 minutes per day doing reading-related activities with them the expected literacy score is 3.37.
+- When a child is 0 months old, and a parent spends 0 minutes per day doing reading-related activities with them the expected literacy score is 3.37.
 
 ## Multiple Regression - coefficients
 
-- What has changed is the interpretation of the slope.
+- The slope is now the expected change in $Y$ for a 1-unit increase in $X$, **holding the other variable constant**
 
-- The slope is now the expected change in Y for a 1-unit increase in X, **holding the other variable constant**
+- It ensures we **isolate** the effect of the specific independent variable we're interested in, without conflating it with the influences of other variables in the model.
 
-- It ensures we isolate the effect of the specific independent variable we're interested in, without conflating it with the influences of other variables in the model.
+:::fragment
+![](img/partial_diagram.png){fig-align="center" width=80%}
+:::
 
 ## Multiple Regression - coefficients
 
@@ -430,6 +506,33 @@ $$
 
 ## Centering predictors
 
-This makes the intercept more useful: it is the expected literacy when we have a child who is the average age and whose parents spend the average amount of time doing reading related activities with them.
+This makes the intercept more useful: it is the expected literacy when we have a child who is the **average age** and whose parents spend the **average amount of time doing reading related activities** with them.
 
+## Interactions
 
+- Interactions are how we can determine whether there is a moderation effect.
+
+- Moderation between 2 predictor variables is like  saying "depends on" - the effect of one predictor variable "depends on" what value the other predictor takes.
+
+:::fragment
+![](img/moderation.png){fig-align="center" width=80%}
+:::
+
+## Interactions
+
+- Perhaps the effect of parent-child activities depends on the child's age.
+
+- Maybe it matters that parents spend time doing these activities with their children when their children are a little bit older, versus when they're younger and parent-child activities has no effect.
+
+- We might want to test if there is an interaction between child's age and parent-child activities.
+
+## Interactions
+
+- To test an interaction in R, you just need to multiply your 2 predictors together instead of adding:
+
+:::fragment
+```{r, echo=TRUE}
+literacy_interaction = lm(OverallLiteracy ~ ChildAge_c * ParentChildAct_c, data = reading)
+```
+
+:::
