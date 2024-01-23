@@ -19,6 +19,7 @@ format:
     margin-left: "0"
     margin-right: "0"
     width: 1400
+    callout-icon: false
     # height: 900
     footer: "PSC 103B - Statistical Analysis of Psychological Data"
     logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
@@ -32,6 +33,35 @@ library(dplyr)
 library(ggplot2)
 library(ggpubr)
 ```
+
+```{r, echo=FALSE}
+my_theme <- theme_minimal(base_family = "Roboto Condensed", base_size = 14) +
+  theme(panel.grid.minor = element_blank(),
+        # Bold, bigger title
+        plot.title = element_text(face = "bold", size = rel(1.7)),
+        # Plain, slightly bigger subtitle that is grey
+        plot.subtitle = element_text(face = "plain", size = rel(1.3), color = "grey70"),
+        # Italic, smaller, grey caption that is left-aligned
+        plot.caption = element_text(face = "italic", size = rel(0.7), 
+                                    color = "grey70", hjust = 0),
+        legend.position = c("top"),
+        legend.text = element_text(size=12),
+        # Bold legend titles
+        legend.title = element_text(face = "bold"),
+        # Bold, slightly larger facet titles that are left-aligned for the sake of repetition
+        strip.text = element_text(face = "bold", size = rel(1.1), hjust = 0),
+        # Bold axis titles
+        axis.title = element_text(face = "bold"),
+        # Add some space above the x-axis title and make it left-aligned
+        axis.title.x = element_text(margin = margin(t = 10), hjust = 0),
+        axis.text.x = element_text(color = "grey70"),
+        # Add some space to the right of the y-axis title and make it top-aligned
+        axis.title.y = element_text(margin = margin(r = 10), hjust = 1),
+        axis.text.y = element_text(color = "grey70"),
+        # Add a light grey background to the facet titles, with no borders
+        strip.background = element_rect(fill = "grey90", color = NA))
+```
+
 
 ## Today's dataset
 
@@ -166,9 +196,9 @@ confint(object = literacy_parent, level = 0.95)
 
 ## Write-up the results
 
-> We ran a simple linear regression to determine whether Parent and Child activity predicts child reading literacy.
+> We ran a simple linear regression to determine whether Parent-Child activity predicts child reading literacy.
 The effect of Parent and Child activity is statistically significant and positive (*b* = 0.21, 95% CI
-[0.11, 0.31], *t*(148) = 4.24, *p* < .001). Parent and Child activity explained 11% of the total variability in child reading literacy.
+[0.11, 0.31], *t*(148) = 4.24, *p* < .001). Parent-Child activity explained 11% of the total variability in child reading literacy.
 
 ## Confidence Limits on Y
 
@@ -204,7 +234,7 @@ $$
 :::
 
 ::: fragment
-### Step 1: calculate $\hat{Y}*$
+### Step 1: calculate $\hat{Y}^*$
 
 ```{r, echo=TRUE}
 pred_literacy <- 13.27 + 0.21*20
@@ -246,10 +276,11 @@ ss_x <- sum((reading$ParentChildAct - mean(reading$ParentChildAct))^2)
 
 ### Step 2: calculate $s_{\hat{Y}^*}$
 
-$s_{\hat{Y}*} = s_\epsilon\sqrt{1+\frac{1}{N}+\frac{(X*-\bar{X})^2}{SS_X}}$
+$s_{\hat{Y}*} = s_\epsilon\sqrt{1+\frac{1}{N}+\frac{(X^*-\bar{X})^2}{SS_X}}$
 
 ```{r, echo=TRUE}
 s_y <- s_epsilon * sqrt( 1+(1/nrow(reading)) + (( (20 - mean(reading$OverallLiteracy))^2 ) / ss_x))
+s_y
 ```
 
 ## Confidence Limits on Y
@@ -312,7 +343,7 @@ predict(object = literacy_age, newdata = data.frame( ChildAge=36), level = 0.95,
 
 - $y_i = b_0 + b_1x_{1_i} + b_2x_{2_i} + \ldots + b_qx_{q_i} + \epsilon_i$
 
-- Say that we want to use `ParentChildAct` and `ChildAge` simultaneously in the model, we would have
+- Say that we want to use `ParentChildAct` and `ChildAge` simultaneously in the model, we would have:
   - $OverallLiteracy_i = b_0 + b_1 \times ChildAge_i + b_2 \times ParentChildAct_i + \epsilon_i$
 
 ## Multiple Regression - running the model
@@ -342,12 +373,12 @@ broom::tidy(literacy_multiple) |>
 
 ## Multiple Regression - coefficients
 
-- The slope is now the expected change in $Y$ for a 1-unit increase in $X$, **holding the other variable constant**
+- The slope is now the expected change in $Y$ for a 1-unit increase in $X$, **holding the other variable constant**.
 
 - It ensures we **isolate** the effect of the specific independent variable we're interested in, without conflating it with the influences of other variables in the model.
 
 :::fragment
-![](img/partial_diagram.png){fig-align="center" width=80%}
+![](img/partial_diagram.png){fig-align="center" width=55%}
 :::
 
 ## Multiple Regression - coefficients
@@ -364,9 +395,9 @@ broom::tidy(literacy_multiple) |>
 
 - The slope for `ChildAge` and `ParentChildAct` is the same as in the simple linear regression models. But don't always expect that! That only happens because `ChildAge` and `ParentChildAct` have a correlation of only `r round(cor(reading$ChildAge, reading$ParentChildAct), 3)`.
 
-- There is no overlapping variance between the two, so both have maintain their unique contribution to predict the outcome.
+- There is no overlapping variance between the two, so both have maintained their unique contribution to predict the outcome.
 
-## Multiple Regression - R-squared
+## Multiple Regression - $R^2$
 
 - What is our $R^2$ now?
 
@@ -388,12 +419,15 @@ summary(literacy_parent)$r.squared
 
 ## Centering predictors
 
-- You might have noticed is that the intercept doesn't always make sense.
+- You might have noticed that the intercept doesn't always make sense.
 
 - Are we ever expected to have a child who is 0 months old? No! That child isn't even born yet!
 
 ::: fragment
 ```{r, message=FALSE}
+#| fig-align: "center"
+#| out-width: 40%
+
 ggplot(data = reading, aes(y = OverallLiteracy, x = ChildAge)) + 
   geom_point(alpha = .5) +
   theme_minimal() +
@@ -413,6 +447,25 @@ reading$ChildAge_c <- scale(reading$ChildAge, scale = FALSE)
 ```
 
 Centering around the mean shifts all the values of your variable so that the overall distribution stays the same but the mean of that distribution is now 0.
+
+::: fragment
+```{r, echo=TRUE}
+reading$ChildAge_c <- reading$ChildAge - mean(reading$ChildAge)
+# OR with the scale() function
+# reading$ChildAge_c <- scale(reading$ChildAge, scale = FALSE)
+```
+:::
+
+- Notice what happens
+
+::: fragment
+```{r, echo=TRUE}
+head(reading$ChildAge)
+head(reading$ChildAge_c)
+```
+:::
+
+## Centering predictors
 
 ```{r}
 #| fig-align: "center"
@@ -439,35 +492,25 @@ g2 <- ggplot(data = reading, aes(y = OverallLiteracy, x = ChildAge_c)) +
 ggarrange(g1, g2, nrow = 2)
 ```
 
-## Centering predictors
-
-We can center a variable in two ways:
-
-::: fragment
-```{r, echo=TRUE}
-reading$ChildAge_c <- reading$ChildAge - mean(reading$ChildAge)
-# OR with the scale() function
-reading$ChildAge_c <- scale(reading$ChildAge, scale = FALSE)
-```
-:::
-
-- Notice what happens
-
-::: fragment
-```{r, echo=TRUE}
-head(reading$ChildAge)
-head(reading$ChildAge_c)
-```
-:::
-
-## Centering predictors
-
-```{r}
+```{r, eval=FALSE}
 #| fig-align: "center"
 #| out-width: 70%
-par(mfrow = c(1, 2))
-hist(reading$ChildAge)
-hist(reading$ChildAge_c)
+
+p_age1 <- ggplot(reading, aes(x = ChildAge)) + 
+  geom_histogram(#bins = 30, 
+                 color = "skyblue", fill = "lightblue") +
+  labs(title = "Histogram of Child Age", 
+       x = "Child Age", 
+       y = NULL)
+
+p_age2 <- ggplot(reading, aes(x = ChildAge_c)) + 
+  geom_histogram(#bins = 30, 
+                 color = "skyblue", fill = "lightblue") +
+  labs(#title = "Histogram of Child Age", 
+       x = "Child Age centered", 
+       y = NULL)
+
+ggarrange(p_age1, p_age2, ncol = 2)
 ```
 
 ## Centering predictors
@@ -515,7 +558,7 @@ This makes the intercept more useful: it is the expected literacy when we have a
 - Moderation between 2 predictor variables is like  saying "depends on" - the effect of one predictor variable "depends on" what value the other predictor takes.
 
 :::fragment
-![](img/moderation.png){fig-align="center" width=80%}
+![](img/moderation.png){fig-align="center" width=55%}
 :::
 
 ## Interactions
@@ -532,7 +575,42 @@ This makes the intercept more useful: it is the expected literacy when we have a
 
 :::fragment
 ```{r, echo=TRUE}
-literacy_interaction = lm(OverallLiteracy ~ ChildAge_c * ParentChildAct_c, data = reading)
+interaction_model <- lm(OverallLiteracy ~ ChildAge_c * ParentChildAct_c, data = reading)
+```
+
+```{r}
+broom::tidy(interaction_model)
 ```
 
 :::
+
+## Interactions
+
+- Is our interaction term significant? 
+
+- No. So that means the effect of parent-child activities does not depend on how old the child is -- it's equally important at all ages.
+
+- But what would we do if we had a significant interaction?
+
+## Interactions
+
+- In that case, we want to better understand what this  effect is, and it's usually better to graph the  regression line between the  outcome and one predictor at different values of the other predictor.
+
+- If your "other predictor" is numeric, this is usually done at 3 values: 1 SD below the mean, 1 SD above the mean, and the mean.
+
+## Interactions
+
+```{r, echo=TRUE}
+int_plot <- sjPlot::plot_model(interaction_model, type = "int", jitter = TRUE,
+           mdrt.values = "meansd", show.data = TRUE)
+```
+
+```{r}
+#| fig-align: "center"
+#| out-width: 45%
+int_plot +
+  xlab("Child Age centered") +
+  my_theme
+```
+
+
