@@ -92,7 +92,7 @@ literacy_age <- lm(OverallLiteracy ~ ChildAge, data = reading)
 
 - In simple linear regression there is only one predictor:
 
-- $y_i = b_0 + b_1x_1 + \epsilon_i$
+- $y_i = b_0 + b_1x_{1_i} + \epsilon_i$
   - $b_0$ = intercept;
   - $b_1$ = slope;
   - $\epsilon_i$ = residuals.

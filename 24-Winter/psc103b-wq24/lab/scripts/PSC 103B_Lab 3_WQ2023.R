@@ -12,9 +12,9 @@
 reading = read.csv("Lab3Data.csv",
                    header = TRUE)
 
-# This data is data that I generated based on information 
-# provided in: Weigel et al. (2006). Contributions of the 
-# home literacy environment to preschool-aged children's 
+# This data is data that I generated based on information
+# provided in: Weigel et al. (2006). Contributions of the
+# home literacy environment to preschool-aged children's
 # emerging literacy and language skills.
 # DOI: https://doi.org/10.1080/03004430500063747
 
