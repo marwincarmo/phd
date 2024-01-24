@@ -66,7 +66,7 @@ my_theme <- theme_minimal(base_family = "Roboto Condensed", base_size = 14) +
 ## Today's dataset
 
 ```{r, echo=TRUE}
-reading <- read.csv("data/Lab3Data.csv", header = TRUE)
+reading <- read.csv("lab/data/Lab3Data.csv", header = TRUE)
 ```
 
 `ParentChildAct`: A composite measure of how often parents spend time with reading-related activities to their children, measured in minutes.
@@ -452,7 +452,7 @@ Centering around the mean shifts all the values of your variable so that the ove
 ```{r, echo=TRUE}
 reading$ChildAge_c <- reading$ChildAge - mean(reading$ChildAge)
 # OR with the scale() function
-# reading$ChildAge_c <- scale(reading$ChildAge, scale = FALSE)
+reading$ChildAge_c <- as.vector(scale(reading$ChildAge, scale = FALSE))
 ```
 :::
 

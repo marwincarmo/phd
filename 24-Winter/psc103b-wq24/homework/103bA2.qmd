@@ -1,0 +1,50 @@
+---
+title: "PSC 103B - Lab 1 Assignment"
+subtitle: "Answer Key"
+format: pdf
+filters:
+  - color.lua
+---
+
+# Question 1
+
+Please read the NPAS dataset (NPAS.csv) into R using read.csv(). Create a dataset that only contains the variables listed above (recall: how do you subset columns from a dataframe?) (.5 pt). Show the first 6 rows (.5 pt) and last 6 rows (.5 pt) of the new dataset. Show your code.
+
+```{r, echo=TRUE}
+npas <- read.csv("data/NPAS.csv")
+npas_subset = npas[ , c("nerdy_scale", "TIPI1", "TIPI3", "nerdy_selfreport")]
+head(npas_subset)
+tail(npas_subset)
+
+```
+# Question 2
+
+Show the correlations among all the variables in the new dataset (1pt). Show your code.
+
+```{r, echo=TRUE}
+round(cor(npas_subset, use = "complete.obs"), 3)
+```
+
+# Question 3
+
+Test whether the correlation between the participants’ nerdiness scores on the NPAS (nerdy_scale) their level of extraversion is significant (1 pt). Report this correlation using APA format (.5 pt). Show your code.
+
+```{r}
+cor_estimate <- cor(npas_subset$nerdy_scale, npas_subset$TIPI1)
+
+sample_size <- nrow(npas_subset)
+
+cor_se <- sqrt((1 - cor_estimate^2) / (sample_size - 2))
+
+t_stat <- cor_estimate / cor_se
+
+df_cor <- sample_size -2
+
+# calculate the p value
+
+pt(t_stat, df = df_cor, lower.tail = TRUE) * 2
+```
+```{r}
+cor.test(npas_subset$nerdy_scale, npas_subset$TIPI1, method = "pearson") -> ct
+```
+
