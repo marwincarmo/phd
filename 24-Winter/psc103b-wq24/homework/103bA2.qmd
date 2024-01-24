@@ -42,9 +42,32 @@ df_cor <- sample_size -2
 
 # calculate the p value
 
-pt(t_stat, df = df_cor, lower.tail = TRUE) * 2
+pt(t_stat, df = df_cor, lower.tail = FALSE) * 2
 ```
 ```{r}
 cor.test(npas_subset$nerdy_scale, npas_subset$TIPI1, method = "pearson") -> ct
+```
+
+lower.tail = FALSE -> P[X > x]
+lower.tail = TRUE -> P[X <= x]
+
+
+```{r}
+cor_estimate <- cor(npas_subset$nerdy_scale, npas_subset$TIPI3)
+
+sample_size <- nrow(npas_subset)
+
+cor_se <- sqrt((1 - cor_estimate^2) / (sample_size - 2))
+
+t_stat <- cor_estimate / cor_se
+
+df_cor <- sample_size -2
+
+# calculate the p value
+
+pt(t_stat, df = df_cor, lower.tail = FALSE) * 2
+```
+```{r}
+cor.test(npas_subset$nerdy_scale, npas_subset$TIPI3, method = "pearson", alternative = "two.sided")
 ```
 
