@@ -1,0 +1,279 @@
+---
+title: "Homework 3"
+author: "YOUR NAME"
+date: "Due February 3rd, 2023"
+output: 
+  pdf_document:
+      toc: true
+      toc_depth: 3
+toccolor: blue
+subtitle: Multiple Regression
+---
+
+
+
+For this assignment, there are two datasets that you will use: hw2data.csv and
+motivation.Rdata
+
+If you do the extra credit, you will also use the arh_hw3.Rdata dataset.
+
+```{r message = FALSE, echo = FALSE, include = FALSE}
+# Load the needed packages
+library(ggplot2)
+library(dplyr)
+library(stargazer)
+
+# Load in the data
+hw2 <- read.csv("hw2data.csv") |>
+    mutate(sex = as.factor(sex))
+load("motivation.Rdata")
+```
+
+
+## Question 1
+
+Use the hw2 data to answer this question. The data come from the study below:
+
+Kim, S. E., Kim, H. N., Cho, J., Kwon, M. J., Chang, Y., et al. (2016) Correction: Direct and indirect effects of five factor personality and gender on depressive symptoms mediated by perceived stress. *PLOS ONE, 11*: e0157204.
+
+The `hw2` file contains the following variables:
+
+* `Stress`: Total perceived stress score from self-reported stress questionnaire
+* `CESD`: Total depression score for the Center for Epidemiological Studies Depression Scale
+* `N`: Total score on neuroticism from the Revised NEO Personality Inventory
+* `E`: Total score on extraversion from the Revised NEO Personality Inventory
+* `O`: Total score on openness to Experience from the Revised NEO Personality Inventory
+* `A`: Total score on agreeableness from the Revised NEO Personality Inventory
+* `C`: Total score on conscientiousness from the Revised NEO Personality Inventory
+* `sex`: Binary variable representing biological sex (0 = male; 1 = female)
+
+
+
+### Part a) [1 pt.]
+
+Fit a linear model using Openness (`0`) and conscientiousness (`C`) to predict Depression (`CESD`), write the regression equation, and interpret each of the parameters found in the multiple regression model. Round all numbers to two decimal places.
+
+```{r echo=TRUE , message=FALSE}
+
+mod1 <- lm(CESD ~ O + C, data = hw2)
+summary(mod1)
+
+```
+
+$$ \widehat{\text{CESD}}_i = 14.87 + 0.038 \times Openness_i -0.12 \times Conscientiousness_i$$
+
+**Interpretations**
+
+* **Intercept**: The predicted level of Total depression when Openness and Conscientiousness are both equal zero is 14.87.
+* **Estimate of `O`**: There is a predicted increase of 0.038 points in depression scores for every one-unit increase in Openness, when holding Conscientiousness constant.
+* **Estimate of `C`**: There is a predicted decrease of -0.12 points in depression scores for every one-unit increase in Conscientiousness, when holding Openness constant.
+
+
+### Part b) [1.5 pt.]
+
+Repeat the multiple regression model from Part a, but with *standardized* predictors. Write the regression equation and interpret the slopes of the two predictors.
+
+Based on this analysis is Openness (`O`) or Conscientiousness (`C`) a better predictor of Depression (`CESD`)? Explain your reasoning.
+
+
+```{r echo=TRUE , message=FALSE}
+hw2_std <- hw2 |> 
+  dplyr::mutate(
+    dplyr::across(N:C, ~ scale(.x))
+  )
+
+mod2 <- lm(CESD ~ O + C, data = hw2_std)
+summary(mod2)
+```
+
+$$ \widehat{\text{CESD}}_i = 11.53 + 0.43 \times Openness_i -1.13 \times Conscientiousness_i$$
+
+**Interpretations**
+
+* **Intercept**: 11.53
+* **Estimate of `O`**: 0.43
+* **Estimate of `C`**: -1.13
+* **Better predictor**: Consciousness
+
+
+### Part c) [0.5 pt.]
+
+Add `N` as another standardized predictor to the model created in Part b. Write the regression equation, and identify what the best predictor of depression (`CESD`) is in the model.
+
+```{r echo = TRUE, message = FALSE}
+
+mod3 <- lm(CESD ~ O + C + N, data = hw2_std)
+summary(mod3)
+
+```
+
+$$ \widehat{\text{CESD}}_i =11.53 + 0.28 \times Openness_i + 0.26 \times Conscientiousness_i + 2.80 \times Neuroticism_i$$
+**The best predictor of CESD is**: 
+
+* Neuroticism
+
+
+### Part d) [1 pt.]
+
+Create a table summarizing the results of your models. The table does not have to be perfectly compliant with APA formatting, but it should be presentable (see the tables in Lab  for expectations). The table should have all numbers rounded to 2 decimal places, names for the models,  and should include confidence intervals.
+
+
+```{r echo = T, message = F, results = 'asis'}
+
+```
+
+
+
+## Question 2
+
+### Part a) [1 pt.]
+
+Using the `hw2` data, predict `Stress` from the following independent variables, in a series of regression models:
+
+* Model 1: `Stress` predicted by Openness (`O`)
+* Model 2: `Stress` predicted by `sex`
+* Model 3: `Stress` predicted by Openness (`O`) plus `sex`
+* Model 4: `Stress` predicted by Openness (`O`), `sex`, and the interaction between Openness (`O`) and `sex`
+
+Standardize all the appropriate variables in the analyses and present the results of the analyses in a table.
+
+```{r echo = T, message = F, results = 'asis'}
+
+```
+
+### Part b) [1 pt.]
+
+Write the estimated equations from the regression in Model 4 for when sex = 0 (males) and when sex = 1 (females). Make sure to simplify the equations.
+
+You may find equations 1-3 in [this](https://www.jstor.org/stable/pdf/25791835.pdf?refreqid=excelsior%3Ad72373c9c9b1dda1654f4b12c5ade528&ab_segments=&origin=&acceptTC=1) paper useful.
+
+$$\widehat{\text{Stress}}_i = ??, \quad \text{when sex = 0}$$
+
+$$\widehat{\text{Stress}}_i = ??, \quad \text{when sex = 1}$$
+
+### Part c) [1 pt.]
+
+Create a scatter plot depicting the interaction analysis above. Make sure that data points and regression line for males and females is clearly labeled, and that the differences between males and females are apparent. You made need to try different combinations of colors and/or panels to make a nice graph.
+
+```{r echo = TRUE, message = FALSE}
+
+
+```
+
+### Part d) [1 pt.]
+
+Answer the following questions:
+
+i) On its own, which variable had a bigger effect on `Stress`: Openness (`O`) or `sex`?
+ii) In which group was there a stronger association between Openness (`O`) and `Stress`: males or females?
+
+**Answers:**
+
+* WRITE ANSWER TO QUESTION 1 HERE
+* WRITE ANSWER TO QUESTION 2 HERE
+
+
+
+## Question 3
+
+```{r message = FALSE, echo = FALSE, include = FALSE}
+# Use the `motivation` data set to answer this question, which contains the following variables:
+
+# difficulty: Task difficulty level
+# motivation: The level of Trainees' motivation to complete the task
+```
+
+
+
+### Part a) [1 pt.]
+
+Using the motivation dataset, run a regression with `motivation` predicted by `difficulty` and write the regression equation. Then, create a quadratic model with `motivation` predicted by `difficulty` and write the regression equation. Do not standardize `difficulty`, but make sure it is mean-centered. You can do this using the `scale()` function and setting `scale = FALSE`, e.g.,
+
+```{r}
+# example of mean-centering the variable `x`
+x <- 1:10
+mean_centered_x <- scale(x, center = TRUE, scale = FALSE)
+mean(x)
+mean(mean_centered_x)
+```
+
+
+```{r echo = T, message = F}
+# first model
+
+```
+
+$$ \widehat{\text{motiv}}_i = ??$$
+
+
+
+
+
+```{r echo = T, message = F}
+# second model
+
+```
+
+$$ \widehat{\text{motiv}}_i =??$$
+
+
+Which model accounts for more variance in motivation (i.e., which model has a higher $R^2$)?
+
+**Answer**: WRITE ANSWER HERE
+
+### Part b) [1 pt.]
+
+For the quadratic model, provide how you would interpret the following:
+
+* **Intercept**: WRITE ANSWER HERE
+* **Estimate of `difficulty` (not the square of difficulty)**: 
+
+
+## Extra Credit [3 pts.]
+
+```{r echo = FALSE, message = FALSE, include = FALSE}
+
+# Use the `arh_hw2` data to answer this question. 
+
+load("arh_hw2.Rdata")
+
+# This data set contains a survey of American adults pertaining to healthy aging and religious behavior. This data frame is a subsetted version of a larger data set, and contains only the following variables from the 2004 wave of data collection:
+ 
+# Depression2004: A measure of Depression. High values represent high levels of Depression.
+
+# SelfWorth2004: A measure of self-worth. High values represent high levels of self-worth.
+
+# FearDeath: A measure of the fear of death. High values represent high fear of death.
+
+```
+
+Using two of the three variables in `arh_hw3`, create a regression model in which suppression occurs. The variables should be standardized in the regression model. You may need to test out different combinations of independent variables, dependent variables, and covariates.
+
+Remember to examine the necessary $R^2$ values to confirm that suppression has occurred. Once you have identified a model that leads to suppression, report the regression equation below, and identify: the type of suppression that is occurring, the suppressor variable, and the supressed variable. You may include a brief explanation if you would like. 
+
+
+```{r echo = T, message = F}
+
+
+
+```
+
+
+**Regression Model**
+
+$$ \widehat{\text{fdeath}_i} =??$$
+
+
+**Type of Suppression Occurring**
+* WRITE ANSWER HERE
+
+**The Suppressor Variable**
+* WRITE ANSWER HERE
+
+**The Suppressed Variable**
+* WRITE ANSWER HERE
+
+**Explanation**:
+* WRITE ANSWER HERE
+
+
