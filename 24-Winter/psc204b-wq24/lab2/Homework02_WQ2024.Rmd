@@ -56,7 +56,7 @@ Fit a linear model using Openness (`0`) and conscientiousness (`C`) to predict D
 ```{r echo=TRUE , message=FALSE}
 
 mod1a <- lm(CESD ~ O + C, data = hw2)
-summary(mod1)
+summary(mod1a)
 
 ```
 
@@ -66,7 +66,7 @@ $$ \widehat{\text{CESD}}_i = 14.87 + 0.038 \times Openness_i -0.12 \times Consci
 
 * **Intercept**: The predicted level of Total depression when Openness and Conscientiousness are both equal zero is 14.87.
 * **Estimate of `O`**: There is a predicted increase of 0.038 points in depression scores for every one-unit increase in Openness, when holding Conscientiousness constant.
-* **Estimate of `C`**: There is a predicted decrease of -0.12 points in depression scores for every one-unit increase in Conscientiousness, when holding Openness constant.
+* **Estimate of `C`**: There is a predicted decrease of 0.12 points in depression scores for every one-unit increase in Conscientiousness, when holding Openness constant.
 
 
 ### Part b) [1.5 pt.]
@@ -83,17 +83,17 @@ hw2_std <- hw2 |>
   )
 
 mod1b <- lm(CESD ~ O + C, data = hw2_std)
-summary(mod2)
+summary(mod1b)
 ```
 
 $$ \widehat{\text{CESD}}_i = 11.53 + 0.43 \times Openness_i -1.13 \times Conscientiousness_i$$
 
 **Interpretations**
 
-* **Intercept**: 11.53
-* **Estimate of `O`**: 0.43
-* **Estimate of `C`**: -1.13
-* **Better predictor**: Consciousness
+* **Intercept**: The predicted level of Total depression when Openness and Conscientiousness are both at their average is 11.53.
+* **Estimate of `O`**: There is a predicted increase of 0.43 standard deviations in depression scores for every one-unit increase in Openness, when holding Conscientiousness constant.
+* **Estimate of `C`**: There is a predicted decrease of 1.13 standard deviations in depression scores for every one-unit increase in Conscientiousness, when holding Openness constant.
+* **Better predictor**: Consciousness, because its slope is higher in absolute value than the slope of Openness.
 
 
 ### Part c) [0.5 pt.]
@@ -103,7 +103,7 @@ Add `N` as another standardized predictor to the model created in Part b. Write 
 ```{r echo = TRUE, message = FALSE}
 
 mod1c <- lm(CESD ~ O + C + N, data = hw2_std)
-summary(mod3)
+summary(mod1c)
 
 ```
 
@@ -173,16 +173,6 @@ ggplot(data = hw2_std, aes(x = O, y = Stress, fill = sex)) +
   theme(legend.title = element_blank())
 ```
 
-```{r}
-ggplot(data = hw2_std, aes(x = O, y = Stress, fill = sex)) +
-  geom_point(aes(color = sex), size = 2, alpha = .3) +
-  geom_smooth(aes(group = sex, colour = sex), method = "lm", se = F, fullrange = T) +
-  labs(title = "Interaction of Sex and Openness Predicting Stress",
-      x = "Openness",
-      y = "Stress") +
-  scale_colour_discrete(labels=c("Female", "Male"))+
-  theme_classic() 
-```
 
 
 ### Part d) [1 pt.]
@@ -194,10 +184,8 @@ ii) In which group was there a stronger association between Openness (`O`) and `
 
 **Answers:**
 
-* WRITE ANSWER TO QUESTION 1 HERE
-* WRITE ANSWER TO QUESTION 2 HERE
-
-
+* Sex
+* Females
 
 ## Question 3
 
@@ -207,8 +195,6 @@ ii) In which group was there a stronger association between Openness (`O`) and `
 # difficulty: Task difficulty level
 # motivation: The level of Trainees' motivation to complete the task
 ```
-
-
 
 ### Part a) [1 pt.]
 
@@ -222,13 +208,17 @@ mean(x)
 mean(mean_centered_x)
 ```
 
+```{r}
+motivation$difficulty_c <- motivation$difficulty - mean(motivation$difficulty, na.rm = TRUE)
+```
 
 ```{r echo = T, message = F}
 # first model
-
+mod3a <- lm(motivation ~ difficulty_c, data=motivation)
+summary(mod3a)
 ```
 
-$$ \widehat{\text{motiv}}_i = ??$$
+$$ \widehat{\text{motiv}}_i = 156.69 -0.42 \times difficulty_i$$
 
 
 
@@ -236,22 +226,23 @@ $$ \widehat{\text{motiv}}_i = ??$$
 
 ```{r echo = T, message = F}
 # second model
-
+mod3b <- lm(motivation ~ difficulty_c + I(difficulty_c^2), data=motivation)
+summary(mod3b)
 ```
 
-$$ \widehat{\text{motiv}}_i =??$$
+$$ \widehat{\text{motiv}}_i = 274.96 -2.54 \times difficulty_i - 0.70 \times difficulty_i^2$$
 
 
 Which model accounts for more variance in motivation (i.e., which model has a higher $R^2$)?
 
-**Answer**: WRITE ANSWER HERE
+**Answer**: The second model with the quadratic term.
 
 ### Part b) [1 pt.]
 
 For the quadratic model, provide how you would interpret the following:
 
-* **Intercept**: WRITE ANSWER HERE
-* **Estimate of `difficulty` (not the square of difficulty)**: 
+* **Intercept**: The predicted level of motivation when difficulty is at its mean level is 247.96.
+* **Estimate of `difficulty` (not the square of difficulty)**: For every unit change in Difficulty, Motivation is predicted to change by -2.54 units.
 
 
 ## Extra Credit [3 pts.]
@@ -278,27 +269,30 @@ Remember to examine the necessary $R^2$ values to confirm that suppression has o
 
 
 ```{r echo = T, message = F}
+mod4a <- lm(FearDeath ~ Depression2004, data = arh_hw3)
+summary(mod4a)
 
-
-
+mod4b <- lm(FearDeath ~ Depression2004 + SelfWorth2004
+            , data = arh_hw3)
+summary(mod4b)
 ```
 
 
 **Regression Model**
 
-$$ \widehat{\text{fdeath}_i} =??$$
+$$ \widehat{\text{fdeath}_i} = 5.19-0.07 \times Depression_i + 1.34 \times SelfWorth_i$$
 
 
 **Type of Suppression Occurring**
-* WRITE ANSWER HERE
+* Classical suppression
 
 **The Suppressor Variable**
-* WRITE ANSWER HERE
+* Depression
 
 **The Suppressed Variable**
-* WRITE ANSWER HERE
+* Self Worth
 
 **Explanation**:
-* WRITE ANSWER HERE
+* The depression suppresses the proportion of variance in self worth that is irrelevant for fear of death.
 
 
