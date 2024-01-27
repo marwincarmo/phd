@@ -55,7 +55,7 @@ Fit a linear model using Openness (`0`) and conscientiousness (`C`) to predict D
 
 ```{r echo=TRUE , message=FALSE}
 
-mod1 <- lm(CESD ~ O + C, data = hw2)
+mod1a <- lm(CESD ~ O + C, data = hw2)
 summary(mod1)
 
 ```
@@ -82,7 +82,7 @@ hw2_std <- hw2 |>
     dplyr::across(N:C, ~ scale(.x))
   )
 
-mod2 <- lm(CESD ~ O + C, data = hw2_std)
+mod1b <- lm(CESD ~ O + C, data = hw2_std)
 summary(mod2)
 ```
 
@@ -102,7 +102,7 @@ Add `N` as another standardized predictor to the model created in Part b. Write 
 
 ```{r echo = TRUE, message = FALSE}
 
-mod3 <- lm(CESD ~ O + C + N, data = hw2_std)
+mod1c <- lm(CESD ~ O + C + N, data = hw2_std)
 summary(mod3)
 
 ```
@@ -118,11 +118,10 @@ $$ \widehat{\text{CESD}}_i =11.53 + 0.28 \times Openness_i + 0.26 \times Conscie
 Create a table summarizing the results of your models. The table does not have to be perfectly compliant with APA formatting, but it should be presentable (see the tables in Lab  for expectations). The table should have all numbers rounded to 2 decimal places, names for the models,  and should include confidence intervals.
 
 
-```{r echo = T, message = F, results = 'asis'}
-
+```{r echo = T, message = F, results = 'asis', }
+stargazer(mod1a, mod1b, mod1c, type = "latex", header = FALSE, title = "Multiple regression model predicting Depression scores from Openness, Conscientiousness (1 and 2), and Neuroticism (3).", ci=TRUE, digits=2,
+          column.labels = c("Raw predictors", "Standardized predictors", "Standardized predictors"))
 ```
-
-
 
 ## Question 2
 
@@ -138,7 +137,15 @@ Using the `hw2` data, predict `Stress` from the following independent variables,
 Standardize all the appropriate variables in the analyses and present the results of the analyses in a table.
 
 ```{r echo = T, message = F, results = 'asis'}
+mod2a <- lm(Stress ~ O, data = hw2_std)
+mod2b <- lm(Stress ~ sex, data = hw2_std)
+mod2c <- lm(Stress ~ O + sex, data = hw2_std)
+mod2d <- lm(Stress ~ O*sex, data = hw2_std)
+```
 
+```{r echo = T, message = F, results = 'asis', }
+stargazer(mod2a, mod2b, mod2c, mod2d, type = "latex", header = FALSE, title = "Multiple regression model predicting Stress scores from Openness and Sex.", ci=TRUE, digits=2,
+          column.labels = c("Model 1", "Model 2", "Model 3", "Model 4"))
 ```
 
 ### Part b) [1 pt.]
@@ -147,18 +154,36 @@ Write the estimated equations from the regression in Model 4 for when sex = 0 (m
 
 You may find equations 1-3 in [this](https://www.jstor.org/stable/pdf/25791835.pdf?refreqid=excelsior%3Ad72373c9c9b1dda1654f4b12c5ade528&ab_segments=&origin=&acceptTC=1) paper useful.
 
-$$\widehat{\text{Stress}}_i = ??, \quad \text{when sex = 0}$$
+$$\widehat{\text{Stress}}_i = 15.90 -0.43\times Openness_i , \quad \text{when sex = 0}$$
 
-$$\widehat{\text{Stress}}_i = ??, \quad \text{when sex = 1}$$
+$$\widehat{\text{Stress}}_i = (15.90 + 2.09) + (-0.43+0.56)\times Openness_i, \quad \text{when sex = 1}$$
 
 ### Part c) [1 pt.]
 
 Create a scatter plot depicting the interaction analysis above. Make sure that data points and regression line for males and females is clearly labeled, and that the differences between males and females are apparent. You made need to try different combinations of colors and/or panels to make a nice graph.
 
 ```{r echo = TRUE, message = FALSE}
-
-
+ggplot(data = hw2_std, aes(x = O, y = Stress, fill = sex)) +
+  geom_point(shape = 21, size = 2, alpha = .3) +
+  geom_smooth(aes(color = sex), method = "lm", se = F, fullrange = T) +
+  xlab("Openness") +
+  scale_colour_discrete(labels = c("Female", "Male")) +
+  scale_fill_discrete(labels = c("Female", "Male")) +
+  theme_classic() +
+  theme(legend.title = element_blank())
 ```
+
+```{r}
+ggplot(data = hw2_std, aes(x = O, y = Stress, fill = sex)) +
+  geom_point(aes(color = sex), size = 2, alpha = .3) +
+  geom_smooth(aes(group = sex, colour = sex), method = "lm", se = F, fullrange = T) +
+  labs(title = "Interaction of Sex and Openness Predicting Stress",
+      x = "Openness",
+      y = "Stress") +
+  scale_colour_discrete(labels=c("Female", "Male"))+
+  theme_classic() 
+```
+
 
 ### Part d) [1 pt.]
 
