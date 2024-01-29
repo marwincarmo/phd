@@ -1,0 +1,80 @@
+---
+title: "PSC205A Assignment 02: Canonical Correlation"
+format: 
+  pdf:
+     include-in-header:
+      - text: |
+          \usepackage{mathtools}
+---
+
+```{r, message=FALSE}
+library(CCA)
+library(candisc)
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+data <- readr::read_csv("mhs_cca.csv") |> 
+  dplyr::mutate(
+    dplyr::across(
+      dplyr::everything(), as.double
+    )
+  ) |> 
+  na.omit()
+
+X <- as.matrix(subset(data, select = c("PCOMP", "APPEAR", "FRIEND")))
+Y <- as.matrix(subset(data, select = c("MOTIV", "PSW", "AFFECT")))
+```
+
+# Q1. Before running any analyses, what is the maximum number of canonical functions you can obtain? Why?
+
+We can have a maximum of 3 canonical correlations because the number of canonical correlations is always equal to the minimum of the number of variables in each set.
+
+# Q2. Before running the analyses, what is the minimum canonical correlation that you should obtain?
+
+The minimum number of canonical correlations we can obtain is zero. In this scenario there is no linear relationship between any linear combination of variables in Set 1 and any linear combination of variables in Set 2.
+
+# Q3. After running the analyses, how many “significant” canonical functions did you find?
+
+```{r}
+cca_res <- cc(X, Y)
+length(cca_res$cor)
+```
+
+# Q4. Write the equations that generate the canonical variates.
+
+```{r}
+cca_res$xcoef
+cca_res$ycoef
+```
+
+
+$$
+\begin{aligned}
+U_1 &= -0.95\times PCOMP-0.44\times APPEAR-0.22\times FRIEND\\
+U_2 &= -1.25\times PCOMP+1.51\times APPEAR-0.33\times FRIEND\\
+U_3 &= 0.32\times PCOMP-0.11\times APPEAR-1.45\times FRIEND\\
+V_1 &= -0.34\times MOTIV-1.09\times PSW -0.19\times AFFECT\\
+V_2 &= -0.79\times MOTIV+1.33\times PSW -1.06\times AFFECT\\
+V_1 &= -1.91\times MOTIV+0.30\times PSW +0.74\times AFFECT\\
+\end{aligned}
+$$
+
+# Q5. Write the correlation matrix of all the canonical variates you found in your analysis.
+
+```{r}
+
+Ax <- X %*% cca_res$xcoef
+Ay <- Y %*% cca_res$ycoef
+
+cmat <- cor(cbind(Ax, Ay), use = "pairwise.complete.obs")
+colnames(cmat) <- c("u1", "u2", "u3", "v1", "v2", "v3")
+rownames(cmat)<- c("u1", "u2", "u3", "v1", "v2", "v3")
+
+cmat
+```
+
+# Q6. Write a brief summary (1 paragraph) interpreting the results of not more than the first two canonical functions.
+
+
+$U_1$  is primarily characterized by low PCOMP (perceived competence), low APPEAR (perceived appearance), and somewhat lower FRIEND (relatedness to friends). $V_1$ is primarily characterized by low MOTIV (academic motivation), low PSW (physical well-being), and somewhat lower AFFECT (affect). That can mean that individuals who place less emphasis on external validation (appearance) and social connections, and potentially view themselves as less complex, might also be more prone to lower motivation, poorer well-being, and reduced positive emotions.
