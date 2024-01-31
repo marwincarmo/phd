@@ -1,0 +1,19 @@
+```{r data generation, echo = FALSE, results = "hide"}
+questions <- list()
+questions[1] <- c("1", "2", "3", "$\sqrt{4}$")
+```
+
+Question
+========
+
+A researcher measures happiness using a questionnaire and finds that the standard 
+deviation for the happiness variable equals 2. What is the variance of happiness?
+
+```{r questionlist, echo = FALSE, results = "asis"}
+answerlist(questions[1], markup = "markdown")
+```
+
+Meta-information
+================
+extype: mchoice
+exname: Exam 1

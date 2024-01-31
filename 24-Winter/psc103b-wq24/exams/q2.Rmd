@@ -1,0 +1,19 @@
+```{r data generation, echo = FALSE, results = "hide"}
+questions2 <- c("The mean", "1", "0", "Cannot determine from the information given")
+solutions2 <- "2"
+```
+
+Question
+========
+
+For any variable, the sum of all of the mean deviations equals
+
+```{r questionlist, echo = FALSE, results = "asis"}
+answerlist(questions2, markup = "markdown")
+```
+
+Meta-information
+================
+extype: mchoice
+exname: Q2
+exsolution: 0100
