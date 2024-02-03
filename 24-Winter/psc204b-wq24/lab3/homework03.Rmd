@@ -53,8 +53,10 @@ arh_q1 <- arh |>
                 widowed_v_married = ifelse(married01 == "Widowed", 1, 0),
                 )
 
-mod1a <- lm(depress2001 ~ divorced_v_married + nevmarried_v_married + separated_v_married + widowed_v_married, data = arh_q1)
-stargazer(mod1a, type = "latex", header = FALSE, ci=TRUE, digits=2, title = "Depression predicted by Marriage Status.")
+mod1 <- lm(depress2001 ~ divorced_v_married + nevmarried_v_married + separated_v_married + widowed_v_married, data = arh_q1)
+
+stargazer(mod1, type = "latex", header = FALSE, ci=TRUE, 
+          digits=2, title = "Depression predicted by Marital Status.")
 ```
 
 $$ \widehat{\texttt{depress2001}_i} = 11.39 + 1\texttt{Divorced}_i + 1.68\texttt{NevMarr}_i + 0.012\texttt{Separated}_i + 1.38\texttt{Widowed}_i$$
@@ -97,7 +99,7 @@ arh_mean |>
   geom_point(size = 5) +
   geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2) +
   theme_minimal() +
-  labs(x = "Marriage status", y = "Depression")
+  labs(x = "Marital status", y = "Depression")
 
 ```
 
@@ -115,8 +117,9 @@ arh_q2 <- arh |>
                 widowed_v_divorced = ifelse(married01 == "Widowed", 1, 0),
                 )
 
-mod2a <- lm(depress2001 ~ married_v_divorced + nevmarried_v_divorced + separated_v_divorced + widowed_v_divorced, data = arh_q2)
-stargazer(mod2a, type = "latex", header = FALSE, ci=TRUE, digits=2, title = "Depression predicted by Marriage Status.")
+mod2 <- lm(depress2001 ~ married_v_divorced + nevmarried_v_divorced + separated_v_divorced + widowed_v_divorced, data = arh_q2)
+stargazer(mod2, type = "latex", header = FALSE, ci=TRUE, 
+          digits=2, title = "Depression predicted by Marital Status.")
 ```
 
 ## Part b)
@@ -125,9 +128,9 @@ Interpret the slope for the dummy code for "Never Married" in both regressions (
 
 **Answer**:
 
--   **"Married" Reference Group**: In this mode, the slope for "Never Married" is statistically non-significant and positive (*b* = 1.68, 95% CI [-0.11, 3.46], *p* = 0.065). It represents the difference between the mean level of depression of the "Married" group and the mean depression of the "Never Married" group.
+-   **"Married" Reference Group**: In this model, the slope for "Never Married" is statistically non-significant and positive (*b* = 1.68, 95% CI [-0.11, 3.46], *p* = 0.065). It represents the difference between the mean level of depression of the "Married" group and the mean depression of the "Never Married" group. However, we do not have evidence to reject the hypothesis that the slope is different from zero.
 
--   **"Divorced" Reference Group**: In this mode, the slope for "Never Married" is statistically non-significant and positive (*b* = 0.68, 95% CI [-1.41, 2.77], *p* = 0.524). It represents the difference between the mean level of depression of the "Divorced" group and the mean depression of the "Never Married" group.
+-   **"Divorced" Reference Group**: In this mode, the slope for "Never Married" is statistically non-significant and positive (*b* = 0.68, 95% CI [-1.41, 2.77], *p* = 0.524). It represents the difference between the mean level of depression of the "Divorced" group and the mean depression of the "Never Married" group. Similar to the previous slope, we cannot reject the hypothesis that it is different from zero.
 
 ## Part c)
 
@@ -145,24 +148,28 @@ Using dummy codes, run a two-way factorial ANOVA model with *self_worth2001* as 
 
 ```{r message = F, warning = F, results='asis'}
 
-arh$married01 <- factor(arh$married01, levels = c("Married", "Widowed", "Never Married", "Divorced", "Separated"))
-arh$smoke01 <- factor(arh$smoke01, levels = c("Non-Smoker", "Smoker"))
+arh$married01 <- factor(arh$married01, 
+                        levels = c("Married", "Widowed", "Never Married", "Divorced", "Separated"))
+arh$smoke01 <- factor(arh$smoke01, 
+                      levels = c("Non-Smoker", "Smoker"))
 
 mod3 <- lm(self_worth2001 ~ married01 * smoke01, data=arh)
-stargazer(mod3, type = "latex", header = FALSE, ci=TRUE, digits=2, title = "Depression predicted by Marriage Status.")
+stargazer(mod3, type = "latex", header = FALSE, 
+          ci=TRUE, digits=2, title = "Self-worth predicted by the interaction 
+          between Marital Status and Smoker status.")
 ```
 
 ## Part b)
 
 Interpret the intercept.
 
--   **Answer**: WRITE ANSWER HERE
+-   **Answer**: The intercept of 4.70 refers to the mean Self Worth level for married and non-smoker people. 
 
 ## Part c)
 
 Among the non-smoker group, which group(s) are significantly different from the reference group, at *p* \< .05?
 
--   **Answer**: WRITE ANSWER HERE
+-   **Answer**: Widowed and Never Married.
 
 ## Part d)
 
@@ -170,7 +177,27 @@ Create a graph showing the means of *self_worth2001* (on the y axis) broken down
 
 ```{r message = F, warning = F}
 
+arh_mean_2 <- arh |> 
+  dplyr::with_groups(
+    c(married01,smoke01), 
+    summarise,
+    mean = mean(depress2001, na.rm = TRUE),
+    n = length(depress2001),
+    sd = sd(depress2001, na.rm = TRUE),
+    se = sd / sqrt(n),
+    upper = mean + se,
+    lower = mean - se
+    ) |> 
+  dplyr::filter(!is.na(married01), !is.na(smoke01))
+
+arh_mean_2 |> 
+  ggplot(aes(x = married01, y = mean)) +
+  geom_errorbar(aes(ymin = lower, ymax = upper, group = smoke01), width = 0.2,
+                position = position_dodge(width = 0.7)) +
+  geom_point(aes(col = smoke01),size = 5, position = position_dodge(width = 0.7)) +
+  theme_minimal() +
+  labs(x = "Marriage status", y = "Self-worth")
 
 ```
 
--   **Explanation**: WRITE ANSWER HERE
+-   **Explanation**: This plot aims to show the mean level of Self-worth across all levels of marital status and within each level, splitting between smokers and non-smokers. By showing means and standard errors in the same plot, we make it easier for the reader to quickly identify which groups are more or less similar. Additionally, by using colors to differentiate the smoking status in each marital status level, it is possible to identify a general trend in each subgroup.
