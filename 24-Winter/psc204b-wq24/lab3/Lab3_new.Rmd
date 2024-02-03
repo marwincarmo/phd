@@ -1,0 +1,1015 @@
+---
+title: "Lab 3"
+author: "Alexander Baxter - edited, Samuel D. Aragones"
+date: "Winter 2024"
+output: pdf_document
+---
+
+# Objectives
+
+1.  One Way ANOVA with Dummy Coding
+2.  Interactions with Dummy Coding
+3.  ANOVA with Effect Coding (Supplementary Information)
+
+```{r message = F, warning = F, echo = F}
+# The following code checks whether the packages needed for today are already installed, if not, they will be installed.
+
+if (!require("car")) install.packages("car")
+if (!require("ggplot2")) install.packages("ggplot2")
+if (!require("scales")) install.packages("scales")
+if (!require("dplyr")) install.packages("dplyr")
+if (!require("ggpubr")) install.packages("ggpubr")
+if (!require("broom")) install.packages("broom")
+if (!require("knitr")) install.packages("knitr")
+if (!require("flextable")) install.packages("flextable")
+```
+
+### Load required packages
+
+```{r message = F, warning = F}
+library(car)       # Has data we will use
+library(ggplot2)   # Graphing
+library(scales)    # Graph formatting
+library(dplyr)     # Data cleaning and handling
+library(ggpubr)    # Multi-Panel Graphs
+library(broom)     # Data cleaning
+library(knitr)     # Tables
+library(flextable) # Tables 
+library(stargazer) # Tables
+```
+
+For today's lab, we will be using the following data sets:
+
+-   `Leinhardt` (from the `car` package, contains data on income, infant mortality, and oil production)
+-   `Salaries` (a built in data set, contains data on professor salaries)
+
+```{r}
+Leinhardt3 <- Leinhardt[Leinhardt$region != 'Europe', ] 
+# We will use this data frame without Europe in it in an exammple below
+```
+
+If you care to know more about the data sets:
+
+```{r eval = F}
+?Leinhardt
+?Salaries
+```
+
+# Dummy Coding
+
+## Dichotomous Variables (Review)
+
+Dummy coding is one of several methods you can use to enter categorical variables into regression analyses. Dummy coded variables take on values of 0 and 1. The group coded as 0 is the reference group, and all estimates for the group(s) coded as 1 will be for differences relative to the reference group.
+
+Thus far in the class, we have used dummy codes to enter dichotomous variables into analyses (for example, sex or diagnosis status). For example, if we wanted to test differences between male and female professor's salaries, we could do a linear regression, with sex as a dummy coded variable.
+
+```{r}
+# First, create a dummy coded variable. 
+# In this case, "Female" is the reference group (0)
+
+Salaries$sex.code <- ifelse(Salaries$sex == "Female", 0, 1)
+
+# Second, fit the linear model
+
+m1 <- lm(salary ~ sex.code, data = Salaries)
+summary(m1)
+```
+
+$$ \widehat{\texttt{salary}_i} = 101002 + 14088\texttt{sex}_i $$
+
+-   The **Intercept**, 101002, is the predicted salary for females (i.e., when *sex* is 0).
+
+-   The **Estimate for sex.code**, 14088, is the predicted increase in *salary* for a 1-unit increase in sex (i.e., going from females' mean to males' mean). Because Males were coded as 1, this means that males' predicted salary is: 101002 + 14088 = 115090.
+
+```{r}
+ggplot(data = Salaries,
+       aes(x = sex.code, y = salary)) +
+  geom_jitter(width = 0.03,
+              alpha = 0.7) +
+  geom_smooth(method = "lm", se = F) +
+  scale_x_continuous(breaks = c(0,1), 
+                     labels = c("Female (0)", "Male (1)")) + 
+  scale_y_continuous(label = dollar) +
+  theme_classic()
+```
+
+Notice what happens when we change the reference group to male.
+
+```{r}
+# In this case, "Male" is the reference group (0)
+Salaries$sex.code_v2 <- ifelse(Salaries$sex == "Male", 0 ,1)
+
+# Second, fit the linear model
+m2 <- lm(salary ~ sex.code_v2, data = Salaries)
+summary(m2)
+```
+
+$$ \widehat{\texttt{salary}_i} = 115090 - 14088\texttt{sex}_i $$
+
+Lets compare the two regression analyses in a table.
+
+There are a few different ways to display table outputs in R Markdown files. The easiest way is with `kable`. However, if you are using a dark-theme and working in Visual mode, these tables don't always display very well when you are working in the Markdown editor. So another option to use is the `flextable` package. Below I will show how both options look. For the remainder of the lab, I will use flextable (if you want to read more about these functions, check out [this link](https://ardata-fr.github.io/flextable-book/)). However, you are not expected to use these functions if you do not want to, you can use `kable` for your assignments.
+
+```{r}
+# Puts model information into a nice format
+tidy_m1 <- tidy(m1)
+tidy_m2 <- tidy(m2)
+
+
+# bind_rows() combines our tidy output from above
+# .id specifies a column to differentiate between M1 and M2
+df <- 
+  bind_rows(
+    M1 = tidy_m1,
+    M2 = tidy_m2,
+    .id = "Model")
+
+
+```
+
+With kable or stargazer:
+
+```{r}
+kable(df,
+      digits = 2,
+      col.names = c("Model", "Term", "Estimate", "S.E.", "Statistic", "p")) #kable reads more as if it is a dataframe
+
+
+stargazer(m2, type='text', header=FALSE)
+```
+
+With flextable 
+
+```{r warning = F}
+df %>% #uses more tidyverse type language for construction of tables
+  flextable() %>%
+  colformat_double(j = 3:5, digits = 1) %>%
+  colformat_double(j = 6, digits = 3) %>%
+  merge_v(j = 1) %>%
+  fix_border_issues() %>%
+  theme_vanilla()
+```
+
+Returning to the example: Lets also look at the R Squared values.
+
+```{r}
+# R Squared for Model 1
+summary(m1)$r.squared
+
+# R Squared for Model 2
+summary(m2)$r.squared
+```
+
+Important take-away points:
+
+-   The intercept changed. This is because we changed what 0 means (Female or Male). This number represents the estimated mean of *y* for the group that is coded as 0 (the reference group).
+
+-   The absolute estimate of *sex.code* did not change, but it did change signs. This is because the the estimate represents the predicted difference between the two groups, relative to the group that is 0. So, when Females were the reference group, the estimate of *sex.code* was positive because Males had a higher mean. When Males were the reference group, the estimate was negative, because Females had a lower mean than males.
+
+-   The $R^2$ did not change. This is because changing the reference group does not change the linear relationship in the data, or the difference between the groups. It just changes where the model will start.
+
+-   Notice that in each case, the intercepts and slopes correspond to the observed means
+
+```{r warning = F}
+Salaries %>% 
+  group_by(sex) %>% 
+  summarise(mean_salary = mean(salary)) %>%
+  flextable() %>%
+  colformat_double(digits = 1) 
+```
+
+-   Model 1 (with "Female" as the reference group)
+    -   Intercept $= 101002$
+    -   Intercept + Slope = $101002 + 14088 = 115090$
+-   Model 2 (with "Male" as the reference group)
+    -   Intercept \$= 115090 \$
+    -   Intercept + Slope $= 115090 - 14088 = 101002$
+
+### Automatic Dummy Coding with Factors
+
+In the previous example, we saw how to manually code the dummy coded variable, and use that in the regression model (i.e., with `sex.code`).
+
+However, as long as the categorical variable (in this case, `sex`) is coded as a factor, you can use it in the linear model. If you do this, the `lm()` function will automatically dummy code your variable, and will use the first level as the reference group.
+
+Lets check how *sex* is coded right now.
+
+```{r}
+class(Salaries$sex) # It should be a factor already
+```
+
+Lets try it and see what happens when we use `sex` as the predictor in the model instead of `sex.code`. Remember, `sex` is coded as "Male" and "Female".
+
+```{r}
+summary(lm(salary ~ sex, data = Salaries))
+```
+
+Notice that the estimate for sex is listed as `sexMale`. This means that the slope represents "the effect of being Male for sex". In other words, Female was coded as the reference group. In this case, the analysis automatically coded Males as 1 and Females as 0.
+
+Why were females coded as the reference group and not males?
+
+It has to do with the orders of the levels for the factor. The first level will automatically be coded as 0, the second level will automatically be coded as 1.
+
+To check the levels of a factor, you can use `levels()`.
+
+```{r}
+levels(Salaries$sex) # Female is the first level
+```
+
+This function returns the levels of the factor, in order. By default, R orders factors alphanumerically; hence Female is the first level and Male is the second.
+
+To change the order of levels, use the `factor()` function and set the levels with the `levels` argument. Lets create a new variable in the data called `sex2` that has Male coded as the first level and Female coded as the second level.
+
+```{r}
+Salaries$sex2 <- 
+  factor(Salaries$sex,               # The original variable
+         levels = c("Male","Female") # The desired order of the levels
+         )
+
+levels(Salaries$sex2)
+
+
+```
+
+Note: Whatever you enter for the levels argument must match the data values exactly as they exist in the original variable, otherwise R will turn any value that is not listed in levels into an NA value. For example, if I did not use a capital F for "Female", all values of "Female" would have been turned to NA.
+
+```{r eval = F}
+
+# We could also use the relevel() function to set our reference group, although
+# this doesn't let you set the order of the remaining levels in the case of 3+
+# levels. So I don't really recommend this option. Just an FYI that this exists.
+
+Salaries$sex2 <- relevel(Salaries$sex, ref = "Male")
+```
+
+Now, lets try using `sex2` in the regression model.
+
+```{r}
+summary(lm(formula = salary ~ sex2, data = Salaries))
+```
+
+Now, Male is the reference group, and the slope estimate is for the Female group.
+
+### Comparison with t-test
+
+Lets compare the $t$-values from the regression equations with male and female reference groups. Remember, the $t$-values from a simple regression are calculated by dividing the slope estimate by the SE of the estimate, and then are used to determine the significance of the slope (relative to the t distribution with the associated DF from the analysis).
+
+Now, lets run an independent (Student's) $t$-test, and see how it compares to the $t$-statistics we got from our regression.
+
+```{r}
+t_test <- t.test(salary ~ sex, data = Salaries, var.equal = TRUE)
+t_test
+```
+
+```{r}
+# t-test
+t_test$statistic
+
+# Regression with female reference group
+tidy_m1$statistic[2]
+
+# Regression with male reference group
+tidy_m2$statistic[2]
+```
+
+## Dummy Coding with 3 Levels (One-Way ANOVA)
+
+Thus far we have only discussed dummy codes with only two levels. But what if we had three groups?
+
+When dummy coding a variable, you will have $J - 1$ columns for the dummy codes, where $J$ is the number of groups in the categorical data. Hence, for only 2 groups, there is 2 - 1 = 1 column.
+
+Lets say we have a variable with 3 groups. This means we will have 2 columns of dummy codes. Each column with be coded with 0s and 1s. The rows belonging to the reference group will have 0s in both columns. Each column will then have 1s coded for the second and third group.
+
+Lets demonstrate this with the `Leinhardt3` dataset. We will predict infant mortality rate (*infant*) based on the region of each country (Americas, Asia, or Africa).
+
+First, you need to choose a reference group. Let's say the Americas will be our reference group.
+
+Second, we need to create 2 new columns: one for "The Region is in Asia" (*Asia*) and one for "The Region is in Africa" (*Africa*).
+
+For the *Asia* variable:
+
+-   *Asia* = 1 if region is Asia
+-   *Asia* = 0 if region is not Asia (i.e., Americas or Africa)
+
+For the *Africa* variable:
+
+-   *Africa* = 1 if region is Africa
+-   *Africa* = 0 if region is not Africa (i.e., Americas or Asia)
+
+```{r}
+# To create the dummy codes
+Leinhardt3$Africa <- ifelse(Leinhardt3$region =="Africa", 1, 0)
+Leinhardt3$Asia <- ifelse(Leinhardt3$region == "Asia", 1, 0)
+```
+
+Here is a summary of the coding we just did:
+
+```{r warning = F}
+Leinhardt3 %>% 
+  group_by(region) %>% 
+  summarise(africa = unique(Africa),
+            asia = unique(Asia)) %>%
+  flextable() %>%
+  colformat_double(digits = 1)  %>%
+  merge_v(j = 1) %>%
+  fix_border_issues() %>%
+  theme_vanilla()
+```
+
+Now, we can add our newly created dummy variables to predict infant morality rates for different regions:
+
+```{r}
+m3 <-  lm(infant ~ Africa + Asia, data = Leinhardt3)
+summary(m3)
+```
+
+$$ \widehat{\texttt{infant}_i} = 55.12 + 87.17{\texttt{africa}_i} + 41.05\texttt{asia}_i$$
+
+**Interpretations**:
+
+-   The *Americas* are the reference here (i.e., when *Africa* and *Asia* are both equal to 0, this is the expected infant mortality for the *Americas*). So the average infant mortality rate for regions in the *Americas* is 55.12 per 1,000 live births.
+
+    -   This corresponds to $55.12 + (87.17*0) + (41.05*0)$
+    -   Conceptually, this equation is the same interpretation that we have been using for the intercept all along: The intercept is the predicted value of y when all predictors are 0. I.e., the predicted infant mortality rate is 55.12 when the dummy codes for *Asia* and *Africa* are 0. What does it mean for these dummy codes to be 0? If both values are 0, that corresponds to *Americas*.
+
+-   The slope for *Africa* refers to the difference between the mean value for Africa and the mean value for the Americas (the reference group). This difference is significant at the 0.05 level (*p* = .0005).
+
+    -   This corresponds to $55.12 + (87.17*1) + (41.05*0) = 142.29$
+    -   Hence, the average infant mortality rate for African regions is 142.29 (per 1,000 live births).
+
+-   The slope for *Asia* refers to the difference between the mean value for Asia and the mean value for the Americas (the reference group). This mean difference is not significantly different from 0 (*p* = .11).
+
+    -   This corresponds to $55.12 + (87.17*0) + (41.05*1) = 96.17$
+    -   The average infant mortality rate for Asian regions is 96.17 (per 1,000 live births).
+
+Now lets compare these interpretations to the actual means of the regions:
+
+```{r warning = F}
+Leinhardt3 %>% 
+  group_by(region) %>% 
+  summarise(mean_infant_mortality = mean(infant, na.rm = T)) %>%
+  flextable() %>%
+  colformat_double(digits = 1) 
+```
+
+One way we could visualize the mortality rates between regions is with a violin plot like this:
+
+```{r}
+# Setting levels in the order I want them graphed 
+Leinhardt3$region <- 
+  factor(Leinhardt3$region,
+         levels = c("Americas", "Africa", "Asia"))
+  ## It is helpful to put the reference group first
+
+# The graph
+ggplot(data = Leinhardt3,
+       aes(x = region, y = infant)) +
+  geom_violin(aes(fill = region),
+              draw_quantiles = c(0.25, 0.5, 0.75)) +
+  labs(x = "Region",
+       y = "Infant Mortality Rate",
+       fill = "Region") +
+  theme_classic()
+```
+
+We could also graph the means on top of the "violins"
+
+```{r}
+ggplot(data = Leinhardt3,
+       aes(x = region,y = infant)) +
+  geom_violin(aes(fill = region)) +
+  
+  # stat summary takes our "y" variable and applies a "fun" (function) to it
+  stat_summary(fun = mean,
+               geom = "point",
+               shape = 21,
+               col = "black",
+               fill = "white",
+               size = 4) +
+  
+  labs(x = "Region",
+       y = "Infant Mortality Rate",
+       fill = "Region") +
+  theme_classic()
+```
+
+Something that could be nice is to further add the actual data points underneath the violins
+
+```{r}
+ggplot(data = Leinhardt3,
+       aes(x = region,y = infant)) +
+  geom_jitter(width = 0.05,
+              alpha = 1) +
+  geom_violin(aes(fill = region),
+              alpha = 0.5) +
+  stat_summary(fun = mean, 
+               geom = "point", 
+               shape = 21,
+               col = "black", 
+               fill = "white", 
+               size = 4) +
+  theme_classic()
+```
+
+A common way to visualize this type of analysis is to plot the means with +/- 1 SE bars, like this:
+
+```{r}
+leinhardt_means <- 
+  Leinhardt3 %>% 
+  group_by(region) %>%
+  summarise(mean = mean(infant, na.rm = T),
+            n = length(infant),
+            sd = sd(infant, na.rm = T),
+            se = sd / sqrt(n),
+            ub = mean + se, # Upper Boundary of SE Bar
+            lb = mean - se  # Lower Boundary of SE Bar
+            )  
+
+ggplot(data = leinhardt_means,
+       aes(x = region, y = mean, fill = region)) +
+  geom_errorbar(aes(ymin = lb, ymax = ub),
+                width = 0.2) +
+  geom_point(size = 5, shape = 21) +
+  labs(x = "Region",
+       y = "Average Mortality Rate (per 1,000 births)",
+       caption = "Note. Error bars denote +/- 1 SE") +
+  theme_classic() +
+  theme(panel.grid.major.y = element_line(linetype = "dotted", size = 1),
+        legend.position = "none")
+```
+
+**Comments on Significance**:
+
+Lets return again to the model, and interpret what is and is not significant (at *p* \< .05). For reference, here is the model again:
+
+```{r}
+summary(m3)
+```
+
+-   The overall model is significant (*F*(2, 80) = 6.80, p = .002). This indicates that *region* has an effect on *infant* mortality.
+
+    -   Remember, the F test is an omnibus test (an "overall test"), which means we don't know where the effect is or what direction the effect is. We just know that there is an effect.
+
+-   The intercept (the mean of the reference group, *Americas*) is significantly different from 0.
+
+    -   Note: this may or may not be pertinent or interesting depending on the hypothesis you are testing; in our case this is not that interesting, because it is not possible to have negative infant mortality, so by definition all regions' infant mortality should be greater than 0.
+
+-   The difference between the mean of *Africa* and the mean of *Americas* is significantly greater than 0 (*b* = 87.17; *p* \< .001). In other words, the mean of *Africa* is significantly higher than the mean of *Americas*.
+
+    -   We know the direction of the effect because the *b* slope is positive (87.17).
+
+-   The difference between the mean of *Asia* and the mean of *Americas* is not significantly different from 0 (*b* = 41.05; *p* = .11). In other words, the means of *Asia* and the *Americas* are not significantly different.
+
+-   We cannot say anything about the difference between the means of *Africa* and *Asia*, as all comparisons are made relative to the reference group (*Americas*).
+
+If you wanted to indicate significant comparisons, you could do so with a series of annotations. For example:
+
+```{r}
+ggplot(data = leinhardt_means,
+       aes(x = region, y = mean, fill = region)) +
+  geom_errorbar(aes(ymin = lb, ymax = ub), width = 0.2) +
+  geom_point(size = 5, shape = 21) +
+  theme_classic() +
+  labs(x = "Region",
+       y = "Average Mortality Rate (per 1,000 births)",
+       caption = "Note. Error bars denote +/- 1 SE") +
+  theme_classic() +
+  theme(panel.grid.major.y = element_line(linetype = "dotted", size = 1),
+        legend.position = "none") +
+  
+  # draws long horizontal line
+  annotate(geom = "segment", 
+           x = 1, xend = 2, y = 160, yend = 160) +
+  # draws vertical lines
+  annotate(geom = "segment", 
+           x = 1, xend = 1, y = 160, yend = 155) +
+  annotate(geom = "segment", 
+           x = 2, xend = 2, y = 160, yend = 155) +
+  # add an asterisk
+  annotate(geom = "text", label = "***",
+           x = 1.5, y = 163, size = 10, color = "black")
+```
+
+You could also make a table:
+
+```{r warning = F}
+tidy_m3 <- tidy(m3) 
+colnames(tidy_m3) <- c("Term", "Estimate", "S.E.", "t", "p") # Cleaning col names
+
+tidy_m3  %>%
+  flextable() %>%
+  colformat_double(j = 1:4, digits = 1) %>%
+  colformat_double(j = "p", digits = 3) 
+
+```
+
+Let's compare the regression analysis we did to an ANOVA. Remember, in R we can do ANOVA by using the `aov` function.
+
+```{r}
+# ANOVA:
+summary(aov(infant ~ region, data = Leinhardt3))
+```
+
+```{r}
+# Regression with Dummy Codes:
+summary(m3)
+```
+
+Notice that the $F$-statistic is the same in both analyses. However, we get slightly different information from the ANOVA vs the regression.
+
+Remember, the ANOVA is an omnibus test; it does not tell us which groups are significantly different. It just tells us that overall there is an effect. That is why there is only an $F$ table given.
+
+The regression with dummy coded variables gives us the same information, plus a little more. It lets us compare one group to the other two, one at a time (in this case, Americas vs Africa and Americas vs Asia). The regression we did does not tell us whether Africa & Asia are significantly different.
+
+### Dummy Coding: The reference group matters!
+
+To demonstrate what happens if we change the reference group, lets re-do the regression analysis above, but this time Asia will be the reference group.
+
+```{r}
+Leinhardt3$Africa_v2 <- ifelse(Leinhardt3$region == "Africa", 1, 0)
+Leinhardt3$Americas_v2 <- ifelse(Leinhardt3$region == "Americas", 1, 0)
+
+m3_Asia <- lm(infant ~ Africa_v2 + Americas_v2, data = Leinhardt3)
+summary(m3_Asia)
+```
+
+Now, lets compare how the parameters change when the reference group is changed:
+
+```{r warning = F}
+
+bind_rows(m3_Americas = tidy(m3),
+          m3_Asia = tidy(m3_Asia),
+          .id = "Model") %>%
+  flextable() %>%
+  merge_v(j = 1) %>%
+  fix_border_issues() %>%
+  theme_vanilla() %>%
+  colformat_double(digits = 2) %>%
+  autofit()
+
+```
+
+```{r warning = F}
+bind_rows(m3_Americas = glance(m3),
+          m3_Asia = glance(m3_Asia),
+          .id = "Model")  %>%
+  select(Model,
+         R.2 = r.squared,
+         p = p.value,
+         df,
+         logLik,
+         AIC,
+         BIC,
+         dev = deviance,
+         df.resid = df.residual,
+         n = nobs
+         ) %>%
+  flextable() %>%
+  colformat_double(digits = 2) %>%
+  colformat_double(j = "p", digits = 3) %>%
+  autofit()
+
+## Note: glance extracts a few key parameters from regression model objects. Handy!
+## For the sake of space I only selected a handful of the available values. 
+```
+
+-   The intercept changed because we changed what 0 means by changing the reference group. Hence the intercept changes, as it represents the mean of the reference group.
+
+-   The slopes also change, because they represent the difference between the group mean and their reference group (hence, changing the reference group changes the slopes).
+
+-   The $F$-statistic and $R^2$ do not change, because we did not change the total amount of variance between the groups, or the linear relationships among the data.
+
+### Other Ways of Creating Dummy Codes
+
+If you do not want to manually code your dummy variables, you can include a categorical variable in a regression model as long as it is saved as a factor. When this is done, the `lm()` function will automatically create dummy codes for you. I usually don't like to do this in my own work, because if I ever decide to change the factor levels at a certain point in my code, if I return to previous portions of the code, it could change my output! This is just an FYI in case you want to do this for yourself.
+
+Because the first level of the factor will always be set as the reference group, you want to make sure what group is set to be the first level.
+
+These lines of code yield the same output:
+
+```{r}
+# Model with manually coded dummy variables (Americas as reference group)
+
+coef(lm(infant ~ Africa + Asia, data = Leinhardt3))
+
+# Model with factor levels 
+## First, you need to order the levels (if they're not already ordered the way you
+## would like), with the group you want as the reference group listed as the first
+## level in the factor
+
+Leinhardt3$region <- 
+  factor(Leinhardt3$region,
+         levels = c("Americas", "Africa", "Asia"))
+  
+
+## Once the factor levels are ordered, you can use the factor in the regression:
+coef(lm(infant ~ region, data = Leinhardt3)) 
+
+```
+
+There are also functions from other packages that you can use that will add the dummy-coded variables to your data. We will not cover those packages in this lab, but if you'd like to learn more, you can read about the `fastDummies` package [here](https://www.marsja.se/create-dummy-variables-in-r/).
+
+### Example with 4+ levels
+
+Now that we have done an example of dummy codes with a 3 level grouping variable, lets review an example with a 4 level grouping variable.
+
+We will use the full Leinhardt data, and include *Europe* as a region in the analysis. We will use *Americas* as the reference region again.
+
+```{r warning = F}
+# Create Dummy Codes
+Leinhardt$Africa <- ifelse(Leinhardt$region == "Africa", 1, 0)
+Leinhardt$Asia <- ifelse(Leinhardt$region == "Asia", 1, 0)
+Leinhardt$Europe <- ifelse(Leinhardt$region == "Europe", 1, 0)
+
+# Summary of Dummy Codes (for demonstration)
+Leinhardt %>% 
+  group_by(region) %>% 
+  summarise(Africa = unique(Africa),
+            Asia = unique(Asia),
+            Europe = unique(Europe)) %>%
+  flextable()
+```
+
+```{r}
+# The model
+m4 <- lm(infant ~ Africa + Asia + Europe, data = Leinhardt)
+summary(m4)
+```
+
+$$ \widehat{\texttt{infant}_i} = 55.12 + 87.17\texttt{africa}_i + 41.05\texttt{asia}_i - 35.87 \texttt{europe}_i$$
+
+```{r warning = F}
+bind_rows(three_groups = tidy(m3),
+          four_groups = tidy(m4),
+          .id = "Model") %>% 
+  flextable() %>%
+  colformat_double(digits = 2) %>%
+  merge_v(j = 1) %>%
+  fix_border_issues() %>%
+  theme_vanilla() %>%
+  autofit()
+
+```
+
+```{r warning = F}
+bind_rows(three_groups = glance(m3),
+          four_groups = glance(m4),
+          .id = "Model")  %>%
+  flextable() %>%
+  colformat_double(digits = 2) %>%
+  autofit()
+```
+
+-   The intercept and dummy code variables for Africa and Asia did not change, because they only represent group means. Adding another group does not change the means of the other groups.
+
+-   The DF and $R^2$ changed because we added more another parameter
+
+## Interactions with Dummy Codes (Two-Way Factorial ANOVA)
+
+We can also use Dummy Codes to do two-way factorial ANOVA (with interactions), by including a second dummy-coded predictor. We will return to the analysis with only three groups (Americas, Africa, and Asia).
+
+In our model, let's return to using Americas as the reference group, but now also consider whether the country is exports oil. To do this, we can just create a dummy code for whether the country does or does not export oil. We will set "no" as the reference group.
+
+```{r}
+Leinhardt3$oil_y = ifelse(Leinhardt3$oil == "yes", 1, 0)
+```
+
+Normally when we do interactions in R, we have written them using multiplication. For example, the model we want to test is:
+
+$$
+\text{Mortality ~ Region * Oil Production}
+$$
+
+In a classical ANOVA, we could enter the variables into the analysis using this same framework as above. However, now that we are using dummy codes, we need to do a little bit of extra work, as the model now looks like:
+
+$$
+\text{Mortality ~ (Africa + Asia) * Oil Production}
+$$
+
+We could factor the equation out as follows:
+
+$$
+\text{Mortality ~ Africa + Asia + Oil + (Africa * Oil) + (Asia * Oil)}
+$$
+
+We already have the dummy codes for Africa, Asia, and Oil in the data frame. The next step will be for us to manually code the interaction terms for the model.
+
+```{r}
+Leinhardt3$Africa.oil_y <- Leinhardt3$Africa * Leinhardt3$oil_y  
+Leinhardt3$Asia.oil_y <- Leinhardt3$Asia * Leinhardt3$oil_y
+```
+
+Here is a summary of the coding:
+
+```{r warning = F}
+Leinhardt3 %>% 
+  mutate(oil = as.character(oil)) %>%
+  group_by(region, oil) %>% 
+  summarise(Africa = unique(Africa),
+            Asia = unique(Asia),
+            Oil = unique(oil_y),
+            Oil_x_Africa = unique(Africa.oil_y),
+            Oil_x_Asia = unique(Asia.oil_y),
+            .groups = "drop") %>%
+  flextable() %>%
+  theme_zebra() %>%
+  autofit()
+```
+
+```{r}
+m5 <-
+  summary(lm(infant ~ Africa + Asia + oil_y + Africa.oil_y + Asia.oil_y, 
+           data = Leinhardt3))
+
+m5
+```
+
+**Interpretations**:
+
+-   The intercept refers to the expected infant mortality when *Africa*, *Asia*, *oil_y*, *Africa.oil_y*, and *Asia.oil_y* are all equal to 0. Therefore, the intercept here refers to mean infant mortality rate for non-oil-exporting regions in the Americas (this is the reference group). So the average infant mortality rate for non-oil-exporting countries in the Americas is 54.13 per 1,000 live births.
+
+    -   Tip: Sometimes it can be tricky to interpret the intercept when you have dummy-coded interactions in the data. Remember, you can ALWAYS apply the phrase "the intercept is the predicted value of y when everything else in the model is 0". Then, all you need to do is figure out what it means for "everything in the model to be 0". If you only have categorical variables in the model, the intercept will ALWAYS be the mean of the sub-group that overlaps both variables' reference group. In other words, *Americas* was the reference group of *region*, and *non-oil producing* was the reference group of *oil_y*. So, the reference group is non-oil-exporting countries in the Americas.
+
+-   *Africa* is the difference between African non-oil-exporting regions and American non-oil-exporting regions (the reference group). So the average infant mortality rate for African non-oil exporting regions is $54.13 + 87.60 = 141.73$ per 1,000 live births.
+
+    -   To interpret main effects, you will always work at the level of the reference group for the other main effect. So, for the main effects of Africa and Asia, you will always be talking about non-oil exporting countries.
+
+-   *Asia* is the difference between Asian non-oil exporting regions and American non-oil-exporting regions. So the average infant mortality rate for Asian non-oil-exporting regions is $54.13 + 20.60 = 74.73$ per 1,000 live births.
+
+-   *oil_y* is the difference between American oil-exporting regions and American non-oil-exporting regions. So the average infant mortality rate for American oil-exporting regions is $54.13 + 10.98 = 65.11$ per 1,000 live births.
+
+-   *Africa.oil_y* is the amount by which the mean difference of African oil-exporting regions versus American non-oil exporting regions exceeds the simple effects of *Africa* and *oil_y*. So the average infant mortality rate of African oil-exporting regions is $54.13 + 87.60 + 10.98 - 4.60 = 149.11$ per 1,000 live births.
+
+-   *Asia.oil_y* is the amount by which the mean difference of Asian oil-exporting regions versus American non-oil exporting regions exceeds the simple effects of *Asia* and *oil_y*. So the average infant mortality rate of Asian oil-exporting regions is $55.13 + 20.60 + 10.98 + 182 = 268.71$ per 1,000 live births.
+
+Here is an example of how we could calculate the predicted mean for Asian Oil-exporting countries. In this example, Asia = 1, Oil = 1, and Asia.Oil = 1; Africa = 0 and Africa.Oil = 0.
+
+$$\widehat{\texttt{infant}_i} = 54.13 + (87.60*0) + (20.60*1) + (10.98*1) - (4.60*0) + (182*1)$$ This simplifies to: $$ 54.13 + 20.60 + 10.98 + 182$$ And equals:
+
+```{r}
+54.13 + 20.60 + 10.98 + 182.00
+```
+
+Again, we are essentially predicting means, so we can verify the above by computing the observed mean
+
+```{r message = F, warning = F}
+Leinhardt3 %>% 
+  group_by(region, oil) %>% 
+  summarise(mean_infant_mortality = mean(infant, na.rm = T))
+```
+
+Here are some graphs that illustrate the regression we just did.
+
+```{r}
+ggplot(data = Leinhardt3,
+       aes(x = region, y = infant)) +
+  geom_jitter(aes(col = oil),
+              alpha = 1,
+              position = position_dodge(width = 0.9)) +
+  geom_violin(aes(fill = oil),
+              alpha = 0.5) +
+  theme_classic()
+```
+
+```{r}
+leinhardt_means2 <- 
+  Leinhardt3 %>% 
+  filter(!is.na(infant)) %>% 
+  group_by(region, oil) %>%
+  summarise(mean = mean(infant, na.rm = T),
+            n = n(),
+            sd = sd(infant),
+            se = sd / sqrt(n),
+            ub = mean + se,
+            lb = mean - se)
+
+ggplot(data = leinhardt_means2,
+       aes(x = region, y = mean)) +
+  geom_errorbar(aes(ymin = lb, ymax = ub, group = oil),
+                width = 0.4,
+                position = position_dodge(width = 0.7)) +
+  geom_point(aes(col = oil), 
+             size = 5, 
+             position = position_dodge(width = 0.7)) +
+  scale_color_manual(values = c("tan4", "goldenrod1")) +
+  labs(x = "Region",
+       y = "Average Mortality Rate (per 1,000 births)",
+       caption = "Note. Error bars denote +/- 1 SE") +
+  theme_classic() +
+  theme(panel.grid.major.y = element_line(linetype = "dotted", size = 1)) 
+```
+
+We could also facet our plot to focus on specific comparisons, e.g., averages mortality rates between regions depending on whether or not they export oil
+
+```{r}
+ggplot(data = leinhardt_means2,
+       aes(x = region, y = mean)) +
+  geom_errorbar(aes(ymin = lb, ymax = ub, group = oil),
+                width = 0.4,
+                position = position_dodge(width = 0.7)) +
+  geom_point(aes(col = oil), 
+             size = 5, 
+             position = position_dodge(width = 0.7)) +
+  scale_color_manual(values = c("tan4", "goldenrod1"))+
+  labs(x = "Region",
+       y = "Average Mortality Rate (per 1,000 births)",
+       caption = "Note. Error bars denote +/- 1 SE") +
+  theme_classic() +
+  theme(panel.grid.major.y = element_line(linetype = "dotted", size = 1)) +
+  facet_wrap(~ oil, scales = "free")
+```
+
+or averages mortality rates between oil exporting and non-exporting regions depending geographical region
+
+```{r}
+ggplot(data = leinhardt_means2,
+       aes(x = region, y = mean)) +
+  geom_errorbar(aes(ymin = lb, ymax = ub, group = oil),
+                width = 0.4,
+                position = position_dodge(width = 0.7)) +
+  geom_point(aes(col = oil), 
+             size = 5, 
+             position = position_dodge(width = 0.7)) +
+  scale_color_manual(values = c("tan4", "goldenrod1"))+
+  labs(x = "Region",
+       y = "Average Mortality Rate (per 1,000 births)",
+       caption = "Note. Error bars denote +/- 1 SE") +
+  theme_classic() +
+  theme(panel.grid.major.y = element_line(linetype = "dotted", size = 1),
+        legend.position = "bottom",
+        legend.background = element_rect(color = "grey50")) +
+  facet_wrap(~ region, scales = "free")
+```
+
+Notice how different comparisons stand out depending on how you graph the data!
+
+**Comments on Significance**:
+
+Lets return again to the model and interpret what is and is not significant. For reference, here is the regression:
+
+```{r}
+m5
+```
+
+-   Overall, the model is significant (*F*(5, 77) = 6.12, *p* \< .001), suggesting that *region*, *oil*, and/or the interaction between these variables has an effect on *infant* mortality.
+
+-   The average of non-oil exporting countries in the Americas (i.e., the reference group, represented by the *intercept*) is significantly higher than 0 (*M* = 54.13, p = .004).
+
+-   The mean of non-oil exporting countries in *Africa* is significantly higher (*M* = `r 54.13 + 87.60`, *p* \< .001) than the mean of non-oil exporting countries in the Americas (*M* = 54.13; i.e., the reference group).
+
+-   The mean of non-oil exporting countries in *Asia* (*M* = `r 54.13 + 20.60`) is not significantly different (*p* = .41) than the mean of non-oil exporting countries in the Americas (*M* = 54.13; i.e., the reference group).
+
+-   The mean of *oil* exporting countries in the Americas (*M* = `r 54.13 + 10.98`) is not significantly different (*p* = .86) than the mean of non-oil exporting countries in the Americas (*M* = 54.13; i.e., the reference group).
+
+-   The mean of *oil* exporting countries in *Africa* (*M* = `r 54.13 + 87.61 + 10.98 - 4.60`) is not significantly different (*p* = .95) from the mean of non-oil exporting countries in the Americas (*M* = 54.13; i.e., the reference group).
+
+-   The mean of *oil* exporting countries in *Asia* (*M* = `r 54.13 + 20.60 + 10.98 + 182.00`) is significantly higher (*p* = .023) from the mean of non-oil exporting countries in the Americas (*M* = 54.13; i.e., the reference group).
+
+# Effect Coding
+
+An alternative to dummy coding is to use effect coding. Effect coding allows us to make a variety of different comparisons. For example, comparing the mean of each group to the grand mean. However, because we can only make $J-1$ comparisons, we have to drop a level in our effect coding.
+
+### One-way ANOVA
+
+In effect coding, the reference group (the group whose estimate will be dropped) is coded as -1, the group represented by the effect code is coded as 1, and all other groups are coded as 0.
+
+Let's look at how we can use effect coding to conduct the one-way ANOVA using region to predict infant morality rate.
+
+Let's create contrast-coded dummy variables, using *Americas* as our reference:
+
+-   *Africa_E* = -1 if region = Americas
+
+-   *Asia_E* = -1 if region = Americas
+
+-   *Africa_E* = 1 if region = Africa
+
+-   *Africa_E* = 0 if region = Asia
+
+-   *Asia_E* = 0 if region = Africa
+
+-   *Asia_E* = 1 if region = Asia
+
+This chunk creates this effect codes, and provides a summary table.
+
+```{r}
+Leinhardt3$Africa_E <- dplyr::recode(Leinhardt3$region,
+                                     Americas = -1,
+                                     Africa = 1,
+                                     Asia = 0)
+
+Leinhardt3$Asia_E <- dplyr::recode(Leinhardt3$region,
+                                   Americas = -1,
+                                   Africa = 0,
+                                   Asia = 1) 
+
+Leinhardt3 %>% group_by(region) %>% 
+  summarise(AfricaE = unique(Africa_E),
+            AsiaE = unique(Asia_E))
+
+#or, we could instead use base R
+Leinhardt$Africa_E <- c('Americas'=-1,'Africa'=1,'Asia'=0)
+Leinhardt$Asia_E <- c('Americas'=-1,'Africa'=0,'Asia'=1)
+
+```
+
+Now, using our effect-coded variables to predict infant mortality:
+
+```{r}
+m6 <- lm(infant ~ Africa_E + Asia_E, data = Leinhardt3)
+summary(m6)
+```
+
+Alternatively, we can use R to create the contrasts for us. Here, the last level of our factor is the one that gets dropped
+
+```{r}
+Leinhardt3$region2 <- factor(Leinhardt3$region,
+                             levels = c("Africa", "Asia", "Americas"))
+
+contrasts(Leinhardt3$region2) <- contr.sum(3)
+
+summary(lm(infant ~ region2, data = Leinhardt3))
+```
+
+$$ \widehat{\texttt{infant}_i} = 97.86 + 44.43\texttt{AfricaE}_i - 1.69\texttt{AsiaE}_i$$
+
+**Interpretation**:
+
+-   The *intercept* is the mean of the means. If the design is balanced (the same number of subjects or rows in each group), the mean of means will be the same thing as the grand mean. Since this analysis is not balanced, these are not the same.
+
+```{r}
+# grand mean
+mean(Leinhardt3$infant, na.rm = T)
+
+# Mean of means
+Leinhardt3 %>% 
+  group_by(region) %>% 
+  summarise(mean_mortality_rate = mean(infant, na.rm = T)) %>% 
+  summarise(mean_of_means = mean(mean_mortality_rate, na.rm = T)) %>%
+  unlist()
+```
+
+Now, continuing with the interpretation (note that we will call the mean of means the "overall mean")
+
+-   *Africa_E* is the amount by which Africa differs from the overall mean. So the mean African infant mortality rate is 142.29 per 1,000 live births.
+
+-   *Asia_E* is the amount by which Asia differs from the overall mean. So the mean Asian infant mortality rate is 96.17 per 1,000 live births.
+
+Here is a visual summary of the analysis we did.
+
+```{r}
+leinhardt_means %>% 
+  filter(region != "Americas") %>% 
+  ggplot(aes(x = region, y = mean, fill = region)) +
+  geom_hline(yintercept = coef(m6)[1], linetype = "dashed") +
+  geom_errorbar(aes(ymin = lb, ymax = ub),
+                width = 0.2) +
+  geom_point(size = 5, shape = 21) +
+  guides(fill = "none") +
+  annotate(geom = "text",
+           label = "^^^Overall mean (aka mean of means; including Americas)^^^",
+           x = 1, y = 96, size = 3) +
+  labs(x = "Region",
+       y = "Average Mortality Rate (per 1,000 births)",
+       caption = "Note. Error bars denote +/- 1 SE") +
+  theme_classic()
+```
+
+Note, there is no estimate for the reference group (Americas), as we have run out of DF to make an orthogonal estimate for this group (because we have estimated the mean of means instead; the intercept).
+
+**Comment on Significance**:
+
+Lets return to the model and interpret what is and is not significant. For reference, here is the output:
+
+```{r}
+summary(m6)
+```
+
+-   Overall, the model is significant (*F*(2,80) = 6.80, *p* = .002), suggesting that *region* has an effect on infant mortality, and that at least one group differs from the overall mean.
+
+-   The overall mean (*M* = 97.86, represented by the *intercept*) is significantly greater than 0 (*p* \< .001). (Note: This may or may not be interesting or relevant to the hypotheses you are testing; in our case it is not that interesting, since it is not possible to have negative infant mortality)
+
+-   The mean infant mortality of countries in *Africa* (*M* = 142.29) is significantly higher (*p* = .001) than the overall mean across the three regions (*M* = 97.86).
+
+-   The mean infant mortality of countries in *Asia* (*M* = 96.17) is not significantly different (*p* = .90) from the overall mean across the three regions (*M* = 97.86).
+
+If you would like to know more about effects codes, check out this [link](https://stats.idre.ucla.edu/spss/faq/coding-systems-for-categorical-variables-in-regression-analysis). For examples of how to do effect coded regressions in R, click [here](https://stats.oarc.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/). There is information about a lot of different types of coding schemes here.
+
+
+#Small section on testing the assumptions of ANOVA
+
+```{r}
+resid.aov <- aov(infant ~ region, data = Leinhardt3) 
+#Leinhardt3
+plot(resid.aov,1) #residuals vs. fits plot. This can show outliers in our data that can affect normality and homogeneity of variance
+leveneTest(infant ~ region, data=Leinhardt3) #Levene's test, if significant, shows that variance across groups is statistically significantly different
+
+#If Levene's is significant, we can still use account for this with certain methods or approaches to the t-test comparisons. One is welch's one-way test [oneway.test is the function]
+
+
+#Checking normailty can utilize Q-Q plots, boxplots to visualize the data, the shapiro wilk's test.
+
+plot(resid.aov,2)
+aov_resids_vals <- residuals(object=resid.aov)
+shapiro.test(aov_resids_vals)
+
+#if this is violated, the F test is still somewhat robust to nonnormality but only in samples that are not small and in cases that are not heavily extreme in terms of nonnormality. To combat this, we could use nonparametric tests or transformation of data may be required.
+```
