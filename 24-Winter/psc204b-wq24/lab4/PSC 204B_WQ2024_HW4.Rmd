@@ -1,0 +1,204 @@
+---
+title: "Homework 4"
+author: "NAME"
+date: "DATE"
+output:
+  pdf_document:
+    toc: true
+toccolor: blue
+subtitle: Week 4 Model Assumptions
+---
+ 
+```{r message = FALSE, echo = FALSE, include = FALSE}
+# Load required packages
+library(car)
+library(knitr)
+library(skedastic)
+library(ggplot2)
+```
+
+
+The data for this homework are from the study below:
+
+Kim, S. E., Kim, H. N., Cho, J., Kwon, M. J., Chang, Y., et al. (2016) Correction: Direct and indirect effects of five factor personality and gender on depressive symptoms mediated by perceived stress. *PLOS ONE, 11*: e0157204.
+
+The `hw4data.csv` file contains several variables, but the ones you'll need in this assignment are
+
+* `Stress`: Total perceived stress score from self-reported stress questionnaire 
+* `A`: Total score on Agreeableness from the Revised NEO Personality Inventory
+
+
+# Question 1
+
+## Part a) [0.5 pts]
+
+Read in the dataset and run an Ordinary Least Squares (OLS) multiple regression analysis using Agreeableness (`A`) to predict Perceived Stress (`Stress`). Write the regression equation below.
+
+```{r echo = TRUE, message = FALSE, warning = FALSE}
+# Code
+hw4data <- readr::read_csv("hw4data.csv")
+
+mod1 <- lm(Stress ~ A, data = hw4data)
+summary(mod1)
+```
+
+$$ \widehat{\text{Stress}_i} = 22.07 - 0.099 \times \text{Agreeableness}_i$$
+
+
+## Part b) [0.5 pts]
+
+Redo the regression analysis, using `A` to predict *log-transformed* `Stress`. Write the regression equation in the space below.
+
+```{r echo = TRUE, message = FALSE, warning = FALSE}
+# Code
+hw4data$log_stress <- log(hw4data$Stress)
+
+mod1b <- lm(log_stress ~ A, data = hw4data)
+summary(mod1b)
+```
+
+$$\widehat{\log(\text{Stress}_i}) = 3.05 - 0.0056 \times \text{Agreeableness}_i$$
+
+## Part c) [1 pts]
+
+Re-run the regression model from part a (`Stress` predicted by `A`), but this time using Weighted Least Squares (WLS) regression using inverse-variance weights.
+
+```{r  echo = TRUE, message = FALSE, warning = FALSE}
+# Code
+abs_resids <- abs(residuals(mod1))
+preds <- fitted(mod1)
+wmod <- lm(abs_resids ~ preds)
+
+variances <- fitted(wmod)^2
+weights <- 1/variances
+
+wls_mod1 <- lm(Stress ~ A, data = hw4data, weights = weights)
+summary(wls_mod1)
+```
+
+$$ \widehat{\text{Stress}_i} = 21.99 - 0.097 \times \text{Agreeableness}_i$$
+
+## Part d) [1 pt]
+
+Create a scatter plot with `A` on the $x$-axis and `Stress` on the $y$-axis. Add the following fit lines to the graphs
+
+* A fit line based on the OLS regression
+* A fit line on the WLS regression.
+
+Make sure the fit lines have distinct colors
+
+```{r  echo = TRUE, message = FALSE, warning = FALSE}
+# Code
+
+hw4data$ols_fitted <- predict(mod1, hw4data)
+hw4data$wls_fitted <- predict(wls_mod1, hw4data)
+
+hw4data |> 
+  ggplot(aes(x = Stress, y = A)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F, fullrange = T, color = "blue") +
+  geom_abline(intercept = wls_mod1$coefficients[1],
+              slope = wls_mod1$coefficients[2],
+              color = "red", size = 1, linetype = "dashed") +
+  labs(x = "Agreeableness", y = "Stress") +
+  theme_minimal()
+  
+
+```
+
+# Question 2
+
+## Part a) [1 pt]
+For the three models you fit in Question 1:
+
+i. Create a side-by-side-by-side graph of the Fitted vs Residual plots 
+ii. Create a side-by-side-by-side graph of the Residuals Q-Q plot
+    
+For each graph, comment on what you see.
+
+Hint: use the `par()` function with the `mfrow` argument like we did in lab.
+
+```{r echo = TRUE, message = FALSE, warning = FALSE}
+# plot 1
+
+par(mfrow = c(1, 3))
+plot(mod1, which = 1, main = "OLS")
+plot(mod1b, which = 1, main = "Log-transformed OLS")
+plot(wls_mod1, which = 1, main = "WLS")
+
+```
+
+* The model in which Stress is log-transformed may be preferred because its more horizontal straight line in the Residuals vs. Fitted plot. Deviations found in the other two models indicate potential non-linearity.
+
+```{r}
+# plot 2
+par(mfrow = c(1, 3))
+plot(mod1, which = 2, main = "OLS")
+plot(mod1b, which = 2, main = "Log-transformed OLS")
+plot(wls_mod1, which = 2, main = "WLS")
+```
+
+* Similar to the previous answer, the plot of the log-transformed OLS model improves the assumption of normality of residuals as they fall approximately along a straight diagonal line. The standard OLS and WLS models display heavier tails.
+
+## Part b) [0.5 pts]
+
+
+Perform White's Test for homogeneity of variance for the original untransformed OLS model, for the OLS model with log-transformed `Stress`, and for the WLS model. Which, if any, model meets this assumption the best?
+
+
+```{r echo = TRUE, message = FALSE, warning = FALSE}
+# Code
+models <- list("ols" = mod1, "log_ols" = mod1b, "wls" = wls_mod1)
+
+purrr::map_dfr(models,  white, .id = "model") |> 
+  kableExtra::kbl(longtable = T, booktabs = T)
+```
+
+
+* According to the results of White's Test, we can reject the null hypothesis of homogeneity of variance for the standard OLS and WLS models, but not for the log-transformed OLS model. So, for the log-transformed OLS model, White's test did not indicate heteroscedasticity $\chi^2$(2) = 2.27, *p* = 0.322.
+
+
+## Part c) [0.5 pts]
+
+Perform Shapiro-Wilk tests on the residuals for the original untransformed OLS model, for the OLS model with *log-transformed* `Stress`, and for the WLS model. Which, if any, model meets this assumption the best?
+
+```{r echo = TRUE, message = FALSE,  warning = FALSE}
+# Code
+residuals_list <- list()
+
+for (m in 1:length(models)) {
+  
+  residuals_list[[names(models[m])]] <- as.vector(models[[m]]$residuals)
+  
+}
+
+purrr::map_dfr(residuals_list, ~broom::tidy(shapiro.test(.x)), .id = "model") |> 
+  kableExtra::kbl(longtable = T, booktabs = T)
+```
+
+* None of the models meet the assumption of normality of residuals according to the results obtained with the Shapiro-Wilk test. For all three tests we rejected the null hypothesis that the residuals were normally distributed.
+
+
+# Question 3 [5 pts]
+
+Think about the data that you work with in your own research (i.e., some predictor(s) and outcome(s)), and respond to the following questions regarding assumptions in linear regression. Make sure to explain your reasoning. One to two sentences for each question is ok, but please try not to write more than four.
+
+1. Validity: Are your data appropriate in helping you answer your research question(s)?
+
+    * Answer here
+
+2. Linearity and additivity: Do you think the relationship between your predictor(s) and outcome variable(s) can adequately be described by a linear and additive relationship?
+  
+    * Answer here
+
+3. Independence of errors: would you expect observations to be independent or dependent (i.e., correlated)?
+
+    * Answer here
+
+4. Equal residual variances: would it be reasonable to expect homoscedasticity  ?
+
+    * Answer here
+
+5. Normality: could you reasonably expect  your residuals to be normally distributed?
+
+    * Answer here
