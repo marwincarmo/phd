@@ -1,0 +1,80 @@
+---
+title: "PSC 103B - Lab 3 Assignment"
+subtitle: "Answer Key"
+format: pdf
+filters:
+  - color.lua
+---
+
+
+
+# Question 1
+
+Fit a multiple regression model in R, with `nerdy_scale` as the outcome variable and `TIPI1` and `TIPI5` as the predictors. Show your code, and include a screenshot of the model summary. (1 point)
+
+```{r echo=TRUE}
+
+npas <- read.csv("data/NPAS.csv")
+
+nerdy_model <- lm(nerdy_scale ~ TIPI1 + TIPI5, data = npas)
+
+summary(nerdy_model)
+
+```
+
+# Question 2
+
+Write out the regression model, using the intercept and slope values you estimated above.
+
+$$
+\widehat{Nerdiness_i} = 3.58 - 0.09 \times Extraversion_i + 0.08 \times Openness_i
+$$
+# Question 3
+
+Interpret each of the intercept and slope values in terms what they mean for the relation between nerdiness, extraversion, and openness to new experiences (3 points).
+
+[Intercept: The intercept value of 3.58 means that a person who rates themselves a 0 on both the extraversion and openness questions is expected to receive a nerdiness score of 3.58.]{color=#b22222}
+
+[Slope of Extraversion: The slope of extraversion is -0.09, which means that for every 1-point increase in the participants’ extraversion, holding their openness rating constant, their nerdiness score is expected to decrease by 0.09 points.]{color=#b22222}
+
+[Slope of Openness: The slope of extraversion is 0.08, which means that for every 1-point increase in the participants’ openness to new experiences, holding their extraversion rating constant, their nerdiness score is expected to increase by 0.08 points.]{color=#b22222}
+
+# Question 4
+
+Report the appropriate $R^2$ value from the model output up to 3 decimal places (1 point). Interpret this value (1 point). 
+
+[The adjusted R2 value is 0.097, which means that 9.7% of the variation in nerdiness scores is explained by participants’ extraversion and openness ratings.]{color=#b22222}
+
+# Question 5
+
+Mean-center the predictors and re-run the model of Question 1, but now with the new centered predictors. What values have changed from the output of Question 1 (1 point)? How has the interpretation of the intercept and slope values changed? Show your code and output (3 points). 
+
+```{r echo=TRUE}
+
+npas$tipi1_c <- npas$TIPI1 - mean(npas$TIPI1)
+
+npas$tipi5_c<- npas$TIPI5 - mean(npas$TIPI5)
+
+nerdy_model_centered <- lm(nerdy_scale ~ tipi1_c + tipi5_c,
+                          data = npas)
+
+summary(nerdy_model_centered)
+
+```
+
+[The intercept value changed from 3.58 to 3.70, while the slopes for both extraversion and openness have stayed the same. The intercept now represents the expected nerdiness score for a person who gives themselves the average rating of extraversion and the average rating of openness. The interpretation of the slopes is the same as in Question 3.]{color=#b22222}
+
+# Question 6
+
+Run a model with an interaction between the centered `TIPI1` predictor and centered TIPI5 predictor. Is this interaction significant (1 point)? Explain (in general terms, no need to visualize this interaction) what this interaction means about the effect of openness to new experiences on nerdiness (1 point). Show your code and model output.
+
+```{r echo=TRUE}
+
+nerdy_interaction <- lm(nerdy_scale ~ tipi1_c*tipi5_c, data = npas)
+
+summary(nerdy_interaction)
+
+```
+
+
+[The interaction between extraversion and openness to new experiences is significant. This means that the effect of openness to new experiences on nerdiness depends on how extraverted a person is.]{color=#b22222}
