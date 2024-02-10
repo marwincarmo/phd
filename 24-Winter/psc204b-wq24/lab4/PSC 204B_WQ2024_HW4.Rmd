@@ -128,7 +128,7 @@ plot(wls_mod1, which = 1, main = "WLS")
 
 ```
 
-* The model in which Stress is log-transformed may be preferred because its more horizontal straight line in the Residuals vs. Fitted plot. Deviations found in the other two models indicate potential non-linearity.
+* The model in which Stress is log-transformed may be preferred because of its more horizontal straight line in the Residuals vs. Fitted plot. Deviations found in the other two models indicate potential non-linearity.
 
 ```{r}
 # plot 2
@@ -185,20 +185,20 @@ Think about the data that you work with in your own research (i.e., some predict
 
 1. Validity: Are your data appropriate in helping you answer your research question(s)?
 
-    * Answer here
+    * School type can be a valid but simplistic predictor of academic achievement.  Many other factors could confound the relationship and need to be considered.
 
 2. Linearity and additivity: Do you think the relationship between your predictor(s) and outcome variable(s) can adequately be described by a linear and additive relationship?
   
-    * Answer here
+    * The relationship between school type and academic achievement is unlikely to be strictly linear.  School type is a categorical variable, so we'll have to use techniques like dummy coding within the regression model, which assumes that the effect of each school type on achievement is distinct.
 
 3. Independence of errors: would you expect observations to be independent or dependent (i.e., correlated)?
 
-    * Answer here
+    * Observations could be dependent, especially because students are nested within schools. Hierarchical or mixed-effects modeling might be more appropriate to account for the clustering of students within schools.
 
 4. Equal residual variances: would it be reasonable to expect homoscedasticity  ?
 
-    * Answer here
+    * Heteroscedasticity is possible since variability in academic achievement might differ across school types.
 
 5. Normality: could you reasonably expect  your residuals to be normally distributed?
 
-    * Answer here
+    * Standardized tests often approximate normality, so normality of residuals is expected to hold.

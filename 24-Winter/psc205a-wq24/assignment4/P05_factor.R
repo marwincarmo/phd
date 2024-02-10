@@ -68,7 +68,7 @@ devtools::install_github("kassambara/factoextra")
 
 
 #PFA
-sapply(1:3, function(f)
+sapply(1:5, function(f)
   factanal(data1, factors = f, method ="mle")$PVAL)
 
 factanal(x = data1, factors = 2, method ="mle")

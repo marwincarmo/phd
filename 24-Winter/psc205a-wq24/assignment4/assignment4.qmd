@@ -1,0 +1,337 @@
+---
+title: "PSC205A Assignment 04: PCA and FA"
+format: 
+  pdf:
+     include-in-header:
+      - text: |
+          \usepackage{mathtools}
+---
+
+```{r message=FALSE}
+library(factoextra)
+library(psych)
+```
+
+
+```{r}
+data <- read.csv("emotion_short.csv")
+```
+
+# 1. Run a PCA separately to each of the two gender groups and:
+
+```{r}
+data_female <- data[data$female==0, -c(1:3)]
+data_male <- data[data$female==1,-c(1:3)]
+
+psych::describeBy(data, group = data$female)
+```
+Since the variable `afraid` has 0 variance in the `male` subgroup, we might drop it from the analysis
+
+```{r}
+data_female <- data[data$female==0, -c(1:3, 23)]
+data_male <- data[data$female==1,-c(1:3, 23)]
+```
+
+
+## 1.1. Attempt to identify an optimal number of components for each group
+
+```{r}
+pca_female <- prcomp(data_female, scale = TRUE)
+pca_male <- prcomp(data_male, scale = TRUE)
+```
+
+### Females
+
+- Screeplot
+
+```{r}
+screeplot(pca_female, type = "lines") 
+```
+- Using the Eigenvalue > 1 criteria
+
+```{r}
+pca_female$sdev
+```
+
+These results suggest that the optimal number of factors for females is `r sum(pca_female$sdev >1)`.
+
+### Males
+
+- Screeplot
+
+```{r}
+screeplot(pca_male, type = "lines") 
+```
+- Using the Eigenvalue > 1 criteria
+
+```{r}
+pca_male$sdev
+```
+
+These results suggest that the optimal number of factors for males is `r sum(pca_male$sdev >1)`. However, given that the 6th eigenvalue is very close to one, this dimension might be considered spurious and a solution with 5 components could be more plausible.
+
+## 1.2. Report a table with eigenvalues (and percent variance explained) for each group
+
+### Females
+
+```{r}
+knitr::kable(get_eigenvalue(pca_female), caption = "Eigenvalues of PCA for the female group.")
+
+```
+
+### Males
+
+```{r}
+
+knitr::kable(get_eigenvalue(pca_male), caption = "Eigenvalues of PCA for the male group.")
+
+```
+
+## 1.3. Rotate the solution using the VARIMAX procedure and report differences between this solution and the unrotated one (include the loading matrix in your report).
+
+After Varimax rotation, we see that variables cluster clearly onto separate components more often, compared to raw loadings.
+
+### Females
+
+```{r}
+rawLoadings_female     <- principal(data_female, nfactors = 4, 
+                                    rotate = 'none')$loadings[,1:4]
+rotatedLoadings_female <- principal(data_female, nfactors = 4, 
+                                    rotate = 'varimax')$loadings[,1:4]
+
+knitr::kable(as.data.frame(rawLoadings_female), caption = "Standardized unrotated loadings for the female group.")
+
+knitr::kable(as.data.frame(rotatedLoadings_female[,1:4]), caption = "Standardized rotated loadings for the female group.")
+```
+
+### Males
+
+```{r}
+rawLoadings_male     <- principal(data_female, nfactors = 5, 
+                                  rotate = 'none')$loadings[,1:5]
+rotatedLoadings_male <- principal(data_female, nfactors = 5, 
+                                  rotate = 'varimax')$loadings[,1:5]
+
+knitr::kable(as.data.frame(rawLoadings_male), caption = "Standardized unrotated loadings for the male group.")
+
+knitr::kable(as.data.frame(rotatedLoadings_male[,1:5]), caption = "Standardized rotated loadings for the male group.")
+```
+
+# 2.  Run a FA (using Principal Axis Factoring) separately to each of the two groups and:
+
+## 2.1. Attempt to identify an optimal number of factors for each group
+
+## Females
+
+```{r}
+
+fa_female <- fa(data_female, nfactors = 4, rotate = "none", fm = "pa")
+
+```
+
+- Screeplot
+
+```{r}
+plot(fa_female$e.values^2, xlab = "Component number", ylab = "Component variance", 
+     type = "l", main = "Scree diagram")
+```
+- Eigenvalues
+
+```{r}
+fa_female$e.values
+```
+
+
+These results suggest that the optimal number of factors for females is `r sum(fa_female$e.values >1)`.
+
+## Males
+
+```{r}
+
+fa_male <- fa(data_male, nfactors = 5, rotate = "none", fm = "pa")
+
+```
+- Screeplot
+
+```{r}
+plot(fa_male$e.values^2, xlab = "Component number", ylab = "Component variance", 
+     type = "l", main = "Scree diagram")
+
+```
+
+- Eigenvalues
+
+```{r}
+fa_male$e.values
+```
+
+These results suggest that the optimal number of factors for males is `r sum(fa_male$e.values >1)`. However, given that the 6th eigenvalue is very close to one, this dimension might be considered spurious and a solution with 5 factors could be more plausible.
+
+## 2.2. Report a table with eigenvalues (and percent variance explained) for each group
+
+### Females
+
+```{r}
+knitr::kable(fa_female$Vaccounted, caption = "Variance explained by the four factors of the female group.")
+
+```
+
+### Males
+
+```{r}
+
+knitr::kable(fa_male$Vaccounted, caption = "Variance explained by the five factors of the male group.")
+
+```
+
+## 2.3. Rotate the solution using the PROMAX procedure and report differences between this solution and the unrotated one (include the loading matrix in your report and the factor intecorrelation matrix)
+
+Promax yielded clearer clusters of variables with high loadings on specific factors for both groups.
+
+### Females
+
+```{r}
+
+fa_female_prmx <- fa(data_female, nfactors = 4, rotate = "promax", fm = "pa")
+
+```
+
+#### Loading matrix
+
+```{r}
+fa_female_prmx$loadings[,1:4] |> knitr::kable(caption = "Rotated loadings matrix for females.")
+```
+
+#### Factor intecorrelation matrix
+
+```{r}
+fa_female_prmx$Phi |> knitr::kable(caption = "Factor correlations for females.")
+```
+
+### Males
+
+```{r}
+
+fa_male_prmx <- fa(data_male, nfactors = 5, rotate = "promax", fm = "pa")
+
+```
+
+#### Loading matrix
+
+```{r}
+fa_male_prmx$loadings[,1:5] |> knitr::kable(caption = "Rotated loadings matrix for males.")
+```
+
+#### Factor intecorrelation matrix
+
+```{r}
+fa_male_prmx$Phi |> knitr::kable(caption = "Factor correlations for males.")
+```
+
+## 2.4. Report differences between the factor matrix and structure matrix for each group (include matrices in your report)
+
+The factor matrix emphasizes the relationships between observed variables and the common factors. Common factors represent the shared variance among a set of variables that explains their intercorrelations. The structure matrix shows the relationship between observed variables and both common and unique factors. Unique factors account for the item-specific variance not shared with other variables in the analysis.
+
+### Females Factor Matrix (Loadings)
+
+```{r}
+fa_female_prmx$loadings
+```
+
+### Females Structure Matrix
+
+```{r}
+fa_female_prmx$loadings %*% fa_female_prmx$Phi
+```
+
+
+### Males Factor Matrix (Loadings)
+
+```{r}
+fa_male_prmx$loadings
+```
+
+### Males Structure Matrix
+
+```{r}
+fa_male_prmx$loadings %*% fa_male_prmx$Phi
+```
+
+## 2.5. Report differences between the results from PCA and FA
+
+PCA and FA yielded similar results in terms of number of components/factors extracted considering the analysis of the screeplot and examining the eigenvalues. However, using a criteria of factor loading greater than 0.4, it was not the case that the items grouped identically across both methods. 
+
+In general, PCA loadings tended to be higher than FA loadings in both groups. This might be explained by the fact that PCA accounts for all variance, while FA partitions out the unique variance.
+
+# 3. Based on these analyses, interpret the structure of affect for these two groups of individuals
+
+### Female group
+
+For females, both PCA and FA suggested the variables can be grouped in four components or factors:  
+
+#### Principal components for females
+
+- PC1: `r names(which(rotatedLoadings_female[,1] > 0.4))`
+
+- PC2: `r names(which(rotatedLoadings_female[,2] > 0.4))`
+
+- PC3: `r names(which(rotatedLoadings_female[,3] > 0.4))`
+
+- PC4: `r names(which(rotatedLoadings_female[,4] > 0.4))`
+
+#### Factors for females
+
+- PA1: `r names(which(fa_female_prmx$loadings[,1] > 0.4))`
+
+- PA2: `r names(which(fa_female_prmx$loadings[,2] > 0.4))`
+
+- PA3: `r names(which(fa_female_prmx$loadings[,3] > 0.4))`
+
+- PA4: `r names(which(fa_female_prmx$loadings[,4] > 0.4))`
+
+The correlations between rotated factors are generally moderate to strong. The factors comprised of emotionally positive items are positively correlated with each other (PA1 and PA4), and negatively correlated with those that are formed by items measuring negative emotions (PA2 and PA3).
+
+### Male group
+
+Similarly, for males both techniques indicated the data can be summarized in five factors:
+
+#### Principal components for males
+
+- PC1: `r names(which(rotatedLoadings_male[,1] > 0.4))`
+
+- PC2: `r names(which(rotatedLoadings_male[,2] > 0.4))`
+
+- PC3: `r names(which(rotatedLoadings_male[,3] > 0.4))`
+
+- PC4: `r names(which(rotatedLoadings_male[,4] > 0.4))`
+
+- PC5: `r names(which(rotatedLoadings_male[,5] > 0.4))`
+
+
+#### Factors for males
+
+- PA1: `r names(which(fa_male_prmx$loadings[,1] > 0.4))`
+
+- PA2: `r names(which(fa_male_prmx$loadings[,2] > 0.4))`
+
+- PA3: `r names(which(fa_male_prmx$loadings[,4] > 0.4))`
+
+- PA4: `r names(which(fa_male_prmx$loadings[,3] > 0.4))`
+
+- PA5: `r names(which(fa_male_prmx$loadings[,5] > 0.4))`
+
+The correlations between rotated factors were generally weaker than those found for the female group, with most of them having a small value. It was also found a similar pattern to the female results, of positive correlation between factors comprised of emotionally positive items (PA1, PA4 and PA5), and negative correlation between these factors and those formed by items measuring negative emotions (PA2 and PA3).
+
+PCA focuses on maximizing variance explained and finding linear combinations of variables to create components. It does not distinguish between common and unique variance. In this data we are exploring variables measuring affect, therefore FA appears to be more suitable. Each emotion measure also contains uniqueness (e.g., the specific situational triggers for sadness vs. fear) and possibly measurement error. FA partitions this out, isolating the shared core.
+
+# 4. Discuss whether or not PCA and FA are relevant to the notion of multivariate static and dynamic concepts.
+
+Both methods are suitable for static and dynamic concepts, given some differences between them.
+
+For static concepts, where relationships among variables are expected to remain stable, PCA captures the dominant structure at that moment. Static latent factors in FA presume an underlying construct that remains relatively stable over time, even if its manifestations on observed variables might fluctuate.
+
+When applied to datasets collected over time components might represent different trajectories and patterns of development. PCA could identify components representing typical trajectories of mood variation. Dynamic FA allows the latent factors themselves to have time-dependent properties and capture complex dynamic relationships among variables.
+
+# 5. Discuss whether or not PCA and FA are relevant to the study of the individual and individual processes
+
+Classical PCA/FA primarily reveal structure at the group level. They are concerned with dimensions shared by most individuals but might not directly uncover a single individual's unique configuration.
