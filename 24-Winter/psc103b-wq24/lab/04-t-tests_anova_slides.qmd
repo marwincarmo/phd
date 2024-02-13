@@ -152,3 +152,58 @@ t.test(bill_length_mm ~ sex, data = penguins_subset, alternative = "less")
 - It is used when the number of samples in each group is different, and the variance of the two data sets is also different. Usually that is a safe assumption.
 
 - If you want to assume equal variances, set the argument `var.equal = TRUE`. 
+
+# One-Way ANOVA
+
+## One-Way ANOVA
+
+- What should we do if we have more than two groups we are interested in comparing?
+
+- Our question is the same as a t-test - are there differences in the average score across the groups - but we can't use a t-test, because a t-test is **limited to 2 groups**.
+
+- Running multiple t-tests increases our Type 1 error rate - the probability of finding a significant difference when there is none.
+
+- One-way ANOVA let's us examine whether **multiple groups** differ in their average scores.
+
+## One-Way ANOVA
+
+- Let us apply this to the example of whether bill length differs across the different species of penguins.
+
+- $H_0: \mu_{Adelie} = \mu_{Chinstrap} = \mu_{Gentoo}$ or in other words, the average bill length is the same for all 3 species of penguins. The alternative hypothesis is:
+
+- $H_A$: At least one of the means is different, or $H_0$ is not true.
+
+## One-Way ANOVA
+
+- The alternative hypothesis is a bit more complicated. It can be that:
+  - $\mu_{Adelie} \neq \mu_{Chinstrap} = \mu_{Gentoo}$ or,
+  - $\mu_{Adelie} = \mu_{Chinstrap} \neq \mu_{Gentoo}$ or,
+  - $\mu_{Adelie} \neq \mu_{Chinstrap} \neq \mu_{Gentoo}$,
+  - etc.
+
+- To capture all those possibilities, we need an alternative hypothesis that is a bit more vague ($H_0$ is not true, or at least one mean is different).
+
+## One-Way ANOVA
+
+- What can you say by looking at this plot?
+
+```{r}
+ggplot(data = penguins_subset, aes(x = species, y = bill_length_mm, fill = species))+
+  geom_boxplot()+
+  scale_fill_viridis(discrete = TRUE, alpha = 0.6)+
+  geom_jitter(color = "black", size = 0.4)+
+  labs(x = "Species", y = "Bill Length")+
+  theme_light()+
+  theme(legend.position = "none")+
+  geom_hline(yintercept = mean(penguins_subset$bill_length_mm, na.rm = TRUE))
+```
+
+## One-Way ANOVA
+
+- On face value, the means of the groups are different from each other, but there is also a lot of variability within each group around that group mean.
+
+- ANOVA quantifies how much of the variation that we see between groups is due to actual, significant group differences and how much of it is just due to sampling variation.
+
+
+
+- 
