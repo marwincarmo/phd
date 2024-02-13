@@ -1,0 +1,154 @@
+---
+title: "Week 3 - Simple and multiple linear regression"
+subtitle: "PSC 103B"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    callout-icon: false
+    # height: 900
+    footer: "PSC 103B - Statistical Analysis of Psychological Data"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+execute:
+  echo: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r packages, echo=FALSE}
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(palmerpenguins)
+```
+
+## Today's dataset
+
+We can access this dataset by installing the `palmerspenguins` package.
+
+```{r eval=FALSE, echo=TRUE}
+install.packages("palmerpenguins")
+library(palmerpenguins)
+```
+
+```{r}
+dplyr::glimpse(penguins)
+```
+
+## Today's dataset
+
+[![Bill dimensions](https://allisonhorst.github.io/palmerpenguins/reference/figures/culmen_depth.png)]{width=50%}
+
+## Two-Sample t-test
+
+- Outcome variable: `bill_length_mm`
+
+- Not all penguins gave data on bill length and there are some missing values.
+
+- The `complete.cases()` function gives the row numbers  where there is non-missing values on the variable you give it.
+
+::: fragment
+```{r}
+penguins_subset <- penguins[complete.cases(penguins$bill_length_mm),]
+```
+:::
+
+## Two-Sample t-test
+
+- Suppose we were interested in whether male penguins or female penguins had different bill lengths.
+
+- We suspected that male penguins have longer bill lengths than female penguins.
+
+- Let's look at both means
+
+::: fragment
+```{r}
+# Average bill lenght for males
+mean(penguins_subset$bill_length_mm[penguins_subset$sex == "male"],
+     na.rm = TRUE)
+
+# Average bill lenght for females
+mean(penguins_subset$bill_length_mm[penguins_subset$sex == "female"],
+     na.rm = TRUE)
+```
+:::
+
+## Two-Sample t-test
+
+- Another way to do this is to use the `tapply()` function.
+
+- `tapply(variable, group, function, extra arguments for the function)`
+
+::: fragment
+```{r}
+tapply(penguins_subset$bill_length_mm, 
+       penguins_subset$sex, mean, na.rm = TRUE)
+```
+:::
+
+## Two-Sample t-test
+
+- Is the numerical difference of ~4 mm actually significant?
+
+- $H_0: \mu_{female} = \mu_{male}$, or the average bill length of females is the same as the average bill length of males.
+
+- $H_1: \mu_{female} < \mu_{male}$, or the average bill length of females is less than that of males.
+
+- The t-test is trying to see whether the difference you observed between the groups is large given the expected variability of that difference across samples.
+
+## Two-Sample t-test
+
+- Our hypothesis was that females have shorter bill lengths than males.
+
+- `R` views the females as Group 1 and males as Group 2 (because female is alphabetically before male). We need to decide our alternative with Group 1 compared to Group 2.
+
+- Using the syntax in the next slide, replace the placeholders with the name of the variables we're interested in.
+
+## Now you try
+
+::: fragment
+```{r eval=FALSE}
+t.test(dependent_variable ~ group_variable, data = dataset,
+       alternative = "???")
+```
+:::
+
+::: fragment
+::: {.callout-tip}
+## Tip
+The argument `alternative` specify the alternative hypothesis and can take any of these three values: `"two.sided"`, `"less"`, or `"greater"`. Think about our hypothesis to choose one the alternatives.
+:::
+:::
+
+## Now you try
+
+```{r }
+t.test(bill_length_mm ~ sex, data = penguins_subset, alternative = "less")
+```
+
+## Write-up the results
+
+> The Welch Two Sample t-test found that female penguins (M = 42.1, SD = 4.90) have, on average, shorter bill lenghts than male penguins (M = 45.9, SD = 5.37), t(329.29) = -6.67, *p* < .001.
+
+## Before we move on...
+
+- Notice that `R` gives us by default the Welch's t-test.
+
+- It is used when the number of samples in each group is different, and the variance of the two data sets is also different. Usually that is a safe assumption.
+
+- If you want to assume equal variances, set the argument `var.equal = TRUE`. 
