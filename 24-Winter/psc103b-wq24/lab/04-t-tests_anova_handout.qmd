@@ -104,6 +104,24 @@ Is our p-value significant? What does that lead us to conclude?
 
 Yes, our p-value is significant, since our p-value is less than .05. Therefore, the difference we observed between the sexes is unlikely to be due to chance, and we can reject our null hypothesis. This means we have evidence that the average bill length of females is shorter than that of males! 
 
+Here's how you could write-up your results:
+
+The Welch Two Sample t-test found that female penguins (M = 42.1, SD = 4.90) have, on average, shorter bill lenghts than male penguins (M = 45.9, SD = 5.37), t(329.29) = -6.67, *p* < .001.
+
+Note that `R` uses Welch's t-test by default. This test is appropriate when the number of samples in each group is different, and the variance of the two data sets is also different. With psychological data, it is usually safe to assume that it is the case. But if you want to assume equal variances, set the argument `var.equal = TRUE`. 
+
+```{r}
+penguins_subset |> 
+  dplyr::filter(!is.na(sex)) |> 
+  ggplot(aes(x = sex, y = bill_length_mm)) +
+  geom_violin(trim = FALSE) +
+  geom_boxplot(aes(fill = sex), width = .2, show.legend = FALSE) + 
+  stat_summary(geom = "pointrange", fun.data = "mean_cl_normal") +
+  labs(x = "Sex", y = "Bill Lenght") +
+  theme_minimal()
+```
+
+
 # One-Way ANOVA
 
 We often have more than 2 groups than we are interested in comparing - e.g., perhaps you have 2 different treatments and a control group, or year in school. Our question is the same as a t-test - are there differences in the average score across the groups - but we can't use a t-test, because a t-test is limited to 2 groups. 
@@ -169,7 +187,7 @@ tapply(penguins_subset$bill_length_mm, penguins_subset$species, mean,
        na.rm = TRUE)
 ```
 
-To calculate the between-group variance, we can make a dataframe that contains the group means and the grand means, to make it easier to calculate the SSBetween. 
+To calculate the between-group variance, we can make a dataframe that contains the group means and the grand means, to make it easier to calculate the $SS_{Between}$. 
 
 ```{r}
 penguin_means <- data.frame(GroupMean = 

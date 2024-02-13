@@ -35,6 +35,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpubr)
 library(palmerpenguins)
+library(viridis)
 ```
 
 ## Today's dataset
@@ -105,9 +106,9 @@ tapply(penguins_subset$bill_length_mm,
 
 - Is the numerical difference of ~4 mm actually significant?
 
-- $H_0: \mu_{female} = \mu_{male}$, or the average bill length of females is the same as the average bill length of males.
+- $H_0: \mu_{female} = \mu_{male}$, or the average bill length of females is the **same** as the average bill length of males.
 
-- $H_1: \mu_{female} < \mu_{male}$, or the average bill length of females is less than that of males.
+- $H_1: \mu_{female} < \mu_{male}$, or the average bill length of females is **less** than that of males.
 
 - The t-test is trying to see whether the difference you observed between the groups is large given the expected variability of that difference across samples.
 
@@ -117,9 +118,15 @@ tapply(penguins_subset$bill_length_mm,
 
 - `R` views the females as Group 1 and males as Group 2 (because female is alphabetically before male). We need to decide our alternative with Group 1 compared to Group 2.
 
-- Using the syntax in the next slide, replace the placeholders with the name of the variables we're interested in.
+::: fragment
+```{r}
+levels(penguins_subset$sex)
+```
+:::
 
 ## Now you try
+
+- Using the following syntax replace the placeholders with the name of the variables we're interested in.
 
 ::: fragment
 ```{r eval=FALSE}
@@ -187,7 +194,8 @@ t.test(bill_length_mm ~ sex, data = penguins_subset, alternative = "less")
 
 - What can you say by looking at this plot?
 
-```{r}
+:::fragment
+```{r echo=FALSE}
 ggplot(data = penguins_subset, aes(x = species, y = bill_length_mm, fill = species))+
   geom_boxplot()+
   scale_fill_viridis(discrete = TRUE, alpha = 0.6)+
@@ -197,6 +205,7 @@ ggplot(data = penguins_subset, aes(x = species, y = bill_length_mm, fill = speci
   theme(legend.position = "none")+
   geom_hline(yintercept = mean(penguins_subset$bill_length_mm, na.rm = TRUE))
 ```
+:::
 
 ## One-Way ANOVA
 
@@ -204,6 +213,184 @@ ggplot(data = penguins_subset, aes(x = species, y = bill_length_mm, fill = speci
 
 - ANOVA quantifies how much of the variation that we see between groups is due to actual, significant group differences and how much of it is just due to sampling variation.
 
+## One-Way ANOVA
+
+- If $H_0$ were true, we would expect the amount of variance due to individual differences to be larger than the amount of variance that is due to group differences
+
+- If $H_0$ **were not true**, and there were actual group differences, then we expect the variation between groups to be larger than the residual variance (which is the variance due to sampling error/non-group differences).
+
+- Let's walk through an example
+
+## One-Way ANOVA
+
+We can compare between and within groups variability with the F-ratio:
+
+$$
+\begin{aligned}
+F &= \frac{\text{Between groups variability}}{\text{Within groups variability}}\\
+&= \frac{\text{Group effects + Ind diffs + Error}}{\text{Ind diffs + Error}}
+\end{aligned}
+$$
+
+If the group effect is zero, F-ratio will be close to one.
+
+## Computing the F-ratio
 
 
-- 
+$$
+F = \frac{MS_{Between}}{MS_{Within}} = \frac{\frac{SS_{Between}}{df_{Between}}}{\frac{SS_{Within}}{df_{Within}}}
+$$
+
+## Between-Group Variance
+
+- If $H_0$ were true, then our best guess for the score of a new penguin would be the grand mean (or the mean of the entire sample), since group membership wouldn't tell us anything useful.
+
+- We can compare each group's mean to this grand mean.
+
+- If the group means are all similar, then the variance will be
+small.
+
+- If the group means are different, then the variance will be large.
+
+## Between-Group Variance
+
+- First, let us calculate the mean of each group.
+
+- How would you do it in `R`?
+
+:::fragment
+```{r}
+tapply(penguins_subset$bill_length_mm, penguins_subset$species, mean,
+       na.rm = TRUE)
+```
+:::
+
+## Between-Group Variance
+
+We can make a dataframe that contains the group means and the grand means, to make it easier to calculate the $SS_{Between}$. 
+
+```{r}
+penguin_means <- data.frame(GroupMean = 
+              tapply(penguins_subset$bill_length_mm, 
+                     penguins_subset$species, mean, 
+                     na.rm = TRUE), 
+              GrandMean = mean(penguins_subset$bill_length_mm, 
+                               na.rm = TRUE))
+
+penguin_means
+```
+
+## Between-Group Variance
+
+:::{.callout-caution title="Exercise"}
+Create a new column in `penguin_means` named `mean_deviations` containing the difference between each group mean and the grand mean.
+:::
+
+:::fragment
+```{r}
+penguin_means$mean_deviations <- penguin_means$GroupMean - penguin_means$GrandMean
+
+penguin_means
+```
+:::
+
+## Between-Group Variance
+
+- The mean deviations do not tell us much yet. We are first trying to estimate the $SS_{Between}$
+
+- If you recall from class, this tell us the variability of group means around the grand mean scaled by group sample size:
+
+:::fragment
+$$
+SS_{Between} = \sum^k_{j=1}n_j(\bar{X_j}-\bar{X})^2
+$$
+:::
+
+## Between-Group Variance
+
+- So, before we can square the deviations and add them, we need to multiply it by the corresponding group sample size.
+
+## Between-Group Variance
+
+- To get the size of each group, we can use the `table()` function.
+
+:::fragment
+```{r}
+table(penguins_subset$species)
+```
+
+```{r}
+penguin_means$SampleSize <- table(penguins_subset$species)
+```
+:::
+
+- Now we can square the deviations, multiply them by the group size, and add them all up.
+
+:::fragment
+```{r}
+SSB <- sum(penguin_means$mean_deviations^2 * penguin_means$SampleSize)
+SSB
+```
+:::
+
+## Within-Group Variance
+
+- Now we need to calculate $SS_{Within}$, or the residual variance, the difference from 
+each individual's score to their group's mean.
+
+- To calculate this, we need to get each penguin's observation and each penguin's group mean in the same dataframe.
+
+:::fragment
+```{r}
+penguins_adelie <- penguins_subset$bill_length_mm[penguins_subset$species == "Adelie"]
+
+penguins_chinstrap <- penguins_subset$bill_length_mm[penguins_subset$species == "Chinstrap"]
+
+penguins_gentoo <- penguins_subset$bill_length_mm[penguins_subset$species == "Gentoo"]
+```
+:::
+
+## Within-Group Variance
+
+:::{.callout-caution title="Exercise"}
+Calculate the sum of squared deviations from the group mean separately for each group, and save them in three different objects: `penguins_adelie_dev`, `penguins_chinstrap_dev`, and `penguins_gentoo_dev`.
+:::
+
+::: {.callout-tip}
+Note that we have to use `na.rm = TRUE` twice: one to calculate the value of the mean, but also to use the `sum()` function since not all penguins have a bill length, so using `mean()` or `sum()` on something with a `NA` value leads to a `NA`.
+:::
+
+## Within-Group Variance
+
+```{r}
+penguins_adelie_dev <- sum((penguins_adelie - 
+                             mean(penguins_adelie, na.rm = TRUE))^2, na.rm = TRUE)
+
+penguins_chinstrap_dev <-  sum((penguins_chinstrap - 
+                                mean(penguins_chinstrap, na.rm = TRUE))^2, na.rm = TRUE)
+
+penguins_gentoo_dev <- sum((penguins_gentoo - 
+                             mean(penguins_gentoo, na.rm = TRUE))^2, na.rm = TRUE)
+```
+
+And now we add up all these deviations to get `SSW`
+
+```{r}
+SSW <- penguins_adelie_dev + penguins_chinstrap_dev + penguins_gentoo_dev
+
+SSW
+```
+
+## ANOVA Calculation
+
+- Now that we have `SSB` and `SSW`, we need to get the df for each variance.
+
+- The formulas for the df are:
+
+:::fragment
+$df_{between} = k - 1$
+
+$df_{within} = N -k - 1$
+:::
+
+- where $k$ is the number of groups and $N$ is the total sample size.
