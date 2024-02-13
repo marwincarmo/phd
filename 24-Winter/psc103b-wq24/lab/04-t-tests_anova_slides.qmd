@@ -126,19 +126,17 @@ levels(penguins_subset$sex)
 
 ## Now you try
 
-- Using the following syntax replace the placeholders with the name of the variables we're interested in.
+- Using the following syntax, replace the placeholders with the names of the variables we’re interested in:
 
 ::: fragment
 ```{r eval=FALSE}
 t.test(dependent_variable ~ group_variable, data = dataset,
        alternative = "???")
 ```
-:::
 
-::: fragment
 ::: {.callout-tip}
 ## Tip
-The argument `alternative` specify the alternative hypothesis and can take any of these three values: `"two.sided"`, `"less"`, or `"greater"`. Think about our hypothesis to choose one the alternatives.
+The argument `alternative` specifies the alternative hypothesis and can take any of these three values: `"two.sided"`, `"less"`, or `"greater"`. Think about our hypothesis to choose one of the alternatives.
 :::
 :::
 
@@ -154,11 +152,11 @@ t.test(bill_length_mm ~ sex, data = penguins_subset, alternative = "less")
 
 ## Before we move on...
 
-- Notice that `R` gives us by default the Welch's t-test.
+- Notice that `R` gives us the Welch's t-test by default.
 
-- It is used when the number of samples in each group is different, and the variance of the two data sets is also different. Usually that is a safe assumption.
+- It is used when the number of samples in each group is different, and the variance of the two data sets is also different. Usually, that is a safe assumption.
 
-- If you want to assume equal variances, set the argument `var.equal = TRUE`. 
+- To assume equal variances, set the argument `var.equal = TRUE`. 
 
 # One-Way ANOVA
 
@@ -166,11 +164,11 @@ t.test(bill_length_mm ~ sex, data = penguins_subset, alternative = "less")
 
 - What should we do if we have more than two groups we are interested in comparing?
 
-- Our question is the same as a t-test - are there differences in the average score across the groups - but we can't use a t-test, because a t-test is **limited to 2 groups**.
+- Our question is the same as a t-test - are there differences in the average score across the groups? We can't use a t-test because a t-test is **limited to 2 groups**.
 
 - Running multiple t-tests increases our Type 1 error rate - the probability of finding a significant difference when there is none.
 
-- One-way ANOVA let's us examine whether **multiple groups** differ in their average scores.
+- One-way ANOVA lets us examine whether **multiple groups** differ in average scores.
 
 ## One-Way ANOVA
 
@@ -196,6 +194,7 @@ t.test(bill_length_mm ~ sex, data = penguins_subset, alternative = "less")
 
 :::fragment
 ```{r echo=FALSE}
+#| fig-align: "center"
 ggplot(data = penguins_subset, aes(x = species, y = bill_length_mm, fill = species))+
   geom_boxplot()+
   scale_fill_viridis(discrete = TRUE, alpha = 0.6)+
@@ -209,17 +208,17 @@ ggplot(data = penguins_subset, aes(x = species, y = bill_length_mm, fill = speci
 
 ## One-Way ANOVA
 
-- On face value, the means of the groups are different from each other, but there is also a lot of variability within each group around that group mean.
 
-- ANOVA quantifies how much of the variation that we see between groups is due to actual, significant group differences and how much of it is just due to sampling variation.
+
+- On face value, the means of the groups are different, but there is also a lot of variability within each group around that group mean.
+
+- ANOVA quantifies how much variation we see between groups is due to actual, significant group differences and how much is just due to sampling variation.
 
 ## One-Way ANOVA
 
 - If $H_0$ were true, we would expect the amount of variance due to individual differences to be larger than the amount of variance that is due to group differences
 
 - If $H_0$ **were not true**, and there were actual group differences, then we expect the variation between groups to be larger than the residual variance (which is the variance due to sampling error/non-group differences).
-
-- Let's walk through an example
 
 ## One-Way ANOVA
 
@@ -240,10 +239,11 @@ If the group effect is zero, F-ratio will be close to one.
 $$
 F = \frac{MS_{Between}}{MS_{Within}} = \frac{\frac{SS_{Between}}{df_{Between}}}{\frac{SS_{Within}}{df_{Within}}}
 $$
+Let's walk through an example.
 
 ## Between-Group Variance
 
-- If $H_0$ were true, then our best guess for the score of a new penguin would be the grand mean (or the mean of the entire sample), since group membership wouldn't tell us anything useful.
+- If $H_0$ were true, then our best guess for the score of a new penguin would be the **grand mean** (or the mean of the entire sample), since group membership wouldn't tell us anything useful.
 
 - We can compare each group's mean to this grand mean.
 
@@ -270,11 +270,11 @@ tapply(penguins_subset$bill_length_mm, penguins_subset$species, mean,
 We can make a dataframe that contains the group means and the grand means, to make it easier to calculate the $SS_{Between}$. 
 
 ```{r}
-penguin_means <- data.frame(GroupMean = 
-              tapply(penguins_subset$bill_length_mm, 
+penguin_means <- data.frame(
+  GroupMean = tapply(penguins_subset$bill_length_mm, 
                      penguins_subset$species, mean, 
                      na.rm = TRUE), 
-              GrandMean = mean(penguins_subset$bill_length_mm, 
+  GrandMean = mean(penguins_subset$bill_length_mm, 
                                na.rm = TRUE))
 
 penguin_means
@@ -302,15 +302,16 @@ penguin_means
 
 :::fragment
 $$
-SS_{Between} = \sum^k_{j=1}n_j(\bar{X_j}-\bar{X})^2
+\begin{aligned}
+SS_{Between} &= \sum^k_{j=1}n_j(\bar{X_j}-\bar{X})^2\\
+             &= n_{1}(\bar{X}_{1}-\bar{X})^2 + n_{2}(\bar{X}_{2}-\bar{X})^2 + n_{3}(\bar{X}_{3}-\bar{X})^2
+\end{aligned}
 $$
 :::
 
 ## Between-Group Variance
 
 - So, before we can square the deviations and add them, we need to multiply it by the corresponding group sample size.
-
-## Between-Group Variance
 
 - To get the size of each group, we can use the `table()` function.
 
@@ -323,8 +324,6 @@ table(penguins_subset$species)
 penguin_means$SampleSize <- table(penguins_subset$species)
 ```
 :::
-
-- Now we can square the deviations, multiply them by the group size, and add them all up.
 
 :::fragment
 ```{r}
@@ -339,6 +338,8 @@ SSB
 each individual's score to their group's mean.
 
 - To calculate this, we need to get each penguin's observation and each penguin's group mean in the same dataframe.
+
+- One way to do this is create smaller vectors for each species.
 
 :::fragment
 ```{r}
@@ -359,6 +360,8 @@ Calculate the sum of squared deviations from the group mean separately for each 
 ::: {.callout-tip}
 Note that we have to use `na.rm = TRUE` twice: one to calculate the value of the mean, but also to use the `sum()` function since not all penguins have a bill length, so using `mean()` or `sum()` on something with a `NA` value leads to a `NA`.
 :::
+
+Here's what you're calculating: $SS = \sum(X_i - \bar{X})$
 
 ## Within-Group Variance
 
@@ -394,3 +397,95 @@ $df_{within} = N -k - 1$
 :::
 
 - where $k$ is the number of groups and $N$ is the total sample size.
+
+## ANOVA Calculation
+
+- We know we have 3 groups, but how many penguins?
+
+:::fragment
+```{r}
+nrow(penguins_subset)
+```
+
+```{r}
+dfB <- 3 - 1
+dfW <- 342 - 3
+```
+:::
+
+- Now we can calculate Mean Squared Between and Mean Squared Within by dividing each sum of squares by the df.
+
+:::fragment
+```{r}
+MSB <- SSB / dfB
+MSW <- SSW / dfW
+```
+:::
+
+## ANOVA Calculation
+
+- $MS_{Between}$ describes the amount of variance that can be attributed to the differences between groups.
+
+- $MS_{Within}$ describes the amount of variance that can be attributed to chance or sampling error (basically, whatever cannot be described by group differences). 
+
+- We compare these 2 to calculate our F-statistic.
+
+:::fragment
+```{r}
+Fstat <-  MSB / MSW
+```
+:::
+
+## ANOVA Calculation
+
+- We can get the p-value of F by looking at the F-distribution with degrees of freedom (dfB, dfW).
+
+- In `R`, this is done using the pf() function.
+
+:::fragment
+```{r}
+pf(Fstat, df1 = dfB, df2 = dfW, lower.tail = FALSE)
+```
+:::
+
+## ANOVA Calculation
+
+- What can we conclude?
+
+- Since our p-value is less than .05, we would reject $H_0$, and conclude that at least one of the groups have an average bill length that is not equal to the rest.
+
+- Which species, though, is different? 
+
+- The F-test is an omnibus test, so although it can tell us that there are significant group differences in bill length, it does **not** tell us which groups are different.
+
+- We find that with post-hoc tests (next week!)
+
+## ANOVA Calculation
+
+- `R` obviously has a way simpler solution to do the anova.
+
+- The `aov()` function: `aov(outcome ~ group, data = dataset)`
+
+- To get meaningful results, we need to wrap the object created by `aov()` around the `summary()` function:
+
+:::fragment
+```{r}
+my_anova <- aov(bill_length_mm ~ species, data = penguins_subset)
+summary(my_anova)
+```
+:::
+
+- Does this match what we got before? Is our conclusion the same?
+
+## Now you try
+
+:::{.callout-caution title="Exercise"}
+Run an One-Way ANOVA using `aov()`to investigate if there is an overall difference in `body_mass_g` between `species` in the `penguins_subset` dataset. What can you conclude?
+:::
+
+:::fragment
+```{r}
+summary(aov(body_mass_g ~ species, data = penguins_subset))
+```
+:::
+
