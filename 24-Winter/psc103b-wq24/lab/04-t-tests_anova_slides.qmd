@@ -1,5 +1,5 @@
 ---
-title: "Week 3 - Simple and multiple linear regression"
+title: "Lab 4: t-tests and One-Way ANOVA"
 subtitle: "PSC 103B"
 author: "Marwin Carmo"
 format: 
