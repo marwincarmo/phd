@@ -1,0 +1,108 @@
+---
+title: "PSC 103B - Lab 4 Assignment"
+subtitle: "Answer Key"
+format: pdf
+filters:
+  - color.lua
+---
+
+We will be continuing to use the NPAS Dataset from the past 2 weeks (sorry if you’re sick of this dataset by now!). Here is a refresher of the relevant variables for this homework assignment:
+
+- `continent`: The continent that the participant is from, out of 5 possible options: Africa, Americas, Asia, Europe, and Oceania
+- `TIPI1`: Participant’s self-rated extraversion (on a scale of 1 to 7)
+- `nerdy_selfreport`: Participant’s self-rated nerdiness level (on a scale of 1 to 7)
+
+```{r}
+npas <- read.csv("data/NPAS.csv")
+```
+
+
+# Question 1
+
+Suppose you met someone from Europe who had just finished a tour of the Americas, who remarked that all the people they had met seemed so much more extraverted than the people they knew back in Europe. Luckily, you have this dataset where you can check and see whether your new friend’s impression is right or not!
+
+State the null and alternative hypothesis for this test (1 point).
+
+$$
+\begin{aligned}
+H_0&: \mu_{\text{Americas}} = \mu_{\text{Europe}}\\
+H_1&: \mu_{\text{Americas}} > \mu_{\text{Europe}}
+\end{aligned}
+$$
+[Where $\mu$ represents the average extraversion score.]{color=#b22222}
+
+# Question 2
+
+Report the mean extraversion score for participants from the Americas and the mean extraversion score for participants from Europe. Show your code. (1 point)
+
+```{r}
+mean(npas$TIPI1[npas$continent == "Americas"])
+mean(npas$TIPI1[npas$continent == "Europe"])
+
+# or:
+tapply(npas$TIPI1, npas$continent, mean, na.rm = TRUE)
+
+```
+
+- [Mean for Americas: `r mean(npas$TIPI1[npas$continent == "Americas"])`]{color=#b22222}
+- [Mean for Europe: `r mean(npas$TIPI1[npas$continent == "Europe"])`]{color=#b22222}
+
+# Question 3
+
+Conduct a t-test to for the hypotheses above. Show your code and output. (2 points)
+
+```{r}
+npas_subset <- npas[npas$continent == "Americas" | npas$continent == "Europe", ]
+
+t.test(TIPI1 ~ continent, data = npas_subset, alternative = "greater")
+
+```
+
+# Question 4
+
+What is your conclusion? Is your friend’s impression of people from the Americas correct? (1 point)
+
+[Our conclusion is that we fail to reject the null hypothesis, since our p-value is greater than .05. There is not enough evidence to conclude that the average extraversion score of people from the Americas is greater than the average extraversion score of people from Europe.]{color=#b22222}
+
+# Question 5
+
+This got you thinking – are there perhaps continental differences in how people perceive themselves? Perhaps people from different continents think they are more or less nerdy than people from other continents. You decide to conduct a one-way ANOVA to see whether this is true, and there is a difference in self-reported nerdiness across continents.
+
+Write the null and alternative hypotheses for this test. (1 point)
+
+$$
+\begin{aligned}
+H_0&: \mu_{\text{Africa}} = \mu_{\text{Americas}} = \mu_{\text{Asia}} = \mu_{\text{Europe}} = \mu_{\text{Oceania}}\\
+H_1&: H_0 \ \text{is not true (at least one of the means is different)}
+\end{aligned}
+$$
+
+[Where $\mu$ represents the average self-reported nerdiness score.]{color=#b22222}
+
+# Question 6
+
+Calculate and report the mean self-reported nerdiness score for each continent. Show your code. (2 points)
+
+```{r}
+tapply(npas$nerdy_selfreport, npas$continent, mean, na.rm = TRUE)
+```
+# Question 7
+
+Conduct the one-way ANOVA. Show your code and output. (2 points)
+
+```{r}
+nerdy_anova <- aov(nerdy_selfreport ~ continent, data = npas)
+summary(nerdy_anova)
+```
+
+# Question 8 
+
+What can you conclude about the average self-reported nerdiness across continents? Is there a difference? (1 point)
+
+[Our p-value is less than .05, so we reject the null hypothesis. At least one of the continents has an average self-reported nerdiness score that differs from the other continents.]{color=#b22222}
+
+# Question 9 
+
+Can the results of the one-way ANOVA tell you which continents have significantly different self-reported nerdiness scores from each other? Why or why not? (1 point)
+
+[The results cannot tell us which continents differ from each other, because the ANOVA is an omnibus test, meaning that all it can do is tell us if there is a difference. We would need to conduct post-hoc tests to determine which continents differ significantly from each other.]{color=#b22222}

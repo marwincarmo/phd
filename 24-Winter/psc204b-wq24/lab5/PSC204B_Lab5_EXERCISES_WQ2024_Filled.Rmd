@@ -1,0 +1,98 @@
+---
+title: "Lab 5 Exercises Filled"
+author: "Samuel D. Aragones"
+date: "Winter Quarter 2024"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r Exercise 1}
+library(ggplot2)
+#a) generate some 'logit data'. Anything is feasible between the bounds of negative infinity and positive infinity
+
+logit_data <- seq(from=-5,to=5,by=0.05)
+
+#b) convert from logit to odds and probabilities
+odds <- exp(logit_data)
+p <- odds/(1+odds)
+
+#c) plot the relationship between logit, odds, and probability
+a<-data.frame(logit_data,odds,p)
+ggplot(a,aes(x=logit_data,y=odds))+geom_line()
+ggplot(a,aes(x=odds,y=p))+geom_line()
+ggplot(a,aes(x=logit_data,y=p))+geom_line()+geom_hline(aes(yintercept=0.5),color='cyan',linetype='dashed')+geom_vline(aes(xintercept=0),color='cyan',linetype='dashed')
+```
+```{r Exercise 2}
+
+#a) Load in the phobia dataset
+load('C:/Users/WOOO WOOOOOOO/Downloads/phobia.Rdata')
+#b) create two new variables in the phobia data set known as diagnosis and gender.code
+phobia$diagnosis <- ifelse(phobia$ADIS_IV == 1, 'Yes Diagnosis','No Diagnosis') %>% factor(levels=c('No Diagnosis','Yes Diagnosis'))
+phobia$male <- ifelse(phobia$gender == 'male', 1, 0)
+#c) Single predictor variable (Predict whether someone has a social phobia or not ADIS_IV variable by using fear of negative evaluation FNE)
+single_pred <- glm(ADIS_IV ~ FNE,family='binomial',data=phobia)
+summary(single_pred)
+coefficients(single_pred)
+single_pred$coefficients
+#d) Multiple predictor variables (Predict whether someone has a social phobia or not ADIS_IV variable by using fear of negative evaluation FNE and SAD)
+multiple_pred <- glm(ADIS_IV ~ FNE + SAD,family='binomial',data=phobia)
+summary(multiple_pred)
+#e) Multiple predictor variables with interaction term (Predict ADIS_IV by FNE, SAD, gender, interaction between gender and SAD)
+complex_pred <- glm(ADIS_IV ~ FNE + SAD*gender,family='binomial',data=phobia)
+summary(complex_pred)
+```
+
+
+```{r Exercise 3}
+
+#Interpret, in your own words, c, d, and e, coefficients in
+#a) logit
+
+#b) odds
+exp(single_pred$coefficients)
+#when score of FNE is 0, the odds of having social phobia diagnosis are 0.02. 
+#For every one-unit increase in the score of FNE, the odds of having a social phobia diagnosis increases by a factor of 1.28
+
+#c) probability
+exp(single_pred$coefficients)/(1+exp(single_pred$coefficients))
+#only interpret the intercept because the probability function is sigmoidal and the interpretation would not map in a straightforward manner.
+#when FNE is 0, the probability of having a social phobia diagnosis is 1.9%
+```
+
+```{r Exercise 4}
+
+#Taking the single predictor model from 2c, 
+
+#a) calculate the logit values for each value of FNE in the data and create a new column. Repeat for odds and probability
+
+#b) create a pred.class column in the data that is of value, ‘Predicted Yes’ if the probability value of the row is >.5  from the single predictor model and ‘Predicted No’ if otherwise.
+
+phobia$prob <- predict(single_pred,list(FNE=phobia$FNE),type='resp')
+phobia$pred.class <- ifelse(phobia$prob > .5, 'Predicted Yes', 'Predicted No')
+#c) Compare correct vs. incorrect classification using the pred.class and diagnosis column (hint: you will use the table() function). Calculate error rate.
+tab1<-table(phobia$pred.class,phobia$diagnosis)
+sum(tab1[c(1,4)])/sum(tab1)*100
+sum(tab1[c(2,3)])/sum(tab1)*100
+#d) Compare the results from c to a null model
+null_model <- glm(ADIS_IV ~ 1, family='binomial', data=phobia) # the tilde 1 is 'predicted by intercept'
+summary(null_model)
+null_model$coefficients
+phobia$pred.intercept <- ifelse(null_model$coefficients[1]>0,'Predicted Yes','Predicted No')
+tab_null <- table(phobia$pred.intercept,phobia$diagnosis)
+
+#e) Perform d but with a focus on AIC
+single_pred$aic
+null_model$aic
+#f) say something about the null deviance vs. residual deviance in the 2c model
+summary(single_pred)
+```
+

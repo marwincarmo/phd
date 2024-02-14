@@ -1,0 +1,251 @@
+---
+title: "Homework 5"
+date: "2/9/2024"
+pdf_document: null
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r message = F, echo = F, include = F}
+
+# The following code checks whether the packages needed for this assignment are already installed, if not, they will be installed. 
+
+if (!require("titanic")) install.packages("titanic")
+if (!require("ggplot2")) install.packages("ggplot2")
+if (!require("ggpubr")) install.packages("ggpubr")
+if (!require("scales")) install.packages("scales")
+if (!require("knitr")) install.packages("knitr")
+if (!require("dplyr")) install.packages("dplyr")
+if (!require("readxl")) install.packages("readxl")
+```
+
+```{r message = F, echo = F, include = F}
+# Load the required packages:
+
+library(ggplot2)
+library(ggpubr)
+library(scales)
+library(knitr)
+library(titanic)
+library(dplyr)
+library(readxl)
+```
+
+```{r message = F, echo = F, include = F}
+
+# You will use data from the titanic package to complete Homework 5. This chunk 
+# will read in two data sets (titanic_train and titanic_test), merge the data 
+# files, and reduce the data so that you have all the variables you need. The end 
+# result is a data frame called titanic_dat. Use this dataframe to complete 
+# homework 6. 
+
+data('titanic_train')
+data('titanic_test')
+titanic_test$Survived = NA
+complete_data <- rbind(titanic_train, titanic_test)
+
+
+titanic_dat <- complete_data[, c('Survived', 'Sex', 'Age','Fare')]
+titanic_dat <- na.omit(titanic_dat)
+titanic_dat$Survived.g <- ifelse(titanic_dat$Survived == 0, "No", "Yes")
+rm(titanic_train, titanic_test, complete_data)
+```
+
+# Question 1
+
+## Part a)
+
+Using the *titanic_dat* data frame, conduct a logistic regression analysis to predict whether passengers' survival (*Survived*) is predicted by the cost of fare paid by passengers (*Fare*). Write out the logistic regression equation on the odds scale. Please write the equation in the most simplified format (i.e., write it in the form of $intercept * slope^{X_{predictor}}$ with each estimate converted to odds ratios; don't write it in the form of $e^{intercept + slope*X_{predictor}}$; remember to simplify as much as possible). Interpret the slope of *Fare*.
+
+```{r echo = T, message = F}
+# Code
+
+mod1 <- glm(Survived ~ Fare, data = titanic_dat, family='binomial')
+summary(mod1)
+
+```
+
+**Regression Equation**:
+
+$$ \widehat{Odds_{Survival}} = 0.41 + 1.02 \times \text{Fare}_i $$
+
+**Interpretation:**
+
+-   **Slope of Fare (odds)**: For every one-unit increase in the cost of the *Fare* paid by the passenger, the odds of survival (*Survival* = 1) increases by a factor of 1.02.
+
+## Part b)
+
+Create a graph that demonstrates the results of the analysis above. The graph should show *Fare* (on the x-axis) plotted against the predicted **probability** of *Survived*. The graph should include the predicted probabilities for each value of fare [and]{.underline} a fit line (hint: For an example of how to add non-linear fit lines to a graph, see the example in the lab where we did this using a separate data frame called `line.data)`. The y-scale on the graph should go from 0% to 100%, and the *x*- and *y*-axes should be appropriately labeled. You are welcome to use a jitter on the data points and/or to adjust the points' alpha level (transparency), but it is OK if the points clump on the fit line somewhat (as long as the graph looks cleans and legible, that is the most important thing). You do not need any extra panels for predicted odds or predicted logits.
+
+```{r echo = T, message = F}
+
+titanic_dat <- titanic_dat |> 
+  dplyr::mutate(
+    prob = exp(predict(mod1)) / (1 + exp(predict(mod1)))
+  )
+
+line_data <- data.frame(
+  fare_range = seq(from = from = min(titanic_dat$Fare, na.rm = T) - 2,
+to = max(phobia$FNE, na.rm = T) + 2,
+by = .01))
+)
+
+titanic_dat |> 
+  ggplot(aes(x = Fare, y = prob)) +
+  geom_line(data = line.data, aes(x = FNE.range, y = prob)) +
+  geom_point(alpha = .1, size = 2) +
+  labs(y = "Probability of Diagnosis (Predicted)") +
+  theme_classic()  +
+  theme(panel.grid.major.y = 
+          element_line(size = .5, color = "grey", linetype = "dotted")) +
+  scale_y_continuous(breaks = c(0,.25, .5, .75, 1),
+                     label = percent) +
+  annotate(geom = "label", 
+           label = c("0% Chance of Diagnosis", "100% Chance of Diagnosis"), 
+           x = 32,
+           hjust = 0,
+           y = c(0, 1), 
+           size = 3)
+```
+
+## Part c)
+
+Create a Null Model for *Survived* (i.e., an intercept-only logistic regression model). Then, calculate the accuracy rate (the percent of correct predictions, or in other words, $1 - error.rate$) for the Null Model and for the model created in Part a (i.e., *Survived* predicted by *Fare*), and report these percentages below. Please report these values as percentages and not decimals.
+
+Note: To calculate the accuracy rate for these models, assume that a predicted probability of Survival greater than or equal to 50% means that a person was predicted to Survive (*Survived* = 1), and that a predicted probability below 50% means that a person was predicted to Not Survive (*Survived* = 0).
+
+```{r}
+# Code
+
+
+```
+
+**Answers**
+
+-   **Accuracy Rate of Null Model**: WRITE ANSWER HERE
+-   **Accuracy Rate of Model 1**: WRITE ANSWER HERE
+
+# Question 2
+
+## Part a)
+
+In the table below, report the Deviance and AIC for the following regression models (some of these models you already created, some you have not). Round all decimals to 2 places.
+
+-   Model 0: The Null model
+-   Model 1: *Survived* predicted by *Fare*
+-   Model 2: *Survived* predicted by *Age*
+-   Model 3: *Survived* predicted by *Sex*
+
+```{r echo = T, message = F}
+# Code
+
+
+```
+
+| Model                | Deviance | AIC |
+|----------------------|----------|-----|
+| Model 0 (Null Model) | ???      | ??? |
+| Model 1 (Fare)       | ???      | ??? |
+| Model 2 (Age)        | ???      | ??? |
+| Model 3 (Sex)        | ???      | ??? |
+
+## Part b)
+
+Based on the AIC from the table in *Part a*, answer the following questions in the space below:
+
+1.  Which variables (*Fare*, *Age*, and/or *Sex*) were significant predictors of Surviving?
+2.  Which variable (*Fare*, *Age*, or *Sex*) was the **best** predictor of Surviving? How can you tell?
+
+**Answers**:
+
+1.  WRITE ANSWER HERE
+2.  WRITE ANSWER HERE
+
+# Question 3
+
+Create a regression model with *Survived* predicted by *Age* + *Fare* + *Sex*. Then, use this model to predict the probability of the following two people surviving the titanic (given the information provided about them below). Report the predicted probabilities, and report these values as percentages below.
+
+1.  Rose, a 17-year old female who paid a Fare of \$84.
+2.  Jack, a 23-year old male who snuck aboard without paying any Fare (\$0).
+
+```{r echo = T, message = F}
+# Code
+
+
+```
+
+**Answers**
+
+-   **Probability of Rose Surviving**: WRITE ANSWER HERE
+-   **Probability of Jack Surviving**: WRITE ANSWER HERE
+
+# Question 4
+
+The code for a complex regression model is provided below, in which *Survived* is predicted by a three way interaction between *Age*, *Fare*, and Sex*.* Run the code and look at the summary output. Then, read the statements below. Based on the analysis output and your understanding of logistic regression, indicate which of the statements are correct and which ones are incorrect (it is possible for more than one statement to be correct); focus on the underlined portion of each statement. For each statement, provide a brief explanation of why the statement was correct or not (one to two sentences will do). You may write additional code if you would like (however, you technically have all the information that you need to answer the question from the output below).
+
+1.  There was [a significant three-way interaction]{.underline} between *Age*, *Fare*, and *Sex* predicting survival status.
+2.  Each slope indicates [how the predicted score of *Survived* will increase or decrease]{.underline} for every one unit increase in each respective predictor.
+3.  The model intercept reflects [the estimated logit of *Survived* for females of an average age and who paid an average fair]{.underline}.
+4.  This model [was significantly improved]{.underline} relative to the null model.
+
+```{r echo = T, message = F}
+complex.model <-
+  glm(Survived ~ Age * Fare * Sex,
+    family = "binomial",
+    data = titanic_dat) %>%
+  summary()
+
+complex.model
+```
+
+**Statement 1**
+
+-   **Is the Statement Correct:** WRITE YES OR NO
+
+-   **Why:** WRITE EXPLANATION HERE
+
+**Statement 2**
+
+-   **Is the Statement Correct:** WRITE YES OR NO
+
+-   **Why:** WRITE EXPLANATION HERE
+
+**Statement 3**:
+
+-   **Is the Statement Correct:** WRITE YES OR NO
+
+-   **Why:** WRITE EXPLANATION HERE
+
+**Statement 4**
+
+-   **Is the Statement Correct**: WRITE YES OR NO
+
+-   **Why**: WRITE EXPLANATION HERE
+
+# Extra Credit
+
+## Part a)
+
+Based on your answers to Question 3, how much **more** likely was Rose to survive than Jack? Write your answer in the space below, and include any code used to calculate your answer in the chunk below. Round to 2 decimal places. This question is worth an extra 0.5 points.
+
+**Answer:** WRITE ANSWER HERE
+
+```{r echo = T, message = F}
+
+```
+
+## Part b)
+
+Based on the analysis output in Question 4, in the space below, fill in the blank for the following statement:
+
+"For a female who paid \$20 in fair, the logit of survival increased by [BLANK] for every one unit increase in Age".
+
+Enter the number in space below, rounded to 3 decimal places. Write any code that you use for calculations in the space below. This question is worth an extra 0.5 points.
+
+**Answer**: WRITE ANSWER HERE
+
+```{r echo = T, message = F}
+
+
+```

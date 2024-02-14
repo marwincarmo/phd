@@ -94,7 +94,7 @@ hw4data$ols_fitted <- predict(mod1, hw4data)
 hw4data$wls_fitted <- predict(wls_mod1, hw4data)
 
 hw4data |> 
-  ggplot(aes(x = Stress, y = A)) +
+  ggplot(aes(x = A, y = Stress)) +
   geom_point() +
   geom_smooth(method = "lm", se = F, fullrange = T, color = "blue") +
   geom_abline(intercept = wls_mod1$coefficients[1],
