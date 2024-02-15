@@ -3,7 +3,7 @@ title: "Homework 5"
 date: "2/9/2024"
 pdf_document: null
 output:
-  word_document: default
+  #word_document: default
   pdf_document: default
 ---
 
@@ -64,6 +64,8 @@ Using the *titanic_dat* data frame, conduct a logistic regression analysis to pr
 mod1 <- glm(Survived ~ Fare, data = titanic_dat, family='binomial')
 summary(mod1)
 
+# Exponetiated coefficients
+exp(mod1$coefficients)
 ```
 
 **Regression Equation**:
@@ -86,27 +88,22 @@ titanic_dat <- titanic_dat |>
   )
 
 line_data <- data.frame(
-  fare_range = seq(from = from = min(titanic_dat$Fare, na.rm = T) - 2,
-to = max(phobia$FNE, na.rm = T) + 2,
+  Fare = seq(from = min(titanic_dat$Fare, na.rm = T) - 2,
+to = max(titanic_dat$Fare, na.rm = T) + 2,
 by = .01))
-)
+
+line_data$prob <- exp(predict(mod1, line_data)) / (1 + exp(predict(mod1, line_data)))
 
 titanic_dat |> 
   ggplot(aes(x = Fare, y = prob)) +
-  geom_line(data = line.data, aes(x = FNE.range, y = prob)) +
+  geom_line(data = line_data, aes(x = Fare, y = prob)) +
   geom_point(alpha = .1, size = 2) +
-  labs(y = "Probability of Diagnosis (Predicted)") +
+  labs(y = "Probability of Survival (Predicted)") +
   theme_classic()  +
   theme(panel.grid.major.y = 
           element_line(size = .5, color = "grey", linetype = "dotted")) +
   scale_y_continuous(breaks = c(0,.25, .5, .75, 1),
-                     label = percent) +
-  annotate(geom = "label", 
-           label = c("0% Chance of Diagnosis", "100% Chance of Diagnosis"), 
-           x = 32,
-           hjust = 0,
-           y = c(0, 1), 
-           size = 3)
+                     label = percent)
 ```
 
 ## Part c)
@@ -117,14 +114,26 @@ Note: To calculate the accuracy rate for these models, assume that a predicted p
 
 ```{r}
 # Code
+null_model <- glm(Survived ~ 1, data = titanic_dat, family = "binomial")
 
-
+titanic_dat <- titanic_dat |> 
+  dplyr::mutate(
+    prob_null = exp(predict(null_model)) / (1 + exp(predict(null_model))),
+    accuracy_mod1 = dplyr::case_when(
+      (Survived == 1 & prob > .5 ) | (Survived == 0 & prob < .5 ) ~ 1,
+      TRUE ~ 0
+    ),
+    accuracy_null = dplyr::case_when(
+      (Survived == 1 & prob_null > .5 ) | (Survived == 0 & prob_null < .5 ) ~ 1,
+      TRUE ~ 0
+    )
+  )
 ```
 
 **Answers**
 
--   **Accuracy Rate of Null Model**: WRITE ANSWER HERE
--   **Accuracy Rate of Model 1**: WRITE ANSWER HERE
+-   **Accuracy Rate of Null Model**: In the null model, the correct prediction frequency was `r round(sum(titanic_dat$accuracy_null)/nrow(titanic_dat)*100, 2)`%
+-   **Accuracy Rate of Model 1**: In the model of `Survival` predicted by `Fare`, `r round(sum(titanic_dat$accuracy_mod1)/nrow(titanic_dat)*100, 2)`% of the cases were correctly classified.
 
 # Question 2
 
@@ -139,16 +148,19 @@ In the table below, report the Deviance and AIC for the following regression mod
 
 ```{r echo = T, message = F}
 # Code
-
+fit_null <- summary(null_model)
+fit_fare <- summary(mod1)
+fit_age <- summary(glm(Survived ~ Age, data = titanic_dat, family = "binomial"))
+fit_sex <- summary(glm(Survived ~ Sex, data = titanic_dat, family = "binomial"))
 
 ```
 
 | Model                | Deviance | AIC |
 |----------------------|----------|-----|
-| Model 0 (Null Model) | ???      | ??? |
-| Model 1 (Fare)       | ???      | ??? |
-| Model 2 (Age)        | ???      | ??? |
-| Model 3 (Sex)        | ???      | ??? |
+| Model 0 (Null Model) |`r round(fit_null$deviance,2)`|`r round(fit_null$aic,2)`|
+| Model 1 (Fare)       |`r round(fit_fare$deviance,2)`|`r round(fit_fare$aic,2)`|
+| Model 2 (Age)        |`r round(fit_age$deviance,2)`|`r round(fit_age$aic,2)`|
+| Model 3 (Sex)        |`r round(fit_sex$deviance,2)`|`r round(fit_sex$aic,2)`|
 
 ## Part b)
 
