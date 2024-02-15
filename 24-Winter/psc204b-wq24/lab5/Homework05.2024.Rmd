@@ -166,13 +166,13 @@ fit_sex <- summary(glm(Survived ~ Sex, data = titanic_dat, family = "binomial"))
 
 Based on the AIC from the table in *Part a*, answer the following questions in the space below:
 
-1.  Which variables (*Fare*, *Age*, and/or *Sex*) were significant predictors of Surviving?
-2.  Which variable (*Fare*, *Age*, or *Sex*) was the **best** predictor of Surviving? How can you tell?
+1.  Which variables (*Fare*, *Age*, and/or *Sex*) were significant predictors of Surviving? 
+2.  Which variable (*Fare*, *Age*, or *Sex*) was the **best** predictor of Surviving? How can you tell? 
 
 **Answers**:
 
-1.  WRITE ANSWER HERE
-2.  WRITE ANSWER HERE
+1.  *Fare*, *Age*, and *Sex*.
+2.  *Sex*. Lower AIC.
 
 # Question 3
 
@@ -184,6 +184,7 @@ Create a regression model with *Survived* predicted by *Age* + *Fare* + *Sex*. T
 ```{r echo = T, message = F}
 # Code
 
+mod3 <- lm(Survived ~ )
 
 ```
 
