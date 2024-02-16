@@ -99,11 +99,12 @@ titanic_dat |>
   geom_line(data = line_data, aes(x = Fare, y = prob)) +
   geom_point(alpha = .1, size = 2) +
   labs(y = "Probability of Survival (Predicted)") +
+  scale_y_continuous(breaks = c(0,.25, .5, .75, 1), limits = c(0, 1),
+                     label = percent) +
   theme_classic()  +
   theme(panel.grid.major.y = 
-          element_line(size = .5, color = "grey", linetype = "dotted")) +
-  scale_y_continuous(breaks = c(0,.25, .5, .75, 1),
-                     label = percent)
+          element_line(size = .5, color = "grey", linetype = "dotted"))
+  
 ```
 
 ## Part c)
@@ -184,14 +185,22 @@ Create a regression model with *Survived* predicted by *Age* + *Fare* + *Sex*. T
 ```{r echo = T, message = F}
 # Code
 
-mod3 <- lm(Survived ~ )
+mod3 <- lm(Survived ~ Age + Fare + Sex, data=titanic_dat)
 
+rose <- data.frame(Age = 17, Sex = "female", Fare = 84)
+jack <- data.frame(Age = 23, Sex = "male", Fare = 0)
+
+# Rose probability
+exp(predict(mod3, rose)) / (1 + exp(predict(mod3, rose)))
+
+# Jack probability
+exp(predict(mod3, jack)) / (1 + exp(predict(mod3, jack)))
 ```
 
 **Answers**
 
--   **Probability of Rose Surviving**: WRITE ANSWER HERE
--   **Probability of Jack Surviving**: WRITE ANSWER HERE
+-   **Probability of Rose Surviving**: 69.71%
+-   **Probability of Jack Surviving**: 54.29%
 
 # Question 4
 
@@ -214,27 +223,27 @@ complex.model
 
 **Statement 1**
 
--   **Is the Statement Correct:** WRITE YES OR NO
+-   **Is the Statement Correct:** YES
 
--   **Why:** WRITE EXPLANATION HERE
+-   **Why:** The coefficient for the three way interaction (`Age:Fare:Sexmale`) is statistically significant with *p* = 0.011.
 
 **Statement 2**
 
--   **Is the Statement Correct:** WRITE YES OR NO
+-   **Is the Statement Correct:** NO
 
--   **Why:** WRITE EXPLANATION HERE
+-   **Why:** Each slope indicates how the predicted logit of *Survived* will increase or decrease for every one unit increase in each respective predictor, keeping all the other predictors constant.
 
 **Statement 3**:
 
--   **Is the Statement Correct:** WRITE YES OR NO
+-   **Is the Statement Correct:** NO
 
--   **Why:** WRITE EXPLANATION HERE
+-   **Why:** Because the data is not centered, the model intercept reflects the estimated logit of *Survived* for females of age 0 and who paid 0 in fare.
 
 **Statement 4**
 
--   **Is the Statement Correct**: WRITE YES OR NO
+-   **Is the Statement Correct**: YES
 
--   **Why**: WRITE EXPLANATION HERE
+-   **Why**: The improvement of the model with predictors over a null model is reflected by the decrease of 269.2 units in the deviance.
 
 # Extra Credit
 
@@ -242,10 +251,14 @@ complex.model
 
 Based on your answers to Question 3, how much **more** likely was Rose to survive than Jack? Write your answer in the space below, and include any code used to calculate your answer in the chunk below. Round to 2 decimal places. This question is worth an extra 0.5 points.
 
-**Answer:** WRITE ANSWER HERE
+**Answer:** The odds of Rose to survive are 2.30, whereas the odds for Jack to survive are 1.19. We can find the how likely was Rose to survive than Jack by calculating the odds ratio: $\frac{2.30}{1.89} = 1.93$. Therefore, Rose was 1.94 times more likely to have survived than Jack.
 
 ```{r echo = T, message = F}
+odds_rose <- exp(predict(mod3, rose))
+odds_jack <- exp(predict(mod3, jack)) 
 
+odds_ratio <- odds_rose/odds_jack
+round(odds_ratio, 2)
 ```
 
 ## Part b)
@@ -256,9 +269,12 @@ Based on the analysis output in Question 4, in the space below, fill in the blan
 
 Enter the number in space below, rounded to 3 decimal places. Write any code that you use for calculations in the space below. This question is worth an extra 0.5 points.
 
-**Answer**: WRITE ANSWER HERE
+**Answer**: For a female who paid \$20 in fair, the logit of survival increased by -0.0006 for every one unit increase in Age
 
 ```{r echo = T, message = F}
 
+titanic_dat$Fare20 <- titanic_dat$Fare - 20
 
+mod4 <- glm(Survived ~ Age * Fare20 * Sex, family = "binomial", data = titanic_dat)
+summary(mod4)
 ```
