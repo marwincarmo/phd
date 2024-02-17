@@ -1,0 +1,576 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={PSC205A Assignment 01: Matrix Algebra},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{PSC205A Assignment 01: Matrix Algebra}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(lavaan)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+This is lavaan 0.6-16
+lavaan is FREE software! Please report any bugs.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(lavaanPlot)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Warning: package 'lavaanPlot' was built under R version 4.3.2
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Attaching package: 'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+The following objects are masked from 'package:stats':
+
+    filter, lag
+\end{verbatim}
+
+\begin{verbatim}
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\StringTok{"mhs\_latent.dat"}\NormalTok{, }\AttributeTok{na.string=}\StringTok{\textquotesingle{}.\textquotesingle{}}\NormalTok{)}
+\FunctionTok{names}\NormalTok{(dat) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"id"}\NormalTok{, }\StringTok{"female"}\NormalTok{, }\StringTok{"age"}\NormalTok{,}
+                \StringTok{"pc1"}\NormalTok{, }\StringTok{"app1"}\NormalTok{, }\StringTok{"gw1"}\NormalTok{, }\StringTok{"pw1"}\NormalTok{, }\StringTok{"par1"}\NormalTok{, }\StringTok{"teach1"}\NormalTok{, }\StringTok{"mate1"}\NormalTok{, }\StringTok{"fri1"}\NormalTok{, }\StringTok{"mot1"}\NormalTok{, }\StringTok{"aff1"}\NormalTok{, }\StringTok{"aut1"}\NormalTok{,}
+                \StringTok{"pc2"}\NormalTok{, }\StringTok{"app2"}\NormalTok{, }\StringTok{"gw2"}\NormalTok{, }\StringTok{"pw2"}\NormalTok{, }\StringTok{"par2"}\NormalTok{, }\StringTok{"teach2"}\NormalTok{, }\StringTok{"mate2"}\NormalTok{, }\StringTok{"fri2"}\NormalTok{, }\StringTok{"mot2"}\NormalTok{, }\StringTok{"aut2"}\NormalTok{, }\StringTok{"aff2"}\NormalTok{, }\StringTok{"acomp2"}\NormalTok{, }\StringTok{"aca\_imp"}\NormalTok{,}
+                \StringTok{"pc3"}\NormalTok{, }\StringTok{"app3"}\NormalTok{, }\StringTok{"gw3"}\NormalTok{, }\StringTok{"pw3"}\NormalTok{, }\StringTok{"par3"}\NormalTok{, }\StringTok{"teach3"}\NormalTok{, }\StringTok{"mate3"}\NormalTok{, }\StringTok{"fri3"}\NormalTok{, }\StringTok{"mot3"}\NormalTok{, }\StringTok{\textquotesingle{}aff3\textquotesingle{}}\NormalTok{, }\StringTok{"aut3"}\NormalTok{, }\StringTok{"acomp3"}\NormalTok{,}
+                \StringTok{"pc4"}\NormalTok{, }\StringTok{"app4"}\NormalTok{, }\StringTok{"gw4"}\NormalTok{, }\StringTok{"pw4"}\NormalTok{, }\StringTok{"par4"}\NormalTok{, }\StringTok{"teach4"}\NormalTok{, }\StringTok{"mate4"}\NormalTok{, }\StringTok{"fri4"}\NormalTok{, }\StringTok{"mot4"}\NormalTok{, }\StringTok{"aff4"}\NormalTok{, }\StringTok{"aut4"}\NormalTok{, }\StringTok{"acomp4"}\NormalTok{, }\StringTok{"roman4"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\section{1. SEM analysis}\label{sem-analysis}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod1 }\OtherTok{\textless{}{-}} \StringTok{"}
+\StringTok{\#factor loadings}
+\StringTok{pc =\textasciitilde{} pc1 + pc2 + pc3 + pc4}
+\StringTok{app =\textasciitilde{} app1 + app2 + app3 + app4}
+\StringTok{gw =\textasciitilde{} gw1 + gw2 + gw3 + gw4}
+\StringTok{pw =\textasciitilde{} pw1 + pw2 + pw3}
+\StringTok{par =\textasciitilde{} par1 + par2 + par3 + par4}
+\StringTok{teach =\textasciitilde{} teach1 + teach2 + teach3 + teach4}
+\StringTok{mate =\textasciitilde{} mate1 + mate2 + mate3 + mate4}
+\StringTok{fri =\textasciitilde{} fri1 + fri2 + fri3 + fri4}
+\StringTok{mot =\textasciitilde{} mot1 + mot2 + mot3 + mot4}
+\StringTok{aff =\textasciitilde{} aff1 + aff2 + aff3 + aff4}
+\StringTok{aut =\textasciitilde{} aut1 + aut2 + aut3 + aut4}
+
+\StringTok{\# structural relations}
+\StringTok{gw \textasciitilde{} app + pc + teach + par + mate + fri}
+\StringTok{pw \textasciitilde{} app +pc + teach + par + mate + fri}
+
+\StringTok{pw \textasciitilde{} aff}
+\StringTok{pw \textasciitilde{} mot}
+
+\StringTok{\# covariances}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*pc}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*pw}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{pc \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{pc \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{"}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit1 }\OtherTok{\textless{}{-}} \FunctionTok{cfa}\NormalTok{(mod1, }\AttributeTok{data =}\NormalTok{ dat, }\AttributeTok{fixed.x=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{missing=}\StringTok{"fiml"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Warning in lav_data_full(data = data, group = group, cluster = cluster, : lavaan WARNING: some cases are empty and will be ignored:
+  161 163
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res1 }\OtherTok{\textless{}{-}} \FunctionTok{summary}\NormalTok{(fit1, }\AttributeTok{fit.measures=}\NormalTok{T, }\AttributeTok{standardized=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\section{2. Additional models}\label{additional-models}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_ind\_m1 }\OtherTok{\textless{}{-}} \FunctionTok{modindices}\NormalTok{(fit1)}
+\FunctionTok{head}\NormalTok{(}\FunctionTok{arrange}\NormalTok{(mod\_ind\_m1, }\FunctionTok{desc}\NormalTok{(mi)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  lhs op   rhs      mi   epc sepc.lv sepc.all sepc.nox
+1  pc  ~  mate 192.294 2.246   1.450    1.450    1.450
+2  pc  ~   par 191.112 1.815   1.519    1.519    1.519
+3  pc  ~ teach 190.709 2.247   1.478    1.478    1.478
+4  pc  ~   fri 176.639 1.859   1.534    1.534    1.534
+5  pc  ~    gw 123.443 1.182   0.844    0.844    0.844
+6  pc  ~   aff 119.262 0.739   0.761    0.761    0.761
+\end{verbatim}
+
+The modification indices tell us that the model might be improved by
+regressing Perceived competence on most of the latent variables in the
+model. We can start by regressing this variable into Classmate support,
+since it is expected to provide the highest improvement in model fit.
+
+\subsection{2.1. Model 2: pc \textasciitilde{}
+mate}\label{model-2-pc-mate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod2 }\OtherTok{\textless{}{-}} \StringTok{"}
+\StringTok{\#factor loadings}
+\StringTok{pc =\textasciitilde{} pc1 + pc2 + pc3 + pc4}
+\StringTok{app =\textasciitilde{} app1 + app2 + app3 + app4}
+\StringTok{gw =\textasciitilde{} gw1 + gw2 + gw3 + gw4}
+\StringTok{pw =\textasciitilde{} pw1 + pw2 + pw3}
+\StringTok{par =\textasciitilde{} par1 + par2 + par3 + par4}
+\StringTok{teach =\textasciitilde{} teach1 + teach2 + teach3 + teach4}
+\StringTok{mate =\textasciitilde{} mate1 + mate2 + mate3 + mate4}
+\StringTok{fri =\textasciitilde{} fri1 + fri2 + fri3 + fri4}
+\StringTok{mot =\textasciitilde{} mot1 + mot2 + mot3 + mot4}
+\StringTok{aff =\textasciitilde{} aff1 + aff2 + aff3 + aff4}
+\StringTok{aut =\textasciitilde{} aut1 + aut2 + aut3 + aut4}
+
+\StringTok{\# structural relations}
+\StringTok{gw \textasciitilde{} app + pc + teach + par + mate + fri}
+\StringTok{pw \textasciitilde{} app +pc + teach + par + mate + fri}
+
+\StringTok{pw \textasciitilde{} aff}
+\StringTok{pw \textasciitilde{} mot}
+
+\StringTok{pc \textasciitilde{} mate}
+
+\StringTok{\# covariances}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*pc}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*pw}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{pc \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{pc \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{"}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit2 }\OtherTok{\textless{}{-}} \FunctionTok{cfa}\NormalTok{(mod2, }\AttributeTok{data =}\NormalTok{ dat, }\AttributeTok{fixed.x=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{missing=}\StringTok{"fiml"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Warning in lav_data_full(data = data, group = group, cluster = cluster, : lavaan WARNING: some cases are empty and will be ignored:
+  161 163
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res2 }\OtherTok{\textless{}{-}} \FunctionTok{summary}\NormalTok{(fit2, }\AttributeTok{fit.measures=}\NormalTok{T, }\AttributeTok{standardized=}\ConstantTok{TRUE}\NormalTok{)}
+
+\NormalTok{mod\_ind\_m2 }\OtherTok{\textless{}{-}} \FunctionTok{modindices}\NormalTok{(fit2)}
+\FunctionTok{head}\NormalTok{(}\FunctionTok{arrange}\NormalTok{(mod\_ind\_m2, }\FunctionTok{desc}\NormalTok{(mi)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  lhs op rhs     mi   epc sepc.lv sepc.all sepc.nox
+1  pc  ~ aff 94.068 0.635   0.676    0.676    0.676
+2 app  ~  pw 84.755 1.220   1.060    1.060    1.060
+3 app  ~  pc 83.181 0.586   0.630    0.630    0.630
+4 app  ~  gw 77.027 3.348   2.606    2.606    2.606
+5  pc  ~ mot 71.005 0.978   0.637    0.637    0.637
+6  pc ~~ app 67.479 0.197   0.531    0.531    0.531
+\end{verbatim}
+
+The new modification indices suggest the model can be further improved
+by regressing Perceived competence on Affect.
+
+\subsection{2.2. Model 3: pc \textasciitilde{} mate +
+aff}\label{model-3-pc-mate-aff}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod3 }\OtherTok{\textless{}{-}} \StringTok{"}
+\StringTok{\#factor loadings}
+\StringTok{pc =\textasciitilde{} pc1 + pc2 + pc3 + pc4}
+\StringTok{app =\textasciitilde{} app1 + app2 + app3 + app4}
+\StringTok{gw =\textasciitilde{} gw1 + gw2 + gw3 + gw4}
+\StringTok{pw =\textasciitilde{} pw1 + pw2 + pw3}
+\StringTok{par =\textasciitilde{} par1 + par2 + par3 + par4}
+\StringTok{teach =\textasciitilde{} teach1 + teach2 + teach3 + teach4}
+\StringTok{mate =\textasciitilde{} mate1 + mate2 + mate3 + mate4}
+\StringTok{fri =\textasciitilde{} fri1 + fri2 + fri3 + fri4}
+\StringTok{mot =\textasciitilde{} mot1 + mot2 + mot3 + mot4}
+\StringTok{aff =\textasciitilde{} aff1 + aff2 + aff3 + aff4}
+\StringTok{aut =\textasciitilde{} aut1 + aut2 + aut3 + aut4}
+
+\StringTok{\# structural relations}
+\StringTok{gw \textasciitilde{} app + pc + teach + par + mate + fri}
+\StringTok{pw \textasciitilde{} app +pc + teach + par + mate + fri}
+
+\StringTok{pw \textasciitilde{} aff}
+\StringTok{pw \textasciitilde{} mot}
+
+\StringTok{pc \textasciitilde{} mate + aff}
+
+\StringTok{\# covariances}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*pc}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*pw}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{pc \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{pc \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{"}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit3 }\OtherTok{\textless{}{-}} \FunctionTok{cfa}\NormalTok{(mod3, }\AttributeTok{data =}\NormalTok{ dat, }\AttributeTok{fixed.x=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{missing=}\StringTok{"fiml"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Warning in lav_data_full(data = data, group = group, cluster = cluster, : lavaan WARNING: some cases are empty and will be ignored:
+  161 163
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res3 }\OtherTok{\textless{}{-}} \FunctionTok{summary}\NormalTok{(fit3, }\AttributeTok{fit.measures=}\NormalTok{T, }\AttributeTok{standardized=}\ConstantTok{TRUE}\NormalTok{)}
+
+\NormalTok{mod\_ind\_m3 }\OtherTok{\textless{}{-}} \FunctionTok{modindices}\NormalTok{(fit3)}
+\FunctionTok{head}\NormalTok{(}\FunctionTok{arrange}\NormalTok{(mod\_ind\_m3, }\FunctionTok{desc}\NormalTok{(mi)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+    lhs op  rhs     mi   epc sepc.lv sepc.all sepc.nox
+1   app  ~   pc 80.173 0.563   0.607    0.607    0.607
+2   app  ~   pw 74.924 1.088   0.923    0.923    0.923
+3   app  ~   gw 62.975 2.842   2.188    2.188    2.188
+4 mate4 ~~ fri4 61.238 0.115   0.115    0.628    0.628
+5    pc ~~  app 52.814 0.134   0.514    0.514    0.514
+6  app4 ~~  gw4 52.767 0.112   0.112    0.572    0.572
+\end{verbatim}
+
+Now the modification indices suggest an improvement in fit by regressing
+Physical appearance on Perceived competence.
+
+\subsection{2.3. Model 4: app \textasciitilde{}
+pc}\label{model-4-app-pc}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod4 }\OtherTok{\textless{}{-}} \StringTok{"}
+\StringTok{\#factor loadings}
+\StringTok{pc =\textasciitilde{} pc1 + pc2 + pc3 + pc4}
+\StringTok{app =\textasciitilde{} app1 + app2 + app3 + app4}
+\StringTok{gw =\textasciitilde{} gw1 + gw2 + gw3 + gw4}
+\StringTok{pw =\textasciitilde{} pw1 + pw2 + pw3}
+\StringTok{par =\textasciitilde{} par1 + par2 + par3 + par4}
+\StringTok{teach =\textasciitilde{} teach1 + teach2 + teach3 + teach4}
+\StringTok{mate =\textasciitilde{} mate1 + mate2 + mate3 + mate4}
+\StringTok{fri =\textasciitilde{} fri1 + fri2 + fri3 + fri4}
+\StringTok{mot =\textasciitilde{} mot1 + mot2 + mot3 + mot4}
+\StringTok{aff =\textasciitilde{} aff1 + aff2 + aff3 + aff4}
+\StringTok{aut =\textasciitilde{} aut1 + aut2 + aut3 + aut4}
+
+\StringTok{\# structural relations}
+\StringTok{gw \textasciitilde{} app + pc + teach + par + mate + fri}
+\StringTok{pw \textasciitilde{} app +pc + teach + par + mate + fri}
+
+\StringTok{pw \textasciitilde{} aff}
+\StringTok{pw \textasciitilde{} mot}
+
+\StringTok{pc \textasciitilde{} mate + aff}
+\StringTok{app \textasciitilde{} pc}
+
+\StringTok{\# covariances}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*pc}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*pw}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{gw \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{app \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{pc \textasciitilde{}\textasciitilde{} 0*aff}
+\StringTok{pc \textasciitilde{}\textasciitilde{} 0*mot}
+\StringTok{"}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit4 }\OtherTok{\textless{}{-}} \FunctionTok{cfa}\NormalTok{(mod3, }\AttributeTok{data =}\NormalTok{ dat, }\AttributeTok{fixed.x=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{missing=}\StringTok{"fiml"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Warning in lav_data_full(data = data, group = group, cluster = cluster, : lavaan WARNING: some cases are empty and will be ignored:
+  161 163
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res4 }\OtherTok{\textless{}{-}} \FunctionTok{summary}\NormalTok{(fit4, }\AttributeTok{fit.measures=}\NormalTok{T, }\AttributeTok{standardized=}\ConstantTok{TRUE}\NormalTok{)}
+
+\NormalTok{mod\_ind\_m4 }\OtherTok{\textless{}{-}} \FunctionTok{modindices}\NormalTok{(fit4)}
+\FunctionTok{head}\NormalTok{(}\FunctionTok{arrange}\NormalTok{(mod\_ind\_m4, }\FunctionTok{desc}\NormalTok{(mi)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+    lhs op  rhs     mi   epc sepc.lv sepc.all sepc.nox
+1   app  ~   pc 80.173 0.563   0.607    0.607    0.607
+2   app  ~   pw 74.924 1.088   0.923    0.923    0.923
+3   app  ~   gw 62.975 2.842   2.188    2.188    2.188
+4 mate4 ~~ fri4 61.238 0.115   0.115    0.628    0.628
+5    pc ~~  app 52.814 0.134   0.514    0.514    0.514
+6  app4 ~~  gw4 52.767 0.112   0.112    0.572    0.572
+\end{verbatim}
+
+\subsection{Model comparison}\label{model-comparison}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{anova}\NormalTok{(fit1, fit2, fit3, fit4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Warning in lavTestLRT(object = object, ..., model.names = NAMES): lavaan WARNING:
+    Some restricted models fit better than less restricted models;
+    either these models are not nested, or the less restricted model
+    failed to reach a global optimum. Smallest difference =
+    -132.760613868318
+\end{verbatim}
+
+\begin{verbatim}
+Warning in lavTestLRT(object = object, ..., model.names = NAMES): lavaan
+WARNING: some models have the same degrees of freedom
+\end{verbatim}
+
+\begin{verbatim}
+
+Chi-Squared Difference Test
+
+      Df   AIC   BIC  Chisq Chisq diff   RMSEA Df diff Pr(>Chisq)    
+fit1 815 12503 13123 2622.4                                          
+fit3 818 12364 12974 2489.7    -132.76 0.00000       3          1    
+fit4 818 12364 12974 2489.7       0.00 0.00000       0               
+fit2 819 12492 13098 2619.8     130.14 0.70342       1     <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+
+
+\end{document}

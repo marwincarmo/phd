@@ -87,6 +87,7 @@ titanic_dat <- titanic_dat |>
     prob = exp(predict(mod1)) / (1 + exp(predict(mod1)))
   )
 
+
 line_data <- data.frame(
   Fare = seq(from = min(titanic_dat$Fare, na.rm = T) - 2,
 to = max(titanic_dat$Fare, na.rm = T) + 2,
@@ -173,7 +174,7 @@ Based on the AIC from the table in *Part a*, answer the following questions in t
 **Answers**:
 
 1.  *Fare*, *Age*, and *Sex*.
-2.  *Sex*. Lower AIC.
+2.  *Sex* is the best predictor because it gives the greatest decrease in AIC relative to the null model.
 
 # Question 3
 
@@ -251,7 +252,7 @@ complex.model
 
 Based on your answers to Question 3, how much **more** likely was Rose to survive than Jack? Write your answer in the space below, and include any code used to calculate your answer in the chunk below. Round to 2 decimal places. This question is worth an extra 0.5 points.
 
-**Answer:** The odds of Rose to survive are 2.30, whereas the odds for Jack to survive are 1.19. We can find the how likely was Rose to survive than Jack by calculating the odds ratio: $\frac{2.30}{1.89} = 1.93$. Therefore, Rose was 1.94 times more likely to have survived than Jack.
+**Answer:** The odds for Rose to survive are 2.30, whereas the odds for Jack to survive are 1.19. We can find how likely Rose was to survive than Jack by calculating the odds ratio: $\ \frac {2.30}{1.89} = 1.93$. Therefore, Rose was 1.94 times more likely to have survived than Jack.
 
 ```{r echo = T, message = F}
 odds_rose <- exp(predict(mod3, rose))

@@ -1,0 +1,339 @@
+---
+title: "PSC205A Assignment 01: Matrix Algebra"
+format: pdf
+---
+
+```{r}
+library(lavaan)
+library(lavaanPlot)
+library(dplyr)
+```
+
+
+```{r}
+dat <- read.table("mhs_latent.dat", na.string='.')
+names(dat) <- c("id", "female", "age",
+                "pc1", "app1", "gw1", "pw1", "par1", "teach1", "mate1", "fri1", "mot1", "aff1", "aut1",
+                "pc2", "app2", "gw2", "pw2", "par2", "teach2", "mate2", "fri2", "mot2", "aut2", "aff2", "acomp2", "aca_imp",
+                "pc3", "app3", "gw3", "pw3", "par3", "teach3", "mate3", "fri3", "mot3", 'aff3', "aut3", "acomp3",
+                "pc4", "app4", "gw4", "pw4", "par4", "teach4", "mate4", "fri4", "mot4", "aff4", "aut4", "acomp4", "roman4")
+
+```
+
+# 1. SEM analysis
+
+```{r}
+mod1 <- "
+#factor loadings
+pc =~ pc1 + pc2 + pc3 + pc4
+app =~ app1 + app2 + app3 + app4
+gw =~ gw1 + gw2 + gw3 + gw4
+pw =~ pw1 + pw2 + pw3
+par =~ par1 + par2 + par3 + par4
+teach =~ teach1 + teach2 + teach3 + teach4
+mate =~ mate1 + mate2 + mate3 + mate4
+fri =~ fri1 + fri2 + fri3 + fri4
+mot =~ mot1 + mot2 + mot3 + mot4
+aff =~ aff1 + aff2 + aff3 + aff4
+aut =~ aut1 + aut2 + aut3 + aut4
+
+# structural relations
+gw ~ app + pc + teach + par + mate + fri
+pw ~ app +pc + teach + par + mate + fri
+
+aff ~ pw
+mot ~ pw + aff
+
+# covariances
+app ~~ 0*pc
+app ~~ 0*teach
+app ~~ 0*par
+app ~~ 0*mate
+app ~~ 0*fri
+app ~~ 0*aff
+app ~~ 0*mot
+
+pc ~~ 0*teach
+pc ~~ 0*par
+pc ~~ 0*mate
+pc ~~ 0*fri
+pc ~~ 0*aff
+pc ~~ 0*mot
+
+gw ~~ 0*pw
+gw ~~ 0*aff
+gw ~~ 0*mot
+
+teach ~~ 0*par
+teach ~~ 0*mate
+teach ~~ 0*fri
+teach ~~ 0*aff
+teach ~~ 0*mot
+
+par ~~ 0*mate
+par ~~ 0*fri
+par ~~ 0*aff
+par ~~ 0*mot
+
+mate ~~ 0*fri
+mate ~~ 0*aff
+mate ~~ 0*mot
+
+fri ~~ 0*aff
+fri ~~ 0*mot
+"
+```
+
+```{r}
+fit1 <- cfa(mod1, data = dat, fixed.x=FALSE, missing="fiml")
+res1 <- summary(fit1, fit.measures=T, standardized=TRUE)
+
+```
+
+# 2. Additional models
+
+```{r}
+mod_ind_m1 <- modindices(fit1)
+head(arrange(mod_ind_m1, desc(mi)))
+```
+
+The modification indices tell us that the model might be improved by allowing the variables friend support and classmate support to correlate. We can start by freeing this relation.
+
+## 2.1. Model 2: mate ~~ fri
+
+```{r}
+mod2 <- "
+#factor loadings
+pc =~ pc1 + pc2 + pc3 + pc4
+app =~ app1 + app2 + app3 + app4
+gw =~ gw1 + gw2 + gw3 + gw4
+pw =~ pw1 + pw2 + pw3
+par =~ par1 + par2 + par3 + par4
+teach =~ teach1 + teach2 + teach3 + teach4
+mate =~ mate1 + mate2 + mate3 + mate4
+fri =~ fri1 + fri2 + fri3 + fri4
+mot =~ mot1 + mot2 + mot3 + mot4
+aff =~ aff1 + aff2 + aff3 + aff4
+aut =~ aut1 + aut2 + aut3 + aut4
+
+# structural relations
+gw ~ app + pc + teach + par + mate + fri
+pw ~ app +pc + teach + par + mate + fri
+
+pw ~ aff
+pw ~ mot
+
+pc ~ mate
+
+# covariances
+app ~~ 0*pc
+app ~~ 0*teach
+app ~~ 0*par
+app ~~ 0*mate
+app ~~ 0*fri
+app ~~ 0*aff
+app ~~ 0*mot
+
+pc ~~ 0*teach
+pc ~~ 0*par
+pc ~~ 0*mate
+pc ~~ 0*fri
+pc ~~ 0*aff
+pc ~~ 0*mot
+
+gw ~~ 0*pw
+gw ~~ 0*aff
+gw ~~ 0*mot
+
+teach ~~ 0*par
+teach ~~ 0*mate
+teach ~~ 0*fri
+teach ~~ 0*aff
+teach ~~ 0*mot
+
+par ~~ 0*mate
+par ~~ 0*fri
+par ~~ 0*aff
+par ~~ 0*mot
+
+mate ~~ fri
+mate ~~ 0*aff
+mate ~~ 0*mot
+
+fri ~~ 0*aff
+fri ~~ 0*mot
+"
+```
+
+```{r}
+fit2 <- cfa(mod2, data = dat, fixed.x=FALSE, missing="fiml")
+res2 <- summary(fit2, fit.measures=T, standardized=TRUE)
+
+mod_ind_m2 <- modindices(fit2)
+head(arrange(mod_ind_m2, desc(mi)))
+```
+
+The new modification indices suggest the model can be further improved by allowing parent support and teacher support to correlate.
+
+## 2.2. Model 3: pc ~ mate + aff
+
+```{r}
+mod3 <- "
+#factor loadings
+pc =~ pc1 + pc2 + pc3 + pc4
+app =~ app1 + app2 + app3 + app4
+gw =~ gw1 + gw2 + gw3 + gw4
+pw =~ pw1 + pw2 + pw3
+par =~ par1 + par2 + par3 + par4
+teach =~ teach1 + teach2 + teach3 + teach4
+mate =~ mate1 + mate2 + mate3 + mate4
+fri =~ fri1 + fri2 + fri3 + fri4
+mot =~ mot1 + mot2 + mot3 + mot4
+aff =~ aff1 + aff2 + aff3 + aff4
+aut =~ aut1 + aut2 + aut3 + aut4
+
+# structural relations
+gw ~ app + pc + teach + par + mate + fri
+pw ~ app +pc + teach + par + mate + fri
+
+pw ~ aff
+pw ~ mot
+
+pc ~ mate + aff
+
+# covariances
+app ~~ 0*pc
+app ~~ 0*teach
+app ~~ 0*par
+app ~~ 0*mate
+app ~~ 0*fri
+app ~~ 0*aff
+app ~~ 0*mot
+
+pc ~~ 0*teach
+pc ~~ 0*par
+pc ~~ 0*mate
+pc ~~ 0*fri
+pc ~~ 0*aff
+pc ~~ 0*mot
+
+gw ~~ 0*pw
+gw ~~ 0*aff
+gw ~~ 0*mot
+
+teach ~~ par
+teach ~~ 0*mate
+teach ~~ 0*fri
+teach ~~ 0*aff
+teach ~~ 0*mot
+
+par ~~ 0*mate
+par ~~ 0*fri
+par ~~ 0*aff
+par ~~ 0*mot
+
+mate ~~ fri
+mate ~~ 0*aff
+mate ~~ 0*mot
+
+fri ~~ 0*aff
+fri ~~ 0*mot
+"
+```
+
+```{r}
+fit3 <- cfa(mod3, data = dat, fixed.x=FALSE, missing="fiml")
+res3 <- summary(fit3, fit.measures=T, standardized=TRUE)
+
+mod_ind_m3 <- modindices(fit3)
+head(arrange(mod_ind_m3, desc(mi)))
+```
+
+Now the modification indices suggest an improvement in fit by regressing Physical appearance on Perceived competence.
+
+## 2.3. Model 4: app ~ pc
+
+```{r}
+mod4 <- "
+#factor loadings
+pc =~ pc1 + pc2 + pc3 + pc4
+app =~ app1 + app2 + app3 + app4
+gw =~ gw1 + gw2 + gw3 + gw4
+pw =~ pw1 + pw2 + pw3
+par =~ par1 + par2 + par3 + par4
+teach =~ teach1 + teach2 + teach3 + teach4
+mate =~ mate1 + mate2 + mate3 + mate4
+fri =~ fri1 + fri2 + fri3 + fri4
+mot =~ mot1 + mot2 + mot3 + mot4
+aff =~ aff1 + aff2 + aff3 + aff4
+aut =~ aut1 + aut2 + aut3 + aut4
+
+# structural relations
+gw ~ pc + teach + par + mate + fri
+pw ~ app +pc + teach + par + mate + fri
+
+pw ~ aff
+pw ~ mot
+
+pc ~ mate + aff
+app ~ pc
+
+# covariances
+app ~~ gw
+app ~~ 0*pc
+app ~~ 0*teach
+app ~~ 0*par
+app ~~ 0*mate
+app ~~ 0*fri
+app ~~ 0*aff
+app ~~ 0*mot
+
+pc ~~ 0*teach
+pc ~~ 0*par
+pc ~~ 0*mate
+pc ~~ 0*fri
+pc ~~ 0*aff
+pc ~~ 0*mot
+
+gw ~~ 0*pw
+gw ~~ 0*aff
+gw ~~ 0*mot
+
+teach ~~ 0*par
+teach ~~ 0*mate
+teach ~~ 0*fri
+teach ~~ 0*aff
+teach ~~ 0*mot
+
+par ~~ 0*mate
+par ~~ 0*fri
+par ~~ 0*aff
+par ~~ 0*mot
+
+mate ~~ 0*fri
+mate ~~ 0*aff
+mate ~~ 0*mot
+
+fri ~~ 0*aff
+fri ~~ 0*mot
+
+"
+```
+
+```{r}
+fit4 <- cfa(mod4, data = dat, fixed.x=FALSE, missing="fiml")
+res4 <- summary(fit4, fit.measures=T, standardized=TRUE)
+
+mod_ind_m4 <- modindices(fit4)
+head(arrange(mod_ind_m4, desc(mi)))
+```
+
+## Model comparison
+
+```{r}
+anova(fit1, fit2, fit3, fit4)
+```
+
+# 3. Results summary
+
+
