@@ -1,0 +1,135 @@
+---
+title: "PSC 204B - Winter 2024 - Homework 6"
+author: '"Your Name"'
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+subtitle: Multilevel Modeling
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message = FALSE}
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
+library(foreign)
+library(haven)
+library(performance)
+library(lme4)
+
+```
+
+We will continue to use the *popularity* dataset we used in lab, as well as a new dataset for a repeated measures example. The second dataset comes from Chapter 10 of *Longitudinal Analysis* by Lesa Hoffman, and contains data from 207 older adults without a dementia diagnosis who were assessed roughly every two years for eight years on their memory (*prose recall*). 
+
+```{r}
+popular = read_spss("popular2.sav")
+
+memory = read_sas("SAS_Chapter10a.sas7bdat")
+```
+
+# Question 1
+
+Use the *popularity* dataset to answer the following questions. In these questions, we are interested in predicting **teacher-rated** popularity of students (*popteach*) based on their gender. 
+
+## Part a) [1 point]
+
+Calculate the intra-class correlation coefficient for how much variability in teacher-rated popularity there is across classrooms. Report the value, and state whether this is considered a large amount of variation (provide a reason, based on cut-offs provided in lecture). 
+```{r}
+# code
+```
+
+**ICC Value:**
+**Is this substantial?**: 
+
+## Part b) [1.5 point]
+
+Run 3 regression models, each predicting teacher-rated popularity using gender, and report the output:
+
+- A OLS regression model
+- A multilevel model with a random intercept only
+- A multilevel model with a random intercept and random slope
+
+```{r}
+# code
+```
+
+## Part c) [1 point]
+
+How do the 3 models differ in terms of what is / is not allowed to differ across classrooms? In other words, what does it mean to include no random effects, a random intercept only, or a random intercept and random slope?
+
+
+
+## Part d) [1 point]
+
+Report and interpret the fixed effects from the model with the random intercept and random slope. 
+
+**(Intercept)**: 
+
+**Effect of sex**: 
+
+## Part e) [1 point]
+
+How do the fixed effects and standard errors differ between the OLS model and the model with a random intercept and random slope?
+
+**Fixed effect of intercept:**
+
+**SE of intercept:**
+
+**Fixed effect of gender:**
+
+**SE of gender:**
+
+# Question 2
+
+## Part a) [1 point]
+
+Create a plot to examine how prose recall (*recall*) changes with age (*tvage*), with age on the x-axis and prose recall on the y-axis. Be sure that observations from the same individual are connected with a line. Be sure to label your axes appropriately. 
+
+```{r}
+# code here
+```
+
+
+## Part b) [2 point]
+
+Run a multilevel model to predict prose recall from age, including a random intercept and random slope. Be sure to include person-centered age (centered at age at the initial timepoint) and age at the initial timepoint as predictors. Note that age at the initial timepoint is already provided in the dataset (*ageT0*). 
+
+```{r}
+# code here
+```
+
+
+## Part c) [1.5 points]
+
+Report and interpret the fixed effects of the model. 
+
+**(Intercept):**
+
+**Fixed effect of age at the initial timepoint:**
+
+**Fixed effect of age:**
+
+
+# Extra Credit
+
+## EC 1 [0.5 point]
+
+Using the ICC calculated in Question 1a, calculate the cluster effect. (*Note: each class has 100 students in it*)
+
+```{r}
+# code
+```
+
+
+## EC 2 [0.5 point]
+
+Using the model run in Question 1b, with a random intercept and random slope - report and interpret the correlation between random effects.
+
+
+
+
+
