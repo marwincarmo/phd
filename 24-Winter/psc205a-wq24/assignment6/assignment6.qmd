@@ -22,6 +22,8 @@ names(dat) <- c("id", "female", "age",
 
 # 1. SEM analysis
 
+Overall all observable variables had high loadings on the factors. This suggest they can be good indicators of their respective latent variables. By observing the structural relations among the factors, we identify that Global self-worth has a stronger relationship with perceived appearance than with any other latent variable. Additionally, Physical self-worth is also strongly related to perceived appearance but also with perceived competence. 
+
 ```{r}
 mod1 <- "
 #factor loadings
@@ -35,7 +37,7 @@ mate =~ mate1 + mate2 + mate3 + mate4
 fri =~ fri1 + fri2 + fri3 + fri4
 mot =~ mot1 + mot2 + mot3 + mot4
 aff =~ aff1 + aff2 + aff3 + aff4
-aut =~ aut1 + aut2 + aut3 + aut4
+
 
 # structural relations
 gw ~ app + pc + teach + par + mate + fri
@@ -85,7 +87,7 @@ fri ~~ 0*mot
 ```
 
 ```{r}
-fit1 <- cfa(mod1, data = dat, fixed.x=FALSE, missing="fiml")
+fit1 <- cfa(mod1, data = dat, missing="fiml")
 res1 <- summary(fit1, fit.measures=T, standardized=TRUE)
 
 ```
@@ -114,7 +116,6 @@ mate =~ mate1 + mate2 + mate3 + mate4
 fri =~ fri1 + fri2 + fri3 + fri4
 mot =~ mot1 + mot2 + mot3 + mot4
 aff =~ aff1 + aff2 + aff3 + aff4
-aut =~ aut1 + aut2 + aut3 + aut4
 
 # structural relations
 gw ~ app + pc + teach + par + mate + fri
@@ -170,12 +171,12 @@ fit2 <- cfa(mod2, data = dat, fixed.x=FALSE, missing="fiml")
 res2 <- summary(fit2, fit.measures=T, standardized=TRUE)
 
 mod_ind_m2 <- modindices(fit2)
-head(arrange(mod_ind_m2, desc(mi)))
+head(arrange(mod_ind_m2, desc(mi)),20)
 ```
 
 The new modification indices suggest the model can be further improved by allowing parent support and teacher support to correlate.
 
-## 2.2. Model 3: pc ~ mate + aff
+## 2.2. Model 3: teach ~~ par
 
 ```{r}
 mod3 <- "
@@ -190,7 +191,6 @@ mate =~ mate1 + mate2 + mate3 + mate4
 fri =~ fri1 + fri2 + fri3 + fri4
 mot =~ mot1 + mot2 + mot3 + mot4
 aff =~ aff1 + aff2 + aff3 + aff4
-aut =~ aut1 + aut2 + aut3 + aut4
 
 # structural relations
 gw ~ app + pc + teach + par + mate + fri
@@ -199,7 +199,7 @@ pw ~ app +pc + teach + par + mate + fri
 pw ~ aff
 pw ~ mot
 
-pc ~ mate + aff
+pc ~ mate
 
 # covariances
 app ~~ 0*pc
@@ -246,12 +246,12 @@ fit3 <- cfa(mod3, data = dat, fixed.x=FALSE, missing="fiml")
 res3 <- summary(fit3, fit.measures=T, standardized=TRUE)
 
 mod_ind_m3 <- modindices(fit3)
-head(arrange(mod_ind_m3, desc(mi)))
+head(arrange(mod_ind_m3, desc(mi)), 20)
 ```
 
-Now the modification indices suggest an improvement in fit by regressing Physical appearance on Perceived competence.
+Now the modification indices suggest an improvement in fit by allowing two items from friend support and classmate support to correlate.
 
-## 2.3. Model 4: app ~ pc
+## 2.3. Model 4: mate4 ~~ fri4
 
 ```{r}
 mod4 <- "
@@ -266,20 +266,19 @@ mate =~ mate1 + mate2 + mate3 + mate4
 fri =~ fri1 + fri2 + fri3 + fri4
 mot =~ mot1 + mot2 + mot3 + mot4
 aff =~ aff1 + aff2 + aff3 + aff4
-aut =~ aut1 + aut2 + aut3 + aut4
+
+mate4 ~~ fri4
 
 # structural relations
-gw ~ pc + teach + par + mate + fri
+gw ~ app + pc + teach + par + mate + fri
 pw ~ app +pc + teach + par + mate + fri
 
 pw ~ aff
 pw ~ mot
 
-pc ~ mate + aff
-app ~ pc
+pc ~ mate
 
 # covariances
-app ~~ gw
 app ~~ 0*pc
 app ~~ 0*teach
 app ~~ 0*par
@@ -299,7 +298,7 @@ gw ~~ 0*pw
 gw ~~ 0*aff
 gw ~~ 0*mot
 
-teach ~~ 0*par
+teach ~~ par
 teach ~~ 0*mate
 teach ~~ 0*fri
 teach ~~ 0*aff
@@ -310,13 +309,12 @@ par ~~ 0*fri
 par ~~ 0*aff
 par ~~ 0*mot
 
-mate ~~ 0*fri
+mate ~~ fri
 mate ~~ 0*aff
 mate ~~ 0*mot
 
 fri ~~ 0*aff
 fri ~~ 0*mot
-
 "
 ```
 
@@ -336,4 +334,40 @@ anova(fit1, fit2, fit3, fit4)
 
 # 3. Results summary
 
+```{r}
+items_loadings <- lavInspect(fit1, what = "std")$lambda
+items_var <- diag(lavInspect(fit1, what = "std")$theta)
+latent_var <- diag(lavInspect(fit1, what = "std")$psi)
+latent_loadings <- lavInspect(fit1, what = "std")$beta
+```
+
+```{r}
+knitr::kable(items_loadings)
+```
+
+```{r}
+knitr::kable(t(items_var))
+```
+
+```{r}
+knitr::kable(t(latent_var))
+```
+
+```{r}
+knitr::kable(latent_loadings)
+```
+
+# 4. Model summary
+
+# 5. Males vs Females
+
+```{r}
+fit.configural = sem(fit4,data=dat,fixed.x=FALSE,group="female", group.equal=c(""))
+fit.loadings   = sem(fit4,data=dat,fixed.x=FALSE,group="female", group.equal=c("loadings"))
+fit.intercepts = sem(fit4,data=dat,fixed.x=FALSE,group="female", group.equal=c("loadings","intercepts"))
+fit.varcov     = sem(fit4,data=dat,fixed.x=FALSE,group="female", group.equal=c("loadings","intercepts", "lv.variances","lv.covariances"))
+fit.regress    = sem(fit4,data=dat,fixed.x=FALSE,group="female", group.equal=c("loadings","intercepts", "lv.variances","lv.covariances","regressions"))
+fit.invariant  = sem(fit4,data=dat,fixed.x=FALSE,group="female",
+                     group.equal=c("loadings","intercepts", "lv.variances","lv.covariances","regressions","residuals"))
+```
 
