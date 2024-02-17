@@ -1,0 +1,302 @@
+---
+title: "PSC 204B Lab 6 - Multilevel Modeling"
+author: "Simran Johal"
+date: "February 16, 2024"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    df_print: kable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse) # for data manipulation
+library(haven) # to read in our datasets
+library(lme4) # for running multilevel models
+library(lmerTest) # for inference on the multilevel models
+library(performance) # to calculate ICC
+library(ggplot2) # for plotting
+library(ggpubr) # for arranging plots
+```
+
+Today we will be learning how to run multilevel regression models in R, using two different datasets (one to illustrate the concept for non-repeated measures data, and one to illustrate the concept for repeated measures data).
+
+The first dataset we will be using is the *popularity* dataset from [this website](https://multilevel-analysis.sites.uu.nl/datasets/), which is the corresponding website for the book *Multilevel Analysis: Techniques and Applications, Third Edition* (Hox, Moerbeek, \& Schoot, 2018). The *popularity* dataset is a **simulated** dataset with information on 2000 students in 100 schools. This will help us get our feet wet in terms of multilevel modeling!
+
+The second dataset we are using is also a simulated dataset, one that I created while working on a research project on detecting cohort effects in multilevel models. This is a repeated measures dataset: each individual was "assessed" 3 times on some cognitive test (or whatever you'd like), with each assessment occurring 2 years apart.  
+
+```{r, message = FALSE}
+popular = read_spss("popular2.sav")
+
+head(popular)
+```
+
+The important variables in this dataset are:
+
+- Pupil: id number for each individual student
+- Class: indicates which class each student was in 
+- extrav: student's level of extraversion
+- popular: student's level of popularity, based on asking other students in the class
+- sex: student's sex
+
+```{r}
+cognitive = read.csv("CognitiveExample.csv", header = TRUE)
+
+head(cognitive)
+```
+
+The variables in this dataset are:
+
+- ids: id variable for each individual
+- age: age at each assessment occasion
+- cognitivescore: individual's cognitive score at each assessment
+
+This dataset is also currently in *wide* format, which means that each individual has one row, with repeated measures across different columns. However, the packages we will be using today require that the dataset is in *long* format (each individual has multiple rows, one for each timepoint) so I will also go over how to transform between the two. 
+
+# Multilevel Modeling: Clustered within Schools
+
+Suppose we were interested in predicting student's popularity, which is based on an average rating from all other students in the class, using their level of extraversion as predictors. I use the variable Cextrav, which is grand-mean centered (which means it was centered using the average extraversion score across all classes and all students).
+
+```{r}
+regular_regression = lm(popular ~ Cextrav, data = popular)
+
+summary(regular_regression)
+```
+Let's calculate an intra-class correlation coefficient, to see how much variability there is across clusters. To do this, we need to calculate an intercept-only model, with a random effect on the intercept.
+
+In `lme4`, you can write your regression equation like you normally would in `lm`. To indicate which variables you want random effects for, you put them in parentheses (1 indicates the intercept, and you can just use + to include other variables, such as your predictors if you want random effects on the slope), and then separate them from your grouping variable using the | 
+```{r}
+interceptonly = lme4::lmer(popular ~ 1 + (1 | class),
+                     data = popular)
+
+summary(interceptonly)
+
+performance::icc(interceptonly)
+```
+The intra-class correlation coefficient is 0.37, which indicates that there is a decent amount of variability due to the different classes! So we should prefer to use a multilevel model. 
+
+Just to illustrate the different models, we will start off with a model that only allows random effects on the intercept. That is, different classes are allowed to have different baseline levels of popularity, but the effect of extraversion on popularity is the same within each class.
+
+```{r}
+mlm_popularity_intercept = lmer(popular ~ Cextrav + (1 | class),
+                                data = popular)
+
+summary(mlm_popularity_intercept)
+```
+
+So in this model, we have two fixed effects: the intercept (which represents the level of popularity when extraversion is at the grand-mean), and the effect of extraversion on popularity. Since these are fixed effects, they represent the average effect across the different classrooms.
+
+We also have a random effect on the intercept: this indicates how much variability there is in that expected level of popularity when extraversion is at its grand mean, across the different classrooms. 
+
+We can also expand our model to include a random effect on the slope - so now, different classes are allowed to have different intercepts, and the effect of extraversion on popularity is also allowed to differ. 
+
+```{r, warning = FALSE}
+mlm_popularity = lmer(popular ~ Cextrav + (1 + Cextrav | class),
+                      data = popular)
+
+summary(mlm_popularity)
+```
+
+As before, we have fixed effects for the intercept and slope, and the interpretation of these parameters are going to mostly be the same as before. Only now, since we had a random effect on the slope, the fixed effect of extraversion is the *average* slope acrosss clusters, not just the effect that every classroom follows. 
+
+We also have a random effect for the intercept and slope: as before, we can see a decent amount of variability in the intercept, and a smaller amount of variance in the slope. We also get a correlation between the random effect, which is negative: this indicates that classrooms that have larger intercepts (higher values for students in this classroom with average levels of extraversion) tend to have lower slopes (a 1-unit change in extraversion leads to a smaller change in popularity). 
+
+How do our models compare? 
+
+```{r}
+summary(regular_regression)
+summary(mlm_popularity_intercept)
+summary(mlm_popularity)
+```
+
+Across all models, we can see that the fixed effects estimates are very similar. The only difference is in the standard errors of the estimates (and in this case, only for the intercept, although the standard errors can also change for the slope). In particular, the standard error of the intercept is much larger in the multilevel model. Although this didn't affect our inference in this case, you can see how it might! 
+
+Also, this visualization is just to see how each of the models differs in terms of random effects. 
+
+```{r, message = FALSE}
+
+# add the predicted values to our dataset so we can plot them
+popular$ols_predict = predict(regular_regression)
+popular$mlm_ri_predict = predict(mlm_popularity_intercept)
+popular$mlm_rs_predict = predict(mlm_popularity)
+
+g1 = ggplot(data = popular, aes(x = extrav, y = ols_predict))+
+  geom_line(aes(color = as.factor(class)), alpha = 0.5)+
+  geom_smooth(method = "lm")+
+  theme_classic()+
+  theme(legend.position = "none")+
+  labs(x = "Extraversion", y = "Popularity", title = "OLS Regression")
+
+g2 = ggplot(data = popular, aes(x = extrav, y = mlm_ri_predict))+
+  geom_line(aes(color = as.factor(class)), alpha = 0.5)+
+  geom_smooth(method = "lm", se = FALSE)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  labs(x = "Extraversion", y = "Popularity", title = "MLM - Random Intercept")
+
+g3 = ggplot(data = popular, aes(x = extrav, y = mlm_rs_predict))+
+  geom_line(aes(color = as.factor(class)), alpha = 0.5)+
+  geom_smooth(method = "lm", se = FALSE)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  labs(x = "Extraversion", y = "Popularity", title = "MLM - Random Slope")
+
+ggarrange(g1, g2, g3, ncol = 3)
+```
+
+In the first graph, clustering is not taken into account, and we are also assuming that each classroom has the same intercept and slope (that is, every classroom follows the plotted regression line). In the second image, different classrooms are allowed to have different intercepts, but their slopes are the same (which we can see based on the different colored lines all being parallel to each other). Finally, in the third model, different classrooms are allowed to have different intercepts and different slopes - visually, although the relation between extraversion and popularity is always positive, some classrooms have much stronger relations. 
+
+# Multilevel Modeling: Repeated Measures
+
+## Converting Wide to Long
+
+`lme4` requires that your data be in long format when you run the model, which means that each individual (or cluster) will have multiple rows. However, your data is not always ready-to-go in long format, so you'd have to convert between them. We can do this using the `pivot_longer` function from the tidyverse package. 
+
+```{r}
+# this becomes a little bit complicated because we have three variables that we need to collapse: age, centered age, and the cognitive score
+# this requires a little bit of regular expressions, which can differ based on the column names of your particular dataset (and honestly I always forget how to do it, so Google is your friend!)
+
+cognitive_long = pivot_longer(data = cognitive,
+                            cols = c("age1", "age2", "age3", 
+                                     "cognitivescore1", "cognitivescore2", "cognitivescore3"),
+                            names_to = c(".value", "timepoint"),
+                            names_pattern = "([A-Za-z]+)(\\d+)")
+
+head(cognitive_long)
+
+# the created timepoint column is treated as a character - we want it to be numeric
+cognitive_long$timepoint = as.numeric(cognitive_long$timepoint)
+```
+
+## Using Timepoint as a Predictor
+
+If you use a time-invariant variable as a predictor, running a multilevel model with repeated measures is pretty much exactly the same as what we did before with students clustered into classrooms. We simply include the variable representing the timepoint as our predictor - we might want to center this variable at the first occasion, however (e.g., have timepoints 0, 1, 2 instead of 1, 2, 3) just to make our intercept more interpretable. 
+
+```{r}
+# centering the timepoint variable at the first value, so that intercept represents baseline measurements
+cognitive_long$timepoint_centered = cognitive_long$timepoint - 1
+
+head(cognitive_long)
+```
+Just as before, we can compare what happens to our estimates and standard errors when we do or don't take clustering into account. Therefore, we can run a regression model looking at the change in cognitive scores across timepoints. 
+```{r}
+cogols = lm(cognitivescore ~ timepoint_centered, data = cognitive_long)
+
+summary(cogols)
+```
+We can calculate the intra-class correlation coefficient to see how much variability there is across individuals. 
+
+```{r}
+interceptonly_cognitive = lmer(cognitivescore ~ 1 + (1 | ids),
+                               data = cognitive_long)
+
+performance::icc(interceptonly_cognitive)
+```
+This is super high!! Probably because I generated this data so that there was a good amount of variability in cognitive scores across individuals :) 
+
+Now we can run a multilevel model to see how cognitive scores change as a function of timepoint. I will allow there to be random effects on both the intercept (individuals can differ in their initial cognitive scores) and slopes (individuals can differ in their rate of change across timepoints).
+
+```{r}
+cogmlm_timepoint = lmer(cognitivescore ~ timepoint_centered + (1 + timepoint_centered | ids), data = cognitive_long)
+
+summary(cogmlm_timepoint)
+```
+
+The fixed effects parameters can still be interpreted as we've done before:
+
+- The intercept represents the expected cognitive score when timepoint = 0, which is the first timepoint. Therefore, on average, individuals have an initial cognitive score of 1.45. 
+
+- The slope represents the average change in cognitive score per timepoint. So, on average, as individuals move from one timepoint to th next, their cognitive scores are expected to increase by 0.30 points. 
+
+We can also look at the random effects, where there appears to be a decent amount of variability in both the intercept and slope, and that the intercept and slope are positively correlated (which means that individuals who tend to have higher cognitive scores at the initial timepoint tend to have higher rates of change). 
+
+We also see that, like in our school example, the standard error of the intercept has increased between the OLS regression and the multilevel model, although the standard error of the slope has decreased. 
+
+## Using Age as a Predictor
+
+However, although we were able to use timepoint as a predictor in our previous model, that might not be very interesting to us. We might be more interested in how cognition develops with *age*, but this is not synonymous with timepoint in this example because we had a wide range of ages at our initial timepoint. Therefore, we might want to include age itself as a predictor in our model.
+
+```{r, message = FALSE}
+g1 = ggplot(data = cognitive_long, aes(x = as.factor(timepoint), y = cognitivescore, group = ids))+
+  geom_point()+
+  geom_line()+
+  theme_classic()+
+  labs(x = "Timepoint", y = "Cognitive Score")
+
+g2 = ggplot(data = cognitive_long, aes(x = age, y = cognitivescore, group = ids))+
+  geom_point()+
+  geom_line()+
+  theme_classic()+
+  labs(x = "Age", y = "Cognitive Score")
+
+ggarrange(g1, g2, ncol = 2)
+```
+
+
+The problem with simply including age is that it is what we call a time-varying predictor: at each timepoint, people's value on this variable also changes. If we simply include time-varying predictors in our model "as is", the resulting fixed slope represents both between-person effects (differences across individuals) and within-person effects (differences across time for a single individual). 
+
+The way to separate out these effects is to include 2 predictors: one is age, centered at some person-specific value (e.g., average age or age at the initial timepoint), and the second is that person-specific value itself. Therefore, the regression coefficient for person-centered age represents the within-person effect of age, and the person-specific mean (which can also be centered at some grand value). 
+
+**Note: You would probably also center the variable used for initial age, in order to make 0 more interpretable. For now, we are going to ignore this, and just use initial age**
+
+```{r, warning = FALSE, message = FALSE}
+# create the person-specific value: I will use age at the initial timepoint
+
+person_initage = as.data.frame(cognitive_long %>%
+  group_by(ids) %>%
+  filter(timepoint == 1) %>%
+  ungroup() %>%
+  select(age))
+
+cognitive_long$person_initage = rep(person_initage$age, each = 3)
+
+# then subtract each person's age from the initial age
+
+cognitive_long = cognitive_long %>%
+  mutate(personcenteredage = age - person_initage)
+
+head(cognitive_long %>% dplyr::select(ids, age, person_initage, personcenteredage), 12)
+
+# Now we run the model
+# only personcenteredage gets a random slope
+
+cogmlm_age = lmer(cognitivescore ~ person_initage + personcenteredage + (1 + personcenteredage | ids), data = cognitive_long)
+
+summary(cogmlm_age)
+
+```
+
+So now we have three parameters:
+
+- The intercept, which represents the expected cognitive score for a person who's age at the initial timepoint is 0 (this is why you normally center that person-specific value at something meaningful!)
+
+- The slope of initial age, which represents between-person differences in cognitive scores due to age. An individual who is 1 year older at the initial timepoint is expected to have a cognitive score that is 0.14 points higher at the initial timepoint. In other words, people who are older at the initial timepoint tend to start out with higher initial scores.
+
+- The slope of person-centered age, which represents the effect of age on cognitive scores. For every additional year a person gets older, their cognitive scores are expected to increase by 0.15 points. This is also different from the effect of timepoint we saw earlier (because timepoints were 2 years apart, whereas the slope of age represents the effect of 1 year).
+
+And to visualize:
+
+```{r, message = FALSE}
+# the reason I'm creating a new dataframe instead of adding on a new column is because not every individual had 3 observations, so predict() wouldn't make a prediction for the third age
+cognitive_predict = data.frame(id = cognitive_long$ids[complete.cases(cognitive_long$age)],
+                               age = cognitive_long$age[complete.cases(cognitive_long$age)],
+                               mlm_agepredict = predict(cogmlm_age))
+
+ggplot(data = cognitive_predict, aes(x = age, y = mlm_agepredict))+
+  geom_line(aes(color = as.factor(id)))+
+  geom_smooth(method = "lm", se = FALSE, color = "black")+
+  theme_classic()+
+  theme(legend.position = "none")+
+  labs(x = "Age", y = "Cognitive Score")
+```
+
+
+# Additional Resources
+
+- I have taken longitudinal data classes in the Human Development Department before, which covered briefly multilevel modeling for repeated measures data
+- Book: Data Analysis Using Regression and Multilevel/Hierarchical Models by Andrew Gelman and Jennifer Hill
+- Lesa Hoffman (Professor at University of Iowa) also has materials from her courses on multilevel modeling: [Link to her website](https://www.lesahoffman.com/Courses.html)
