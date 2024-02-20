@@ -154,6 +154,7 @@ penguin_means
 Find all the possible mean differences between groups and compare to the critical difference we just calculated. What can we conclude about those differences?
 :::
 
+:::fragment
 ```{r}
 adelie_mean <- penguin_means[1]
 chinstrap_mean <- penguin_means[2]
@@ -166,6 +167,7 @@ adelie_mean - chinstrap_mean
 adelie_mean - gentoo_mean
 chinstrap_mean - gentoo_mean
 ```
+:::
 
 ## Tukey's HSD
 
@@ -199,6 +201,12 @@ Factorial ANOVA allow us examine in one test:
 - is there an effect of Grouping Variable 2? 
 
 - is there an interaction between the 2 variables (so that the effect of Grouping Variable 1 depends on Grouping Variable 2, or vice versa)?
+
+## Factorial ANOVA
+
+- **Main effect**: When the average outcome changes consistently across different levels of one factor, regardless of the other factors. Imagine studying how exercise and diet affect weight loss. If people lose more weight with exercise regardless of their diet, that's a main effect of exercise.
+
+- **Interaction**: When the effect of one factor changes depending on the level of another factor. Back to the exercise and diet example, if exercise leads to more weight loss only for people on a specific diet, there's an interaction.
 
 ## Factorial ANOVA
 
