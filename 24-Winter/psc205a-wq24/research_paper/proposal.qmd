@@ -1,0 +1,17 @@
+---
+title: "Final Project proposal"
+author: "Marwin Carmo"
+format: pdf
+---
+
+## Introduction
+
+Cognitive and behavioral models of insomnia emphasize the role of sleep-related cognitions as maintainers of insomnia. The excess of negatively toned activity about sleep triggers arousal and distress, channeling attention and monitoring sleep threats. A specific tool to assess sleep-related cognitions is the Dysfunctional Beliefs and Attitudes about Sleep Scale (DBAS-16), measuring the strength of agreement to maladaptive beliefs about sleep. This project examines the factorial structure of the Brazilian-Portuguese version of the DBAS-16.
+
+# Methods
+
+Confirmatory Factor Analysis (CFA) will be used to assess the structural validity evidence, taking as a priori guess the aspects of the original model (i.e., the number of factors present in the data and the relation between observed and latent variables). The scale will also be tested regarding longitudinal (14 days) and group (bad sleepers vs. good sleepers) factorial invariance. We collected data from 1397 individuals with a mean age of 38.4 years, of which 1130 were female, and 1062 reported insomnia symptoms. 
+
+# Expected results
+
+It is expected that the original structure proposed for the DBAS-16 will be replicated in our sample. However, given this study's exploratory nature, it might also be possible to suggest an alternative relation between the observable and latent variables. Additionally, the proposed factor structure of dysfunctional beliefs about sleep is expected to remain stable over time and across good and bad sleepers.

@@ -1,0 +1,321 @@
+---
+title: "Lab 5: Post-hoc Tests & Factorial ANOVA"
+subtitle: "PSC 103B"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    callout-icon: false
+    # height: 900
+    footer: "PSC 103B - Statistical Analysis of Psychological Data"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+execute:
+  echo: true
+editor_options: 
+  chunk_output_type: console
+---
+
+## Today's dataset
+
+- We'll be using a modified version of last week's data set.
+
+- I randomly chose 68 penguins from each species, because the *manual* post-hoc test we are doing requires equal group sizes.
+
+:::fragment
+```{r}
+penguins_data <- read.csv("data/penguins_103b.csv")
+```
+:::
+
+## Post-Hoc Tests
+
+- The one-way ANOVA we conducted last week we were interested in whether the different species of penguins had, on average, equal bill lengths, or whether there was some difference in the average bill length among the 3 species.
+
+:::fragment
+```{r}
+my_anova <- aov(bill_length_mm ~ species, data = penguins_data)
+summary(my_anova)
+```
+:::
+
+- What can we conclude?
+
+## Post-Hoc Tests
+
+- After a significant ANOVA result, we're interested in learning *where* those differences are.
+
+- Post-hoc tests are meant to correct for the many comparisons you are doing, so that your chances of a **Type 1 error** (saying 2 groups have different means when they actually have the same means) stays at .05.
+
+- There are multiple post-hoc tests available, and they differ in how conservative they are. We're focus on **Tukey's Honest Significant Difference (HSD) Test**.
+
+## Tukey's HSD
+
+- It computes a value called a **"Critical Difference"**, and so any group differences that are larger than the Critical Difference (CD) in absolute value are significant.
+
+:::fragment
+$$
+CD = q \times \sqrt{\frac{MS_w}{n}}
+$$
+:::
+
+- where $n$ is the group size within each group, and $MS_w$ is the Mean Squared Within
+you can get from your ANOVA table.
+
+## Find *n* and $MS_w$
+
+$n$
+
+:::fragment
+```{r}
+table(penguins_data$species)
+
+n <- 68
+```
+:::
+
+$MS_w$ (tip: look in the ANOVA summary)
+
+:::fragment
+```{r}
+summary(my_anova)
+```
+
+```{r}
+MSW <- 9.2
+```
+:::
+
+---
+
+To find *q*, we can use the function `qtukey()`, that takes 3 main arguments:
+
+  - `p`, which is the probability to the *left* of the critical value,
+  - `nmeans`, which is the number of groups we're comparing and,
+  - `df`, which is just df within
+
+- If our test is conducted at the .05 level, then the probability *below* the critical value is .95.
+
+::: fragment
+:::{.callout-caution title="Exercise"}
+Find *q* using the `qtukey()` function. Set the values for the arguments `p`, `nmeans`, and `df`. Save your result to an object called `qvalue`. Tip: you can also find df within in the ANOVA summary
+:::
+:::
+
+## Find *q*
+
+
+```{r}
+qvalue <- qtukey(p = .95, 
+       nmeans = 3, # because we have 3 species
+       df = 201) 
+qvalue
+```
+
+## Tukey's HSD
+
+- Now, we can go ahead and calculate our CD. 
+
+:::fragment
+```{r}
+cd <- qvalue * sqrt(MSW / n)
+cd
+```
+:::
+
+- How can we get all the groups' means?
+
+:::fragment
+```{r}
+penguin_means <- tapply(penguins_data$bill_length_mm, 
+                       penguins_data$species, 
+                       mean, na.rm = TRUE)
+penguin_means
+```
+:::
+
+---
+
+:::{.callout-caution title="Exercise"}
+Find all the possible mean differences between groups and compare to the critical difference we just calculated. What can we conclude about those differences?
+:::
+
+```{r}
+adelie_mean <- penguin_means[1]
+chinstrap_mean <- penguin_means[2]
+gentoo_mean <- penguin_means[3]
+
+```
+
+```{r}
+adelie_mean - chinstrap_mean
+adelie_mean - gentoo_mean
+chinstrap_mean - gentoo_mean
+```
+
+## Tukey's HSD
+
+| Comparison | Mean difference |
+|------------|:----------:|
+|Adelie - Chinstrap | -10.45 |
+|Adelie - Gentoo    | -9.22|
+|Chinstrap - Gentoo | 1.23 |
+
+- Given our CD of 1.21 which of these differences are significant?
+
+- We can say that Adelie has a significantly lower average bill length than both Chinstrap and Gentoo.
+
+- And Chinstrap has a significantly longer bill length, on average, than Gentoo.
+
+## Tukey's HSD
+
+`R` has a built-in function  for Tukey's HSD, called `TukeyHSD()`, and the only argument you need to give it is the ANOVA object you saved earlier:
+
+```{r}
+TukeyHSD(my_anova)
+```
+
+# Factorial ANOVA
+
+## Factorial ANOVA
+
+Factorial ANOVA allow us examine in one test: 
+
+- is there an effect of Grouping Variable 1 (at least one mean is different in those groups)? 
+- is there an effect of Grouping Variable 2? 
+
+- is there an interaction between the 2 variables (so that the effect of Grouping Variable 1 depends on Grouping Variable 2, or vice versa)?
+
+## Factorial ANOVA
+
+- Let's assume we were interested in whether **body mass** differed not only among the 3 penguin **species**, but also whether it differed among **males and females**.
+
+- If we were to do this as 2 separate ANOVAs, we would have 2 sets of hypotheses:
+
+- One for the species of penguin:
+
+  - $H_0: \mu_{Adelie} = \mu_{Chinstrap} = \mu_{Gentoo}$ (there is no  difference in average body mass among the species).
+
+  - $H_A$: At least one mean is significantly different from the rest.
+  
+## Factorial ANOVA
+
+- One for the sex:
+
+  - $H_0: \mu_{female} = \mu_{male}$ (there is no difference in average body mass among male and female penguins).
+
+  - $H_A: \mu_{female} \neq \mu_{male}$ (note that because there are only 2 groups, we can be more specific with our alternative hypothesis).
+  
+- And we also have a hypothesis for the interaction:
+
+  - $H_0$: There is no interaction between the species of penguin and their sex.
+
+  - $H_A$: There is an interaction between the species of penguin and their sex.
+  
+## Factorial ANOVA
+
+- In `R` where we "multiply" our two predictors to include an interaction between them.
+
+:::fragment
+```{r}
+factorial_anova <- aov(body_mass_g ~ species * sex, data = penguins_data)
+summary(factorial_anova)
+```
+:::
+
+- Which results are significant? What does this tell us?
+
+## Factorial ANOVA
+
+### Main effect of species
+
+At least one species has an average body mass that is significantly different from another species.
+
+```{r}
+TukeyHSD(factorial_anova)$species
+```
+
+## Factorial ANOVA
+
+### Main effect of sex
+
+The *p*-value is also less than .05 so we can reject H0 and (since there are only 2 groups) say that there is a significant difference between the body mass of male and female penguins
+
+```{r}
+TukeyHSD(factorial_anova)$sex
+```
+
+## Factorial ANOVA
+
+### Interaction
+
+- The difference in body mass between male and female penguins depends on the species.
+
+- We can try to  uncover what that interaction is by graphing the means.
+
+- In this graph, we would have one grouping variable on the x-axis and the other grouping variable as different lines on the graph.
+
+- To do this, we will use the function `interaction.plot()`.
+
+## Factorial ANOVA
+
+```{r}
+#| fig-align: "center"
+#| out-width: 55%
+
+interaction.plot(x.factor = penguins_data$species, # grouping variable on x axis
+                 trace.factor = penguins_data$sex, # grouping variable as lines
+                 response = penguins_data$body_mass_g, # outcome variable
+                 fun = mean, # summary statistic
+                 type = "l", # graph lines
+                 col = c("black", "red"), xlab = "Species", ylab = "Body Mass (g)", trace.label = "Sex")
+```
+
+## Factorial ANOVA
+
+- Males, on average, weigh more than females.
+
+- Gentoo penguins weigh more than Adelie and Chinstrap, but Adelie and Chinstrap are pretty close to each other.
+
+- The interaction appears to be that the magnitude of the difference is different depending on the species. In particular, males and females have a much smaller difference in the Chinstrap species than the other 2 species.
+
+## Now you try
+
+:::{.callout-caution title="Exercise"}
+Run a factorial ANOVA testing the interaction between the penguin `sex` and its `island` in accounting for differences in `body_mass_g`. What can you conclude?
+:::
+
+:::fragment
+```{r}
+factorial_anova_2 <- aov(body_mass_g ~ sex * island, data = penguins_data)
+summary(factorial_anova_2)
+```
+:::
+
+## Now you try
+
+At least penguins from one island have an average body mass that is significantly different from penguins from another island.
+
+```{r}
+TukeyHSD(factorial_anova_2)$island
+```
+
+Males have significantly higher body mass than females.
+
+```{r}
+TukeyHSD(factorial_anova_2)$sex
+```

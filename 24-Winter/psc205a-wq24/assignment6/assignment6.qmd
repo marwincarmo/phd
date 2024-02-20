@@ -1,12 +1,12 @@
 ---
-title: "PSC205A Assignment 01: Matrix Algebra"
+title: "PSC205A Assignment 06: SEM"
 format: pdf
 ---
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 library(lavaan)
-library(lavaanPlot)
 library(dplyr)
+library(weights)
 ```
 
 
@@ -86,7 +86,7 @@ fri ~~ 0*mot
 "
 ```
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 fit1 <- cfa(mod1, data = dat, missing="fiml")
 res1 <- summary(fit1, fit.measures=T, standardized=TRUE)
 
@@ -94,7 +94,7 @@ res1 <- summary(fit1, fit.measures=T, standardized=TRUE)
 
 # 2. Additional models
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 mod_ind_m1 <- modindices(fit1)
 head(arrange(mod_ind_m1, desc(mi)))
 ```
@@ -103,7 +103,7 @@ The modification indices tell us that the model might be improved by allowing th
 
 ## 2.1. Model 2: mate ~~ fri
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 mod2 <- "
 #factor loadings
 pc =~ pc1 + pc2 + pc3 + pc4
@@ -121,10 +121,8 @@ aff =~ aff1 + aff2 + aff3 + aff4
 gw ~ app + pc + teach + par + mate + fri
 pw ~ app +pc + teach + par + mate + fri
 
-pw ~ aff
-pw ~ mot
-
-pc ~ mate
+aff ~ pw
+mot ~ pw + aff
 
 # covariances
 app ~~ 0*pc
@@ -178,7 +176,7 @@ The new modification indices suggest the model can be further improved by allowi
 
 ## 2.2. Model 3: teach ~~ par
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 mod3 <- "
 #factor loadings
 pc =~ pc1 + pc2 + pc3 + pc4
@@ -196,10 +194,8 @@ aff =~ aff1 + aff2 + aff3 + aff4
 gw ~ app + pc + teach + par + mate + fri
 pw ~ app +pc + teach + par + mate + fri
 
-pw ~ aff
-pw ~ mot
-
-pc ~ mate
+aff ~ pw
+mot ~ pw + aff
 
 # covariances
 app ~~ 0*pc
@@ -241,7 +237,7 @@ fri ~~ 0*mot
 "
 ```
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 fit3 <- cfa(mod3, data = dat, fixed.x=FALSE, missing="fiml")
 res3 <- summary(fit3, fit.measures=T, standardized=TRUE)
 
@@ -249,9 +245,9 @@ mod_ind_m3 <- modindices(fit3)
 head(arrange(mod_ind_m3, desc(mi)), 20)
 ```
 
-Now the modification indices suggest an improvement in fit by allowing two items from friend support and classmate support to correlate.
+Now the modification indices suggest an improvement in fit by allowing perceived competence to correlate with perceived appearance.
 
-## 2.3. Model 4: mate4 ~~ fri4
+## 2.3. Model 4: pc ~~ app
 
 ```{r}
 mod4 <- "
@@ -273,13 +269,11 @@ mate4 ~~ fri4
 gw ~ app + pc + teach + par + mate + fri
 pw ~ app +pc + teach + par + mate + fri
 
-pw ~ aff
-pw ~ mot
-
-pc ~ mate
+aff ~ pw
+mot ~ pw + aff
 
 # covariances
-app ~~ 0*pc
+app ~~ pc
 app ~~ 0*teach
 app ~~ 0*par
 app ~~ 0*mate
@@ -318,56 +312,63 @@ fri ~~ 0*mot
 "
 ```
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 fit4 <- cfa(mod4, data = dat, fixed.x=FALSE, missing="fiml")
 res4 <- summary(fit4, fit.measures=T, standardized=TRUE)
 
-mod_ind_m4 <- modindices(fit4)
-head(arrange(mod_ind_m4, desc(mi)))
 ```
 
 ## Model comparison
 
 ```{r}
-anova(fit1, fit2, fit3, fit4)
+anova(fit1, fit2, fit3, fit4) |> knitr::kable(caption = "Fit indices comparisons of the four models.")
 ```
 
 # 3. Results summary
 
 ```{r}
-items_loadings <- lavInspect(fit1, what = "std")$lambda
-items_var <- diag(lavInspect(fit1, what = "std")$theta)
-latent_var <- diag(lavInspect(fit1, what = "std")$psi)
-latent_loadings <- lavInspect(fit1, what = "std")$beta
+items_loadings <- lavInspect(fit4, what = "std")$lambda
+items_var <- diag(lavInspect(fit4, what = "std")$theta)
+latent_var <- diag(lavInspect(fit4, what = "std")$psi)
+latent_loadings <- lavInspect(fit4, what = "std")$beta
 ```
 
 ```{r}
-knitr::kable(items_loadings)
+knitr::kable(items_loadings, caption = "Standardized loadings of the observable variabels.", digits = 3)
 ```
 
 ```{r}
-knitr::kable(t(items_var))
+knitr::kable(as.data.frame(items_var), caption = "Item variances.", digits= 3)
 ```
 
 ```{r}
-knitr::kable(t(latent_var))
+knitr::kable(as.data.frame(latent_var), caption = "Latent variances.", digits= 3)
 ```
 
 ```{r}
-knitr::kable(latent_loadings)
+knitr::kable(latent_loadings, caption = "Standardized loadings of the latent variabels.", digits= 3)
 ```
 
 # 4. Model summary
 
+The structural model showed below acceptable fit indices, suggesting that it might not be a good representation of the relation between self-worth and motivation: $\chi^2$ (683) = 2378.56, RMSEA = 0.098 90% CI [0.093, 0.102], CFI = 0.764, SRMR = 0.212.
+
+This model has shown that perceived self-worth positively predicts affect ($\beta$ = 0.605) and motivation ($\beta$ = 0.312). Motivation was also a strong predictor of affect ($\beta$ = 0.480). That means that a positive self-worth can improve affect, which also improves motivation.
+
 # 5. Males vs Females
 
-```{r}
-fit.configural = sem(fit4,data=dat,fixed.x=FALSE,group="female", group.equal=c(""))
-fit.loadings   = sem(fit4,data=dat,fixed.x=FALSE,group="female", group.equal=c("loadings"))
-fit.intercepts = sem(fit4,data=dat,fixed.x=FALSE,group="female", group.equal=c("loadings","intercepts"))
-fit.varcov     = sem(fit4,data=dat,fixed.x=FALSE,group="female", group.equal=c("loadings","intercepts", "lv.variances","lv.covariances"))
-fit.regress    = sem(fit4,data=dat,fixed.x=FALSE,group="female", group.equal=c("loadings","intercepts", "lv.variances","lv.covariances","regressions"))
-fit.invariant  = sem(fit4,data=dat,fixed.x=FALSE,group="female",
+```{r warning=FALSE, message=FALSE}
+fit.configural = sem(mod4,data=dat, group="female", group.equal=c(""))
+fit.loadings   = sem(mod4,data=dat, group="female", group.equal=c("loadings"))
+fit.intercepts = sem(mod4,data=dat, group="female", group.equal=c("loadings","intercepts"))
+fit.varcov     = sem(mod4,data=dat, group="female", group.equal=c("loadings","intercepts", "lv.variances","lv.covariances"))
+fit.regress    = sem(mod4,data=dat, group="female", group.equal=c("loadings","intercepts", "lv.variances","lv.covariances","regressions"))
+fit.invariant  = sem(mod4,data=dat, group="female",
                      group.equal=c("loadings","intercepts", "lv.variances","lv.covariances","regressions","residuals"))
+```
+
+```{r}
+anova(fit.configural, fit.loadings, fit.intercepts, fit.varcov, fit.regress, fit.invariant) |> 
+  knitr::kable(caption = "Multiple group invariance test.", digits=3)
 ```
 

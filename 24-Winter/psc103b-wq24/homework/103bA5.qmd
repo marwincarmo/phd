@@ -1,0 +1,71 @@
+---
+title: "PSC 103B - Lab 4 Assignment"
+subtitle: "Answer Key"
+format:
+  docx:
+    reference-doc: ../word-styles-reference-01.docx
+filters:
+  - color.lua
+---
+
+## The data
+
+This week, we will be moving away from the NPAS dataset and using the version of the penguins dataset that we have been using in lab. Download this dataset from the Homework 5 assignment page on Canvas.
+
+The response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as `VC`). The variables we will be using today are:
+
+- `len`: tooth length ($\mu m$)
+- `supp`: Supplement type (OJ or VC)
+- `dose`: Dosage levels (0.5, 1, or 2)
+
+```{r}
+hw_data <- ToothGrowth
+hw_data$dose <- factor(hw_data$dose)
+```
+
+
+# Question 1
+
+Suppose we were interested in conducting a factorial ANOVA with Supplement type and Dosage levels as our grouping variables, and tooth length as the outcome. 
+
+Write out the 3 sets of null and alternative hypotheses for the factorial ANOVA –- one for each main effect and one for the interaction. (3 points)
+
+# Question 2
+
+Conduct the factorial ANOVA to test the hypotheses you wrote for question 1. Show your code and output. (1 point)
+
+```{r}
+fact_anova <- aov(len ~ supp * dose, data = hw_data)
+summary(fact_anova)
+```
+
+# Question 3
+
+*If the main effect of dose is significant*: Conduct the Tukey Honest Significant Difference post-hoc test. Show your code. 
+
+*If the main effect of dose is not significant*: State "The main effect of dose was not significant". (1 point)
+
+```{r}
+TukeyHSD(fact_anova, "dose")
+```
+# Question 4
+
+If you conducted the Tukey HSD test in the previous question: Which doses were significantly different from each other? What was the difference (e.g., which group had the larger/smaller tooth length)? (1 point)
+
+# Question 5
+
+If the main effect of sex is significant: Calculate the means for each group. Show your code and output. 
+
+If the main effect of sex is not significant: State “The main effect of sex was not significant”. (1 point)
+
+# Question 8
+
+```{r}
+interaction.plot(x.factor = hw_data$dose, # grouping variable on x axis
+                 trace.factor = hw_data$supp, # grouping variable as lines
+                 response = hw_data$len, # outcome variable
+                 fun = mean, # summary statistic
+                 type = "l", # graph lines
+                 col = c("black", "red"), xlab = "Dose (mg)", ylab = "Tooth Length (micron)", trace.label = "Supplement")
+```
+
