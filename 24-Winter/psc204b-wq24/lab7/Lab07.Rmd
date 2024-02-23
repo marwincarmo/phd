@@ -1,0 +1,562 @@
+---
+title: "Lab 7"
+subtitle: Propensity Score Matching
+author: "Josue Rodriguez - Edited by Samuel D. Aragones"
+date: "Spring 2024"
+output: 
+  pdf_document:
+    highlight: haddock
+urlcolor: blue
+---
+
+```{r eval=FALSE}
+if (!require("MatchIt")) install.packages("MatchIt")
+```
+
+```{r warning=FALSE, message=FALSE}
+library(MatchIt)
+library(dplyr)
+library(stargazer)
+
+
+# Load the Age Religion Health data:
+arh <- read.csv("arh.csv") |>
+       select(id, smoke01, married01, depress2001, race,
+              sex, weight2004, church2001, school, see_dr90days) |>
+  na.omit()
+
+# convert sex to factor
+arh$sex <- as.factor(arh$sex)
+
+# convert church2001 to factor
+arh$church2001 <- as.factor(arh$church2001)
+
+# Recoding so that non-smoker is the reference group
+arh$smoke01 <- ifelse(arh$smoke01 == 2, "Non-smoker", "Smoker")
+arh$smoke01 <- as.factor(arh$smoke01)
+
+# Re-ordering levels so that the group with largest N is reference group
+arh$race <- factor(arh$race,
+                   levels = c("Black/African American",
+                              "Black/African American and some other race",
+                              "White/Caucasian",
+                              "White/Caucasian and some other race",
+                              "Hispanic/Latino",
+                              "American Indian or Alaskan Native"))
+# Re-ordering levels so that the group with largest N is reference group
+arh$married01 <- factor(arh$married01,
+                        levels = c("Married",
+                                   "Widowed",
+                                   "Divorced",
+                                   "Separated",
+                                   "Never Married"))
+
+```
+
+# Propensity Scores
+
+The propensity score (PS) is the probability that an individual is assigned to the experimental group of interest, conditional on confounders. They allow a path towards causal inference in the absence of randomization
+
+-   We must estimate the PS in non-experimental settings
+
+The propensity score has the balancing property that given the *true* propensity score, the distribution of features for the treatment cases is the same as that for the control cases.
+
+The intuition is that you can use propensity scores to match up participants in your data frame that are the most similar, but that were assigned to different treatment groups.
+
+-   For example, imagine we wanted to know the effect of smoking on life expectancy. We could match up two people of similar socioeconomic backgrounds, similar medical histories, same age, etc. We would try to match them so that their only difference is that one smoked and one did not.
+
+In an experiment setting where we can randomize assignment to experimental condition, this is not usually a worry because between-group differences cancel out due to the randomization.
+
+Let's go through an example. Suppose we are interested in knowing whether people who smoked cigarettes differ from non-smokers in terms of depression. We will use the 2001 variables from the `arh` dataset. In this case, non-smokers have been coded as the reference group.
+
+```{r}
+# A regression with all available data
+lm1 <- lm(depress2001 ~ smoke01, data = arh)
+summary(lm1)
+```
+
+-   `Intercept`: The mean `depression2001` for non-smokers is 11.86. This is significantly higher than 0.
+
+-   `smoke01Smoker`: On average, smokers have higher depression scores than non-smokers, $b = 1.12, t(734) = 1.97, p = .049$.
+
+Let's say that we think some groups have a higher *propensity* to be smokers than others, and so we match our samples on a few key demographics: `sex`, `race`, `married01` (marital status).
+
+## Calculating Propensity Scores by Hand
+
+Before we dive into how to subset the data down using the functions from `MatchIt`, let's talk about what is happening under the hood of those functions, in terms of propensity scores. Note: you don't need to do hand-calculations for this to work, this step will be taken care of for you in the `MatchIt` functions, but I think this is helpful information to know.
+
+"Propensity scores" is just another name for predicted probabilities (commonly) obtained from a logistic regression. The difference is unlike our typical logistic regression, the outcome variable is actually our main predictor of interest --- typically this is the treatment condition. In other words, a propensity score is the predicted probability that a participant is in the "treatment" group.
+
+For our running example, the "treatment" variable is whether someone smokes (0 if no, 1 if yes) and the "treatment" is being a smoker.
+
+We can use the `MatchIt` function to generate propensity scores for us using a variety of methods, but first let's generate propensity scores for ourselves, based on `sex`, `race`, and `married01` (marital status).
+
+```{r}
+# First: Create a logistic regression model with the original IV as the outcome,
+# and all of the demographic variables you want to match subjects on as predictors.
+
+propensity_model <- glm(smoke01 ~ sex + race + married01,
+                        family = "binomial",
+                        data = arh)
+
+# Remember, this is just a logistic regression model:
+summary(propensity_model)
+
+```
+
+Because `sex`, `race` and `married01` are categorical, they are dummy coded in our analysis
+
+-   Black/African American was the reference group for `race`
+-   Married was the reference group for `married01`
+-   Female was the reference group for `sex`
+
+In this case, we don't really care about whether each dummy-code is significant or the interpretation of our coefficients, we just care that they are in the model. The main thing we care about is the predicted probability of being a smoker for each row in the data file.
+
+Previously, we saw how to get the predicted probabilities by using the regression equation coefficients to obtain the predicted logits, exponentiating them to obtain odds, and finally converting the odds to probabilities using the equation $odds/(1 + odds)$
+
+There is a slightly easier way, especially when you have a lot of dummy codes, like we do here, so you don't have to manually code all those variables as a regression equation.
+
+The predicted probabilities are already saved in the model object and can be obtained several ways
+
+```{r}
+# note that we preview the results using head(), but
+# we would not use head() if we wanted the full results
+
+# option 1
+head(propensity_model$fitted.values)
+
+# option 2
+head(predict(propensity_model, type = "response"))
+```
+
+We can add these values to the original data frame.
+
+```{r}
+# Second: Add the predicted probabilities to the original model.
+arh$ps <- propensity_model$fitted.values
+arh$ps <- round(arh$ps, 3)
+
+# Lets take a look at what we have done:
+arh |>
+  select(sex, race, married01, smoke01, ps) |>
+  arrange(sex, race, married01, smoke01) |>
+  head(10)
+```
+
+Notice that all the subjects that fall into the same combination of subgroups have the same propensity score. For example, all females that were married and Black/African American had a propensity score of 0.087, indicating that we would predict about a 9% chance they are in the "treatment group" (Smoker).
+
+Now let's look at how many people are in each subgroup
+
+```{r}
+arh |>
+  group_by(sex, race, married01, ps) |>
+  count(smoke01) |>
+  head(10)
+```
+
+This table shows us the number of people that fall in each subgroup, as well as what their propensity score is. For example, in the first two rows we see that for participants that were Female, Black/African American, and Married, there were 67 non-smokers and 11 smokers.
+
+Important: Notice that the propensity score is the same for both smokers and non-smokers in this group. This is because the propensity score is only a *predicted probability* of being in the "treatment group", not the treatment group that was actually observed. We want to match people up based on the probability of belonging to the treatment group (i.e., similar propensity scores).
+
+Also, given that 67 people in the above group were non-smokers and only 11 were smokers, it makes sense why the propensity score was so low for this specific subgroup: Most people in this category were not smokers, so if you randomly selected one of the 78 participants that were Female, Black/African American, and Married, there would only be an 9% predicted chance that they would be a smoker.
+
+Another thing to note from this table: For some groups, its not possible to find exact matches. For example, there was only one Hispanic/Latino person in the data file, and they were Male, Widowed, and a Non-Smoker. So it won't be possible to find a perfect match for him in the Smoker category.
+
+Side note: I am not sure what part of the United States that this study originally targeted. I suspect that it was a location where Hispanic/Latino people made up a smaller percentage of the population. But STILL, the fact that there was only one Hispanic/Latino person is a sad commentary on sampling efforts back in the day, and is a major limitation of the data file.
+
+Let's zoom in on another subgroup and talk about how the propensity scores will be used.
+
+```{r}
+# We could also zoom in on specific groups. For example:
+
+arh |>
+  group_by(sex, race, married01, ps)|>
+  count(smoke01) |>
+  arrange(ps, smoke01) |>
+  filter(sex == "Male",
+         race == "Black/African American",
+         married01 == "Married")
+```
+
+This table tells us that for Male, Black/African American, Married participants, there were 70 non-smokers and 10 smokers.
+
+The idea behind propensity matching is that we could match these 10 smokers with at least other 10 non-smokers that have the same (or most similar) propensity score (i.e., the 10 Black/African-American Married Men that Smoke would be matched with 10 Black/African-American Married Men that were Non-Smokers). This is called the "nearest neighbor" approach.
+
+In this case, there are 70 Black/African-American Married Men that were Non-Smokers that we could use. Since we only looked at these 3 demographic variables, any of those 70 could do. So how do you chose which of the 70 to use?
+
+One option is to pick 10 at random. Another is to consider additional information in making the matches. For example, we could enter `age` into the logistic regression and try to pick 10 of the 70 that matched the Smokers most closely in age.
+
+However, both of these approaches will result in dropping observations from out dataset. To avoid this, a popular option would be to do a weighted regression, so that the 10 smokers gets weighted equally against the 70 non-smokers. In essence, you would be pooling the 70 non-smokers down to the statistical equivalent of 10 non-smokers.
+
+We will explore these options in the next section.
+
+## Matched Sample Comparisons with `MatchIt`
+
+Now let's used the `MatchIt` package to redo the analysis using a matched sample.
+
+An important note before we get into it: The `matchit` functions do not actually do the matched-sample regressions for you. Instead, the main purpose of the `matchit` functions are to create a data frame that is suitable for your causal analysis.
+
+Further, you don't need to manually calculate propensity scores (like we did above), the `matchit` function will do it for you automatically (it calls it "distance" instead of "propensity score").
+
+The way the `MatchIt` functions works:
+
+1.  First create a "match object" using `matchit()` in which the dichotomous treatment indicator variable is predicted by whatever factors you want to match participants based on
+
+-   Here, you can also specify the `method` for how you want to participants to be matched.
+
+2.  You then extract the matched dataframe from this "match object" using `match.data()`.
+
+3.  Using the new matched dataframe, run the analysis of interest. Usually, it is in the form of `outcome ~ treatment_indicator`
+
+### Nearest Neighbor Matching
+
+By default, the `MatchIt` function uses **nearest neighbor** (propensity scoring) to create matched data. This is where each person in the treatment group gets matched with exactly one person in the control group. So, for example, the 10 Black/African-American Married Men than Smoked would be matched with 10 Black/African-American Married Men that did not Smoke.
+
+Note that in Step 1, we are predicting the treatment indicator variable (`smoke01`) based on the variables that we want to match on (`sex`, `race`, `married01`) and use our original dataset, `arh`.
+
+In Step 3, however, we are predicting our main outcome of interest (`depress2001`) based on the treatment indicator (`smoke01`), and we are using the *matched* dataset, `matched_df_nearest`
+
+```{r}
+# To use the "Nearest Neighbor" method:
+
+# Step 1: Create a MatchIt object
+# -- We are matching participants on sex, race, and married01
+match1 <- matchit(smoke01 ~ sex + race + married01,
+                  method = "nearest", # This is the default
+                  data = arh)
+
+# Step 2: Convert the match object to a data frame that can be used in the analysis
+matched_df_nearest <- match.data(match1)
+
+# Step 3: Do the analysis using the _propensity score matched data_
+psm_lm_nearest <- lm(depress2001 ~ smoke01, data = matched_df_nearest)
+
+summary(psm_lm_nearest)
+```
+
+-   In this case, the results of the unmatched analysis replicated, and in fact, the effects of smoking on depression are even stronger than when we used the unmatched data. Using the matched data, smokers exhibited, on average, 2.7 units more depression than non-smokers ($p < .001$).
+
+Something important to notice is that we went from 737 rows in the original analysis to 166 rows using the nearest neighbor approach (look at differences in model degrees of freedom). We could also determine this by looking at:
+
+```{r}
+nrow(arh)
+nrow(matched_df_nearest)
+```
+
+Where is this number, 166, coming from?
+
+The reason why 166 subjects were used is because there were 83 subjects in the smoker group, and hence the 83 non-smokers that were selected to go into the analysis.
+
+Let's look at the number of smokers / non-smokers in the original full data set:
+
+```{r}
+table(arh$smoke01)
+```
+
+Versus the number of smokers / non-smokers in the subsetted data set determined from `matchit`:
+
+```{r}
+table(matched_df_nearest$smoke01)
+```
+
+If you want to know which participants were matched up, you can look at the `subclass` column that was added to the `matched_df` data frame:
+
+```{r}
+matched_df_nearest |>
+  select(id,
+         smoke01,
+         sex,
+         race,
+         married01,
+         subclass,
+         distance,
+         ps) |>
+  arrange(subclass) |>
+  head(10)
+```
+
+Notice that each subclass is matched on "distance" as best as possible. For example, the first and second rows show, a White/Caucasian Married Female *smoker*, got matched with a White/Caucasian Married Female *non-smoker*. These two people are categorized in subclass 1. There will be as many unique subclasses as there are people in the "treatment group" (smokers in this case, so 90 subclasses in this example).
+
+When possible, the nearest neighbor method will match people with the exact same propensity score. However, this is not always possible. For example, in `subclass` 5, a Black/African-American Divorced Male who Smoked, was matched with a Black/African-American Divorced Female who did not Smoke (because there were no other men in that subcategory who did not smoke for him to be matched with).
+
+At this point, you might be wondering about a few important points regarding the validity of the analysis above. For example:
+
+Why was participant 10349 (a White/Caucasian Married Female Smoker) paired with participant 11494 (a White/Caucasian Married Female Non-Smoker) and not participant 10845 (also a White/Caucasian Married Female Non-Smoker)?
+
+The answer: It has to do with how the data are sorted (which means if we re-sorted the data we could get a different result from our analysis).
+
+This also explains how the `matchit` function chose which non-smokers to include in the analysis in the first place (there were 7 smokers and 105 non-smokers in the category of White/Caucasian Married Females). To decide which of those 105 non-smokers to use, the analysis simply chose the first 7 non-smokers in the group of White/Caucasian Married Females, and matched them up with the 7 Smokers in this category in the order that they were listed.
+
+In this case, this means that we these results may not have high fidelity, as the results could change depending on which non-smokers where chosen for the smokers to be compared against.
+
+For example, if we shuffle the order of the data frame, notice how the results change. Try re-running this chunk several times, and notice how the results change each time you run the chunk (because the data frame gets randomly re-ordered each time).
+
+```{r}
+random_rows <- sample(x = 1:nrow(arh), size = nrow(arh))
+arh_randomized <- arh[random_rows, ]
+
+# Step 1: Create a MatchIt object
+match1_random <- matchit(smoke01 ~ sex + race + married01,
+                         method = "nearest",
+                         data = arh_randomized)
+
+# Step 2: Convert the match object to a data frame that can be used in the analysis
+matched_df_random <- match.data(match1_random)
+
+# Step 3: redo the analysis using the matched data
+psm_lm_random <- lm(depress2001 ~ smoke01, data = matched_df_random)
+
+summary(psm_lm_random)
+```
+
+One way you could deal with this is by taking an exhaustive approach and testing all possible ways of matching participants. You could then report the range of effects of `smoke01` for each permutation tested. However, this would be quite tedious.
+
+The other options are:
+
+1.  Include more information in how you match participants until there is only one "nearest neighbor" for each person in the treatment group to be matched against. In this case, matching based on a continuous variable is very helpful at "breaking up" groups of identical propensity scores.
+
+2.  Using a different matching method, like exact matching.
+
+### Exact Matching
+
+Let's redo the analysis using only data from participants that are matched in terms of `sex`, `race`, and `married01`. For this analysis, we will use the "exact" method for matching participants.
+
+The exact method drops all possible subgroup combinations of the demographic variables that are not represented in both treatment groups. It does not try to balance the number of subjects in each group, the only criteria is that there is at least one subject in each group in both levels of the treatment variable.
+
+```{r}
+# Step 1: Create a "matchit object"
+match2 <- matchit(smoke01 ~ sex + race + married01,
+                  method = "exact",
+                  data = arh)
+
+# Step 2: Extract the data
+matched_df_exact <- match.data(match2)
+```
+
+Before we run the main analysis, lets take a look at the data that was just created, and how the subgroups are being created.
+
+```{r}
+matched_df_exact |>
+  select(id,
+         smoke01,
+         sex,
+         race,
+         married01,
+         subclass,
+         ps,
+         weights) |>
+  arrange(subclass) |>
+  head(10)
+```
+
+Just as before, participants are grouped according to sex, race, and marital status, and these groupings match the propensity score groupings.
+
+There are a few things that are different this time around, though:
+
+-   Unlike before, we now have a column for weights. We can use these to do a weighted regression.
+
+-   For everyone in the smoker group, the weights are 1. This means that they will contribute "normally" to the analysis, the same way they would in the original OLS regression.
+
+-   For everyone in the non-smoker group, the weights are different from 1. Notice that the more people that there are in the specific non-smoker subgroup, the smaller the weight, and the fewer people that there are, the larger the weight. This is happening because the weights will essentially "equalize" the groups.
+
+-   There are now fewer `subclass` groups. Rather than one `subclass` for each person in the treatment group (smoker), there is one `subclass` for each `sex` by `race` by `married01` subgroup.
+
+-   There are 700 rows in the exact-matched data, rather than 166. This is because exact matching only drops people whose subclass is not represented in both treatment groups. That is, subgroups that did not have at least one Smoker and one Non-Smoker were dropped from the data file.
+
+    -   For example, recall that there was only one Hispanic/Latino participant (a Widowed Male Non-Smoker). But he was dropped in the exact-matched data because there were no other Hispanic/Latino Widowed Male Smokers in the data to match him with. We will take a closer look at this in the following section.
+
+Let's proceed with the propensity score regression with our exact-matched dataset.
+
+```{r}
+# Step 3: Do the matched analysis
+# - Note: we now include the "weights" column from
+# -       the matched_df_exact dataframe.
+psm_lm_exact <- lm(depress2001 ~ smoke01,
+                   weights = weights,
+                   data = matched_df_exact)
+
+summary(psm_lm_exact)
+```
+
+-   When participants are matched with the "exact" method on sex, race, and marital status, the average difference between smokers and non-smokers (1.10 units). Non-smokers have slightly higher depression, but the difference is no longer significant ($p = .052$).
+
+Again, we have many more rows included in the analysis now (700) compared to the "nearest neighbor" method (166). From the 737 in the original analysis, only 37 were excluded when we used the "exact" method. One benefit of exact matching is that it usually maximizes the amount of data available when you are only matching on categorical variables. This means the results don't change when you shuffle how the data are sorted (if you rerun this chunk over and over you will get the same result). A drawback of this method is that it does quite poorly when you match using continuous predictors (e.g., gpa, height) since this reduces that any two observations share the same subclass.
+
+```{r}
+random_rows2 <- sample(x = 1:nrow(arh), size = nrow(arh))
+arh_randomized2 <- arh[random_rows, ]
+
+# Step 1: Create a MatchIt object
+match2_random <- matchit(smoke01 ~ sex + race + married01,
+                         method = "exact",
+                         data = arh_randomized2)
+
+# Step 2: Convert the match object to a data frame that can be used in the analysis
+matched_df_random2 <- match.data(match2_random)
+
+# Step 3: redo the analysis using the subsetted (matched) data:
+psm_lm_random2 <- lm(depress2001 ~ smoke01,
+                     weights = weights,
+                     data = matched_df_random2)
+
+summary(psm_lm_random2)
+```
+
+Because this method drops some subgroups, it is a good idea to check which ones were not included. We can do this by first identifying the original subgroups. For each of the original and matched dataframes, we can extract the subgroups by doing the following:
+
+1.  Determine the `distinct()` combinations of the categories
+2.  `mutate()` and `paste()` our categories
+    -   This creates a new column which specifies the subgroup
+3.  `pull()` the new subgroups column
+    -   This returns a vector containing the values of the specified column
+
+Once we have the subgroups for each dataframe, we can use the `setdiff()` function to find which subgroups were excluded
+
+```{r}
+og_subgroups <-
+  arh |>
+  distinct(race, sex, married01) |>
+  mutate(subgroups = paste(race, sex, married01)) |>
+  pull(subgroups)
+
+
+exact_matched_subgroups <-
+  matched_df_exact |>
+  distinct(race, sex, married01) |>
+  mutate(subgroups = paste(race, sex, married01)) |>
+  pull(subgroups)
+
+
+# Important: the original subgroups must come first
+setdiff(og_subgroups, exact_matched_subgroups)
+```
+
+```{r}
+# how many subgroups were dropped?
+length(setdiff(og_subgroups, exact_matched_subgroups))
+```
+
+Okay, let's compare the different analyses so far using the `stargazer()` function. The arguments I gave it below are as follows:
+
+-   The models that we want to include in our table. For this lab, they are called `lm1`, `psm_lm_nearest`, and `psm_lm_exact`.
+
+-   `title`: The title of the table.
+
+-   `column.labels`: The names of our columns. For this lab, we want them to match up to the original regression, the nearest neighbor matched regression, and the exact matched regression.
+
+-   `type`: The format we want the output.
+
+    -   **Important**: If you are outputting to a `pdf_document`, then set this argument to `"latex"`. If you are one of the people outputting to a word document and then converting to a pdf document, then set this argument to `"text"` instead. *After* you have knitted your document, copy and paste the table from RMarkdown into the word document, as it will not be formatted nicely.
+
+```{r results='asis'}
+stargazer(
+  lm1,
+  psm_lm_nearest,
+  psm_lm_exact,
+  title = "Model Results",
+  column.labels = c("Original", "Nearest Neighbor", "Exact"),
+  type = "latex", # set type = "text" while coding and type = "latex" when knitting to pdf
+  header = FALSE # remove annoying header
+)
+```
+
+### Nearest Neighbor Matching, again
+
+In the last example of nearest-neighbor matching, we saw that the results can be unreliable because we had too many "ties" in propensity scores in the control group (meaning that the people included in the analysis depended on how the data were sorted).
+
+This means we have an opportunity to be more fine-grained in how we match our participants. Let's start by including weight (`weight2004`) in how we match participants.
+
+```{r}
+lm2 <- lm(depress2001 ~ smoke01, data = arh)
+
+# To use the "Nearest Neighbor" method:
+
+# Step 1: Create a MatchIt object
+match3 <- matchit(smoke01 ~ sex + race + married01 + weight2004,
+                  method = "nearest",
+                  data = arh)
+
+# Step 2: Convert the match object to a data frame that can be used in the analysis
+matched_df_nearest2 <- match.data(match3)
+
+# Step 3: redo the analysis using the subsetted (matched) data:
+psm_lm_nearest2 <- lm(depress2001 ~ smoke01, data = matched_df_nearest2)
+
+summary(psm_lm_nearest2)
+```
+
+To assess whether shuffling changes the results:
+
+```{r}
+random_rows3 <- sample(x = 1:nrow(arh), size = nrow(arh))
+arh_randomized3 <- arh[random_rows3, ]
+
+# Step 1: Create a MatchIt object
+match3_random <- matchit(smoke01 ~ sex + race + married01 + weight2004,
+                         method = "nearest",
+                         data = arh_randomized3)
+
+# Step 2: Convert the match object to a data frame that can be used in the analysis
+matched_df_random3 <- match.data(match3_random)
+
+# Step 3: redo the analysis using the subsetted (matched) data:
+psm_lm_random3 <- lm(depress2001 ~ smoke01, data = matched_df_random3)
+
+summary(psm_lm_random3)
+```
+
+The results are still fluctuating, albeit less so. This indicates that there are still imbalances in the subgroups.
+
+We can try to match participants based on even more information.
+
+Lets throw years of education (`school`), religion (`church2001`), and number of times they saw a doctor in the last 90 days (`see_dr90days`) into the mix --- hopefully that will break any and all "propensity ties" in the data.
+
+```{r}
+# To use the "Nearest Neighbor" method:
+
+# Step 1: Create a MatchIt object
+match4 <-
+  matchit(smoke01 ~ sex + race + married01 + weight2004 + school +
+                    church2001 + see_dr90days,
+          method = "nearest",
+          data = arh)
+
+# Step 2: Convert the match object to a data frame that can be used in the analysis
+matched_df_nearest3 <- match.data(match4)
+
+# Step 3: redo the analysis using the subsetted (matched) data:
+psm_lm_nearest3 <- lm(depress2001 ~ smoke01, data = matched_df_nearest3)
+
+summary(psm_lm_nearest3)
+```
+
+```{r}
+random_rows4 <- sample(x = 1:nrow(arh), size = nrow(arh))
+arh_randomized4 <- arh[random_rows4, ]
+
+# Step 1: Create a MatchIt object
+match4_random <- matchit(smoke01 ~ sex + race + married01 + weight2004 +
+                                   school + church2001 + see_dr90days,
+                         method = "nearest",
+                         data = arh_randomized3)
+
+# Step 2: Convert the match object to a data frame that can be used in the analysis
+matched_df_random4 <- match.data(match4_random)
+
+# Step 3: redo the analysis using the subsetted (matched) data:
+psm_lm_random4 <- lm(depress2001 ~ smoke01, data = matched_df_random4)
+
+summary(psm_lm_random4)
+```
+
+We have finally reached stability with the nearest neighbor approach (note: at the cost of losing participants from excluding missing data, notice that the degrees of freedom have dropped).
+
+At this point, we've gone through so many iterations of the data ("forking paths") that I wouldn't put much faith in this analysis. We did this in an effort to illustrate how propensity score matching works. However, thinking about what variables to include in the matching stage can be very difficult. If we fail to include a truly confounding variable, then the final causal estimate will still be biased. Thinking about how to obtain the propensity scores may well be the most difficult part of a propensity score analysis.
+
+# A note on the `twang` package
+
+A more sophisticated approach to predicting the propensity scores is through a generalized boosted regression models --- a machine learning technique. The advantages is that this kind of models is better suited to capturing non-linearities and complex interactions. Propensity score matching using gbm's is available through the `twang` package developed by the RAND Corporation. If you're interested, I've added some supplemental material on Canvas that briefly introduces this package.
+
+# Take home
+
+Propensity score matching is a quasi-experimental method in which the researcher uses statistical techniques to construct an artificial control group by matching each treated unit with a non-treated unit of similar characteristics. Using these matches, the researcher can estimate the impact of an intervention.

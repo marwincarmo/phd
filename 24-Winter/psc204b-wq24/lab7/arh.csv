@@ -1,0 +1,839 @@
+"id","sex","race","school","married01","church2001","sunday_school01","how_often01","relship_god01","bible01","pray01","overall_health01","smoke01","cig_week01","depress2001","satisfied2001","self_worth2001","marriage2004","church2004","sunday_school04","how_often04","relship_god04","bible04","pray04","overall_health04","see_dr90days","weight2004","smoke04","cig_week04","depression2004","satisfied2004","self_worth2004","fear_death"
+10349,"Female","White/Caucasian",12,"Married","Protestant",1,1,2,3,1,1,1,1,15,9,6,"Married","Protestant",1,3,1,NA,NA,1,0,131,1,686,8,8,5,12
+10348,"Male","White/Caucasian",5,"Married","Protestant",1,1,2,3,3,1,1,1,14,10,6,"Married","Protestant",1,3,1,8,NA,1,0,163,1,NA,8,7,6,16
+10667,"Male","Black/African American",5,"Widowed","Protestant",3,3,2,7,8,2,1,1,10,11,6,"Widowed","Protestant",1,4,3,5,1,4,2,173,2,NA,18,6,4,5
+10346,"Male","White/Caucasian",12,"Married","Catholic or Roman Catholic",8,8,1,2,1,2,1,1,11,4,3,"Married","Other",1,8,1,NA,1,1,0,204,2,NA,8,4,6,16
+10127,"Female","Black/African American",12,"Widowed","Protestant",1,6,1,3,1,3,1,1,23,12,3,"Widowed","Protestant",1,6,1,5,1,2,1,170,1,NA,15,10,7,11
+10129,"Male","Black/African American",12,"Married","Protestant",1,6,1,3,2,3,1,1,13,9,6,"Married","Protestant",7,6,1,1,1,3,2,200,2,NA,18,10,7,12
+11130,"Female","White/Caucasian",14,"Married","Other",7,8,1,2,2,1,1,3,11,8,3,"Married","Protestant",8,8,1,2,2,2,0,130,1,56,8,7,7,12
+10741,"Male","Black/African American",12,"Married","Protestant",1,2,NA,8,2,2,1,3,20,13,6,"Married","Protestant",1,1,3,5,2,3,2,170,2,NA,13,11,6,8
+10579,"Female","Black/African American",7,"Widowed","Protestant",4,4,1,1,1,2,1,3,8,4,NA,"Widowed","Other",2,2,1,2,2,3,3,123,2,NA,9,8,8,16
+10459,"Male",NA,2,"Widowed","Protestant",1,7,1,8,2,2,1,3,8,9,6,"Widowed","Protestant",1,1,2,8,1,4,6,145,1,84,14,11,8,16
+10437,"Male","Black/African American",6,"Never Married","Other",5,6,2,7,4,2,1,3,12,10,6,"Never married","Protestant",4,6,1,5,2,3,1,142,1,NA,13,8,7,12
+10405,"Female","Black/African American",12,"Married","Protestant",1,8,1,1,1,3,1,3,16,7,3,"Widowed","Protestant",5,8,1,2,1,2,3,200,2,NA,10,8,5,12
+10163,"Female","Black/African American",11,"Divorced","Protestant",4,4,1,3,1,3,1,3,14,9,6,"Divorced","Protestant",7,7,1,2,1,2,4,175,1,35,8,8,7,12
+11194,"Male","Black/African American and some other race",20,"Divorced","Protestant",5,5,1,8,1,4,1,3,13,8,3,"Divorced","Other",8,8,1,2,2,2,0,195,2,NA,8,7,7,12
+10921,"Female","Black/African American and some other race",12,"Widowed","Protestant",8,8,1,1,1,2,1,4,8,4,3,"Widowed","Protestant",5,1,1,2,1,3,4,129,2,NA,9,4,6,16
+11042,"Female","Black/African American",12,"Divorced","Protestant",4,7,1,2,1,2,1,4,8,9,5,"Divorced","No religious preference",1,1,2,2,2,2,1,135,1,0,9,8,6,14
+10779,"Female","Black/African American",7,"Widowed","Protestant",1,7,1,3,1,2,1,4,8,5,3,"Widowed","Protestant",1,7,1,4,1,3,4,135,1,49,13,7,5,13
+10254,"Male","Black/African American",15,"Widowed","Protestant",1,4,2,6,2,2,1,4,14,10,6,"Widowed","Protestant",1,3,2,6,2,2,4,199,2,NA,16,10,6,9
+11140,"Female","Black/African American",10,"Divorced","Protestant",1,1,2,8,5,2,1,4,3,10,6,"Widowed","Protestant",1,1,1,8,1,3,0,130,1,70,21,10,5,12
+10805,"Female","White/Caucasian",3,"Married","Protestant",8,9,1,2,1,4,1,4,16,9,6,"Married","Protestant",1,1,2,2,3,4,1,168,1,140,14,11,6,9
+10911,"Female","White/Caucasian",5,"Never Married","Catholic or Roman Catholic",1,6,2,8,1,2,1,5,10,9,6,"Married","No religious preference",1,1,3,8,7,4,NA,NA,2,NA,32,17,6,8
+10876,"Male","Black/African American and some other race",3,"Widowed","Protestant",1,6,2,3,1,3,1,5,15,NA,6,"Widowed","Protestant",2,5,2,2,1,4,20,177,2,NA,9,11,6,11
+10991,"Male","Black/African American and some other race",10,"Married","Protestant",2,2,2,2,2,3,1,5,5,12,5,"Married","Other",4,3,1,2,1,1,6,170,1,686,8,10,7,12
+10653,"Female","Black/African American and some other race",11,"Divorced","Protestant",9,8,1,1,1,4,1,5,13,12,4,"Divorced","Other",9,8,1,2,1,3,3,200,2,NA,13,9,4,13
+10357,"Male","White/Caucasian",9,"Married","Protestant",1,1,2,8,8,3,1,6,11,7,6,"Married","Protestant",1,1,2,8,3,4,6,126,2,NA,10,12,6,8
+11101,"Female","Black/African American",8,"Married","Protestant",1,8,2,2,2,3,1,6,8,12,6,"Married","Protestant",1,8,1,2,1,2,0,142,1,21,8,7,6,16
+10626,"Male","Black/African American",7,"Married","Protestant",9,8,1,1,1,3,1,9,9,4,4,"Married","Protestant",8,8,1,3,1,3,2,189,2,NA,12,9,6,16
+10126,"Female","Black/African American",12,"Widowed","Protestant",6,6,1,1,2,3,1,9,13,11,6,"Widowed","Protestant",1,6,2,1,1,4,12,172,1,49,16,7,7,12
+10545,"Female","White/Caucasian",9,"Widowed","Other",1,1,2,8,1,1,1,10,13,8,5,"Widowed","Protestant",1,1,1,8,2,2,1,170,2,NA,13,8,4,12
+10048,"Male","Black/African American",4,"Widowed","Protestant",3,3,1,4,1,2,1,10,13,5,6,"Widowed","Protestant",1,6,1,3,2,2,0,125,2,NA,13,8,6,16
+10445,"Female","Black/African American",8,"Married","Protestant",6,6,1,5,1,2,1,10,9,11,5,"Married","Protestant",1,6,2,7,3,3,1,173,2,NA,11,10,6,10
+10334,"Male","Black/African American",12,"Divorced","Protestant",6,7,1,4,3,2,1,10,8,7,3,"Divorced","Protestant",4,6,2,3,2,2,1,223,1,84,8,5,6,16
+10449,"Female","Black/African American",5,"Widowed","Protestant",1,6,1,7,1,2,1,10,11,9,6,"Widowed","Protestant",1,4,1,3,1,2,1,194,1,42,20,10,6,16
+11318,"Female","Black/African American",22,"Married","Protestant",7,8,1,2,2,2,1,10,12,NA,4,"Widowed","Protestant",8,8,1,4,3,2,0,145,2,NA,8,21,10,27
+10642,"Female","Black/African American",12,"Married","Protestant",1,8,1,2,2,2,1,10,12,5,4,"Married","Protestant",4,3,2,2,2,2,1,178,1,21,8,8,7,12
+10756,"Female","White/Caucasian",12,"Widowed","Protestant",4,4,2,2,2,2,1,10,11,8,6,"Widowed","Protestant",1,1,1,2,2,1,0,100,1,70,8,8,6,16
+10751,"Male","White/Caucasian",12,"Married","Protestant",4,4,2,5,3,2,1,10,10,9,6,"Married","Protestant",1,4,2,NA,2,2,4,170,2,NA,8,12,6,11
+10980,"Male","Black/African American",9,"Separated","Protestant",1,3,1,4,2,2,1,10,16,9,3,"Divorced","Protestant",7,7,2,3,3,3,0,162,1,28,11,8,5,12
+11063,"Female","White/Caucasian",12,"Widowed","Protestant",10,3,2,7,7,2,1,10,15,11,6,"Married","Protestant",1,8,2,8,2,2,1,118,2,NA,16,10,7,7
+10755,"Male","White/Caucasian",16,"Widowed","Protestant",1,4,3,7,8,3,1,10,19,10,6,"Widowed","Protestant",1,1,3,8,8,3,1,135,1,105,15,11,7,12
+11217,"Female","Black/African American",11,"Married","Protestant",4,4,1,2,2,3,1,10,8,NA,3,"Married","Protestant",1,2,1,5,2,2,0,180,1,NA,8,9,7,12
+11138,"Male","Black/African American",12,"Married","Protestant",3,7,1,3,1,3,1,10,12,11,3,"Married","Other",1,8,1,3,2,3,1,165,1,NA,8,12,6,16
+11139,"Female","Black/African American",16,"Married","Protestant",3,4,2,3,1,3,1,10,15,11,5,"Married","Other",1,1,1,3,1,3,1,112,2,NA,8,7,6,16
+10162,"Male","Black/African American",8,"Divorced","Protestant",3,4,1,5,1,3,1,10,8,8,6,"Divorced","Protestant",5,4,1,6,1,2,1,180,1,42,8,9,5,12
+10679,"Male","Black/African American",3,"Married","Protestant",1,2,NA,8,2,3,1,10,10,9,8,"Married","No religious preference",1,2,2,8,2,4,0,220,1,70,14,8,7,12
+10965,"Male","White/Caucasian",11,"Married","Protestant",4,6,1,7,3,3,1,10,18,12,3,"Married","Protestant",4,3,2,8,5,3,0,187,2,NA,17,10,6,13
+10804,"Male","White/Caucasian",8,"Separated","Protestant",6,NA,2,3,2,3,1,10,16,NA,6,"Widowed","Protestant",8,8,1,2,1,2,0,180,2,NA,12,13,7,13
+10987,"Male","Black/African American",5,"Never Married","Protestant",4,3,2,5,2,3,1,10,29,12,5,"Divorced","No religious preference",1,1,3,8,5,2,0,170,1,210,11,9,6,8
+10558,"Female","Black/African American",10,"Divorced","Protestant",4,3,1,5,1,4,1,10,27,13,6,"Widowed","Protestant",7,9,1,2,1,4,0,150,1,35,20,4,4,10
+11467,"Male","Black/African American",7,"Married","Protestant",1,4,1,8,1,4,1,10,9,9,6,"Married","Protestant",1,4,2,8,6,4,4,160,1,NA,29,12,7,6
+10030,"Male","Black/African American",12,"Married","Protestant",1,8,1,5,2,1,1,12,11,8,3,"Married","Protestant",1,6,1,7,2,2,0,212,1,56,8,5,5,12
+10197,"Female","Black/African American",12,"Widowed","Protestant",8,8,1,3,1,2,1,12,9,5,4,"Widowed","Other",8,8,1,2,1,1,0,98,1,21,30,5,6,16
+10053,"Female","White/Caucasian",14,"Widowed","Protestant",1,4,2,5,2,2,1,12,8,9,6,"Widowed","Protestant",1,4,2,8,3,3,1,123,1,56,10,9,7,11
+11475,"Female","Black/African American",14,"Married","Protestant",1,8,1,7,2,3,1,12,9,11,3,"Married","Protestant",1,9,2,8,1,2,1,110,1,70,9,7,7,11
+10607,"Female","White/Caucasian",11,"Married","Protestant",1,7,1,3,2,3,1,12,8,8,6,"Married","Protestant",1,3,1,3,1,3,3,118,2,NA,14,8,5,11
+10041,"Male","Black/African American",12,"Married","Protestant",1,3,2,2,3,3,1,12,16,7,4,"Widowed","Protestant",8,8,2,8,6,2,1,165,1,70,8,8,7,11
+10101,"Female","White/Caucasian",10,"Married","Protestant",1,1,2,8,2,2,1,15,10,7,6,"Married","Protestant",1,1,1,8,2,1,0,180,1,140,8,4,4,11
+10299,"Female","Black/African American",12,"Widowed","Protestant",4,4,2,2,2,2,1,15,12,11,3,"Widowed","Protestant",1,4,1,1,1,2,2,NA,1,28,13,8,4,9
+10790,"Female","White/Caucasian",13,"Widowed","Protestant",8,9,1,2,2,1,1,20,20,10,4,"Widowed","Protestant",7,8,2,2,2,2,3,150,1,NA,11,10,6,16
+11080,"Female","Black/African American",12,"Divorced","Protestant",NA,NA,2,5,NA,1,1,20,13,5,6,"Married","Other",1,3,2,7,1,2,1,NA,2,NA,17,17,7,17
+10029,"Female","Black/African American",11,"Widowed","Protestant",8,8,1,2,1,2,1,20,19,11,3,"Widowed","Protestant",7,8,2,2,1,2,1,175,1,7,8,8,5,12
+11083,"Female","Black/African American",7,"Widowed","Protestant",2,4,NA,NA,NA,2,1,20,15,9,6,"Widowed","Protestant",NA,NA,1,1,1,4,NA,160,2,NA,17,9,5,12
+11078,"Male","White/Caucasian and some other race",7,"Never Married","Catholic or Roman Catholic",6,4,2,4,2,2,1,20,16,10,NA,"Divorced","Protestant",1,1,2,3,2,2,1,297,2,NA,13,12,6,8
+10926,"Female","White/Caucasian",12,"Divorced","Protestant",1,3,NA,7,2,2,1,20,8,NA,5,"Divorced","Protestant",NA,NA,2,7,2,2,0,132,1,NA,8,13,7,10
+10775,"Male","Black/African American",4,"Married","Protestant",1,1,2,7,3,2,1,20,8,5,3,"Married","Protestant",1,3,1,8,2,2,2,176,2,NA,8,10,5,12
+11001,"Male","Black/African American",12,"Married","Protestant",4,8,1,2,1,2,1,20,NA,11,6,"Married","Protestant",8,8,1,4,1,3,3,234,1,70,9,9,6,16
+10503,"Male","White/Caucasian",12,"Divorced","Protestant",2,2,2,7,4,2,1,20,8,8,6,"Married","Protestant",1,1,2,5,2,2,1,187,2,NA,8,8,5,12
+10291,"Male","White/Caucasian",12,"Never Married","Protestant",1,7,2,8,3,3,1,20,9,10,6,"Never married","Protestant",1,1,2,7,5,3,0,186,1,NA,12,12,6,8
+10672,"Female","Black/African American",12,"Widowed","Protestant",8,8,1,2,2,3,1,20,12,4,3,"Widowed","Protestant",8,8,1,1,1,2,2,160,2,NA,8,4,5,12
+10451,"Male","Black/African American",10,"Married","Protestant",1,8,2,2,2,3,1,20,12,9,3,"Married","Protestant",1,8,1,2,1,1,1,195,1,NA,13,8,6,12
+10201,"Female","White/Caucasian",12,"Married","Protestant",4,4,1,3,1,3,1,20,23,9,6,"Widowed","Protestant",1,2,1,2,1,2,1,160,1,140,32,9,6,10
+10767,"Male","Black/African American",5,"Married","Protestant",1,7,2,NA,2,3,1,20,NA,NA,6,"Married","Protestant",1,8,1,2,1,2,0,199,1,NA,8,8,3,4
+10966,"Female","White/Caucasian",12,"Divorced","Protestant",3,3,2,4,2,3,1,20,31,11,6,"Divorced","Protestant",1,1,1,5,2,4,3,114,2,NA,16,9,6,11
+11435,"Female","White/Caucasian",10,"Widowed","Protestant",1,3,1,4,5,3,1,20,18,10,6,"Widowed","Protestant",2,4,2,5,1,3,2,128,1,NA,19,8,6,8
+11057,"Male","White/Caucasian",12,"Married","Protestant",1,1,2,7,6,3,1,20,9,4,4,"Married","Protestant",1,1,3,7,7,2,1,156,1,NA,8,8,6,14
+10460,"Female","Black/African American",10,"Widowed","Protestant",6,6,1,5,1,4,1,20,23,11,5,"Widowed","Protestant",6,6,1,6,2,3,3,276,2,NA,11,9,5,12
+10831,"Female","Black/African American",11,"Divorced","Protestant",3,1,2,5,2,4,1,20,8,8,6,"Divorced","Protestant",1,3,2,7,NA,2,1,108,1,70,11,9,5,16
+10511,"Female","White/Caucasian",10,"Widowed","Protestant",1,7,1,3,2,4,1,20,8,6,6,"Widowed","Protestant",2,1,1,3,1,1,0,110,1,NA,8,4,5,12
+10441,"Male","Black/African American",8,"Married","Protestant",1,1,2,4,4,4,1,20,32,11,6,"Married","Other",1,3,2,8,2,2,NA,158,1,NA,13,8,7,12
+10462,"Male","Black/African American",10,"Divorced","Protestant",1,1,1,8,1,4,1,25,16,9,5,"Divorced","Protestant",1,5,1,3,1,3,4,215,1,140,10,9,6,16
+10557,"Male","Black/African American",13,"Never Married","Protestant",3,6,1,4,1,1,1,30,14,7,6,"Never married","Protestant",4,6,1,2,1,2,1,140,1,NA,12,4,3,10
+11028,"Male","White/Caucasian",14,"Married","Protestant",1,3,2,8,2,3,1,30,12,10,5,"Divorced","Protestant",1,4,2,7,2,3,0,180,1,140,14,12,7,11
+10157,"Male","White/Caucasian",12,"Divorced","Protestant",1,4,2,3,5,3,1,40,12,11,6,"Divorced","Other",1,8,1,7,2,2,1,170,2,NA,11,10,5,12
+10109,"Male","White/Caucasian",12,"Widowed",NA,1,1,1,7,3,1,1,60,12,7,3,"Widowed","Protestant",1,1,2,5,7,4,0,205,1,NA,11,11,7,14
+11141,"Female","Black/African American",14,"Widowed","Protestant",1,1,2,NA,1,2,NA,NA,30,NA,6,"Widowed","Protestant",1,3,1,5,2,2,1,173,2,NA,12,15,5,12
+11464,"Female","Black/African American",12,"Married","Protestant",4,7,1,1,3,1,1,NA,9,4,3,"Married","Protestant",1,6,1,2,1,2,0,162,2,NA,10,9,7,12
+10510,"Female","White/Caucasian",12,"Widowed","Protestant",1,3,1,7,2,2,1,NA,9,6,3,"Widowed","Protestant",1,1,1,4,2,2,1,126,1,NA,12,8,7,12
+10198,"Male","Black/African American",12,"Divorced",NA,1,1,4,8,8,3,1,NA,14,10,6,"Divorced","No religious preference",1,1,4,8,8,3,1,230,2,NA,9,9,6,12
+11498,"Female","Black/African American",12,"Married","Protestant",1,2,2,8,1,3,1,NA,18,9,6,"Widowed","Protestant",1,4,2,8,3,2,0,130,2,NA,9,8,6,8
+11046,"Female","Black/African American and some other race",16,"Widowed","Protestant",6,8,2,4,2,3,1,NA,18,NA,6,"Widowed","Protestant",1,7,2,3,2,3,1,210,2,NA,15,8,5,12
+10344,"Female","White/Caucasian",13,"Married","Protestant",1,4,1,NA,2,3,1,NA,8,9,3,"Married","Protestant",1,1,1,3,3,3,1,120,1,70,8,11,5,8
+10270,"Female","Black/African American",4,"Married","Protestant",1,3,2,3,2,4,1,NA,27,9,4,"Married","Protestant",2,2,2,3,1,3,2,158,1,14,8,10,6,11
+10100,"Male","White/Caucasian",16,"Married","Protestant",2,2,2,7,8,1,2,NA,8,1,6,"Married","Protestant",1,4,3,7,7,3,0,190,2,NA,8,14,12,32
+10073,"Male","White/Caucasian",17,"Married","Protestant",4,4,4,7,8,1,2,NA,12,8,6,"Married","Protestant",1,1,4,8,8,2,2,155,2,NA,11,8,7,12
+11494,"Female","White/Caucasian",16,"Married","Protestant",1,1,NA,8,8,1,2,NA,8,8,3,"Married","Protestant",1,1,3,8,8,1,3,165,2,NA,8,8,7,12
+11343,"Male","White/Caucasian",7,"Married","Protestant",1,1,2,8,8,1,2,NA,8,4,3,"Married","Protestant",1,1,2,8,7,2,2,184,2,NA,8,5,6,10
+10859,"Male","White/Caucasian",12,"Married","Protestant",1,3,3,8,8,1,2,NA,8,8,6,"Married","Protestant",1,4,3,8,8,4,1,225,2,NA,8,8,5,12
+10115,"Female","White/Caucasian",12,"Divorced","Protestant",2,3,3,8,8,1,2,NA,9,13,6,"Divorced","Protestant",1,1,3,8,8,1,1,135,2,NA,15,12,9,12
+10071,"Female","White/Caucasian",17,"Married",NA,1,1,4,8,8,1,2,NA,10,10,6,"Married","No religious preference",1,1,4,8,8,1,1,125,2,NA,10,10,6,9
+10933,"Male","White/Caucasian",8,"Widowed","Protestant",1,1,4,8,8,1,2,NA,16,8,3,"Divorced","No religious preference",1,1,4,8,8,1,2,191,2,NA,14,12,6,9
+10256,"Male","White/Caucasian",14,"Widowed","Protestant",1,1,4,8,8,1,2,NA,13,10,3,"Widowed","Protestant",1,1,4,8,8,1,1,167,2,NA,9,8,6,16
+10664,"Female","Black/African American",12,"Widowed","Protestant",9,8,2,5,2,1,2,NA,11,11,3,"Widowed","Protestant",8,8,1,2,2,2,1,150,2,NA,17,6,6,12
+10691,"Male","Black/African American",12,"Married","Protestant",6,8,1,1,2,1,2,NA,8,7,3,"Married","Protestant",6,8,1,3,1,2,0,180,2,NA,8,8,10,26
+10224,"Female","White/Caucasian",12,"Widowed","Protestant",7,8,1,2,2,1,2,NA,8,NA,3,"Widowed","Protestant",4,8,1,2,1,2,3,129,2,NA,10,9,6,14
+10001,"Male","Black/African American",16,"Divorced","Protestant",3,2,1,4,2,1,2,NA,10,NA,3,"Divorced","Protestant",3,5,1,8,3,1,6,185,2,NA,14,9,5,10
+10395,"Male","White/Caucasian",16,"Married","Protestant",1,2,NA,3,3,1,2,NA,8,7,3,"Married","Protestant",1,1,1,4,5,2,4,160,2,NA,9,10,6,15
+11304,"Male","White/Caucasian",13,"Widowed","Protestant",1,1,2,7,3,1,2,NA,11,9,6,"Widowed","Protestant",1,3,2,8,6,1,3,205,2,NA,8,7,7,12
+10584,"Male","White/Caucasian",17,"Divorced","Protestant",5,5,2,5,7,1,2,NA,8,9,3,"Married","Other",3,4,NA,6,6,1,4,185,2,NA,8,9,5,10
+10568,"Male","White/Caucasian",12,"Married","Protestant",1,1,3,8,7,1,2,NA,9,11,4,"Married","Not sure",1,1,3,8,8,3,3,160,2,NA,11,11,5,12
+10137,"Male","White/Caucasian",15,"Married","Protestant",1,1,3,8,7,1,2,NA,10,NA,6,"Married","Protestant",1,1,3,8,7,1,1,183,2,NA,8,22,5,12
+10881,"Male","Black/African American",12,"Married","Other",9,8,1,1,1,1,2,NA,12,5,3,"Married","Other",8,9,1,2,2,2,1,215,2,NA,8,5,5,12
+10329,"Female","Black/African American",16,"Divorced","Protestant",8,8,1,1,1,1,2,NA,8,4,3,"Divorced","Protestant",8,8,1,2,2,1,0,107,2,NA,8,8,5,12
+10627,"Female","Black/African American and some other race",9,"Separated","Protestant",8,9,1,1,1,1,2,NA,8,5,5,"Separated","Protestant",8,8,1,1,1,2,3,141,2,NA,10,7,6,14
+10845,"Female","White/Caucasian",12,"Married","Protestant",5,8,1,1,1,1,2,NA,9,9,6,"Widowed","Protestant",8,8,1,2,1,2,2,112,2,NA,26,9,7,12
+10844,"Female","White/Caucasian",8,"Married","Protestant",6,9,1,1,1,1,2,NA,8,7,5,"Married","Protestant",8,9,1,1,1,2,2,139,2,NA,8,6,6,12
+10842,"Male","White/Caucasian",10,"Married","Protestant",6,9,1,1,1,1,2,NA,8,7,5,"Married","Protestant",8,9,1,1,1,2,2,162,2,NA,9,7,7,12
+10181,"Female","Black/African American",6,"Widowed","Protestant",8,8,1,2,1,1,2,NA,16,6,3,"Widowed","Protestant",4,8,1,3,1,3,1,126,2,NA,15,10,6,12
+10066,"Female","White/Caucasian",12,"Widowed","Protestant",8,8,1,2,1,1,2,NA,12,11,3,"Widowed","Protestant",8,8,1,2,2,1,0,160,2,NA,10,10,6,16
+10619,"Female","Black/African American",12,"Widowed","Protestant",8,8,1,2,1,1,2,NA,12,7,3,"Divorced","Decline to answer",1,NA,2,8,5,NA,4,189,2,NA,8,18,6,8
+11280,"Female","White/Caucasian",14,"Married","Protestant",4,9,1,2,1,1,2,NA,9,8,3,"Married","Other",8,8,1,2,1,2,2,165,2,NA,8,9,6,13
+11055,"Female","White/Caucasian",12,"Married","Protestant",8,8,1,2,1,1,2,NA,20,NA,3,"Married","Protestant",9,8,1,2,1,2,6,190,2,NA,17,4,5,11
+10074,"Female","White/Caucasian",14,"Married","Protestant",8,8,1,2,1,1,2,NA,8,5,6,"Married","Protestant",8,8,1,2,2,2,1,120,2,NA,9,5,6,13
+10400,"Male","Black/African American",15,"Married","Protestant",2,5,1,2,1,1,2,NA,8,4,3,"Married","Protestant",4,4,1,2,2,2,1,176,2,NA,9,9,8,16
+10464,"Female","Black/African American",7,"Married","Protestant",6,6,1,2,1,1,2,NA,13,8,6,"Widowed","Protestant",8,8,1,2,1,1,0,150,2,NA,14,8,8,16
+10658,"Female","Black/African American",14,"Married","Protestant",8,8,1,2,1,1,2,NA,8,8,3,"Married","Protestant",8,8,1,2,2,1,1,140,2,NA,8,15,6,16
+10077,"Female","White/Caucasian",14,"Widowed","Protestant",8,8,1,2,1,1,2,NA,3,6,5,"Widowed","Protestant",8,8,2,1,1,2,6,110,2,NA,12,8,7,11
+10105,"Male","White/Caucasian",12,"Married","Protestant",9,9,1,2,1,1,2,NA,8,9,6,"Married","Protestant",8,8,1,2,2,2,1,177,2,NA,8,8,5,12
+11479,"Male","Black/African American",6,"Widowed","Protestant",1,6,2,2,1,1,2,NA,8,4,3,"Widowed","Protestant",1,1,2,NA,2,4,1,160,2,NA,9,11,6,14
+11281,"Male","White/Caucasian",14,"Married","Protestant",2,3,1,3,1,1,2,NA,8,6,3,"Married","Other",5,4,1,5,1,1,0,250,2,NA,8,4,6,16
+11179,"Female","Black/African American",11,"Widowed","Protestant",5,8,1,3,1,1,2,NA,8,4,3,"Widowed","Other",8,8,1,2,2,1,0,124,2,NA,8,11,6,16
+11174,"Female","Black/African American",12,"Widowed","Protestant",6,6,1,3,1,1,2,NA,9,6,3,"Widowed","Other",1,6,1,3,1,2,0,185,2,NA,8,8,5,13
+10946,"Female","White/Caucasian",16,"Married","Protestant",8,8,1,3,1,1,2,NA,9,0,6,"Widowed","Other",8,8,1,3,1,2,0,200,2,NA,8,7,6,16
+10848,"Male","White/Caucasian",12,"Married","Protestant",1,1,2,3,1,1,2,NA,8,9,6,"Married","Protestant",9,1,2,2,1,1,0,172,2,NA,8,7,7,12
+11224,"Male","Black/African American",11,"Married","Protestant",1,5,1,5,1,1,2,NA,8,4,3,"Married","Protestant",1,3,2,5,1,3,1,205,2,NA,8,8,7,12
+10534,"Male","Black/African American",16,"Married","Protestant",1,8,1,7,1,1,2,NA,11,4,3,"Married","Protestant",8,8,1,5,2,2,1,240,2,NA,8,8,5,12
+10576,"Male","Black/African American",9,"Married",NA,7,7,1,NA,2,1,2,NA,9,10,3,"Married","Other",8,8,1,3,2,3,4,199,2,NA,12,12,6,20
+10068,"Female","White/Caucasian",17,"Widowed","Protestant",8,8,1,2,2,1,2,NA,13,11,3,"Widowed","Protestant",8,8,1,3,1,2,0,127,2,NA,18,9,5,12
+10292,"Female","Black/African American",11,"Married","Protestant",6,8,1,2,2,1,2,NA,16,NA,6,"Widowed","Protestant",6,8,2,1,1,2,1,155,NA,686,23,7,6,10
+11084,"Female","Black/African American",12,"Divorced","Other",4,5,2,2,2,1,2,NA,10,7,6,"Widowed","Other",9,2,NA,2,1,3,2,162,2,NA,20,18,13,12
+11235,"Female","White/Caucasian",12,"Widowed","Protestant",5,8,1,3,2,1,2,NA,11,6,3,"Widowed","Protestant",5,6,1,4,3,2,0,150,2,NA,15,9,6,14
+10613,"Female","White/Caucasian",12,"Married","Protestant",2,4,1,3,2,1,2,NA,8,7,3,"Married","Protestant",2,2,1,3,1,1,1,180,2,NA,8,7,6,16
+10117,"Female","White/Caucasian",12,"Married","Protestant",8,7,2,3,2,1,2,NA,14,12,3,"Married","Protestant",8,6,2,3,1,2,3,165,2,NA,15,10,7,12
+10469,"Male","White/Caucasian",12,"Married","Other",8,8,1,4,2,1,2,NA,8,4,3,"Married","Protestant",8,8,1,3,2,1,0,165,2,NA,8,8,7,11
+10722,"Female","Black/African American",9,"Widowed","Protestant",1,1,2,4,2,1,2,NA,8,8,6,"Married","Protestant",8,8,2,3,2,1,1,195,2,NA,10,9,7,12
+10535,"Female","Black/African American",4,"Widowed","Protestant",6,3,1,5,2,1,2,NA,16,7,3,"Widowed","Protestant",5,3,1,7,2,3,1,114,2,NA,11,8,6,9
+10173,"Male","Black/African American",6,"Never Married","Protestant",1,8,1,7,2,1,2,NA,10,4,3,"Never married","Protestant",1,8,2,8,1,3,2,156,2,NA,8,11,6,10
+11436,"Male","White/Caucasian",12,"Married","Protestant",2,3,1,8,2,1,2,NA,13,7,3,"Married","Protestant",2,2,2,8,2,1,1,187,2,NA,10,10,7,10
+10884,"Male","Black/African American",8,"Widowed","Protestant",1,5,1,8,2,1,2,NA,14,11,6,"Widowed","Protestant",1,6,1,8,2,2,1,185,2,NA,9,8,5,12
+10269,"Female","Black/African American",12,"Widowed","Protestant",8,8,1,2,3,1,2,NA,12,8,6,"Widowed","Protestant",1,1,2,NA,2,4,2,NA,2,NA,8,12,7,12
+10341,"Male","White/Caucasian",16,"Divorced","Protestant",4,3,1,5,3,1,2,NA,6,8,6,"Divorced","Protestant",1,1,1,7,8,2,9,155,2,NA,8,11,5,12
+10294,"Male","Black/African American",7,"Married","Protestant",1,6,NA,7,3,1,2,NA,11,9,3,"Married","Protestant",1,6,1,5,3,2,0,210,2,NA,13,5,13,36
+10141,"Male","White/Caucasian",16,"Widowed","Protestant",8,8,1,1,1,1,2,NA,8,8,6,"Widowed","Protestant",1,8,1,2,1,2,1,185,2,NA,8,8,8,16
+10696,"Male","White/Caucasian",19,"Married","Protestant",8,9,1,1,1,1,2,NA,9,10,3,"Married","Protestant",4,6,2,2,2,1,0,160,2,NA,10,11,6,11
+11154,"Female","Black/African American",5,"Widowed","Protestant",1,7,1,1,1,1,2,NA,8,6,NA,"Widowed","Protestant",4,8,1,2,2,2,1,NA,2,NA,8,8,8,16
+10392,"Female","White/Caucasian",12,"Divorced","Protestant",8,8,1,1,1,1,2,NA,8,4,3,"Divorced","Protestant",1,1,1,1,1,2,0,110,2,NA,8,4,7,12
+11454,"Female","Black/African American",8,"Widowed","Protestant",8,8,1,1,1,1,2,NA,8,5,3,"Widowed","Other",7,9,1,2,1,1,0,165,2,NA,8,7,6,16
+10841,"Male","White/Caucasian",12,"Married","Protestant",1,9,1,1,1,1,2,NA,0,8,4,"Widowed","Protestant",3,9,1,2,1,2,1,212,2,NA,9,7,6,12
+11197,"Female","Black/African American",15,"Widowed","Protestant",6,8,1,2,1,1,2,NA,3,5,3,"Widowed","Protestant",1,6,1,2,2,2,3,173,2,NA,14,6,6,13
+10218,"Female","White/Caucasian",12,"Married","Protestant",8,8,1,2,1,1,2,NA,8,9,6,"Married","Other",8,8,1,2,1,1,1,124,2,NA,9,8,8,13
+10820,"Female","Black/African American",18,"Divorced","Protestant",8,8,1,2,1,1,2,NA,11,NA,3,"Separated","Protestant",8,8,1,2,1,2,3,116,2,NA,8,5,6,16
+11238,"Male","White/Caucasian",12,"Married","Protestant",3,9,1,2,1,1,2,NA,10,NA,NA,"Married","Other",8,8,1,2,2,3,1,180,2,NA,12,15,9,16
+10471,"Female","White/Caucasian",16,"Married","Other",8,8,2,2,1,1,2,NA,8,4,5,"Married","Other",1,8,1,2,2,1,0,138,2,NA,8,7,6,16
+11323,"Female","Black/African American",12,"Widowed","Protestant",1,4,1,3,1,1,2,NA,11,11,3,"Widowed","Protestant",1,3,1,4,1,2,1,135,2,NA,8,9,6,16
+11312,"Female","Black/African American",12,"Married","Protestant",4,8,1,3,1,1,2,NA,8,11,6,"Divorced","Protestant",3,7,2,6,3,3,1,179,2,NA,10,8,6,16
+10131,"Male","Black/African American",13,"Married","Protestant",8,9,1,3,1,1,2,NA,10,4,3,"Married","Protestant",8,8,1,1,1,2,3,191,2,NA,11,6,6,16
+10310,"Male","Black/African American",5,"Widowed","Protestant",1,1,2,3,1,1,2,NA,22,6,4,"Widowed","Other",1,1,2,2,1,2,4,224,2,NA,11,9,12,16
+11127,"Female","White/Caucasian",10,"Widowed","Protestant",1,1,1,7,1,1,2,NA,11,8,3,"Widowed","Protestant",1,2,1,5,2,2,NA,110,2,NA,17,11,6,16
+10978,"Male","Black/African American",12,"Married","Protestant",8,9,1,2,2,1,2,NA,12,NA,3,"Married","Protestant",9,8,1,3,1,3,1,140,2,NA,8,9,5,9
+10264,"Male","Black/African American",12,"Married","Protestant",3,6,1,3,2,1,2,NA,10,8,6,"Married","Protestant",1,1,1,8,1,4,NA,140,2,NA,27,13,6,16
+11091,"Male","White/Caucasian",12,"Married","Protestant",1,8,1,3,2,1,2,NA,12,10,3,"Married","Protestant",8,8,1,3,2,1,1,148,2,NA,8,6,5,12
+11391,"Female","Black/African American",8,"Divorced","Protestant",8,8,1,3,2,1,2,NA,8,7,3,"Divorced","Protestant",1,3,NA,8,7,3,1,NA,2,NA,27,15,10,8
+10064,"Female","White/Caucasian",14,"Widowed","Protestant",8,8,1,3,2,1,2,NA,8,8,3,"Widowed","Protestant",6,6,2,6,2,2,1,98,2,NA,8,9,6,9
+10202,"Male","White/Caucasian",12,"Married","Other",1,1,1,5,2,1,2,NA,11,8,6,"Married","Protestant",1,1,1,8,2,2,1,206,2,NA,14,5,5,14
+10487,"Female","White/Caucasian",11,"Married","Protestant",1,1,1,7,2,1,2,NA,8,4,3,"Married","Other",1,1,1,7,2,1,0,222,2,NA,8,4,4,10
+10116,"Female","White/Caucasian",12,"Married","Protestant",1,3,2,7,2,1,2,NA,8,5,6,"Married","Protestant",1,1,2,8,3,1,4,132,2,NA,8,5,7,13
+11164,"Female","White/Caucasian",12,"Married","Protestant",1,8,1,8,2,1,2,NA,8,4,5,"Widowed","Protestant",NA,8,1,5,2,2,4,153,2,NA,19,9,5,11
+10739,"Male","White/Caucasian",17,"Married","Protestant",7,7,1,2,3,1,2,NA,8,5,6,"Married","Protestant",8,8,1,5,3,1,2,190,2,NA,8,8,6,16
+10119,"Male","White/Caucasian",12,"Married","Protestant",8,8,1,5,3,1,2,NA,9,8,3,"Married","Protestant",8,8,1,2,1,1,2,160,2,NA,9,9,6,16
+10762,"Male","Black/African American",8,"Widowed","Protestant",6,8,2,6,3,1,2,NA,8,4,3,"Widowed","Other",6,8,1,7,2,2,2,182,2,NA,11,7,7,12
+10532,"Male","Black/African American",18,"Married","Other",1,8,2,7,3,1,2,NA,16,9,3,"Married","Protestant",7,8,1,8,3,2,0,169,2,NA,8,8,4,10
+11155,"Female","White/Caucasian",3,"Widowed","Protestant",1,4,1,8,3,1,2,NA,11,NA,NA,"Widowed","Other",1,3,1,3,1,4,6,160,2,NA,27,11,7,14
+10252,"Male","White/Caucasian",18,"Married","Protestant",5,8,2,7,4,1,2,NA,8,5,3,"Married","Protestant",8,8,2,8,4,2,1,196,2,NA,8,8,4,8
+10174,"Male","Black/African American",12,"Married","Protestant",6,6,1,8,4,1,2,NA,11,8,6,"Widowed","Protestant",1,8,1,4,2,2,1,160,2,NA,9,11,5,12
+10345,"Female","White/Caucasian",12,"Widowed","Protestant",1,5,2,8,4,1,2,NA,13,9,3,"Widowed","Protestant",1,2,2,NA,5,1,0,149,2,NA,11,10,6,8
+10389,"Female","White/Caucasian",12,"Widowed","Protestant",1,1,3,7,6,1,2,NA,15,7,4,"Widowed","No religious preference",1,1,3,8,8,1,0,125,2,NA,8,5,6,12
+11349,"Female","White/Caucasian",12,"Widowed","Protestant",1,2,2,8,6,1,2,NA,9,NA,3,"Widowed","Protestant",1,1,3,7,5,2,3,125,2,NA,8,8,6,14
+11106,"Female","Black/African American",7,"Widowed","Protestant",1,8,1,2,1,1,2,NA,8,9,4,"Widowed","Other",7,7,1,2,1,2,1,140,2,NA,8,7,8,13
+10298,"Female","Black/African American",8,"Widowed","Protestant",8,8,1,2,1,1,2,NA,11,5,5,"Widowed","Protestant",1,4,1,1,1,2,1,95,2,NA,11,8,7,9
+10990,"Female","White/Caucasian",11,"Widowed","Protestant",1,8,1,2,1,1,2,NA,11,8,5,"Widowed","Protestant",1,8,1,3,1,1,4,180,2,NA,10,7,7,12
+11216,"Female","Black/African American",12,"Widowed","Protestant",8,8,1,2,1,1,2,NA,9,6,3,"Widowed","Protestant",NA,8,1,3,1,2,2,148,2,NA,10,8,5,12
+10922,"Male","Black/African American and some other race",7,"Married","Protestant",9,9,1,2,1,1,2,NA,8,4,3,"Married","Other",8,9,1,3,1,1,1,150,2,NA,8,7,6,16
+10217,"Female","White/Caucasian",14,"Married","Protestant",6,8,1,3,1,1,2,NA,8,7,3,"Married","Protestant",6,6,1,3,1,2,2,150,2,NA,8,4,5,12
+10093,"Male","White/Caucasian",20,"Married","Protestant",6,6,2,5,1,1,2,NA,9,8,3,"Married","Other",6,6,1,5,2,1,0,165,2,NA,8,6,4,11
+11303,"Female","White/Caucasian",20,"Widowed","Protestant",1,3,2,7,1,1,2,NA,8,6,3,"Widowed","Protestant",1,1,2,3,2,1,1,113,2,NA,8,10,5,12
+10834,"Female","White/Caucasian",14,"Widowed","Protestant",1,8,2,8,1,1,2,NA,9,8,6,"Widowed","Protestant",1,8,2,8,1,2,0,140,2,NA,9,8,6,10
+10491,"Female","White/Caucasian",12,"Married","Protestant",8,8,1,2,2,1,2,NA,10,9,3,"Married","Protestant",8,7,1,2,2,2,2,140,2,NA,10,8,7,12
+10381,"Male","White/Caucasian",16,"Married","Protestant",8,8,1,2,2,1,2,NA,8,6,3,"Married","Protestant",8,6,1,1,1,1,0,190,2,NA,8,5,5,12
+11350,"Female","White/Caucasian",12,"Married","Protestant",8,7,2,2,2,1,2,NA,13,7,3,"Married","Protestant",NA,8,1,2,1,1,5,143,2,NA,8,7,5,12
+10286,"Female","Black/African American",12,"Never Married","Protestant",1,4,2,2,2,1,2,NA,10,10,4,"Widowed","Other",9,9,1,1,1,1,0,122,2,NA,8,6,6,16
+10789,"Male","White/Caucasian",13,"Widowed","Protestant",1,8,1,3,2,1,2,NA,10,10,3,"Widowed","Protestant",4,7,3,5,4,1,1,170,2,NA,11,11,7,16
+10453,"Male","Black/African American",12,"Widowed","Protestant",1,6,2,3,2,1,2,NA,12,8,3,"Widowed","Protestant",1,6,2,2,2,2,1,226,2,NA,14,10,7,12
+10493,"Male","White/Caucasian",16,"Married","Protestant",1,7,2,5,2,1,2,NA,9,9,4,"Married","Protestant",2,7,1,4,2,2,1,173,2,NA,8,7,6,9
+10151,"Male","Black/African American",12,"Married","Protestant",4,8,NA,6,2,1,2,NA,8,9,3,"Married","Other",1,5,1,4,2,1,1,171,2,NA,8,9,4,8
+10288,"Female","White/Caucasian",16,"Widowed","Protestant",1,6,2,7,2,1,2,NA,10,11,6,"Widowed","Protestant",1,6,2,7,2,2,0,200,2,NA,8,8,6,12
+11284,"Female","White/Caucasian",12,"Married","Protestant",1,7,2,7,2,1,2,NA,11,11,NA,"Married","Protestant",1,8,1,7,5,2,0,110,2,NA,13,10,6,8
+10176,"Female","White/Caucasian",13,"Married","Protestant",2,8,2,7,2,1,2,NA,8,8,6,"Married","Protestant",1,8,1,2,1,1,2,160,2,NA,9,7,6,16
+11299,"Male","White/Caucasian",13,"Married","Protestant",1,1,1,8,2,1,2,NA,8,10,6,"Married","Protestant",1,1,2,7,2,2,1,145,2,NA,13,9,6,15
+10953,"Male","White/Caucasian",12,"Married","Protestant",1,6,2,4,3,1,2,NA,9,8,6,"Married","Protestant",2,7,1,5,1,2,0,200,2,NA,9,6,7,10
+10732,"Male","White/Caucasian",16,"Married","Protestant",1,7,3,8,3,1,2,NA,22,12,6,"Married","Protestant",1,7,3,8,2,2,4,158,2,NA,18,12,6,11
+10419,"Female","White/Caucasian",14,"Married","Protestant",1,5,2,NA,5,1,2,NA,8,6,3,"Married","Other",1,1,2,8,2,2,0,160,2,NA,9,15,3,4
+11093,"Male","White/Caucasian",17,"Married","Protestant",1,7,2,7,5,1,2,NA,8,8,6,"Married","Protestant",1,8,2,7,2,2,1,215,2,NA,11,8,5,11
+10056,"Male","White/Caucasian",13,"Married","Protestant",1,8,2,7,5,1,2,NA,8,7,6,"Married","Protestant",10,8,1,7,2,1,0,185,2,NA,8,10,8,13
+10222,"Female","White/Caucasian",12,"Widowed","Protestant",1,5,2,8,5,1,2,NA,11,9,3,"Married","Protestant",6,1,1,NA,2,2,2,150,2,NA,8,4,6,16
+10322,"Female","White/Caucasian",12,"Divorced","Protestant",1,1,3,8,5,1,2,NA,9,7,5,"Divorced","Protestant",1,2,2,7,3,2,1,129,1,NA,8,8,7,12
+10368,"Male","White/Caucasian",12,"Never Married","Protestant",1,2,NA,7,6,1,2,NA,8,NA,6,"Never married","Protestant",6,3,2,6,4,2,1,235,2,NA,16,10,6,14
+10956,"Female","White/Caucasian",16,"Married","Protestant",1,2,3,8,7,1,2,NA,9,10,3,"Widowed","Protestant",1,2,3,8,8,1,1,135,2,NA,15,8,5,12
+10225,"Female","White/Caucasian",12,"Married","Protestant",1,3,3,8,7,1,2,NA,9,9,3,"Married","Protestant",1,3,3,8,7,1,0,152,2,NA,8,8,7,11
+11056,"Female","White/Caucasian",16,"Married","Protestant",1,8,1,3,2,1,2,NA,27,NA,3,"Widowed","Protestant",4,8,1,5,2,1,1,128,2,NA,8,12,6,9
+10592,"Male","White/Caucasian",12,"Married","Protestant",1,4,2,7,8,2,2,NA,15,11,6,"Married","Protestant",1,3,2,8,5,3,6,204,2,NA,11,11,4,8
+10473,"Female","White/Caucasian",16,"Married",NA,1,8,4,7,8,2,2,NA,8,10,6,"Married","Other",1,4,4,8,8,1,0,140,2,NA,10,7,6,12
+10026,"Male","White/Caucasian",12,"Married","Protestant",NA,4,NA,8,8,2,2,NA,8,4,6,"Married","Protestant",1,1,3,8,8,2,0,170,2,NA,8,14,8,20
+11201,"Male","White/Caucasian",16,"Married","Protestant",1,5,NA,8,8,2,2,NA,13,9,6,"Married","Protestant",1,4,2,8,7,2,6,154,2,NA,10,9,5,12
+11222,"Male","Black/African American",6,"Divorced","Other",1,2,1,8,8,2,2,NA,8,4,3,"Divorced","Other",1,2,2,7,8,2,NA,165,2,NA,8,12,12,15
+10320,"Male","White/Caucasian",12,"Married",NA,1,1,3,8,8,2,2,NA,10,0,6,"Married","No religious preference",1,1,3,8,8,2,1,245,2,NA,8,10,5,12
+10132,"Male","White/Caucasian",16,"Married",NA,1,1,3,8,8,2,2,NA,1,10,4,"Married","No religious preference",1,1,3,8,7,NA,5,175,2,NA,19,12,7,12
+10527,"Male","White/Caucasian",14,"Married",NA,1,1,3,8,8,2,2,NA,14,10,7,"Married","No religious preference",1,1,3,8,8,2,2,225,2,NA,12,11,9,11
+11357,"Male","White/Caucasian",14,"Married","Protestant",1,1,3,8,8,2,2,NA,18,10,6,"Married","No religious preference",1,1,4,8,8,2,1,170,2,NA,11,10,6,11
+10909,"Male","White/Caucasian",18,"Divorced","Protestant",1,1,3,8,8,2,2,NA,9,6,3,"Divorced","No religious preference",1,1,4,8,8,3,2,144,2,NA,14,12,7,12
+10135,"Male","White/Caucasian",14,"Married",NA,1,3,3,8,8,2,2,NA,10,9,6,"Married","No religious preference",1,1,2,8,7,2,0,185,2,NA,12,15,6,8
+10226,"Male","White/Caucasian",12,"Married","Protestant",1,3,3,8,8,2,2,NA,8,7,3,"Married","Protestant",1,3,4,8,8,2,4,179,2,NA,8,7,8,14
+10147,"Female","White/Caucasian",16,"Married","Protestant",1,3,3,8,8,2,2,NA,8,5,6,"Married","Protestant",1,3,2,8,NA,2,1,158,2,NA,8,6,7,12
+10055,"Male","White/Caucasian",16,"Married",NA,1,1,4,8,8,2,2,NA,8,7,4,"Married","Protestant",1,1,4,8,8,2,0,220,2,NA,9,7,7,11
+10638,"Female","White/Caucasian",16,"Married","Protestant",1,1,4,8,8,2,2,NA,8,8,6,"Married","Protestant",1,1,2,8,NA,2,5,125,2,NA,8,9,5,12
+10927,"Female","White/Caucasian",12,"Married","Protestant",1,6,NA,NA,NA,2,2,NA,8,8,6,"Married","Protestant",1,6,1,8,1,2,0,165,2,NA,11,8,6,14
+10042,"Male","Black/African American",12,"Widowed","Protestant",10,3,NA,8,4,2,2,NA,12,7,NA,"Divorced","Protestant",1,1,2,8,4,2,3,285,2,NA,12,11,6,8
+10931,"Female","White/Caucasian",2,"Widowed","Protestant",4,4,1,2,1,2,2,NA,10,7,5,"Widowed","Protestant",1,1,1,5,1,2,2,100,2,NA,9,7,6,16
+10648,"Female","White/Caucasian and some other race",6,"Widowed","Protestant",8,8,1,2,1,2,2,NA,NA,NA,3,"Divorced","Other",6,8,1,3,1,2,1,222,2,NA,10,16,5,12
+10387,"Male","White/Caucasian",8,NA,"Protestant",1,3,2,2,1,2,2,NA,17,9,6,"Separated","Protestant",1,2,1,2,2,3,1,210,2,NA,9,11,5,11
+11473,"Female","Black/African American",12,"Never Married","Protestant",1,8,1,3,1,2,2,NA,8,13,3,"Never married","Protestant",1,6,2,4,2,2,1,130,2,NA,8,5,5,11
+11114,"Female","Black/African American",12,"Widowed","Protestant",1,5,1,3,1,2,2,NA,8,12,6,"Widowed","Other",2,2,1,2,1,3,1,NA,2,NA,11,15,7,12
+10829,"Male","Black/African American",15,"Married","Protestant",3,8,2,4,1,2,2,NA,8,11,3,"Widowed","Protestant",1,7,2,7,2,3,2,226,2,NA,9,7,6,14
+10306,"Female","White/Caucasian",14,"Married","Protestant",4,8,1,7,1,2,2,NA,13,8,5,"Widowed","Protestant",1,1,1,6,2,3,1,85,2,NA,15,9,6,9
+11060,"Male","White/Caucasian",17,"Married","Protestant",1,4,1,8,1,2,2,NA,9,5,3,"Married","Protestant",1,1,2,8,3,2,1,175,2,NA,8,8,8,18
+10972,"Female","White/Caucasian",15,"Married","Protestant",8,8,1,4,2,2,2,NA,12,9,6,"Widowed","Protestant",8,8,2,6,2,2,1,220,2,NA,8,8,6,12
+10364,"Female","White/Caucasian",18,"Married","Protestant",8,8,2,4,2,2,2,NA,8,9,3,"Married","Protestant",8,8,2,3,1,2,1,126,2,NA,8,9,7,12
+11371,"Female","White/Caucasian",16,"Married","Protestant",10,5,1,7,2,2,2,NA,10,7,3,"Married","Protestant",1,5,1,6,2,1,4,208,2,NA,12,7,6,16
+10581,"Male","White/Caucasian",16,"Married",NA,8,8,2,8,2,2,2,NA,10,8,6,"Married","Other",1,8,2,8,2,2,10,140,2,NA,8,7,8,16
+10578,"Female","Black/African American",12,"Widowed","Protestant",6,7,1,2,3,2,2,NA,8,NA,3,"Widowed","Other",8,8,1,2,2,2,1,238,2,NA,8,5,6,17
+11306,"Male","White/Caucasian",17,"Married","Protestant",1,2,NA,8,3,2,2,NA,15,11,6,"Married","Protestant",1,2,2,8,3,2,8,180,2,NA,8,9,8,11
+11058,"Female","White/Caucasian",12,"Married","Protestant",8,8,2,8,3,2,2,NA,12,7,6,"Married","Protestant",1,4,2,8,3,2,1,147,2,NA,10,11,9,10
+11276,"Male","White/Caucasian",19,"Married","Protestant",1,1,2,7,5,2,2,NA,8,9,6,"Married","Other",1,3,1,8,5,1,1,175,2,NA,8,10,6,16
+10432,"Female","Black/African American",8,"Widowed","Other",1,1,3,7,5,2,2,NA,8,11,4,"Widowed","Protestant",1,4,1,7,1,1,1,180,2,NA,11,10,7,11
+11365,"Male","White/Caucasian",19,"Married","Catholic or Roman Catholic",1,4,NA,8,5,2,2,NA,8,10,6,"Married","Other",1,1,4,8,8,2,3,202,2,NA,9,9,6,16
+11414,"Male","White/Caucasian",13,"Married","Protestant",1,1,3,7,7,2,2,NA,3,8,6,"Married","Other",1,1,2,7,5,4,5,243,2,NA,23,16,14,16
+10309,"Male","White/Caucasian",12,"Married","Protestant",2,2,3,7,7,2,2,NA,9,10,4,"Married","Other",1,1,3,8,7,4,6,154,2,NA,8,21,5,9
+11207,"Female","Black/African American",12,"Married","Protestant",8,8,1,NA,1,2,2,NA,8,NA,NA,"Married","Protestant",8,8,1,1,1,2,NA,230,2,NA,8,8,6,16
+10602,"Female","Black/African American",9,"Widowed","Protestant",1,1,1,1,1,2,2,NA,22,6,5,"Widowed","Protestant",1,1,1,4,1,3,1,130,2,NA,15,9,6,14
+10979,"Female","White/Caucasian and some other race",8,"Married","Protestant",8,8,1,1,1,2,2,NA,11,9,6,"Separated","Protestant",5,2,2,3,2,2,0,NA,2,NA,9,14,6,11
+10476,"Male","White/Caucasian",16,"Married","Protestant",9,8,1,1,1,2,2,NA,8,NA,6,"Married","Protestant",8,9,1,2,1,2,2,182,2,NA,8,4,6,13
+11237,"Female","White/Caucasian",11,"Married","Protestant",8,9,1,1,1,2,2,NA,8,4,3,"Married","Other",NA,9,1,7,1,4,2,140,2,NA,18,11,5,11
+10635,"Female","Black/African American",12,"Divorced","Protestant",9,9,1,1,1,2,2,NA,8,4,3,"Separated","Protestant",9,8,1,1,1,1,0,130,2,NA,9,10,6,16
+10793,"Female","Black/African American",12,"Divorced","Protestant",8,8,1,1,1,2,2,NA,10,8,3,"Divorced","Protestant",9,9,1,1,1,2,1,203,2,NA,13,8,7,16
+11172,"Male","Black/African American",12,"Married","Protestant",8,9,1,1,1,2,2,NA,8,5,3,"Married","Protestant",8,8,1,2,1,3,1,188,2,NA,8,8,6,16
+10376,"Female","Black/African American",12,"Widowed","Protestant",8,9,1,1,1,2,2,NA,10,9,3,"Widowed","Protestant",8,9,1,7,1,3,5,174,2,NA,19,14,4,8
+11024,"Female","Black/African American",11,"Divorced","Protestant",9,9,1,1,1,2,2,NA,9,10,6,"Divorced","Other",8,9,1,1,1,2,1,175,2,NA,8,5,6,16
+10433,"Female","Black/African American",12,"Divorced","Other",9,9,1,1,1,2,2,NA,8,6,3,"Divorced","Protestant",8,8,1,1,1,1,1,186,2,NA,8,8,5,12
+10331,"Female","Black/African American",10,"Separated","Protestant",2,5,1,1,1,2,2,NA,9,4,3,"Divorced","Protestant",4,5,1,1,1,3,1,130,2,NA,19,5,7,12
+10253,"Female","Black/African American",14,"Widowed","Protestant",7,8,1,1,1,2,2,NA,8,11,NA,"Widowed","Other",8,9,2,1,1,2,0,164,2,NA,8,7,7,12
+11017,"Male","Black/African American",11,"Married","Protestant",8,8,1,1,1,2,2,NA,10,5,3,"Married","Protestant",8,8,1,2,1,1,3,119,2,NA,8,8,6,16
+10604,"Female","Black/African American",10,"Widowed","Protestant",8,8,1,1,1,2,2,NA,15,6,3,"Widowed","Protestant",4,7,1,3,2,2,2,205,2,NA,11,6,6,13
+10388,"Female","White/Caucasian",13,"Widowed","Protestant",8,9,1,1,1,2,2,NA,32,7,6,"Widowed","Protestant",1,8,1,3,1,2,1,118,2,NA,11,9,7,12
+11465,"Female","Black/African American",12,"Divorced","Protestant",4,7,1,1,1,2,2,NA,15,9,3,"Divorced","Protestant",1,6,1,2,1,3,4,146,2,NA,18,9,7,17
+10122,"Female","Black/African American",9,"Married","Protestant",3,8,1,1,1,2,2,NA,9,5,3,"Married","Protestant",1,8,1,1,1,2,0,160,2,NA,8,6,6,12
+10497,"Female","Black/African American",12,"Divorced","Protestant",6,8,1,1,1,2,2,NA,10,9,6,"Widowed","Protestant",8,8,1,1,1,2,0,240,2,NA,10,8,7,12
+11421,"Female","Black/African American",10,"Widowed","Protestant",6,8,1,1,1,2,2,NA,8,9,3,"Widowed","Protestant",1,3,1,5,1,2,NA,110,2,NA,16,10,6,16
+10878,"Male","Black/African American",18,"Married","Protestant",9,9,1,1,1,2,2,NA,16,9,6,"Married","Protestant",8,9,1,1,1,2,2,137,1,70,10,7,7,11
+10519,"Female","White/Caucasian and some other race",NA,"Married","Protestant",9,9,1,1,1,2,2,NA,8,6,6,"Married","Protestant",8,8,1,1,1,3,2,115,2,NA,11,5,7,12
+10538,"Female","Black/African American",9,"Never Married","Protestant",1,1,1,2,1,2,2,NA,8,4,3,"Widowed","Protestant",1,6,2,2,1,3,1,169,2,NA,8,14,7,12
+10676,"Female","Black/African American",9,"Widowed","Protestant",2,2,1,2,1,2,2,NA,12,11,3,"Widowed","Protestant",1,1,2,2,1,2,1,156,2,NA,25,8,7,11
+10851,"Female","White/Caucasian",12,"Married","Protestant",8,8,1,2,1,2,2,NA,NA,8,6,"Married","Other",8,8,1,3,1,2,0,155,2,NA,9,6,5,11
+11004,"Female","Black/African American",12,"Widowed","Protestant",9,8,1,2,1,2,2,NA,8,4,5,"Widowed","Protestant",8,8,1,2,1,1,1,154,2,NA,9,7,7,15
+10014,"Male","White/Caucasian",14,"Married","Protestant",8,9,1,2,1,2,2,NA,8,9,6,"Married","Protestant",8,8,1,2,2,2,0,175,2,NA,8,9,6,16
+10634,"Male","Black/African American",3,"Widowed","Protestant",8,9,1,2,1,2,2,NA,10,6,3,"Widowed","Protestant",8,8,1,1,1,1,0,160,2,NA,8,4,6,16
+10621,"Female","Black/African American",12,"Widowed","Protestant",6,6,1,2,1,2,2,NA,16,7,6,"Divorced","Protestant",1,NA,1,NA,NA,3,7,168,2,NA,16,14,12,32
+11499,"Male","Black/African American",7,"Widowed","Protestant",1,9,1,2,1,2,2,NA,11,5,6,"Widowed","Protestant",3,6,1,5,2,3,4,140,2,NA,24,12,8,8
+10463,"Female","Black/African American",10,"Widowed","Protestant",8,9,1,2,1,2,2,NA,9,7,3,"Widowed","Protestant",8,8,1,2,1,3,1,165,2,NA,12,9,4,10
+11199,"Female","Black/African American",16,"Widowed","Protestant",2,7,1,2,1,2,2,NA,8,10,3,"Widowed","Protestant",1,6,1,2,1,2,1,120,2,NA,8,11,6,16
+10541,"Female","Black/African American",15,"Married","Protestant",6,7,1,2,1,2,2,NA,8,9,6,"Married","Protestant",9,9,1,2,1,2,0,187,2,NA,8,8,6,15
+11109,"Female","Black/African American",4,"Married","Protestant",7,8,1,2,1,2,2,NA,8,7,6,"Widowed","Other",1,6,1,2,1,3,1,105,2,NA,15,11,4,7
+10633,"Male","Black/African American",12,"Married","Protestant",8,8,1,2,1,2,2,NA,26,8,6,"Married","Protestant",9,7,1,3,1,2,4,150,2,NA,25,5,6,16
+10819,"Female","White/Caucasian",12,"Widowed","Protestant",8,8,1,2,1,2,2,NA,17,11,6,"Widowed","Protestant",8,8,1,3,2,2,0,NA,2,NA,8,9,5,12
+10085,"Male","Black/African American",8,"Married","Protestant",8,9,1,2,1,2,2,NA,0,6,3,"Married","Protestant",4,4,2,6,1,2,1,180,2,NA,8,8,4,10
+11381,"Female","Black/African American",9,"Widowed","Protestant",8,9,1,2,1,2,2,NA,8,8,3,"Divorced","Protestant",8,8,1,2,1,3,1,154,2,NA,8,6,5,10
+10339,"Female","Black/African American",8,"Widowed","Other",8,8,1,2,1,2,2,NA,8,4,3,"Widowed","Protestant",1,4,1,8,1,2,1,181,2,NA,9,8,7,11
+10522,"Female","Black/African American",12,"Widowed","Protestant",9,8,1,2,1,2,2,NA,NA,7,3,"Widowed","Protestant",9,8,1,1,1,1,0,210,2,NA,11,6,5,12
+10935,"Female","Black/African American",NA,"Widowed","Protestant",9,8,1,2,1,2,2,NA,11,7,3,"Widowed","Protestant",8,8,1,3,2,3,1,NA,2,NA,10,9,5,12
+10587,"Female","White/Caucasian",15,"Married","Protestant",7,9,1,2,1,2,2,NA,10,4,3,"Married","Other",8,9,1,2,1,2,1,148,2,NA,8,8,6,16
+10297,"Female","Black/African American and some other race",7,"Widowed","Protestant",9,9,1,2,1,2,2,NA,9,8,3,"Widowed","Other",8,8,1,1,1,3,6,200,2,NA,12,10,5,12
+10920,"Female","Black/African American",13,"Married","Protestant",9,9,2,2,1,2,2,NA,9,5,3,"Married","Protestant",9,9,1,1,1,1,1,190,2,NA,8,8,6,16
+10477,"Female","White/Caucasian",12,"Married","Protestant",8,8,2,2,1,2,2,NA,10,11,5,"Divorced","Protestant",8,8,2,3,1,2,3,152,2,NA,10,15,7,13
+10130,"Male","Black/African American",4,"Married","Protestant",8,6,2,2,1,2,2,NA,9,9,6,"Married","Protestant",8,6,2,8,1,4,0,105,2,NA,12,8,7,11
+11219,"Female","White/Caucasian and some other race",12,"Married","Protestant",1,8,1,3,1,2,2,NA,12,8,6,"Widowed","Protestant",2,8,1,6,1,2,1,145,2,NA,24,14,5,12
+10689,"Female","Black/African American",12,"Widowed","Protestant",6,8,1,3,1,2,2,NA,3,5,NA,"Widowed","Protestant",8,7,1,2,1,2,0,120,2,NA,11,6,6,24
+10185,"Female","Black/African American",10,"Married","Protestant",3,6,1,3,1,2,2,NA,8,5,3,"Married","Protestant",1,1,2,5,3,2,1,145,2,NA,16,10,7,12
+10394,"Female","White/Caucasian",12,"Married","Protestant",1,8,1,3,1,2,2,NA,16,11,6,"Married","Protestant",8,8,1,3,1,1,2,195,2,NA,18,9,7,12
+10456,"Female","Black/African American",10,"Married","Protestant",4,8,1,3,1,2,2,NA,11,8,3,"Married","Protestant",8,8,1,3,1,2,4,105,2,NA,14,7,7,12
+11117,"Female","Black/African American",11,"Widowed","Protestant",1,6,1,3,1,2,2,NA,11,7,6,"Widowed","Protestant",3,4,1,1,1,2,1,180,2,NA,67,27,12,22
+10336,"Female","Black/African American",9,"Married","Protestant",1,8,1,3,1,2,2,NA,9,4,3,"Married","Protestant",1,8,1,3,1,2,1,267,2,NA,14,5,6,16
+11427,"Female","Black/African American",10,"Widowed","Protestant",3,8,1,3,1,2,2,NA,15,9,5,"Widowed","Protestant",6,7,1,1,1,1,1,158,2,NA,10,6,6,16
+10674,"Male","Black/African American and some other race",7,"Married","Other",9,9,2,3,1,2,2,NA,8,NA,3,"Married","Protestant",9,9,1,2,1,2,1,170,2,NA,8,11,7,12
+11092,"Female","White/Caucasian",9,"Widowed","Protestant",1,1,1,4,1,2,2,NA,22,10,6,"Widowed","Protestant",1,1,2,8,3,4,3,198,2,NA,26,12,13,12
+10735,"Male","White/Caucasian",16,"Married","Protestant",1,8,1,4,1,2,2,NA,16,10,6,"Married","Protestant",1,8,1,4,1,1,1,138,2,NA,9,9,4,9
+11204,"Female","Black/African American",12,"Married","Protestant",6,6,2,4,1,2,2,NA,11,5,3,"Married","Protestant",6,6,2,3,1,3,0,142,2,NA,27,8,3,5
+10216,"Male","White/Caucasian",13,"Married","Protestant",1,4,1,5,1,2,2,NA,10,10,5,"Married","Protestant",4,4,2,7,2,2,1,174,2,NA,8,4,6,9
+10540,"Male","Black/African American",16,"Married","Protestant",5,5,2,6,1,2,2,NA,10,5,6,"Married","Protestant",5,5,1,5,1,2,2,220,2,NA,15,4,5,12
+11143,"Male","Black/African American",NA,NA,"Protestant",4,3,2,7,1,2,2,NA,8,10,5,"Widowed","Protestant",1,3,2,NA,5,2,1,182,2,NA,14,10,5,11
+10708,"Female","Black/African American",16,"Married","Protestant",1,8,2,7,1,2,2,NA,8,9,3,"Married","Protestant",1,8,2,4,1,3,1,207,2,NA,12,5,4,8
+10480,"Male","White/Caucasian",20,"Widowed","Catholic or Roman Catholic",1,1,1,8,1,2,2,NA,8,6,3,"Widowed","Protestant",7,7,1,2,1,1,2,183,2,NA,8,6,5,12
+10450,"Male","Black/African American",8,"Never Married","Protestant",1,1,1,8,1,2,2,NA,9,10,3,"Widowed","Protestant",1,6,2,8,3,2,1,240,2,NA,8,8,7,12
+10877,"Female","Black/African American",8,"Widowed","Protestant",8,8,1,2,2,2,2,NA,12,8,7,"Widowed","Protestant",6,8,1,2,2,3,3,188,2,NA,8,8,5,12
+11322,"Female","Black/African American",10,"Never Married","Protestant",6,8,1,2,2,2,2,NA,8,11,6,"Never married","Protestant",7,8,2,5,3,2,2,189,2,NA,8,8,7,11
+10024,"Female","White/Caucasian and some other race",12,"Married","Protestant",8,8,2,2,2,2,2,NA,19,8,6,"Married","Protestant",2,7,2,2,2,3,3,158,2,NA,8,14,5,22
+10075,"Female","White/Caucasian",19,"Married","Protestant",8,8,2,2,2,2,2,NA,8,8,6,"Married","Protestant",8,8,1,3,1,2,0,118,2,NA,8,9,5,12
+10651,"Female","Black/African American",10,"Married","Protestant",1,5,2,2,2,2,2,NA,24,7,7,"Married","Protestant",1,3,1,2,2,2,1,170,2,NA,9,5,4,9
+10937,"Female","Black/African American",4,"Widowed","Protestant",3,5,2,2,2,2,2,NA,10,8,6,"Widowed","Protestant",1,3,2,NA,3,1,4,NA,2,NA,8,8,5,12
+11386,"Female","Black/African American",12,"Widowed","Protestant",2,7,2,2,2,2,2,NA,15,11,6,"Widowed","Protestant",7,7,1,4,2,2,0,150,2,NA,8,8,8,16
+10649,"Female","Black/African American",12,"Married","Protestant",1,8,1,3,2,2,2,NA,17,8,6,"Married","Other",1,8,1,3,2,2,1,140,2,NA,8,8,5,12
+10146,"Male","White/Caucasian",13,"Married","Protestant",7,7,1,3,2,2,2,NA,13,9,3,"Married","Protestant",8,8,1,3,2,3,4,167,2,NA,8,8,6,12
+10410,"Female","Black/African American",9,"Divorced","Protestant",1,4,1,3,2,2,2,NA,9,11,5,"Divorced","No religious preference",1,1,1,3,1,3,1,125,2,NA,8,9,7,12
+10968,"Female","White/Caucasian",10,"Widowed","Protestant",4,4,1,3,2,2,2,NA,20,8,5,"Widowed","Protestant",1,1,2,5,3,3,2,155,2,NA,18,11,5,12
+10961,"Female","White/Caucasian",9,"Widowed","Protestant",2,6,1,3,2,2,2,NA,10,4,3,"Widowed","Protestant",1,1,2,2,2,2,0,180,2,NA,22,4,6,16
+10499,"Male","Black/African American",14,"Married","Protestant",7,7,1,3,2,2,2,NA,12,6,3,"Married","Protestant",4,7,1,3,1,2,1,240,2,NA,11,7,5,12
+11107,"Female","Black/African American",10,"Married","Protestant",1,8,2,3,2,2,2,NA,11,7,5,"Married","Protestant",1,8,2,5,1,2,0,185,2,NA,8,8,7,17
+10960,"Male","White/Caucasian",11,"Married","Protestant",8,8,1,4,2,2,2,NA,25,8,3,"Married","Protestant",1,8,1,4,2,1,1,208,2,NA,8,10,5,12
+10891,"Male","White/Caucasian and some other race",10,"Married","Protestant",1,8,1,4,2,2,2,NA,9,5,6,"Married","Protestant",1,8,1,7,2,2,1,167,2,NA,8,8,6,8
+11248,"Male","White/Caucasian and some other race",16,"Divorced","Protestant",6,8,1,5,2,2,2,NA,11,8,6,"Divorced","Other",7,8,1,3,2,1,1,222,2,NA,16,8,4,8
+11460,"Male","Black/African American",6,"Widowed","Protestant",3,6,1,6,2,2,2,NA,8,8,3,"Widowed","Protestant",1,2,2,8,2,1,0,202,2,NA,9,8,7,8
+10371,"Female","White/Caucasian",12,"Widowed","Protestant",1,1,2,6,3,2,2,NA,24,8,6,"Widowed","Protestant",1,1,2,4,3,2,1,220,2,NA,13,10,13,36
+11321,"Female","Black/African American",12,"Married","Protestant",1,5,2,7,3,2,2,NA,10,10,6,"Married","Protestant",1,8,2,5,1,2,0,185,2,NA,13,8,7,12
+11422,"Female","Black/African American",NA,"Married","Protestant",1,2,2,NA,1,2,2,NA,13,7,6,"Widowed","Protestant",1,1,1,1,1,4,1,80,2,NA,8,9,6,16
+11416,"Male",NA,4,"Married","Protestant",9,8,1,1,1,2,2,NA,12,5,3,"Married","Other",1,1,1,NA,2,4,1,174,2,NA,14,5,6,16
+10212,"Female","White/Caucasian",13,"Married","Protestant",8,9,1,1,1,2,2,NA,10,8,6,"Married","Protestant",9,9,2,2,2,2,0,100,2,NA,8,8,6,11
+10673,"Male","Black/African American",12,"Married","Protestant",8,9,1,1,1,2,2,NA,9,6,3,"Married","Protestant",8,8,1,1,1,2,1,151,2,NA,8,7,6,15
+10684,"Female","Black/African American",12,"Married","Protestant",3,7,1,1,1,2,2,NA,16,14,3,"Married","Protestant",6,7,1,3,2,2,1,145,2,NA,9,15,4,11
+11423,"Male","Black/African American",9,"Married","Protestant",7,8,1,1,1,2,2,NA,11,6,6,"Widowed","Protestant",9,9,1,3,1,2,2,158,2,NA,13,6,6,16
+10984,"Female","Black/African American",14,"Widowed","Protestant",8,8,1,1,1,2,2,NA,8,4,3,"Widowed","Protestant",7,8,1,2,2,2,0,190,2,NA,8,8,5,12
+11417,"Female","White/Caucasian",12,"Widowed","Protestant",1,9,1,1,1,2,2,NA,11,7,3,"Widowed","Other",1,1,2,NA,1,4,1,115,2,NA,17,12,6,11
+10461,"Female","Black/African American",8,"Widowed","Protestant",8,9,1,1,1,2,2,NA,13,9,4,"Widowed","Protestant",8,8,1,2,1,2,3,206,2,NA,14,10,6,16
+11208,"Female","Black/African American",14,"Widowed","Protestant",9,9,1,1,1,2,2,NA,15,8,3,"Widowed","Protestant",8,9,1,2,1,2,0,170,2,NA,12,7,6,14
+11440,"Female","Black/African American and some other race",10,"Widowed","Protestant",6,6,1,1,1,2,2,NA,13,11,6,"Married","Other",8,8,1,4,2,2,2,170,2,NA,8,11,5,10
+11244,"Male","White/Caucasian",12,"Married","Catholic or Roman Catholic",1,8,1,1,1,2,2,NA,10,10,6,"Married","Protestant",1,1,2,1,1,2,1,158,2,NA,17,9,7,11
+10293,"Female","Black/African American",12,"Widowed","Protestant",8,8,1,1,1,2,2,NA,12,4,3,"Widowed","Protestant",8,9,1,1,1,2,1,164,2,NA,8,7,5,12
+11173,"Male","Black/African American",NA,"Widowed","Protestant",8,9,1,1,1,2,2,NA,12,4,4,"Widowed","Protestant",8,8,1,2,2,2,3,138,2,NA,8,8,7,12
+11011,"Female","Black/African American",9,"Never Married","Protestant",1,1,1,2,1,2,2,NA,9,10,3,"Widowed","Other",1,4,1,1,2,3,3,182,2,NA,16,15,5,11
+10693,"Female","White/Caucasian",12,"Married","Protestant",9,9,1,2,1,2,2,NA,8,4,3,"Married","Other",8,9,1,2,1,1,1,156,2,NA,9,5,6,10
+10150,"Male","Black/African American",12,"Married","Protestant",9,9,1,2,1,2,2,NA,8,4,3,"Married","Protestant",6,8,1,2,2,2,0,174,2,NA,8,9,4,8
+11450,"Female","Black/African American",12,"Married","Protestant",9,9,1,2,1,2,2,NA,NA,6,3,"Married","Other",8,9,1,1,1,2,1,200,2,NA,24,5,7,11
+10628,"Female","Black/African American",11,"Never Married","Protestant",9,9,1,2,1,2,2,NA,17,6,3,"Never married","Protestant",8,8,1,1,1,2,1,185,2,NA,8,9,6,16
+11193,"Female","White/Caucasian and some other race",12,"Widowed","Protestant",4,8,1,2,1,2,2,NA,8,10,3,"Widowed","Other",10,8,1,2,2,2,1,200,2,NA,11,9,7,15
+11410,"Female","White/Caucasian",12,"Married","Protestant",7,8,1,2,1,2,2,NA,9,5,3,"Married","Other",2,1,1,2,1,2,12,113,2,NA,10,9,6,16
+11418,"Female","American Indian or Alaskan Native",13,"Widowed","Protestant",1,9,1,2,1,2,2,NA,14,5,3,"Widowed","Protestant",1,7,1,1,1,2,1,200,2,NA,8,6,6,16
+11020,"Female","White/Caucasian",14,"Widowed","Protestant",1,8,1,2,1,2,2,NA,9,8,3,"Widowed","Other",1,8,1,2,1,2,0,132,2,NA,14,8,7,12
+10475,"Male","White/Caucasian",11,"Widowed","Protestant",8,8,1,2,1,2,2,NA,13,11,6,"Widowed","Protestant",8,8,1,3,1,1,2,210,2,NA,8,15,5,12
+10088,"Female","Black/African American and some other race",12,"Widowed","Protestant",8,8,1,2,1,2,2,NA,11,7,3,"Widowed","Protestant",5,6,1,2,1,2,4,132,2,NA,22,12,6,9
+10271,"Female","White/Caucasian",12,"Married","Other",8,8,1,2,1,2,2,NA,10,6,3,"Widowed","Other",8,8,1,4,2,2,0,120,2,NA,9,7,4,11
+10695,"Female","White/Caucasian",11,"Married","Protestant",8,9,1,2,1,2,2,NA,9,10,3,"Married","Protestant",1,6,2,2,1,4,12,116,2,NA,10,7,7,12
+10509,"Female","White/Caucasian",10,"Widowed","Protestant",9,9,1,2,1,2,2,NA,24,10,3,"Widowed","Protestant",7,8,1,3,1,3,2,238,2,NA,30,9,7,12
+11329,"Female","Black/African American",8,"Married","Protestant",1,5,1,2,1,2,2,NA,9,7,3,"Married","Protestant",7,7,2,3,2,3,1,154,2,NA,8,11,5,12
+10421,"Female","Black/African American",10,"Widowed","Other",1,7,1,2,1,2,2,NA,15,13,6,"Widowed","Protestant",1,8,1,3,1,2,4,119,2,NA,21,10,6,16
+10975,"Male","White/Caucasian",14,"Married","Protestant",1,8,1,2,1,2,2,NA,9,4,3,"Married","Protestant",8,8,1,2,1,2,0,168,2,NA,9,8,6,15
+10904,"Female","Black/African American",12,"Widowed","Protestant",2,8,1,2,1,2,2,NA,11,4,3,"Widowed","Protestant",4,6,1,2,1,4,1,196,2,NA,12,10,5,12
+10986,"Female","Black/African American",13,"Widowed","Protestant",7,8,1,2,1,2,2,NA,16,8,3,"Widowed","Protestant",4,7,1,2,2,2,0,116,2,NA,8,8,6,16
+10438,"Female","Black/African American",12,"Widowed","Protestant",8,8,1,2,1,2,2,NA,10,9,5,"Widowed","Protestant",8,8,2,2,2,1,2,145,2,NA,8,16,6,16
+10427,"Female","Black/African American",14,"Widowed","Protestant",8,8,1,2,1,2,2,NA,13,10,6,"Widowed","Protestant",8,8,1,2,1,1,1,187,2,NA,16,5,6,16
+10233,"Female","White/Caucasian",10,"Divorced","Other",9,8,1,2,1,2,2,NA,16,9,3,"Widowed","Protestant",9,9,1,3,1,2,3,170,2,NA,11,5,7,15
+11453,"Female","Black/African American",8,"Widowed","Protestant",8,9,1,2,1,2,2,NA,9,8,3,"Widowed","Protestant",8,8,2,3,1,2,1,146,2,NA,8,10,4,8
+10037,"Male","Black/African American",7,"Married","Protestant",1,8,2,2,1,2,2,NA,10,7,6,"Married","Protestant",9,9,2,8,2,4,2,144,2,NA,10,12,7,8
+11412,"Male","White/Caucasian",12,"Divorced","Protestant",4,4,2,2,1,2,2,NA,8,8,3,"Married","Protestant",4,7,1,2,1,2,0,189,2,NA,8,9,6,14
+10590,"Male","White/Caucasian",13,"Married","Protestant",6,7,2,2,1,2,2,NA,8,8,6,"Married","Other",1,1,1,NA,1,4,NA,160,2,NA,22,7,5,12
+11088,"Female","White/Caucasian",13,"Married","Protestant",8,8,2,2,1,2,2,NA,8,8,6,"Married","Protestant",8,8,1,5,2,2,3,130,2,NA,8,8,7,12
+10338,"Female","Black/African American",20,"Married","Protestant",8,8,2,2,1,2,2,NA,8,9,3,"Married","Protestant",8,8,1,3,1,2,1,153,2,NA,8,6,7,9
+11256,"Male","White/Caucasian",12,"Married","Protestant",8,9,2,2,1,2,2,NA,9,7,6,"Married","Protestant",6,8,2,3,2,2,5,165,2,NA,8,9,7,12
+11270,"Female","Black/African American",11,"Married","Protestant",8,4,1,3,1,2,2,NA,13,4,3,"Married","Protestant",8,8,1,2,1,1,1,187,2,NA,14,8,5,12
+11171,"Female","Black/African American",14,"Separated","Protestant",8,8,1,3,1,2,2,NA,10,9,6,"Separated","Protestant",8,8,1,3,1,3,7,185,2,NA,12,8,5,12
+11455,"Female","Black/African American",8,"Widowed","Protestant",1,9,1,3,1,2,2,NA,10,8,NA,"Never married","Protestant",8,8,2,2,1,2,1,215,2,NA,8,12,7,12
+10296,"Female","Black/African American",11,"Widowed","Protestant",7,7,1,3,1,2,2,NA,13,7,3,"Widowed","Protestant",1,1,2,3,1,2,0,200,2,NA,8,8,6,16
+10148,"Female","Black/African American",15,"Divorced","Protestant",4,8,1,3,1,2,2,NA,15,NA,3,"Divorced","Protestant",8,8,2,3,2,2,1,132,2,NA,8,7,8,16
+10854,"Male","White/Caucasian",12,"Married","Protestant",8,8,1,3,1,2,2,NA,8,9,3,"Married","Other",8,8,1,3,1,2,0,205,2,NA,8,7,6,16
+10124,"Male","Black/African American",13,"Married","Protestant",8,8,1,3,1,2,2,NA,9,9,6,"Married","Protestant",7,7,2,3,1,2,1,230,2,NA,9,8,5,10
+11387,"Male","Black/African American",13,"Widowed","Protestant",8,8,1,3,1,2,2,NA,8,8,6,"Widowed","Protestant",4,7,1,6,2,2,1,136,2,NA,8,7,5,12
+10414,"Female","White/Caucasian",10,"Married","Protestant",4,4,1,3,1,2,2,NA,12,NA,3,"Widowed","Other",1,7,1,2,1,3,2,165,2,NA,12,15,8,16
+10783,"Female","White/Caucasian",12,"Married","Protestant",2,5,1,3,1,2,2,NA,13,4,3,"Married","Protestant",1,1,2,3,1,2,6,237,2,NA,11,9,8,14
+10967,"Female","White/Caucasian",10,"Married","Protestant",5,5,1,3,1,2,2,NA,20,6,5,"Married","Protestant",1,1,2,3,2,2,0,170,2,NA,8,9,7,12
+11382,"Female","White/Caucasian",12,"Married","Protestant",1,6,1,3,1,2,2,NA,11,9,6,"Married","Protestant",1,1,1,NA,2,3,4,190,2,NA,15,8,6,16
+10457,"Female","Black/African American",9,"Widowed","Protestant",1,6,1,3,1,2,2,NA,12,13,6,"Widowed","Protestant",6,6,1,3,1,2,1,160,2,NA,8,9,5,12
+10047,"Female","Black/African American",12,"Widowed","Protestant",1,8,1,3,1,2,2,NA,12,6,3,"Widowed","Protestant",NA,8,2,NA,1,3,3,123,2,NA,16,8,7,12
+11043,"Female","Black/African American",10,"Married","Protestant",7,8,1,3,1,2,2,NA,8,NA,3,"Widowed","Other",8,8,1,3,1,2,1,128,2,NA,12,10,5,15
+10748,"Female","Black/African American and some other race",12,"Married","Protestant",5,8,2,3,1,2,2,NA,7,NA,6,"Widowed","Other",4,6,1,NA,1,2,0,155,2,NA,19,7,6,14
+11366,"Female","White/Caucasian",19,"Married","Protestant",8,8,2,3,1,2,2,NA,9,NA,6,"Married","Other",8,8,1,5,2,2,1,180,2,NA,10,10,7,10
+10794,"Female","Black/African American",12,"Widowed","Protestant",8,8,2,3,1,2,2,NA,8,8,6,"Widowed","Protestant",8,8,2,3,1,2,1,185,2,NA,8,4,5,14
+10118,"Female","White/Caucasian",15,"Married","Protestant",7,7,1,5,1,2,2,NA,11,8,6,"Married","Protestant",8,8,1,2,2,2,1,200,2,NA,10,6,7,14
+10947,"Female","Black/African American",13,"Married","Other",8,8,1,5,1,2,2,NA,8,10,3,"Married","Protestant",3,3,2,3,2,1,0,166,2,NA,8,10,7,10
+10164,"Female","Black/African American",11,"Widowed","Protestant",1,4,1,5,1,2,2,NA,17,8,7,"Widowed","Protestant",1,3,2,7,3,4,2,146,2,NA,14,10,7,12
+10614,"Female","White/Caucasian",9,"Married","Protestant",4,7,1,5,1,2,2,NA,8,6,6,"Widowed","Protestant",2,5,1,3,1,2,0,160,2,NA,8,9,6,16
+10072,"Male","White/Caucasian",12,"Married","Protestant",1,8,1,5,1,2,2,NA,15,9,6,"Widowed","Protestant",2,8,2,5,1,3,1,145,2,NA,12,9,7,12
+10733,"Female","White/Caucasian",16,"Never Married","Protestant",8,8,2,5,1,2,2,NA,8,9,3,"Never married","Protestant",8,8,2,6,1,2,1,126,2,NA,8,9,4,11
+11182,"Female","Black/African American",9,"Widowed","Protestant",1,8,2,5,1,2,2,NA,9,10,3,"Divorced","Other",4,8,1,6,1,2,1,128,2,NA,10,6,6,16
+10272,"Female","White/Caucasian",13,"Married","Other",2,2,1,6,1,2,2,NA,12,8,6,"Widowed","Other",2,2,2,7,1,4,1,164,2,NA,8,8,7,12
+10035,"Male","Black/African American",5,"Married","Protestant",7,8,1,6,1,2,2,NA,7,10,6,"Married","Protestant",8,8,1,1,1,2,1,165,2,NA,8,8,6,12
+10436,"Male","Black/African American",2,"Married","Other",6,8,1,7,1,2,2,NA,8,NA,5,"Married","Protestant",6,6,1,8,1,2,0,160,2,NA,8,8,7,12
+10034,"Male","Black/African American",12,"Married","Protestant",1,8,1,7,1,2,2,NA,12,9,6,"Married","Protestant",8,8,1,2,1,2,1,201,2,NA,8,5,7,12
+11324,"Female","Black/African American",12,"Widowed","Protestant",8,8,1,7,1,2,2,NA,8,7,3,"Widowed","Protestant",7,8,1,3,1,3,1,145,2,NA,12,8,7,11
+10774,"Female","Black/African American",8,"Married","Protestant",1,4,1,7,1,2,2,NA,8,7,5,"Married","Protestant",1,1,2,7,2,3,3,230,2,NA,17,11,7,12
+10287,"Female","White/Caucasian",14,"Divorced","Protestant",9,8,2,7,1,2,2,NA,NA,1,6,"Divorced","Other",1,8,3,8,2,3,NA,120,2,NA,28,15,7,10
+10880,"Male","Black/African American",10,"Married","Protestant",1,4,2,7,1,2,2,NA,9,9,6,"Widowed","Protestant",6,6,1,7,5,2,1,213,2,NA,8,9,8,16
+10707,"Male","Black/African American",12,"Never Married","Protestant",1,6,2,8,1,2,2,NA,10,6,3,"Married","Protestant",1,7,2,8,3,2,0,143,1,140,9,8,7,10
+10175,"Female","Black/African American",11,"Widowed","Protestant",1,8,2,8,1,2,2,NA,12,4,3,"Widowed","Protestant",1,8,1,7,2,1,1,115,2,NA,9,9,6,10
+10598,"Female","Black/African American",14,"Married","Protestant",8,8,1,1,2,2,2,NA,9,4,3,"Married","Other",8,8,1,2,1,2,1,110,2,NA,8,4,5,12
+10725,"Female","White/Caucasian",12,"Widowed","Protestant",3,2,1,2,2,2,2,NA,24,9,5,"Widowed","Protestant",1,1,2,2,2,2,0,230,2,NA,17,10,5,10
+10060,"Male","White/Caucasian",10,"Married","Protestant",1,8,1,2,2,2,2,NA,9,8,3,"Widowed","Protestant",8,8,1,3,1,1,1,153,2,NA,10,9,5,11
+10192,"Female","Black/African American",12,"Never Married","Protestant",7,7,1,2,2,2,2,NA,16,12,4,"Never married","Protestant",1,9,2,8,1,2,1,148,2,NA,8,7,5,11
+10591,"Female","White/Caucasian",12,"Married","Protestant",6,8,1,2,2,2,2,NA,8,11,3,"Married","Other",NA,NA,1,3,1,2,2,160,2,NA,13,12,6,16
+10443,"Female","White/Caucasian",18,"Widowed","Other",4,8,1,2,2,2,2,NA,16,11,6,"Widowed","Other",1,1,2,2,2,3,4,145,2,NA,23,12,7,10
+11311,"Male","Black/African American",14,"Married","Protestant",8,8,1,2,2,2,2,NA,9,9,6,"Married","Protestant",5,8,1,2,2,2,1,163,2,NA,12,8,5,14
+10317,"Female","White/Caucasian",11,"Widowed","Other",9,9,1,2,2,2,2,NA,9,7,6,"Widowed","Protestant",8,8,1,1,1,2,6,140,2,NA,8,10,6,12
+10515,"Female","White/Caucasian",11,"Widowed","Protestant",1,8,1,2,2,2,2,NA,13,10,3,"Widowed","Protestant",1,7,2,2,2,1,1,101,2,NA,10,6,5,11
+10786,"Female","White/Caucasian",3,"Married","Other",1,8,1,2,2,2,2,NA,13,8,3,"Widowed","Other",6,8,2,3,2,3,3,140,2,NA,12,11,7,12
+11159,"Female","Black/African American",16,"Married","Protestant",8,8,1,2,2,2,2,NA,16,11,3,"Married","Protestant",1,8,1,2,2,2,0,119,2,NA,8,8,6,15
+10738,"Female","White/Caucasian",17,"Widowed","Protestant",9,8,1,2,2,2,2,NA,8,8,3,"Divorced","Protestant",9,8,1,1,1,3,0,126,2,NA,9,4,5,14
+11203,"Male","Black/African American",14,"Married","Protestant",1,4,2,2,2,2,2,NA,8,8,6,"Separated","Other",1,8,1,5,2,1,1,165,2,NA,8,7,8,13
+11180,"Female","Black/African American",13,"Widowed","Protestant",6,5,2,2,2,2,2,NA,12,8,6,"Widowed","Protestant",4,4,2,3,2,3,0,140,2,NA,14,10,7,12
+10985,"Female","Black/African American",9,"Widowed","Protestant",1,6,2,2,2,2,2,NA,16,11,3,"Widowed","Protestant",1,7,1,2,2,3,12,120,2,NA,8,8,6,16
+10560,"Female","Black/African American",12,"Widowed","Protestant",3,8,2,2,2,2,2,NA,15,8,6,"Widowed","Protestant",1,8,1,3,1,2,2,186,2,NA,14,7,7,12
+11073,"Male","Black/African American",8,"Married","Protestant",9,9,1,3,2,2,2,NA,8,7,3,"Married","Protestant",7,9,1,2,3,3,3,192,2,NA,11,7,5,11
+10624,"Male","Black/African American",NA,"Widowed","Protestant",6,8,1,3,2,2,2,NA,14,9,6,"Married","Protestant",1,8,1,3,3,2,2,162,2,NA,8,8,6,16
+11389,"Female","Black/African American",10,"Separated","Protestant",8,8,1,3,2,2,2,NA,9,7,3,"Separated","Protestant",7,8,1,2,1,3,1,142,2,NA,12,9,6,14
+10416,"Female","White/Caucasian and some other race",16,"Married","Protestant",8,9,1,3,2,2,2,NA,11,NA,4,"Married","Other",8,9,1,3,1,3,3,145,2,NA,8,10,6,16
+10817,"Female","White/Caucasian",12,"Widowed","Protestant",7,7,1,3,2,2,2,NA,10,9,6,"Widowed","Protestant",7,7,2,3,1,2,2,165,2,NA,9,10,7,12
+11476,"Male","White/Caucasian",16,"Married","Protestant",8,8,1,3,2,2,2,NA,14,7,4,"Married","Protestant",8,9,1,3,1,2,1,199,2,NA,11,8,6,12
+10570,"Female","White/Caucasian",12,"Married","Catholic or Roman Catholic",1,3,2,3,2,2,2,NA,8,8,6,"Widowed","No religious preference",1,3,2,2,2,3,1,180,2,NA,18,12,7,12
+11090,"Male","White/Caucasian",14,"Married","Protestant",9,8,2,3,2,2,2,NA,15,10,3,"Married","Other",9,9,1,3,2,2,5,175,2,NA,11,11,4,10
+10892,"Female","Black/African American",10,"Married","Protestant",7,7,2,3,2,2,2,NA,8,NA,6,"Widowed","Protestant",7,8,1,1,1,2,2,170,2,NA,12,8,6,16
+10719,"Female","Black/African American",12,"Widowed","Other",6,6,2,3,2,2,2,NA,NA,8,6,"Widowed","Protestant",NA,3,2,7,NA,3,2,135,2,NA,16,10,7,12
+10415,"Male","White/Caucasian",18,"Widowed","Protestant",4,8,1,4,2,2,2,NA,17,7,3,"Widowed","Protestant",4,8,1,7,1,2,1,200,2,NA,13,10,4,21
+10612,"Male","White/Caucasian",11,"Married","Protestant",4,4,1,4,2,2,2,NA,8,7,5,"Married","Protestant",1,1,1,3,1,4,NA,127,2,NA,25,9,6,16
+11346,"Female","White/Caucasian",12,"Married","Protestant",4,5,1,4,2,2,2,NA,9,9,6,"Married","Protestant",1,3,1,7,1,2,4,150,2,NA,10,8,6,16
+10942,"Male","Black/African American",11,"Married","Protestant",1,8,1,5,2,2,2,NA,8,NA,3,"Married","Other",8,8,1,2,2,2,1,202,2,NA,8,6,6,14
+11089,"Male","Black/African American",8,"Widowed","Protestant",1,1,2,5,2,2,2,NA,8,8,6,"Widowed","Other",1,1,1,3,2,2,1,245,2,NA,22,5,5,12
+10273,"Male","White/Caucasian",14,"Married","Other",8,8,2,5,2,2,2,NA,15,9,6,"Married","Other",8,8,2,7,6,2,1,190,2,NA,14,10,7,12
+11176,"Female","Black/African American",16,"Widowed","Protestant",1,5,2,5,2,2,2,NA,9,8,6,"Widowed","Protestant",5,5,1,5,2,2,1,199,2,NA,8,8,7,12
+10815,"Female","White/Caucasian",8,"Widowed","Protestant",1,8,2,5,2,2,2,NA,11,12,4,"Widowed","Protestant",1,8,2,8,3,NA,0,85,2,NA,8,9,7,17
+10302,"Female","White/Caucasian",9,"Married","Protestant",3,2,2,6,2,2,2,NA,13,10,6,"Married","Protestant",1,1,2,6,2,2,4,150,2,NA,9,9,7,10
+10094,"Male","White/Caucasian",3,"Married","Protestant",2,2,1,7,2,2,2,NA,15,12,5,"Married","Protestant",8,8,1,2,2,2,1,NA,2,NA,8,4,6,16
+11148,"Male","Black/African American",11,"Married","Protestant",1,1,2,7,2,2,2,NA,10,NA,3,"Married","Other",1,1,2,NA,NA,2,4,248,2,NA,8,17,6,8
+10134,"Female","White/Caucasian",14,"Married","Protestant",1,2,2,7,2,2,2,NA,13,11,5,"Married","Protestant",1,3,1,NA,3,1,3,170,2,NA,13,9,5,12
+10240,"Male","White/Caucasian",12,"Married","Other",1,4,2,7,2,2,2,NA,19,11,6,"Widowed","Protestant",3,4,2,4,3,2,1,140,2,NA,19,10,4,10
+11359,"Female","White/Caucasian",12,"Widowed","Catholic or Roman Catholic",1,1,1,8,2,2,2,NA,17,10,7,"Widowed","No religious preference",1,1,2,8,2,2,1,130,2,NA,20,10,6,10
+10244,"Female","Black/African American",9,"Married","Protestant",8,8,1,8,2,2,2,NA,13,10,NA,"Married","Protestant",8,8,2,5,3,2,0,155,2,NA,13,10,6,7
+10144,"Female","White/Caucasian",12,"Widowed","Protestant",1,1,2,8,2,2,2,NA,9,11,3,"Widowed","Protestant",1,1,2,8,2,2,3,170,2,NA,16,10,6,9
+10973,"Male","White/Caucasian",16,"Married","Protestant",1,8,2,8,2,2,2,NA,8,8,3,"Married","Protestant",5,8,2,4,2,1,3,246,2,NA,8,7,7,12
+11331,"Male","Black/African American",12,"Married","Protestant",6,6,1,3,3,2,2,NA,10,NA,6,"Married","Protestant",6,6,1,2,2,2,1,210,2,NA,11,8,7,12
+10536,"Female","Black/African American",8,"Widowed","Protestant",7,8,1,3,3,2,2,NA,10,8,6,"Widowed","Protestant",8,8,1,2,2,2,2,150,2,NA,8,5,6,11
+10303,"Male","White/Caucasian",16,"Married","Protestant",9,8,1,3,3,2,2,NA,9,8,6,"Married","Protestant",8,8,1,4,2,2,1,180,2,NA,8,8,6,16
+10759,"Male","White/Caucasian",16,"Married","Protestant",7,7,2,4,3,2,2,NA,9,6,6,"Married","Protestant",7,7,2,4,2,2,1,192,2,NA,8,8,6,11
+11041,"Male","White/Caucasian",13,"Married","Protestant",8,8,2,4,3,2,2,NA,8,0,6,"Married","Protestant",8,8,1,3,1,1,2,190,2,NA,8,10,6,16
+10235,"Female","White/Caucasian",12,"Married","Other",1,8,1,5,3,2,2,NA,11,4,3,"Married","Other",1,5,2,4,3,2,1,208,2,NA,14,8,8,16
+11123,"Female","White/Caucasian",12,"Divorced","Other",8,8,1,6,3,2,2,NA,11,8,5,"Divorced","Other",7,7,2,7,3,2,2,150,2,NA,11,8,7,12
+10547,"Female","White/Caucasian",10,"Divorced","Other",2,3,2,7,3,2,2,NA,20,14,6,"Divorced","Other",1,2,2,7,1,3,2,225,2,NA,17,10,6,7
+11210,"Female","White/Caucasian",14,"Married","Protestant",2,4,1,8,3,2,2,NA,10,9,6,"Widowed","Protestant",4,4,1,7,2,2,6,218,2,NA,9,12,6,16
+11033,"Female","White/Caucasian",12,"Widowed",NA,1,1,4,8,3,2,2,NA,21,10,6,"Widowed","Other",8,8,1,4,1,2,3,132,2,NA,10,8,6,16
+10054,"Female","White/Caucasian",14,"Widowed",NA,1,1,4,8,4,2,2,NA,16,9,6,"Widowed","Protestant",1,1,3,8,8,1,0,150,2,NA,11,9,7,11
+10957,"Male","White/Caucasian",13,"Married","Protestant",1,8,1,3,5,2,2,NA,13,11,6,"Widowed","Protestant",1,8,2,5,5,2,2,200,2,NA,10,10,7,9
+11074,"Female","Black/African American",8,"Widowed","Protestant",1,5,2,7,5,2,2,NA,8,NA,6,"Widowed","Protestant",1,2,2,7,5,2,0,128,2,NA,8,11,7,11
+10546,"Male","White/Caucasian",11,"Married","Other",8,8,1,4,6,2,2,NA,11,8,6,"Married","Other",8,8,1,6,2,3,0,240,2,NA,9,9,7,12
+11108,"Female","Black/African American",11,"Widowed","Protestant",1,6,2,7,NA,2,2,NA,8,9,NA,"Widowed","Other",1,7,2,7,8,3,1,219,2,NA,11,10,7,9
+10887,"Male","Black/African American",5,"Widowed","Other",9,9,1,1,1,2,2,NA,16,4,6,"Widowed","Other",9,9,2,2,1,2,3,190,2,NA,27,7,6,8
+10422,"Male","Black/African American and some other race",12,"Widowed","Protestant",8,8,1,1,1,2,2,NA,20,4,3,"Widowed","Other",8,8,1,8,1,2,1,180,2,NA,9,4,8,16
+10220,"Female","Black/African American",11,"Widowed","Protestant",8,8,1,2,1,2,2,NA,13,11,6,"Widowed","Protestant",8,8,1,2,1,3,2,190,2,NA,12,8,7,12
+11415,"Female","White/Caucasian",12,"Married","Protestant",8,8,1,2,1,2,2,NA,10,NA,4,"Married","Other",8,8,1,2,1,2,0,155,2,NA,16,9,6,9
+10424,"Female","Black/African American",18,"Divorced","Protestant",8,8,1,2,1,2,2,NA,14,9,6,"Divorced","Protestant",8,8,1,2,1,2,1,180,2,NA,8,5,3,4
+10033,"Female","Black/African American",12,"Married","Protestant",8,8,1,2,1,2,2,NA,13,7,6,"Married","Protestant",9,8,1,3,1,2,1,129,2,NA,10,9,5,10
+10899,"Male","Black/African American",8,"Widowed","Protestant",8,8,1,2,1,2,2,NA,9,8,3,"Widowed","Protestant",1,3,2,5,2,3,37,181,2,NA,18,13,7,12
+10998,"Female","Black/African American",14,"Married","Protestant",7,8,1,3,1,2,2,NA,8,9,3,"Married","Protestant",8,8,1,3,1,2,1,130,2,NA,8,7,5,13
+11434,"Female","White/Caucasian",21,"Married","Protestant",8,8,1,3,1,2,2,NA,9,8,NA,"Married","Protestant",8,8,1,3,2,2,3,128,2,NA,11,8,7,12
+11267,"Female","Black/African American",2,"Separated","Protestant",1,8,1,3,1,2,2,NA,11,6,4,"Widowed","Other",NA,8,1,NA,1,2,1,146,2,NA,19,7,4,11
+10219,"Male","White/Caucasian",15,"Married","Protestant",1,6,2,3,1,2,2,NA,10,9,3,"Married","Protestant",1,4,2,5,1,3,4,135,2,NA,9,13,8,19
+10737,"Female","White/Caucasian",12,"Married","Protestant",NA,8,1,5,1,2,2,NA,10,7,3,"Married","Protestant",1,7,1,3,1,2,1,165,2,NA,19,11,4,10
+11408,"Male","Black/African American",12,"Widowed","Protestant",6,8,2,5,1,2,2,NA,8,12,3,"Married","Protestant",1,6,1,8,1,2,1,180,2,NA,8,8,7,12
+10760,"Female","White/Caucasian",14,"Divorced",NA,1,1,1,7,1,2,2,NA,10,8,5,"Divorced","Other",4,4,1,7,1,2,3,155,2,NA,11,8,6,12
+10730,"Male","White/Caucasian",16,"Married","Protestant",8,8,1,7,1,2,2,NA,10,11,3,"Married","Protestant",8,8,1,2,1,1,1,186,2,NA,8,11,6,16
+10379,"Female","White/Caucasian",17,"Married","Protestant",1,4,2,7,1,2,2,NA,8,4,3,"Widowed","Protestant",1,8,1,4,2,2,3,180,2,NA,9,8,6,16
+11265,"Female","White/Caucasian",12,"Widowed","Protestant",1,8,2,7,1,2,2,NA,2,0,3,"Widowed","Protestant",1,6,2,7,5,2,3,140,2,NA,8,12,8,16
+10599,"Female","Black/African American",10,"Widowed","Protestant",1,1,1,8,1,2,2,NA,13,8,5,"Widowed","Protestant",3,3,1,3,2,2,1,NA,2,NA,18,9,5,12
+10170,"Male","Black/African American",2,"Married","Protestant",6,6,1,8,1,2,2,NA,14,9,6,"Married","Protestant",6,8,1,7,1,2,1,165,2,NA,8,8,5,12
+10690,"Male","Black/African American",NA,"Married","Protestant",1,6,2,8,1,2,2,NA,8,8,4,"Married","Other",1,3,1,8,1,4,1,170,2,NA,9,9,7,16
+11327,"Male","White/Caucasian",12,"Married","Protestant",10,8,1,NA,2,2,2,NA,11,6,3,"Married","Protestant",10,8,1,5,1,3,1,155,2,NA,8,5,4,10
+11110,"Male","Black/African American",6,"Widowed","Protestant",4,8,1,2,2,2,2,NA,12,NA,6,"Widowed","Other",1,7,1,8,2,3,1,185,2,NA,10,6,5,12
+11273,"Female","Black/African American",11,"Widowed","Protestant",8,8,1,2,2,2,2,NA,25,5,3,"Widowed","Protestant",3,8,1,2,1,2,2,170,2,NA,11,5,6,15
+10027,"Female","White/Caucasian",16,"Widowed","Protestant",7,8,1,2,2,2,2,NA,13,NA,3,"Widowed","Protestant",2,5,2,5,2,2,1,120,2,NA,10,15,5,17
+10631,"Female","Black/African American",12,"Widowed","Protestant",8,7,2,2,2,2,2,NA,18,6,6,"Widowed","Protestant",7,9,1,1,1,2,3,217,2,NA,8,11,5,9
+10749,"Male","Black/African American",16,"Married","Protestant",6,8,2,2,2,2,2,NA,14,NA,6,"Married","Other",7,8,1,2,2,2,2,155,2,NA,14,7,6,15
+10413,"Female","White/Caucasian",12,"Married","Protestant",8,9,1,3,2,2,2,NA,8,4,3,"Married","Other",8,8,1,3,3,2,1,189,2,NA,8,5,4,8
+11234,"Female","Black/African American",9,"Married","Protestant",2,6,1,3,2,2,2,NA,14,8,4,"Married","Protestant",1,6,2,7,1,3,2,176,2,NA,12,9,6,9
+11023,"Female","Black/African American",19,"Divorced","Protestant",3,7,1,3,2,2,2,NA,14,6,3,"Divorced","Protestant",1,7,1,3,1,2,1,152,2,NA,8,7,6,16
+10396,"Female","White/Caucasian",18,"Widowed","Protestant",8,8,1,3,2,2,2,NA,10,7,3,"Widowed","Protestant",8,8,1,5,2,1,0,150,2,NA,8,8,6,15
+11404,"Male","Black/African American",12,"Married","Other",1,8,1,3,2,2,2,NA,9,7,6,"Married","Protestant",8,7,1,5,2,3,1,180,2,NA,8,8,8,16
+11485,"Male","Black/African American",10,"Married","Protestant",8,8,1,3,2,2,2,NA,8,9,3,"Married","Protestant",8,8,2,3,2,1,0,168,1,42,8,10,7,12
+10280,"Female","Black/African American",12,"Married","Protestant",8,8,1,3,2,2,2,NA,9,7,6,"Married","Protestant",4,8,1,4,1,2,4,193,2,NA,8,5,6,16
+10692,"Female","Black/African American",7,"Married","Protestant",7,9,1,3,2,2,2,NA,10,6,6,"Married","Protestant",9,9,1,1,1,1,0,169,2,NA,12,9,6,15
+11342,"Female","White/Caucasian",12,"Never Married","Protestant",1,1,2,3,2,2,2,NA,15,11,6,"Never married","Protestant",1,1,2,4,2,2,1,155,2,NA,13,10,7,10
+10870,"Female","White/Caucasian",11,"Married","Protestant",3,3,2,3,2,2,2,NA,13,0,6,"Widowed","Protestant",1,1,1,3,1,2,1,135,2,NA,13,10,6,14
+10373,"Male","White/Caucasian",14,"Married","Protestant",8,8,1,4,2,2,2,NA,11,9,3,"Married","Protestant",8,9,1,7,1,3,6,174,2,NA,13,8,3,13
+10860,"Male","White/Caucasian",16,"Married","Protestant",5,8,2,4,2,2,2,NA,10,8,4,"Married","Protestant",5,8,2,4,2,2,0,175,2,NA,10,7,6,8
+10159,"Female","White/Caucasian",16,"Married","Catholic or Roman Catholic",1,1,NA,5,2,2,2,NA,12,NA,6,"Divorced","Protestant",1,3,1,2,1,1,1,130,2,NA,8,6,4,10
+10954,"Female","White/Caucasian",12,"Widowed","Protestant",5,6,1,5,2,2,2,NA,13,8,6,"Widowed","Protestant",1,1,1,4,1,4,3,155,2,NA,27,15,6,16
+11030,"Female","White/Caucasian",13,"Married","Protestant",8,8,1,5,2,2,2,NA,8,8,5,"Married","Protestant",8,8,1,2,2,2,1,138,2,NA,8,5,6,16
+10099,"Female","White/Caucasian",15,"Widowed","Protestant",8,8,2,5,2,2,2,NA,9,11,6,"Widowed","Protestant",9,8,2,3,2,2,1,163,2,NA,8,8,6,9
+11307,"Female","White/Caucasian",12,"Married","Protestant",1,5,1,6,2,2,2,NA,13,6,6,"Married","Protestant",3,3,2,7,2,2,1,NA,2,NA,8,7,4,9
+10839,"Female","White/Caucasian",16,"Widowed","Protestant",1,7,1,6,2,2,2,NA,8,8,6,"Widowed","Protestant",1,7,2,7,1,2,0,124,2,NA,9,11,7,12
+10372,"Female","White/Caucasian",NA,"Married","Catholic or Roman Catholic",1,3,2,6,2,2,2,NA,17,8,5,"Married","No religious preference",1,4,1,5,1,2,1,158,2,NA,19,10,7,12
+11071,"Female","Black/African American",11,"Widowed","Protestant",1,9,1,7,2,2,2,NA,8,8,3,"Widowed","Protestant",4,7,2,2,3,2,1,160,2,NA,10,10,5,11
+10825,"Female","White/Caucasian",12,"Widowed",NA,1,3,2,7,2,2,2,NA,20,10,3,"Widowed","Protestant",1,1,2,8,6,3,1,NA,2,NA,10,8,5,12
+10238,"Male","White/Caucasian",11,"Married","Protestant",1,3,2,7,2,2,2,NA,14,8,6,"Married","Protestant",1,6,2,7,6,2,1,235,2,NA,11,8,6,15
+10494,"Male","White/Caucasian",12,"Married","Protestant",8,8,2,7,2,2,2,NA,11,10,6,"Married","Protestant",7,8,2,4,2,2,1,172,2,NA,12,9,7,11
+11075,"Female","Black/African American",10,"Divorced","Protestant",8,8,2,7,2,2,2,NA,12,NA,3,"Widowed","Protestant",3,5,2,5,4,2,1,145,2,NA,8,15,5,10
+10340,"Female","White/Caucasian",12,"Widowed",NA,10,1,1,8,2,2,2,NA,14,NA,3,"Divorced","No religious preference",1,1,2,8,3,1,2,212,2,NA,10,10,6,8
+11002,"Male","Black/African American and some other race",8,"Married","Protestant",1,2,2,8,2,2,2,NA,8,9,3,"Married","Protestant",1,6,1,7,1,1,1,200,2,NA,8,8,5,12
+11489,"Female","White/Caucasian",12,"Married","Protestant",2,2,2,8,2,2,2,NA,11,1,6,"Married","Protestant",1,1,1,8,2,2,1,150,2,NA,8,11,6,12
+10439,"Female","Black/African American",9,"Divorced","Protestant",1,3,2,8,2,2,2,NA,26,14,10,"Widowed","Protestant",1,1,1,4,2,1,3,132,2,NA,19,9,5,12
+11167,"Female","Black/African American",12,"Married","Protestant",1,6,2,8,2,2,2,NA,12,11,6,"Widowed","Protestant",1,6,1,4,1,2,1,236,2,NA,13,12,3,4
+11054,"Female","White/Caucasian",12,"Married","Protestant",1,4,2,8,2,2,2,NA,10,7,6,"Married","Protestant",1,1,2,7,2,2,1,159,2,NA,9,4,3,10
+10566,"Female","White/Caucasian",12,"Married","Protestant",1,1,2,2,3,2,2,NA,10,7,6,"Widowed","Protestant",8,8,1,2,1,NA,3,168,2,NA,12,7,6,16
+10019,"Female","White/Caucasian",12,"Widowed","Protestant",8,8,2,2,3,2,2,NA,20,0,5,"Widowed","Protestant",7,8,1,4,3,2,1,210,2,NA,18,21,6,18
+11076,"Male","Black/African American",NA,"Widowed","Protestant",1,1,2,3,3,2,2,NA,10,NA,3,"Widowed","Protestant",2,3,2,7,6,3,0,160,2,NA,10,11,8,16
+10213,"Female","White/Caucasian",14,"Widowed","Protestant",8,8,2,3,3,2,2,NA,11,9,6,"Widowed","Protestant",8,8,2,3,2,3,3,118,2,NA,9,9,6,9
+11305,"Female","White/Caucasian",17,"Widowed","Catholic or Roman Catholic",1,4,2,3,3,2,2,NA,15,10,4,"Widowed","No religious preference",1,1,2,3,3,2,2,140,2,NA,23,13,6,14
+11380,"Male","White/Caucasian",14,"Divorced","Protestant",1,4,2,3,3,2,2,NA,8,12,6,"Married","Protestant",1,1,3,8,8,4,3,160,2,NA,26,13,8,16
+10390,"Female","White/Caucasian",11,"Divorced","Protestant",4,4,3,4,3,2,2,NA,14,7,6,"Divorced","Protestant",1,1,2,8,5,2,2,127,2,NA,11,8,7,12
+10709,"Female","Black/African American",12,"Married","Catholic or Roman Catholic",10,5,1,5,3,2,2,NA,10,11,NA,"Married","Protestant",5,6,2,1,3,3,1,167,2,NA,11,9,6,8
+11409,"Female","Black/African American",10,"Married","Protestant",1,3,2,5,3,2,2,NA,8,12,6,"Married","Protestant",7,8,1,1,1,2,2,178,2,NA,13,4,5,12
+10058,"Female","White/Caucasian",14,"Widowed","Protestant",4,4,2,5,3,2,2,NA,10,9,6,"Widowed","Protestant",1,3,1,3,2,2,0,105,2,NA,17,7,6,16
+10849,"Male","White/Caucasian",12,"Married","Protestant",1,8,2,5,3,2,2,NA,8,8,6,"Married","Protestant",1,6,1,5,3,3,3,235,2,NA,9,8,5,12
+10611,"Male","White/Caucasian",11,"Married","Protestant",1,1,1,7,3,2,2,NA,8,NA,6,"Married","Protestant",2,2,2,7,2,3,2,140,2,NA,8,9,7,12
+10993,"Male","Black/African American",10,NA,"Protestant",1,8,2,3,4,2,2,NA,16,8,3,"Widowed","Protestant",1,8,1,2,2,2,2,159,2,NA,8,4,5,12
+11068,"Female","Black/African American",14,"Married","Protestant",1,4,2,7,4,2,2,NA,8,8,3,"Married","Protestant",3,4,1,5,3,1,0,130,2,NA,8,8,4,8
+10318,"Male","White/Caucasian",12,"Widowed","Protestant",1,6,3,7,5,2,2,NA,22,10,6,"Widowed","Protestant",2,2,2,8,2,3,2,175,2,NA,18,10,6,9
+11262,"Female","White/Caucasian",8,"Widowed","Protestant",1,1,3,8,5,2,2,NA,8,NA,3,"Widowed","Protestant",1,1,3,8,8,1,1,NA,2,NA,8,9,4,8
+10548,"Male","White/Caucasian",13,"Widowed","Other",6,6,3,8,5,2,2,NA,8,8,6,"Widowed","Other",7,6,NA,7,8,2,1,170,2,NA,8,8,8,14
+10091,"Male","White/Caucasian",9,"Divorced","Protestant",1,3,2,8,6,2,2,NA,14,12,6,"Divorced","Other",1,1,2,8,5,1,1,170,2,NA,10,12,7,11
+11300,"Male","White/Caucasian",16,"Married","Protestant",1,9,3,8,7,2,2,NA,10,8,6,"Married","Protestant",8,8,2,8,1,2,2,135,2,NA,8,8,6,16
+10526,"Female","White/Caucasian",18,"Married","Protestant",1,2,3,7,4,2,2,NA,10,9,4,"Married","Protestant",1,3,4,7,3,2,1,175,2,NA,12,8,5,5
+10852,"Male","White/Caucasian",12,"Married",NA,1,1,3,7,7,2,2,NA,12,NA,6,"Married","No religious preference",1,1,4,8,8,2,2,170,2,NA,8,11,5,10
+11301,"Male","White/Caucasian",12,"Married","Protestant",1,1,2,8,7,2,2,NA,15,10,5,"Married","Protestant",1,2,NA,8,7,1,1,152,2,NA,14,12,6,13
+10098,"Female","White/Caucasian",NA,"Married","Protestant",2,4,3,8,7,2,2,NA,9,12,7,"Married","Protestant",4,4,2,8,7,2,4,NA,2,NA,8,8,3,4
+10594,"Male","White/Caucasian",16,"Married",NA,1,1,3,7,1,2,2,NA,13,7,3,"Married","No religious preference",1,1,2,7,8,2,9,165,2,NA,17,10,7,12
+10886,"Male","Black/African American",7,"Married","Protestant",4,6,1,8,1,2,2,NA,5,7,6,"Married","Protestant",3,6,2,5,2,3,2,135,2,NA,16,10,7,11
+11431,"Female","White/Caucasian",16,"Married","Protestant",1,1,1,7,3,2,2,NA,8,7,3,"Married","Protestant",1,1,2,5,5,1,1,150,2,NA,9,6,5,12
+10016,"Male","White/Caucasian",10,"Widowed","Protestant",5,5,2,8,6,2,2,NA,18,10,6,"Widowed","Protestant",1,1,3,NA,6,2,0,155,2,NA,8,11,6,8
+10502,"Male","White/Caucasian",12,"Married","Protestant",1,3,2,8,7,2,2,NA,8,12,3,"Widowed","Protestant",5,4,2,7,7,3,3,150,2,NA,8,8,5,12
+11367,"Male","White/Caucasian",12,"Married",NA,1,1,2,8,8,3,2,NA,9,NA,6,"Married","No religious preference",1,1,2,8,NA,2,2,200,2,NA,19,8,7,16
+11251,"Female","White/Caucasian",12,"Married","Catholic or Roman Catholic",1,1,2,8,8,3,2,NA,12,9,7,"Married","Other",1,1,NA,NA,NA,4,NA,102,2,NA,26,10,7,12
+10636,"Female","White/Caucasian",12,"Widowed","Protestant",1,1,2,8,8,3,2,NA,16,12,6,"Widowed","Protestant",1,1,2,8,5,4,5,197,2,NA,30,7,3,10
+10885,"Male","White/Caucasian",12,"Married","Protestant",1,2,2,8,8,3,2,NA,15,10,5,"Married","Other",1,1,2,8,NA,2,3,170,2,NA,8,10,5,12
+10036,"Female","Black/African American",7,"Married","Protestant",1,3,2,8,8,3,2,NA,22,13,7,"Married","Protestant",1,8,2,8,3,2,1,105,2,NA,10,5,6,10
+11059,"Male","White/Caucasian",12,"Married","Protestant",2,8,2,8,8,3,2,NA,12,9,6,"Married","Protestant",1,1,2,8,4,4,4,144,2,NA,17,14,7,11
+10882,"Female","White/Caucasian",12,"Married","Protestant",1,1,3,8,8,3,2,NA,12,9,6,"Married","No religious preference",1,1,2,7,7,2,0,NA,2,NA,8,5,6,16
+10637,"Male","White/Caucasian",18,"Married","Protestant",1,1,3,8,8,3,2,NA,8,9,3,"Married","Protestant",1,1,2,8,8,2,NA,160,2,NA,17,10,6,16
+10412,"Female","White/Caucasian",11,"Married","Protestant",1,3,3,8,8,3,2,NA,16,2,NA,"Widowed","Protestant",3,2,2,3,2,3,3,190,2,NA,8,9,8,16
+11355,"Female","White/Caucasian",15,"Married","Protestant",1,3,3,8,8,3,2,NA,8,14,3,"Married","Protestant",2,2,2,7,3,4,1,NA,2,NA,16,10,7,12
+10375,"Male","Black/African American",9,"Widowed","Catholic or Roman Catholic",1,4,3,8,8,3,2,NA,8,10,3,"Divorced","No religious preference",1,3,1,7,7,3,2,143,2,NA,12,8,6,14
+10103,"Male","White/Caucasian",10,"Widowed",NA,1,1,4,8,8,3,2,NA,8,11,6,"Divorced","Protestant",3,3,2,8,3,3,1,190,2,NA,8,11,6,9
+11032,"Male","White/Caucasian",11,"Married","Protestant",1,1,4,8,8,3,2,NA,10,6,3,"Married","Protestant",1,3,2,7,7,3,1,185,2,NA,12,12,3,8
+10083,"Male","Black/African American",NA,"Married","Protestant",9,9,1,1,1,3,2,NA,8,NA,3,"Separated","Protestant",1,3,3,8,6,4,7,NA,2,NA,31,17,9,4
+11186,"Female","White/Caucasian",13,"Never Married","Catholic or Roman Catholic",5,8,1,8,NA,3,2,NA,NA,9,NA,"Never married","Protestant",5,8,1,2,1,3,0,135,2,NA,10,8,7,17
+11443,"Female","Black/African American",9,"Separated","Protestant",8,8,1,3,1,3,2,NA,15,NA,NA,"Divorced","Protestant",4,8,1,3,2,3,2,210,2,NA,13,10,6,12
+10352,"Female","White/Caucasian",16,"Married","Protestant",3,5,2,6,1,3,2,NA,13,11,5,"Married","Protestant",1,5,3,4,1,3,2,103,2,NA,13,11,6,16
+11240,"Female","White/Caucasian",14,"Never Married","Protestant",1,5,NA,7,1,3,2,NA,28,4,0,"Never married","Protestant",1,1,1,NA,1,3,6,300,2,NA,21,17,6,4
+11112,"Female","Black/African American and some other race",5,"Married","Protestant",3,3,1,8,1,3,2,NA,20,13,6,"Married","Other",2,2,1,8,3,3,3,225,2,NA,9,9,5,8
+11397,"Female","White/Caucasian",9,"Never Married","Protestant",1,7,2,2,2,3,2,NA,11,8,5,"Never married","Other",1,8,2,7,2,2,0,175,2,NA,13,9,7,11
+10866,"Female","White/Caucasian",16,"Widowed","Protestant",1,7,1,3,2,3,2,NA,8,11,6,"Widowed","Protestant",8,8,1,3,1,2,2,130,2,NA,9,11,5,13
+11070,"Female","Black/African American",12,"Married","Protestant",5,5,1,6,2,3,2,NA,8,7,5,"Married","Protestant",5,6,2,2,2,4,2,130,2,NA,22,14,6,9
+10934,"Male","White/Caucasian",11,"Married","Protestant",1,3,2,8,3,3,2,NA,10,11,6,"Married","Protestant",1,3,2,8,NA,3,4,225,2,NA,11,8,5,13
+10700,"Female","White/Caucasian",16,"Widowed","Protestant",1,4,3,8,3,3,2,NA,22,14,7,"Widowed","Protestant",1,1,2,8,6,3,7,170,2,NA,19,11,7,12
+11067,"Female","White/Caucasian",12,"Widowed","Protestant",1,3,2,8,4,3,2,NA,13,12,7,"Widowed","Protestant",1,1,2,8,2,4,1,130,2,NA,13,11,7,7
+10417,"Male","White/Caucasian",8,"Married","Protestant",1,1,2,8,6,3,2,NA,10,13,NA,"Married","No religious preference",1,1,2,8,8,3,3,240,2,NA,12,11,6,8
+11368,"Female","White/Caucasian",10,"Married",NA,1,1,3,8,6,3,2,NA,9,10,6,"Married","No religious preference",1,1,2,8,3,3,3,215,2,NA,11,11,4,9
+11336,"Male","White/Caucasian",11,"Separated","Catholic or Roman Catholic",1,8,NA,8,7,3,2,NA,8,11,6,"Separated","Other",1,4,2,8,3,3,4,222,2,NA,8,13,8,14
+10850,"Male","White/Caucasian",12,"Married","Protestant",1,2,2,8,7,3,2,NA,11,9,3,"Married","Protestant",1,1,2,8,6,2,50,255,2,NA,11,8,7,12
+11330,"Female","Black/African American",8,"Married","Other",1,8,1,1,1,3,2,NA,8,NA,6,"Married","Other",8,8,1,2,2,3,1,92,2,NA,8,20,5,12
+10712,"Female","Black/African American",15,"Widowed","Protestant",5,5,1,1,1,3,2,NA,17,10,6,"Married","Protestant",9,8,1,3,2,2,1,145,2,NA,10,7,7,12
+10227,"Female","Black/African American",12,"Widowed","Protestant",8,6,1,1,1,3,2,NA,8,8,3,"Widowed","Protestant",1,6,1,2,2,2,1,173,2,NA,10,11,6,16
+10495,"Female","Black/African American",9,"Widowed","Protestant",1,8,1,1,1,3,2,NA,15,9,5,"Widowed","Protestant",1,7,1,2,1,3,4,230,2,NA,10,7,7,12
+11302,"Female","White/Caucasian",14,"Widowed","Protestant",1,8,1,1,1,3,2,NA,8,8,6,"Widowed","Other",8,8,1,NA,1,3,2,145,2,NA,9,8,7,12
+10003,"Female","Black/African American",6,"Widowed","Protestant",4,8,1,1,1,3,2,NA,11,4,3,"Widowed","Protestant",8,8,1,2,1,2,1,190,2,NA,20,5,4,8
+10168,"Female","Black/African American",12,"Never Married","Other",8,8,1,1,1,3,2,NA,12,5,3,"Never married","Other",7,7,1,2,1,2,1,180,2,NA,10,8,7,12
+10267,"Female","Black/African American",9,"Widowed","Protestant",1,8,2,1,1,3,2,NA,25,9,6,"Widowed","Protestant",1,7,1,1,1,3,1,121,2,NA,13,8,3,8
+11012,"Female","Black/African American",5,"Widowed",NA,1,1,1,2,1,3,2,NA,8,8,3,"Decline to answer","No religious preference",2,2,2,2,1,2,1,NA,2,NA,8,35,12,36
+11328,"Female","Black/African American",7,"Separated","Protestant",1,3,1,2,1,3,2,NA,9,4,6,"Widowed","Protestant",2,2,1,1,2,3,0,150,2,NA,8,8,7,12
+11049,"Male","Black/African American",10,"Married","Protestant",8,8,1,2,1,3,2,NA,10,7,3,"Separated","Protestant",9,9,1,2,1,3,1,184,2,NA,8,5,5,12
+10263,"Male","Black/African American",12,"Widowed","Protestant",5,9,1,2,1,3,2,NA,8,11,6,"Widowed","Protestant",3,9,2,3,1,2,1,182,2,NA,8,9,7,12
+11209,"Female","Black/African American",12,"Widowed","Protestant",9,9,1,2,1,3,2,NA,10,9,4,"Widowed","Protestant",8,8,1,2,1,3,7,150,2,NA,17,10,5,14
+11446,"Male","Black/African American",10,"Divorced","Protestant",1,5,1,2,1,3,2,NA,10,NA,3,"Divorced","Protestant",1,6,1,8,2,2,2,150,2,NA,8,10,7,11
+11151,"Female","Black/African American",6,"Widowed","Protestant",6,8,1,2,1,3,2,NA,23,NA,3,"Widowed","Protestant",1,6,1,1,1,4,2,138,2,NA,8,7,6,16
+10797,"Female","Black/African American",18,"Married","Protestant",8,8,1,2,1,3,2,NA,14,7,6,"Widowed","Protestant",8,8,1,1,1,3,0,160,2,NA,13,11,6,16
+11218,"Female","White/Caucasian and some other race",3,"Widowed","Protestant",9,8,1,2,1,3,2,NA,15,10,3,"Widowed","Other",8,8,1,4,2,2,1,140,2,NA,8,9,4,8
+11170,"Female","Black/African American",11,"Divorced","Protestant",1,5,1,2,1,3,2,NA,20,10,6,"Divorced","Protestant",1,4,1,2,1,3,4,180,2,NA,13,10,7,12
+10153,"Female","Black/African American",12,"Married","Protestant",1,7,1,2,1,3,2,NA,20,NA,3,"Married","Other",4,4,1,2,1,3,2,168,2,NA,21,16,5,12
+11481,"Female","Black/African American",10,"Widowed","Protestant",1,7,1,2,1,3,2,NA,18,4,3,"Widowed","Protestant",1,7,1,3,1,2,1,185,2,NA,8,4,5,12
+10646,"Female","Black/African American",9,"Widowed","Protestant",7,7,1,2,1,3,2,NA,9,5,3,"Widowed","Protestant",1,3,2,NA,2,1,0,150,2,NA,8,11,7,12
+11449,"Male","Black/African American",16,"Widowed","Protestant",2,8,1,2,1,3,2,NA,9,5,3,"Widowed","Protestant",1,8,1,2,2,4,2,167,2,NA,18,11,7,12
+10319,"Female","White/Caucasian",12,"Married","Protestant",8,8,1,2,1,3,2,NA,8,9,6,"Married","Protestant",7,7,1,3,2,2,1,182,2,NA,11,10,5,12
+10281,"Male","Black/African American",13,"Married","Protestant",8,8,1,2,1,3,2,NA,9,6,3,"Married","Protestant",6,8,1,2,1,2,3,228,2,NA,8,7,6,16
+10330,"Female","Black/African American",7,"Widowed","Protestant",8,8,1,2,1,3,2,NA,12,6,3,"Widowed","Other",9,9,1,2,1,2,0,270,2,NA,10,6,5,8
+10655,"Female","Black/African American",11,"Married","Protestant",9,8,1,2,1,3,2,NA,10,6,3,"Widowed","Protestant",7,7,1,2,1,3,4,220,2,NA,12,11,5,12
+11411,"Female",NA,12,"Married","Protestant",9,8,1,2,1,3,2,NA,12,10,NA,"Married","Other",9,7,1,3,1,3,1,195,2,NA,10,12,6,16
+11424,"Female","Black/African American",11,"Married","Protestant",8,8,2,2,1,3,2,NA,16,8,6,"Married","Other",8,8,1,3,2,1,1,154,2,NA,13,4,4,8
+10228,"Female","Black/African American",14,"Married","Protestant",9,9,2,2,1,3,2,NA,16,9,3,"Widowed","Protestant",8,8,1,2,1,3,3,238,2,NA,13,9,6,16
+10630,"Female","Black/African American",NA,"Separated","Protestant",1,8,2,2,1,3,2,NA,13,10,6,"Widowed","Protestant",1,8,1,8,1,3,2,140,2,NA,12,6,4,8
+10681,"Female","Black/African American",12,"Never Married","Protestant",6,8,2,2,1,3,2,NA,11,7,6,"Never married","Protestant",1,8,1,2,1,3,0,250,2,NA,12,8,6,7
+10468,"Female","White/Caucasian",12,"Widowed","Protestant",2,1,1,3,1,3,2,NA,16,8,6,"Widowed","Protestant",1,1,2,3,2,3,1,94,2,NA,10,10,6,10
+10697,"Male","White/Caucasian",14,"Married","Protestant",8,9,1,3,1,3,2,NA,13,7,6,"Married","Protestant",1,7,2,7,2,3,1,184,2,NA,9,8,8,13
+11426,"Female","Black/African American",16,"Married","Protestant",8,9,1,3,1,3,2,NA,8,10,5,"Married","Protestant",8,8,1,3,1,2,2,174,2,NA,8,7,7,12
+11462,"Female","Black/African American",6,"Married","Protestant",1,6,2,3,1,3,2,NA,16,9,3,"Married","Protestant",8,7,2,2,1,3,3,127,2,NA,12,7,6,9
+10125,"Female","Black/African American",10,"Widowed","Protestant",6,8,2,3,1,3,2,NA,16,8,6,"Widowed","Protestant",1,8,2,1,1,2,1,178,2,NA,10,7,7,12
+10059,"Female","White/Caucasian",14,"Married","Protestant",8,8,2,3,1,3,2,NA,11,10,6,"Married","Other",1,7,1,NA,1,1,1,135,2,NA,13,8,5,12
+10801,"Female","Black/African American",12,"Divorced","Protestant",7,8,2,3,1,3,2,NA,8,9,6,"Divorced","Protestant",8,8,2,2,2,3,2,150,2,NA,9,9,7,11
+10685,"Female","Black/African American",12,"Widowed","Protestant",8,1,2,4,1,3,2,NA,16,9,6,"Widowed","Protestant",1,7,1,NA,2,4,6,120,2,NA,8,12,5,12
+10703,"Female","Black/African American",NA,"Widowed","Protestant",6,6,2,5,1,3,2,NA,24,11,6,"Widowed","Other",9,8,2,3,1,3,4,129,2,NA,26,10,7,10
+11241,"Female","Black/African American",8,"Widowed","Protestant",1,6,1,7,1,3,2,NA,32,12,7,"Widowed","Protestant",1,8,1,3,2,2,3,95,2,NA,11,10,6,16
+11003,"Female","Black/African American",7,"Divorced","Protestant",2,NA,2,7,1,3,2,NA,8,7,3,"Widowed","Protestant",1,1,2,2,1,3,NA,155,2,NA,8,15,8,16
+10050,"Female","Black/African American",3,"Widowed","Other",1,5,1,8,1,3,2,NA,14,9,5,"Widowed","Other",1,1,1,5,1,3,1,140,2,NA,23,11,5,12
+10446,"Female","Black/African American",9,"Never Married","Protestant",1,4,2,8,1,3,2,NA,19,10,3,"Never married","Protestant",1,1,2,7,1,3,1,180,2,NA,21,8,8,16
+10720,"Female","Black/African American",14,"Widowed","Other",1,5,1,NA,2,3,2,NA,11,9,3,"Widowed","Protestant",1,3,2,5,2,3,1,169,2,NA,8,11,7,12
+10005,"Female","Black/African American",10,"Married","Protestant",8,9,1,1,2,3,2,NA,9,5,3,"Widowed","Protestant",8,8,2,1,1,2,1,210,2,NA,11,8,5,12
+10013,"Female","Black/African American",4,"Widowed","Protestant",2,8,1,1,2,3,2,NA,10,NA,3,"Widowed","Protestant",4,8,2,2,1,4,0,160,2,NA,10,7,6,12
+11152,"Female","Black/African American",11,NA,"Protestant",8,8,1,1,2,3,2,NA,9,5,3,"Separated","Protestant",1,8,1,1,1,2,1,240,2,NA,13,6,5,10
+11319,"Male","Black/African American and some other race",12,"Married","Protestant",2,6,1,2,2,3,2,NA,8,8,3,"Married","Protestant",4,4,2,4,2,3,2,170,2,NA,17,12,6,8
+10615,"Female","White/Caucasian",9,"Widowed","Protestant",8,9,1,2,2,3,2,NA,13,NA,6,"Widowed","Protestant",8,9,1,2,2,3,2,130,2,NA,9,9,7,16
+10517,"Male","White/Caucasian",12,"Married","Protestant",3,3,2,2,2,3,2,NA,8,4,3,"Married","Protestant",4,5,1,5,2,2,1,198,2,NA,8,8,6,16
+10015,"Female","White/Caucasian",12,"Married","Other",9,8,2,2,2,3,2,NA,12,8,6,"Married","Other",9,8,1,2,2,3,3,125,2,NA,9,8,8,16
+10706,"Female","White/Caucasian",10,"Widowed","Protestant",8,8,2,2,2,3,2,NA,14,6,3,"Widowed","Other",8,8,1,2,1,3,2,152,2,NA,18,14,7,12
+10800,"Male","Black/African American",12,"Married","Protestant",1,1,1,3,2,3,2,NA,15,8,3,"Married","Protestant",1,2,1,3,1,3,1,220,2,NA,14,24,12,14
+10133,"Male","White/Caucasian",16,"Married","Protestant",8,8,1,3,2,3,2,NA,11,7,6,"Married","Protestant",9,8,1,3,2,3,1,150,2,NA,13,8,5,12
+11291,"Female","White/Caucasian",12,"Married","Other",8,8,1,3,2,3,2,NA,10,11,3,"Married","Protestant",7,7,2,3,1,2,4,130,2,NA,14,13,10,9
+10009,"Female","Black/African American",15,"Widowed","Protestant",8,8,2,4,2,3,2,NA,8,6,3,"Widowed","Protestant",9,9,2,3,1,2,0,160,2,NA,8,7,7,12
+11437,"Male","White/Caucasian",10,"Married","Protestant",8,8,2,6,2,3,2,NA,9,10,7,"Separated","Protestant",8,8,2,2,1,2,7,215,2,NA,8,12,7,12
+10172,"Male","Black/African American",9,"Married","Protestant",1,5,1,7,2,3,2,NA,8,7,4,"Married","Protestant",1,3,2,7,1,3,1,197,2,NA,9,6,8,12
+10138,"Male","White/Caucasian",23,"Married",NA,1,3,3,8,2,3,2,NA,9,11,6,"Widowed","Not sure",1,1,1,7,2,3,3,180,2,NA,9,11,6,16
+10680,"Male","Black/African American",11,"Widowed","Protestant",8,8,3,8,2,3,2,NA,11,8,3,"Widowed","No religious preference",1,8,2,7,2,3,0,185,2,NA,13,7,7,9
+10308,"Female","White/Caucasian",18,"Widowed","Protestant",8,8,1,3,3,3,2,NA,13,7,6,"Widowed","Other",9,8,1,2,2,2,1,190,2,NA,8,6,5,12
+10425,"Male","Black/African American",5,"Widowed","Protestant",7,8,1,3,3,3,2,NA,15,4,3,"Widowed","Other",8,8,1,NA,1,2,1,210,2,NA,19,7,3,4
+10266,"Male","Black/African American",10,"Married","Protestant",3,3,2,3,3,3,2,NA,11,7,6,"Married","Protestant",3,3,2,8,2,2,1,145,2,NA,8,8,6,11
+11006,"Male","Black/African American",8,"Married","Protestant",NA,5,2,8,4,3,2,NA,21,8,NA,"Married","Protestant",1,1,2,8,8,2,2,134,2,NA,22,14,6,8
+11419,"Female","White/Caucasian",13,"Widowed","Protestant",1,7,1,2,NA,3,2,NA,12,NA,3,"Widowed","Other",1,1,1,1,1,4,6,114,2,NA,17,10,11,36
+11326,"Female","White/Caucasian",3,"Never Married","Protestant",1,9,1,NA,1,3,2,NA,11,8,4,"Never married","Protestant",7,8,1,4,1,2,2,165,2,NA,8,5,5,12
+10948,"Male","Black/African American",12,"Married","Protestant",6,8,1,1,1,3,2,NA,8,6,3,"Married","Protestant",4,7,1,3,1,3,0,182,2,NA,8,5,5,12
+10418,"Female","White/Caucasian and some other race",10,"Married","Protestant",8,8,1,1,1,3,2,NA,10,9,6,"Married","Other",7,9,1,2,1,3,2,150,2,NA,11,10,4,10
+10044,"Female","Black/African American",11,"Widowed","Protestant",9,8,1,1,1,3,2,NA,8,NA,6,"Widowed","Other",8,8,1,1,1,2,3,128,2,NA,8,8,6,16
+10883,"Male","Black/African American",8,"Married","Protestant",9,9,1,1,1,3,2,NA,9,9,4,"Married","Other",9,9,1,1,1,3,1,180,2,NA,9,4,5,11
+10007,"Female","Black/African American",16,"Widowed","Protestant",8,7,1,1,1,3,2,NA,12,8,4,"Widowed","Protestant",7,9,2,1,1,3,2,121,2,NA,11,10,7,12
+10654,"Female","Black/African American",4,"Separated","Protestant",8,8,1,1,1,3,2,NA,9,7,3,"Widowed","Other",9,9,1,2,3,1,3,189,2,NA,9,8,6,14
+10744,"Female","Black/African American",12,"Married","Protestant",8,9,1,1,1,3,2,NA,22,7,6,"Married","Other",7,8,1,1,1,2,4,206,2,NA,13,7,5,11
+11047,"Female","Black/African American",11,"Widowed","Protestant",6,5,1,1,1,3,2,NA,23,12,4,"Widowed","Protestant",4,4,1,3,1,3,0,207,1,42,21,10,5,12
+10688,"Female","Black/African American",12,"Widowed","Protestant",1,6,1,1,1,3,2,NA,15,12,6,"Widowed","Protestant",5,5,1,1,1,3,2,142,2,NA,13,6,4,10
+10777,"Female","Black/African American",6,"Married","Protestant",7,7,1,1,1,3,2,NA,12,8,3,"Married","Protestant",1,8,1,3,1,3,3,150,2,NA,19,9,3,7
+10241,"Female","Black/African American",15,"Widowed","Protestant",1,8,1,1,1,3,2,NA,10,9,5,"Widowed","Protestant",2,8,1,1,1,3,0,161,2,NA,10,8,6,12
+10282,"Female","Black/African American and some other race",12,"Divorced","Protestant",6,8,1,1,1,3,2,NA,18,8,6,"Divorced","Protestant",2,8,1,2,1,3,3,168,2,NA,13,14,5,4
+10822,"Female","Black/African American",13,"Widowed","Protestant",9,9,1,1,1,3,2,NA,10,NA,NA,"Widowed","Protestant",9,9,1,2,1,2,1,109,2,NA,14,12,6,16
+10723,"Female","Black/African American",12,"Widowed","Protestant",1,8,1,2,1,3,2,NA,9,9,3,"Widowed","Protestant",7,8,1,2,1,4,2,NA,2,NA,9,12,7,12
+11486,"Female","Black/African American",11,"Never Married","Catholic or Roman Catholic",1,8,1,2,1,3,2,NA,21,9,3,"Never married","Protestant",NA,8,1,3,1,2,1,240,2,NA,8,14,6,16
+11478,"Female","Black/African American",10,"Married","Protestant",1,6,1,2,1,3,2,NA,14,7,NA,"Separated","Protestant",8,8,1,1,1,2,0,173,2,NA,11,7,5,11
+10766,"Female","Black/African American",9,"Married","Protestant",1,8,1,2,1,3,2,NA,13,7,3,"Married","Other",1,7,1,2,1,4,6,160,2,NA,10,7,6,13
+10250,"Female","White/Caucasian",12,"Widowed","Protestant",8,8,1,2,1,3,2,NA,16,11,6,"Widowed","Other",3,3,1,4,1,4,3,149,2,NA,18,11,7,16
+10838,"Female","White/Caucasian",16,"Widowed","Protestant",8,8,1,2,1,3,2,NA,15,7,6,"Widowed","Protestant",1,1,1,1,1,3,2,108,2,NA,17,12,8,14
+10214,"Male","White/Caucasian",6,"Married","Protestant",8,9,1,2,1,3,2,NA,10,12,5,"Widowed","Protestant",9,8,1,5,2,3,1,130,2,NA,8,10,6,10
+10110,"Female","White/Caucasian",12,"Married","Protestant",8,9,1,2,1,3,2,NA,11,8,3,"Married","Protestant",7,8,1,1,1,3,2,126,2,NA,10,9,5,12
+10994,"Male","Black/African American",16,"Married","Protestant",9,9,1,2,1,3,2,NA,11,9,3,"Married","Protestant",6,8,1,3,1,3,1,218,2,NA,8,7,6,14
+11271,"Male","Black/African American",9,"Married","Protestant",2,6,2,2,1,3,2,NA,15,9,3,"Married","Protestant",1,1,1,2,1,4,3,230,2,NA,15,12,5,12
+11425,"Male","Black/African American",6,"Married","Protestant",8,9,2,2,1,3,2,NA,8,12,6,"Married","Protestant",6,8,1,5,2,2,2,180,2,NA,8,20,6,12
+10333,"Male","Black/African American",10,"Married","Protestant",1,1,1,3,1,3,2,NA,20,10,4,"Married","Protestant",1,1,NA,8,NA,3,0,175,2,NA,22,14,10,10
+10776,"Female","Black/African American",7,"Widowed","Protestant",2,7,1,3,1,3,2,NA,13,4,3,"Widowed","Protestant",5,4,1,3,1,3,1,120,2,NA,12,6,6,16
+10200,"Female","Black/African American",8,"Married","Protestant",1,4,1,3,1,3,2,NA,10,8,3,"Married","Other",1,5,1,3,1,3,0,180,2,NA,8,7,7,12
+10753,"Male","White/Caucasian",18,"Married","Protestant",5,7,1,3,1,3,2,NA,14,8,4,"Married","Protestant",1,1,1,4,1,3,10,139,2,NA,17,10,7,11
+11191,"Female","Black/African American",9,"Widowed","Protestant",8,8,1,3,1,3,2,NA,12,6,3,"Widowed","Other",8,6,1,4,1,2,1,184,2,NA,12,4,6,16
+10312,"Female","Black/African American",8,"Widowed","Protestant",3,3,2,3,1,3,2,NA,16,10,6,"Widowed","Protestant",1,1,1,2,2,3,NA,154,2,NA,8,13,5,12
+10964,"Female","White/Caucasian",10,"Widowed","Protestant",4,4,1,4,1,3,2,NA,13,10,3,"Widowed","Protestant",1,1,1,6,1,3,1,112,2,NA,20,11,8,13
+10114,"Female","White/Caucasian",12,"Married","Protestant",5,6,1,6,1,3,2,NA,11,10,6,"Married","Other",4,8,1,2,1,2,3,179,2,NA,8,9,5,13
+10840,"Female","White/Caucasian",16,"Married","Protestant",1,8,1,7,1,3,2,NA,14,7,3,"Married","Protestant",1,8,1,7,1,3,2,238,2,NA,29,9,6,9
+10754,"Female","White/Caucasian",16,"Married","Protestant",7,7,2,7,1,3,2,NA,17,11,6,"Married","Protestant",1,1,1,3,1,3,7,111,2,NA,16,11,7,12
+10161,"Female","Black/African American",11,"Divorced","Protestant",6,6,2,7,1,3,2,NA,15,9,6,"Divorced","Protestant",3,4,1,5,1,4,1,172,2,NA,15,15,7,12
+11316,"Male","Black/African American",3,"Married","Protestant",2,1,1,8,1,3,2,NA,8,9,NA,"Married","Protestant",1,4,2,7,3,4,1,175,2,NA,17,18,12,32
+10454,"Male","Black/African American",3,"Widowed","Protestant",8,8,1,8,1,3,2,NA,9,10,6,"Widowed","Protestant",8,9,1,1,1,2,1,198,2,NA,18,9,7,12
+10785,"Male","White/Caucasian",10,"Divorced","Other",1,4,1,8,1,3,2,NA,20,12,5,"Divorced","Other",1,1,1,8,1,3,12,320,2,NA,11,12,5,11
+10166,"Female","Black/African American",6,"Separated","Protestant",6,6,1,8,1,3,2,NA,16,8,6,"Divorced","Protestant",5,4,2,5,3,2,2,165,2,NA,9,11,7,10
+10435,"Female","Black/African American",12,"Widowed","Other",7,8,1,8,1,3,2,NA,10,NA,6,"Widowed","Protestant",6,7,1,7,1,4,6,170,2,NA,15,9,7,11
+10589,"Female","White/Caucasian",14,"Married","Protestant",8,8,2,1,2,3,2,NA,9,12,7,"Married","Protestant",NA,8,1,1,1,3,1,115,2,NA,13,9,6,16
+10608,"Female","White/Caucasian",12,"Widowed","Protestant",1,5,1,2,2,3,2,NA,17,10,6,"Widowed","Protestant",2,8,2,3,2,3,1,181,2,NA,17,10,7,11
+11258,"Female","Black/African American",9,"Widowed","Protestant",8,8,1,2,2,3,2,NA,8,8,3,"Widowed","Protestant",8,9,1,2,1,2,2,164,2,NA,8,7,7,12
+10632,"Female","Black/African American",10,"Divorced","Protestant",9,8,1,2,2,3,2,NA,13,7,3,"Widowed","Other",8,8,1,1,1,3,3,154,2,NA,11,12,7,16
+10792,"Female","Black/African American",12,"Married","Protestant",8,8,2,2,2,3,2,NA,8,7,6,"Married","Protestant",9,9,1,3,2,2,1,150,2,NA,8,8,6,8
+11198,"Male","Black/African American",9,"Married","Protestant",8,8,1,3,2,3,2,NA,11,9,3,"Married","Protestant",6,8,2,8,6,4,4,220,2,NA,12,9,7,12
+10045,"Female","Black/African American",6,"Widowed","Protestant",8,8,1,3,2,3,2,NA,11,7,6,"Widowed","Protestant",1,1,1,1,1,4,3,140,2,NA,20,15,7,16
+11275,"Male","Black/African American",8,"Divorced","Protestant",3,6,1,3,2,3,2,NA,17,11,6,"Divorced","Protestant",2,6,1,5,2,3,4,175,2,NA,22,11,7,11
+11403,"Female","Black/African American",11,"Divorced","Protestant",8,8,1,3,2,3,2,NA,8,7,6,"Divorced","Other",7,8,1,1,1,2,1,211,2,NA,10,10,6,16
+10936,"Female","Black/African American",9,"Widowed","Protestant",5,5,1,4,2,3,2,NA,13,6,6,"Widowed","Protestant",1,3,2,NA,2,2,1,145,2,NA,13,8,7,12
+10279,"Female","White/Caucasian",12,"Married","Protestant",1,8,1,4,2,3,2,NA,19,8,6,"Married","Protestant",1,8,1,3,1,3,1,185,2,NA,10,7,5,11
+10206,"Female","White/Caucasian",9,"Widowed","Protestant",3,5,2,4,2,3,2,NA,9,9,4,"Widowed","Protestant",3,8,2,3,5,1,0,152,2,NA,8,7,4,11
+10020,"Female","White/Caucasian",12,"Widowed","Protestant",7,7,2,4,2,3,2,NA,13,NA,3,"Divorced","Protestant",7,8,1,4,2,2,1,170,2,NA,9,14,5,12
+11195,"Female","Black/African American and some other race",12,"Separated","Protestant",1,4,1,8,2,3,2,NA,13,11,6,"Married","Protestant",1,5,2,8,2,3,3,165,2,NA,10,11,8,13
+10704,"Male","Black/African American",6,"Married","Protestant",2,2,2,8,2,3,2,NA,17,7,4,"Widowed","Protestant",1,1,2,8,2,4,1,175,2,NA,15,7,6,10
+11458,"Female","Black/African American",8,"Married","Protestant",1,8,1,2,3,3,2,NA,23,5,5,"Married","Protestant",1,6,1,3,1,3,1,143,2,NA,8,8,7,12
+11402,"Male","Black/African American",12,"Married","Protestant",1,7,1,2,3,3,2,NA,10,12,6,"Married","Protestant",1,2,2,7,2,3,4,195,2,NA,13,4,5,10
+11364,"Male","White/Caucasian",14,"Married","Protestant",7,7,1,3,3,3,2,NA,16,11,6,"Married","Other",8,8,1,3,2,3,3,198,2,NA,8,12,6,16
+10479,"Female","White/Caucasian",12,"Widowed","Protestant",5,7,2,3,3,3,2,NA,8,10,5,"Widowed","Protestant",7,8,1,2,1,1,0,195,2,NA,8,8,6,11
+10917,"Male","Black/African American",8,"Married","Protestant",1,3,1,8,3,3,2,NA,8,4,3,"Married","No religious preference",1,1,NA,8,8,3,4,200,2,NA,8,8,6,16
+10811,"Male","White/Caucasian and some other race",12,"Married","Protestant",2,4,2,3,4,3,2,NA,NA,7,3,"Widowed","Protestant",8,8,1,5,3,2,1,150,2,NA,8,8,7,12
+11156,"Male","White/Caucasian",9,"Married","Protestant",1,6,2,7,7,3,2,NA,13,10,6,"Married","Protestant",4,8,2,8,2,3,3,183,2,NA,13,12,6,10
+10694,"Female","White/Caucasian",12,"Widowed","Protestant",3,3,2,7,NA,3,2,NA,10,11,6,"Widowed","Other",1,1,2,8,6,2,0,125,2,NA,10,10,6,10
+10949,"Male","Black/African American",10,"Married","Protestant",8,8,1,1,1,3,2,NA,8,9,3,"Married","Protestant",4,8,1,2,1,3,3,210,2,NA,18,12,6,16
+10539,"Female","Black/African American",5,"Widowed","Protestant",2,8,1,1,1,3,2,NA,13,9,3,"Divorced","Protestant",1,3,1,2,1,4,15,140,2,NA,17,11,6,14
+11233,"Male","Black/African American",9,"Married","Protestant",8,8,1,1,1,3,2,NA,9,0,3,"Married","Protestant",8,9,1,2,1,2,3,192,2,NA,8,10,5,12
+10496,"Female","Black/African American",8,"Widowed","Protestant",8,8,1,1,1,3,2,NA,10,7,6,"Widowed","Protestant",1,8,1,3,1,3,3,200,2,NA,16,9,7,12
+10167,"Female","Black/African American",16,"Widowed","Protestant",8,8,1,1,1,3,2,NA,11,9,4,"Widowed","Protestant",9,8,1,2,1,3,1,160,2,NA,10,8,6,11
+11116,"Female","Black/African American",9,"Never Married","Protestant",4,8,1,2,1,3,2,NA,8,9,4,"Never married","Protestant",8,8,1,2,2,3,0,270,2,NA,10,8,6,12
+11175,"Female","Black/African American",12,"Married","Protestant",8,8,1,2,1,3,2,NA,9,0,NA,"Married","Protestant",7,9,1,2,1,4,8,160,2,NA,14,12,5,11
+11488,"Male","Black/African American",13,"Widowed","Protestant",1,8,1,2,1,3,2,NA,8,7,3,"Widowed","Protestant",6,8,1,3,2,2,0,179,2,NA,8,9,5,12
+10650,"Female","Black/African American",8,"Widowed","Other",8,8,1,2,1,3,2,NA,19,8,4,"Widowed","Other",1,8,1,2,1,3,3,149,2,NA,15,11,5,13
+10873,"Female","Black/African American",10,"Divorced","Protestant",9,8,1,2,1,3,2,NA,18,9,6,"Widowed","Other",8,5,1,2,1,3,2,152,2,NA,9,6,7,17
+10301,"Female","White/Caucasian",14,"Widowed","Protestant",1,4,2,2,1,3,2,NA,16,9,6,"Widowed","Protestant",1,8,1,2,1,3,3,195,2,NA,13,9,7,12
+11008,"Female","Black/African American",12,"Widowed","Other",1,8,2,2,1,3,2,NA,9,7,4,"Widowed","Protestant",3,8,2,2,2,3,1,138,2,NA,8,8,6,10
+11097,"Female","Black/African American",12,"Widowed","Protestant",8,8,2,2,1,3,2,NA,9,11,3,"Widowed","Other",8,8,2,1,1,2,3,165,2,NA,9,5,6,12
+10923,"Female","Black/African American",11,"Widowed","Protestant",8,8,1,3,1,3,2,NA,12,10,3,"Widowed","Protestant",8,8,1,2,1,3,2,190,2,NA,12,11,6,15
+11500,"Female","Black/African American",10,"Married","Protestant",8,8,1,4,1,3,2,NA,16,5,3,"Married","Protestant",7,7,1,1,1,3,1,140,2,NA,9,5,6,16
+11105,"Female","Black/African American",9,"Widowed","Protestant",1,8,2,4,1,3,2,NA,13,11,NA,"Widowed","Other",1,6,2,4,1,4,2,160,2,NA,14,13,9,10
+10914,"Female","White/Caucasian",18,"Married","Protestant",1,3,2,5,1,3,2,NA,20,9,4,"Married","Protestant",1,3,1,5,1,2,2,163,2,NA,16,11,4,8
+11094,"Female","Black/African American",8,"Widowed","Protestant",7,8,1,6,1,3,2,NA,12,12,NA,"Widowed","Other",1,4,1,7,5,3,2,240,2,NA,11,16,5,8
+10764,"Female","Black/African American",7,"Married","Protestant",2,2,1,7,1,3,2,NA,6,10,6,"Married","Protestant",1,3,1,7,1,3,4,140,1,35,16,9,8,12
+11103,"Male","Black/African American",3,"Divorced","Protestant",1,5,1,8,1,3,2,NA,13,9,6,"Divorced","Other",1,6,2,8,1,4,1,205,2,NA,14,8,7,10
+10008,"Female","Black/African American",6,"Widowed","Other",4,4,NA,NA,2,3,2,NA,10,NA,6,"Divorced","Other",2,2,2,7,3,3,0,123,2,NA,8,8,7,12
+10011,"Male","Black/African American",8,"Married","Protestant",4,4,2,1,2,3,2,NA,12,9,3,"Married","Protestant",3,6,2,2,1,3,3,169,2,NA,10,8,7,10
+10221,"Female","Black/African American",11,"Married","Protestant",8,8,1,2,2,3,2,NA,11,10,6,"Married","Protestant",8,8,1,2,1,2,3,170,2,NA,9,7,7,12
+10384,"Female","White/Caucasian",12,"Married","Protestant",7,7,2,3,2,3,2,NA,11,10,6,"Married","Protestant",7,7,2,3,2,3,2,138,2,NA,11,9,7,12
+11361,"Female","White/Caucasian",12,"Married","Protestant",8,8,2,3,2,3,2,NA,11,8,6,"Married","Protestant",8,8,2,3,2,3,1,145,2,NA,12,7,6,18
+11178,"Female","Black/African American",8,"Widowed","Protestant",NA,6,1,4,2,3,2,NA,8,8,6,"Widowed","Other",7,8,1,7,2,3,1,150,2,NA,12,8,3,4
+11072,"Female","Black/African American",8,"Married","Protestant",6,5,1,4,2,3,2,NA,32,NA,6,"Married","Protestant",2,6,1,2,2,4,2,198,2,NA,12,9,8,16
+10316,"Female","White/Caucasian",12,"Widowed","Protestant",6,8,2,4,2,3,2,NA,13,9,6,"Widowed","Protestant",6,8,1,2,2,3,3,NA,2,NA,10,7,8,16
+11142,"Male","Black/African American",13,"Married","Protestant",1,7,2,6,2,3,2,NA,14,12,6,"Married","Protestant",1,8,1,8,2,3,NA,149,2,NA,14,10,6,12
+10830,"Male","Black/African American",18,"Married","Protestant",4,6,2,7,2,3,2,NA,8,NA,6,"Married","Other",3,5,2,7,2,3,5,219,2,NA,18,11,7,11
+10401,"Female","Black/African American",12,"Divorced","Protestant",1,5,2,7,2,3,2,NA,9,10,4,"Divorced","Protestant",3,3,2,7,2,3,3,165,2,NA,8,10,7,12
+10765,"Male","Black/African American",4,"Married","Protestant",2,2,2,8,2,3,2,NA,10,11,6,"Married","Protestant",1,3,2,8,1,4,0,116,1,35,11,9,7,12
+10644,"Male","Black/African American",12,"Widowed","Protestant",1,3,2,8,2,3,2,NA,12,10,4,"Married","Protestant",1,3,1,7,2,2,1,NA,2,NA,8,5,5,12
+11448,"Male","Black/African American",4,"Married","Protestant",1,5,2,8,2,3,2,NA,23,7,4,"Married","Protestant",1,8,2,8,1,3,1,230,2,NA,8,10,6,12
+11061,"Female","White/Caucasian",12,"Married","Protestant",1,5,2,8,2,3,2,NA,12,7,6,"Married","No religious preference",1,1,2,8,3,3,2,122,2,NA,13,11,8,15
+10377,"Male","Black/African American",11,"Married","Protestant",1,6,1,3,3,3,2,NA,10,5,3,"Married","Protestant",1,3,1,7,2,3,1,175,2,NA,13,7,7,13
+10675,"Female","Black/African American",12,"Married","Other",9,9,2,3,3,3,2,NA,8,NA,5,"Married","Protestant",9,9,2,2,1,3,1,138,2,NA,18,12,7,8
+11113,"Female","Black/African American",9,"Widowed","Other",8,6,2,3,3,3,2,NA,9,9,3,"Widowed","Other",6,6,1,2,2,3,1,213,2,NA,10,14,11,33
+10997,"Male","Black/African American",16,"Married","Protestant",7,7,1,4,3,3,2,NA,8,8,3,"Married","Protestant",8,8,1,3,2,3,1,270,2,NA,13,7,6,15
+10383,"Male","White/Caucasian",12,"Widowed","Protestant",8,8,2,4,3,3,2,NA,11,9,6,"Widowed","Protestant",8,8,2,4,3,3,2,168,2,NA,8,9,7,12
+10186,"Male","White/Caucasian",12,"Married","Protestant",2,1,2,7,3,3,2,NA,13,10,6,"Married","Protestant",3,3,2,4,2,3,2,NA,2,NA,9,9,7,10
+10507,"Male","White/Caucasian",12,"Married","Protestant",1,7,2,7,3,3,2,NA,9,10,6,"Married","Protestant",1,8,2,4,1,2,0,247,2,NA,11,13,7,12
+10808,"Male","White/Caucasian",4,"Married","Protestant",3,2,NA,NA,4,3,2,NA,NA,NA,6,"Married","Other",9,9,1,2,1,3,1,174,2,NA,8,7,7,13
+10791,"Female","White/Caucasian",12,"Married","Protestant",2,2,2,6,5,3,2,NA,11,5,3,"Married","Protestant",1,1,2,7,2,2,12,187,2,NA,18,7,6,16
+10078,"Male","White/Caucasian",8,"Married","Protestant",1,4,1,8,5,3,2,NA,8,10,6,"Married","Protestant",1,1,2,8,5,2,2,155,2,NA,8,9,5,12
+10816,"Female","White/Caucasian",10,"Married","Protestant",1,3,2,8,5,3,2,NA,20,9,6,"Married","Protestant",1,1,3,8,7,4,6,220,2,NA,19,12,7,12
+10603,"Female","White/Caucasian",12,"Never Married","Protestant",7,8,1,3,6,3,2,NA,12,6,4,"Never married","Protestant",1,8,1,4,1,4,3,100,2,NA,20,14,7,13
+10963,"Male","White/Caucasian",14,"Married","Protestant",4,4,4,7,7,3,2,NA,12,9,6,"Married","Protestant",1,1,3,7,6,3,1,265,2,NA,10,11,6,10
+10378,"Male","White/Caucasian",16,"Married","Protestant",1,6,3,8,7,3,2,NA,29,14,6,"Married","Protestant",1,6,1,8,1,2,2,225,2,NA,10,8,5,12
+10606,"Female","White/Caucasian",10,"Married","Protestant",1,1,2,7,5,3,2,NA,8,7,6,"Married","Protestant",1,1,1,5,2,3,NA,200,2,NA,8,10,5,12
+10898,"Female","Black/African American",6,"Widowed","Protestant",6,6,1,6,NA,3,2,NA,10,9,3,"Married","Protestant",8,9,1,2,1,2,1,160,2,NA,8,6,6,13
+10283,"Male","White/Caucasian",20,"Never Married","Protestant",3,6,2,8,3,3,2,NA,10,0,4,"Never married","No religious preference",1,1,2,8,3,2,4,185,2,NA,8,9,5,12
+10857,"Female","White/Caucasian",12,"Widowed","Protestant",1,3,3,7,7,3,2,NA,18,10,6,"Widowed","Other",1,1,2,7,7,3,1,178,2,NA,8,8,7,12
+10659,"Male","Black/African American",3,"Divorced","Protestant",1,2,1,7,8,4,2,NA,21,12,6,"Widowed","Protestant",1,1,3,8,5,2,1,135,2,NA,14,12,6,8
+10409,"Male","Black/African American",12,"Married","Protestant",1,1,3,7,8,4,2,NA,13,13,6,"Married","Protestant",1,4,1,3,3,4,2,230,2,NA,9,10,6,8
+10017,"Male","White/Caucasian",12,"Married","Protestant",1,1,NA,8,8,4,2,NA,17,13,4,"Widowed","Protestant",3,3,2,8,5,2,1,195,2,NA,16,10,7,17
+10470,"Male","White/Caucasian",12,"Married",NA,1,1,3,8,8,4,2,NA,16,9,6,"Married","Protestant",1,1,2,8,2,3,3,190,1,42,18,9,6,16
+11119,"Female","Black/African American",4,"Widowed","Other",1,6,1,3,1,4,2,NA,20,11,6,"Widowed","Other",3,4,1,2,1,4,1,NA,2,NA,8,9,8,12
+10090,"Male","Black/African American",8,"Married","Protestant",1,1,1,8,1,4,2,NA,29,15,NA,"Decline to answer","No religious preference",1,1,NA,8,NA,4,NA,NA,2,NA,72,36,27,36
+10528,"Male","Black/African American",3,"Widowed","Other",8,9,1,2,2,4,2,NA,10,8,4,"Widowed","Protestant",8,8,2,3,2,2,0,160,2,NA,9,8,7,12
+10888,"Male","Black/African American",NA,NA,"Protestant",8,9,2,8,2,4,2,NA,10,NA,NA,"Never married","Protestant",8,9,2,3,2,2,3,125,2,NA,11,9,7,12
+11285,"Male","White/Caucasian",15,"Widowed","Protestant",1,6,1,5,3,4,2,NA,22,7,3,"Widowed","Protestant",1,1,2,8,6,4,4,125,2,NA,13,11,6,10
+10530,"Female","Black/African American",11,"Widowed","Other",1,1,1,1,1,4,2,NA,26,7,3,"Widowed","Protestant",1,1,1,4,3,3,1,198,2,NA,15,13,7,27
+10408,"Female","Black/African American",8,"Never Married","Protestant",8,8,1,1,1,4,2,NA,8,NA,3,"Married","Protestant",8,8,1,2,2,3,0,160,2,NA,10,8,6,12
+10918,"Female","Black/African American",4,"Widowed","Protestant",9,8,1,1,1,4,2,NA,20,4,3,"Widowed","Protestant",1,6,1,2,1,3,3,178,2,NA,26,6,6,16
+10837,"Male","Hispanic/Latino",16,"Widowed","Protestant",9,9,1,1,1,4,2,NA,8,7,6,"Widowed","Protestant",8,9,1,1,1,3,0,140,2,NA,8,7,5,14
+10434,"Female","Black/African American",7,"Married","Other",1,1,1,2,1,4,2,NA,17,11,6,"Widowed","Protestant",6,7,1,2,1,4,2,206,2,NA,10,8,7,12
+11388,"Female","Black/African American",9,"Widowed","Protestant",8,8,1,2,1,4,2,NA,0,7,6,"Widowed","Other",1,1,1,NA,1,3,3,180,2,NA,26,14,7,12
+10089,"Female","Black/African American",12,"Married","Protestant",8,9,1,2,1,4,2,NA,17,6,3,"Widowed","Protestant",8,9,1,1,1,3,3,265,2,NA,18,15,6,16
+10242,"Female","Black/African American",10,"Married","Protestant",1,1,1,3,1,4,2,NA,14,8,6,"Married","Protestant",1,4,1,1,1,4,NA,188,2,NA,18,8,6,16
+10512,"Male","White/Caucasian",14,"Married","Protestant",3,8,1,3,1,4,2,NA,11,13,6,"Married","Protestant",3,3,1,7,3,3,6,205,2,NA,14,11,6,8
+10182,"Female","Black/African American",4,"Married","Protestant",8,8,1,3,1,4,2,NA,8,6,3,"Married","Protestant",1,1,1,NA,2,2,NA,110,2,NA,14,13,5,12
+10399,"Female","Black/African American",7,"Widowed","Protestant",1,6,1,4,1,4,2,NA,13,4,3,"Widowed","Other",1,1,1,8,1,3,1,120,2,NA,8,6,5,11
+10531,"Female","Black/African American",8,"Married","Protestant",1,5,1,8,1,4,2,NA,8,6,3,"Widowed","Protestant",1,1,1,8,2,3,1,160,2,NA,14,9,11,32
+11325,"Male","Black/African American",8,"Married","Protestant",9,6,1,8,2,4,2,NA,11,12,6,"Married","Other",4,6,1,3,1,3,2,165,2,NA,8,8,5,12
+10498,"Male","Black/African American",11,"Divorced","Protestant",1,5,2,8,2,4,2,NA,26,11,6,"Widowed","Protestant",3,3,2,8,2,3,0,NA,2,NA,8,10,6,8
+10169,"Female","Black/African American",12,"Never Married","Protestant",6,7,1,4,3,4,2,NA,28,10,6,"Never married","Protestant",5,5,2,1,2,3,2,183,2,NA,15,10,7,12
+10081,"Female","Black/African American",10,"Widowed","Protestant",1,1,1,2,1,4,2,NA,13,8,3,"Widowed","Protestant",5,6,1,3,1,2,1,165,2,NA,10,5,6,16
+10537,"Male","Black/African American",2,"Married","Protestant",3,7,1,2,1,4,2,NA,12,NA,6,"Married","Protestant",3,7,1,1,1,3,6,194,2,NA,23,4,3,4
+10768,"Male","Black/African American",7,"Married","Protestant",4,4,1,2,1,4,2,NA,20,9,6,"Married","Protestant",2,4,1,2,2,4,0,325,2,NA,29,8,6,14
+10087,"Female","Black/African American",9,"Married","Protestant",8,9,1,2,1,4,2,NA,15,7,3,"Widowed","Protestant",9,9,1,1,1,3,3,217,2,NA,14,6,5,11
+10295,"Female","Black/African American",12,"Widowed","Protestant",9,9,1,2,1,4,2,NA,12,9,6,"Widowed","Protestant",9,8,1,1,2,4,1,160,2,NA,12,12,7,11
+10402,"Female","Black/African American",8,"Widowed","Protestant",1,1,1,3,1,4,2,NA,15,9,7,"Widowed","Protestant",1,1,2,8,2,4,0,125,2,NA,32,10,10,32
+10323,"Female","Black/African American",7,"Widowed","Protestant",4,5,1,3,1,4,2,NA,18,9,6,"Widowed","Other",1,7,1,3,2,4,1,152,2,NA,17,8,5,7
+10452,"Female","Black/African American and some other race",8,"Widowed","Protestant",1,5,1,3,1,4,2,NA,14,11,3,"Widowed","Protestant",7,7,2,4,2,4,1,199,2,NA,9,9,7,12
+11021,"Female","Black/African American",12,"Widowed","Protestant",4,8,1,3,1,4,2,NA,12,12,6,"Widowed","Other",1,1,1,8,1,2,2,128,2,NA,15,12,6,16
+10492,"Female","White/Caucasian",8,"Widowed","Protestant",8,8,1,3,1,4,2,NA,25,13,6,"Widowed","Protestant",3,1,2,8,1,3,5,190,2,NA,18,13,5,4
+10038,"Female","Black/African American",12,"Married","Protestant",10,3,1,4,1,4,2,NA,24,11,6,"Widowed","Protestant",1,1,1,7,1,3,0,115,2,NA,18,8,7,13
+11022,"Female","Black/African American",12,"Widowed","Protestant",2,3,1,5,1,4,2,NA,29,6,3,"Widowed","Not sure",10,NA,1,3,1,3,1,250,1,28,8,7,6,14
+10084,"Female","Black/African American",9,"Widowed","Protestant",3,4,1,8,1,4,2,NA,18,9,3,"Widowed","Protestant",1,1,1,8,1,2,3,NA,2,NA,21,8,6,16
+10982,"Female","Black/African American",12,"Widowed","Protestant",1,1,2,8,1,4,2,NA,24,9,3,"Widowed","Protestant",2,4,1,3,2,3,1,115,2,NA,8,8,6,16
+10686,"Female","Black/African American",12,"Widowed","Protestant",1,1,1,2,2,4,2,NA,11,0,3,"Widowed","Protestant",1,1,2,2,1,4,NA,230,2,NA,26,14,8,16
+10770,"Female","Black/African American",6,"Widowed","Protestant",5,6,1,2,2,4,2,NA,12,6,6,"Widowed","Other",1,5,1,2,2,4,1,210,2,NA,10,8,7,12
+10466,"Female","Black/African American and some other race",12,"Widowed",NA,1,1,1,7,2,4,2,NA,10,9,6,"Widowed","Protestant",1,3,2,4,2,4,2,155,2,NA,15,10,7,13
+10120,"Male","White/Caucasian",12,"Married","Protestant",7,7,2,3,3,4,2,NA,22,6,3,"Married","Other",4,4,1,3,1,4,5,183,2,NA,22,7,3,5
+10567,"Female","White/Caucasian",12,"Married","Protestant",1,1,2,5,4,4,2,NA,16,11,3,"Married","Other",1,1,2,8,5,4,6,140,2,NA,16,15,6,8
+11428,"Female","Black/African American",10,"Widowed","Protestant",1,5,1,1,1,4,2,NA,31,11,3,"Widowed","Protestant",2,2,2,7,2,4,4,179,2,NA,17,10,4,8
+10657,"Female","Black/African American",8,"Widowed","Protestant",8,8,1,1,1,4,2,NA,9,12,3,"Widowed","Other",8,8,1,2,1,4,3,213,2,NA,8,10,6,12
+10043,"Female","Black/African American",8,"Married","Protestant",7,6,2,2,1,4,2,NA,20,11,7,"Married","Protestant",1,3,2,8,2,4,10,124,2,NA,19,10,6,8
+10778,"Female","Black/African American",9,"Divorced","Protestant",1,1,1,3,1,4,2,NA,11,12,3,"Widowed","Protestant",1,4,1,2,2,4,1,145,2,NA,16,8,4,10
+10929,"Female","White/Caucasian",9,"Widowed","Protestant",1,1,2,7,1,4,2,NA,11,10,6,"Widowed","Protestant",1,1,2,NA,1,3,3,98,2,NA,22,9,6,16
+10165,"Female","Black/African American",5,"Widowed","Protestant",1,1,1,8,1,4,2,NA,20,9,6,"Divorced","Protestant",1,4,1,8,2,3,1,NA,2,NA,8,10,7,12
+11433,"Female","White/Caucasian",14,"Widowed","Protestant",1,1,1,8,1,4,2,NA,1,12,4,"Widowed","Other",1,3,1,1,1,4,2,104,2,NA,14,8,6,16
+10040,"Female","Black/African American",13,"Widowed","Protestant",8,6,1,1,2,4,2,NA,24,13,5,"Widowed","Protestant",1,8,2,8,1,3,2,200,2,NA,19,11,8,8
+10063,"Female","White/Caucasian",9,"Married","Protestant",2,2,1,3,2,4,2,NA,15,8,6,"Widowed","Protestant",1,1,2,8,2,3,1,NA,2,NA,18,12,6,9
+10404,"Male","Black/African American",7,"Widowed","Protestant",5,8,2,3,2,4,2,NA,12,9,6,"Widowed","Other",6,8,1,2,3,3,1,149,2,NA,8,14,7,12
+11243,"Female","White/Caucasian",14,"Widowed","Protestant",1,4,1,5,2,4,2,NA,18,8,6,"Widowed","Protestant",1,3,1,3,1,4,1,152,2,NA,8,10,7,11
+10559,"Male","Black/African American",8,"Married","Protestant",3,5,2,5,2,4,2,NA,24,8,6,"Married","Protestant",1,3,2,4,2,4,2,179,2,NA,24,7,6,8
+10472,"Male","White/Caucasian",10,"Married","Protestant",1,8,1,6,2,4,2,NA,21,1,NA,"Married","Protestant",1,7,2,8,1,3,2,215,2,NA,24,10,7,11
+11309,"Female","White/Caucasian",15,"Married","Protestant",1,5,2,6,2,4,2,NA,10,11,6,"Married","Other",1,1,1,3,2,4,2,150,2,NA,15,10,6,16
+10865,"Male","White/Caucasian",10,"Married","Protestant",1,1,1,7,2,4,2,NA,9,8,6,"Widowed","Protestant",3,3,1,6,6,3,4,165,2,NA,8,9,5,12
+11115,"Female","Black/African American",8,"Widowed","Protestant",1,2,1,7,2,4,2,NA,14,NA,6,"Divorced","Other",3,3,1,3,1,2,1,176,2,NA,9,8,7,12
+11384,"Female","White/Caucasian",12,"Widowed","Protestant",2,4,2,2,3,4,2,NA,12,8,6,"Widowed","Protestant",1,4,2,3,3,3,5,119,2,NA,11,7,10,17
+11469,"Female","White/Caucasian",12,"Married","Protestant",2,2,2,5,3,4,2,NA,8,12,6,"Separated","Protestant",1,1,2,7,2,4,0,98,2,NA,23,12,7,12
+10315,"Female","White/Caucasian",12,"Married","Protestant",2,2,2,8,7,4,2,NA,22,12,5,"Married","Protestant",1,1,2,4,3,4,4,110,2,NA,17,11,6,10
+10506,"Female","White/Caucasian",4,"Married","Protestant",1,2,3,7,5,4,2,NA,22,13,8,"Widowed","Other",1,1,2,5,2,4,3,94,2,NA,14,16,10,14
+10758,"Male","White/Caucasian",17,"Married","Protestant",1,2,2,5,2,4,2,NA,12,9,6,"Married","Protestant",1,1,2,8,2,4,4,166,2,NA,23,10,6,16
+10025,"Female","White/Caucasian",12,"Widowed","Protestant",1,1,NA,8,4,4,2,NA,16,6,4,"Widowed","Protestant",1,1,2,8,7,4,3,115,2,NA,32,13,6,8
+11048,"Female","Black/African American",12,"Separated","Protestant",1,4,1,6,1,2,1,98,9,9,6,"Separated","Protestant",1,4,2,7,1,3,1,175,1,686,8,8,5,12
+10006,"Female","Black/African American",14,"Widowed","Protestant",8,8,2,2,1,3,1,98,10,NA,5,"Widowed","Protestant",6,7,1,1,1,1,1,135,1,126,8,4,5,12

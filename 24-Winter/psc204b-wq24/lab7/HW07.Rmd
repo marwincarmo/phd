@@ -1,0 +1,97 @@
+---
+title: "HW 7"
+subtitle: Propensity Score Matching
+output: 
+  pdf_document:
+    toc: true
+    highlight: kate
+toccolor: blue
+urlcolor: blue
+---
+
+The data for this homework is stored in the `hbo.csv` file and contains information on tv shows, movies, etc. on HBO up to 2020. The variables we will be using today are:
+
+* `type`: Whether the media is a TV show or a Movie/Other (factor)
+* `rating`: The parental guidelines rating (e.g., G, PG, etc.; factor)
+* `imdb_score`: The media's score on IMDB (numeric)
+* `genre`: The media's genre (factor)
+
+```{r message=FALSE, warning=FALSE}
+# Load required packages
+library(dplyr)
+library(MatchIt)
+library(stargazer)
+
+# Read in data, convert character vars to factors,
+# and filter to years of interest
+hbo <- read.csv("hbo.csv") |>
+  select(-X) |>
+  mutate(across(where(is.character), as.factor)) |>
+  filter(year >= 1999)
+```
+
+
+# Question 1 [1 pt.]
+
+Recent decades have been talked about as a ["golden age" of television shows](https://en.wikipedia.org/wiki/Golden_Age_of_Television_(2000s%E2%80%93present)). Inspired by this, we will examine whether or not TV shows (from 1999 to 2020) are rated more highly than other types of media on HBO.
+
+With the `hbo` data, use a linear regression to assess the effect of `type` on `imdb_score`. Based on the results of the regression, state below whether TV shows are rated significantly more highly than other types of media, at the $p < .05$ level.
+
+
+```{r echo = T, warning = F, message = F}
+
+```
+
+* Answer here
+
+
+# Question 2
+
+## Part a [3 pts.]
+
+We can't randomly assign media to be either a TV show or a movie, so let's redo the above analysis using a matched sample (use the functions from the `MatchIt` package). Use nearest neighbor matching, based on `rating` and `genre` (missing data for these variables were already filtered out for you, so you do not need to worry about that).
+
+Display the matched regression output below.
+
+```{r echo = T, warning = F, message = F}
+
+```
+
+
+
+## Part b [1 pt.]
+
+When matched on `rating` and `genre`, do TV shows appear to be more highly rated than other types of media, at the $p < .05$ significant level? How does this compare to the original analysis above?
+
+* Answer here
+
+
+# Question 3
+
+## Part a [3 pts.]
+
+Re-do the propensity matched analysis, but this time use exact matching instead of nearest neighbor matching. Display the regression output below.
+
+```{r}
+
+```
+
+
+## Part b [1 pt.]
+
+Did any subgroups get dropped?
+
+```{r echo = T, warning = F, message = F}
+
+```
+
+* Answer here
+
+# Question 4 [1 pt.]
+
+Using the `stargazer()` function, create a table of the regressions in questions 1, 2 and 4. (1 pt.)
+
+```{r, results='asis'}
+
+```
+
