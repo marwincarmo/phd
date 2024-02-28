@@ -1,5 +1,6 @@
 ---
 title: "PSC205A Assignment 06: SEM"
+name: "Marwin Carmo"
 format: pdf
 ---
 

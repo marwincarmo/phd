@@ -1,0 +1,141 @@
+---
+title: "Eronen (2024). Causal complexity and psychological measurement"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    # height: 900
+    footer: "DIPS - 02/27/2024"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+## Definitions for measurement
+
+- Historically, discussions of measurement have revolved around the **representational theory of measurement**:
+  - Relationships between empirical and numerical systems.
+
+- Recently, **causality** gained more relevance:
+  - The attribute or property that is being measured should *cause* the measurement outcome
+  
+- Mood -> survey
+
+## Psychometric measurement as causal models
+
+In **LVM** observed variables are measurements of the latent variable with a degree of error. The attribute is causing the measurement outcomes.
+
+
+![](img/lvm.jpeg){fig-align="center"}
+
+
+- A test or measurement is valid if and only if it measures what it is intended to measure (Borsboom, 2005; Borsboom et al., 2004).
+
+## Minimal causal condition for measurement
+
+- $O$ is a valid measure of $X$ *only if* there is a causal relationship from $X$ to $O$.
+
+- Necessary but not sufficient condition for measurement.
+
+- The minimal causal condition is compatible with further requirements, such as proof that the attribute is in fact quantitative.
+
+## Conceptual ambiguity and causal complexity
+
+- Most psychological concepts are not well-defined (e.g., psychological symptoms). This unclarity makes it harder to understand their causal structure.
+
+- 'Impaired concentration' refers to three phenomena that are causally different:
+  - mental blanking;
+  - intrusive thoughts;
+  - drifting off topic.
+  
+- The observed variables are *not* caused by impaired concentration but by one of the three other phenomena.
+
+- The minimal causal condition is not satisfied
+
+## Conceptual ambiguity and causal complexity
+
+- A clearer conceptualization of psychological phenomena is hampered by causal complexity.
+
+- The challenge is to distill relatively stable and causally well-behaved variables.
+
+- The focus has been on applying statistical methods to empirical data, without much attention to how phenomena are conceptualized.
+
+- Models based on *current* psychological concepts might oversimplify and misrepresent the causal structure.
+
+## Possible objections
+
+- Factor analysis might be used to show that a symptom consists of one or several phenomena.
+
+- But it is a poor guide to causal structure because different causal structures can explain the data equally well.
+
+- Our current methods are not sufficient to determine how many variables there are and what is the cause of the measurements.
+
+
+## Implications for psychological measurement
+
+- The minimal causal condition can justify that psychological measurement does not fulfill the requirements for genuine measurement.
+
+- However, the results of psychological measurements are **often useful**:
+  - Self-report measures of feelings are better predictors of decisions and actions than economic variables such as SES.
+  - Intelligence scores can predict job performance or academic achievement.
+
+- Psychological measurement can be informative and useful for specific purposes.
+
+## Hard vs. Soft measurement
+
+A. **Hard measurement**: measurement as in the physical sciences, metrology, or the philosophy of measurement.
+
+B. **Soft measurement**: data generation by human participants (human individuals putting numbers on things).
+
+- Different from *hard* measurement, in *soft* measurement we don't know the causal structure and cannot assume a causal link between the attribute and the measurement outcome.
+
+## A new hope
+
+- Psychological measurement is not *hard* measurement, but nevertheless measurement in a weaker sense.
+
+- Soft measurement must be understood on its own terms as something distinct from hard measurement.
+
+- Focus on the specific features of soft measurement, without trying to force psychological measurement into the mold of hard measurement.
+
+## Validity
+
+- Psychological measurements can have a degree of validity for certain intended uses or interpretations.
+
+- It does not mean validity in the causal sense.
+
+- Intelligence test scores can be valid to predict academic achievement but might not justify the existence of an underlying latent variable.
+
+## Prediction without a causal link
+
+- Prediction is possible purely based on (noncausal) correlations.
+
+- Ambiguous concepts can be useful for prediction as long as they are correlated with the cause of what is being predicted.
+
+- Emphasis on the qualitative aspects of measurement:
+  - intended uses;
+  - evidences;
+  - conceptualization.
+  
+## Conclusion
+
+- Psychological measurement is fundamentally different from measurement in the physical sciences but can nevertheless be useful.
+
+- We should approach soft measurement not only with statistical tools but with conceptual and qualitative approaches.
+
+
+

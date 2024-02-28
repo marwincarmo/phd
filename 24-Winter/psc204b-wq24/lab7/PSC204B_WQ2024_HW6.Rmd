@@ -1,6 +1,6 @@
 ---
 title: "PSC 204B - Winter 2024 - Homework 6"
-author: '"Your Name"'
+author: 'Marwin Carmo'
 date: "`r Sys.Date()`"
 output:
   pdf_document: default
@@ -74,21 +74,21 @@ In the OLS model, the relationship between gender and popularity is assumed to b
 
 Report and interpret the fixed effects from the model with the random intercept and random slope. 
 
-**(Intercept)**: The intercept represents the average level of teacher-rated popularity when the student is a boy.
+**(Intercept)**: The intercept represents the average level of teacher-rated popularity across clusters when the student is a boy.
 
-**Effect of sex**: 
+**Effect of sex**: The slope of sex represents the average effect of gender (or average difference between boys and girls) across clusters on teacher-rated popularity.
 
 ## Part e) [1 point]
 
 How do the fixed effects and standard errors differ between the OLS model and the model with a random intercept and random slope?
 
-**Fixed effect of intercept:**
+**Fixed effect of intercept:** Similar in both models: OLS = 4.29, MLM = 4.40.
 
-**SE of intercept:**
+**SE of intercept:** Larger for the model with a random intercept and random slope: OLS = 0.037, MLM = 0.080.
 
-**Fixed effect of gender:**
+**Fixed effect of gender:** Similar in both models: OLS = 1.53, MLM = 1.32.
 
-**SE of gender:**
+**SE of gender:** Very similar in both models: OLS = 0.053, MLM = 0.053.
 
 # Question 2
 
@@ -98,6 +98,11 @@ Create a plot to examine how prose recall (*recall*) changes with age (*tvage*),
 
 ```{r}
 # code here
+ggplot(data = memory, aes(x = tvage, y = recall, group = PersonID))+
+  geom_point()+
+  geom_line()+
+  theme_classic()+
+  labs(x = "Age", y = "Prose recall")
 ```
 
 
@@ -107,6 +112,12 @@ Run a multilevel model to predict prose recall from age, including a random inte
 
 ```{r}
 # code here
+memory_c <- memory |> 
+  dplyr::mutate(tvage_c = tvage - ageT0)
+
+mod2b <- lmer(recall ~ ageT0 + tvage_c + (1 + tvage_c| PersonID), data = memory_c)
+
+summary(mod2b)
 ```
 
 
@@ -114,11 +125,11 @@ Run a multilevel model to predict prose recall from age, including a random inte
 
 Report and interpret the fixed effects of the model. 
 
-**(Intercept):**
+**(Intercept):** The model's intercept is at 25.05, and corresponds to the expected prose recall for a person who is at the average initial age.
 
-**Fixed effect of age at the initial timepoint:**
+**Fixed effect of age at the initial timepoint:** The slope of initial age, which represents between-person differences in prose recall due to age. The negative slope of -0.18 indicates that people that are older at the start show lower prose recall.
 
-**Fixed effect of age:**
+**Fixed effect of age:** The slope of person-centered age is -0.05. It indicates that for every additional year a person gets older, their prose recall scores are expected to decrease by 0.05 points.
 
 
 # Extra Credit
@@ -129,6 +140,21 @@ Using the ICC calculated in Question 1a, calculate the cluster effect. (*Note: e
 
 ```{r}
 # code
+
+# does each class really have 100 students in it?
+popular |> 
+  dplyr::with_groups(class, 
+                     summarise,
+                     size = n()) |> 
+  dplyr::summarise(avg_size = mean(size))
+
+cluster_effect <- function(ni, icc) {
+  1 + (ni - 1)*icc
+}
+
+cluster_effect(ni = 20, icc = 0.343)
+
+cluster_effect(ni = 100, icc = 0.343)
 ```
 
 
@@ -137,6 +163,6 @@ Using the ICC calculated in Question 1a, calculate the cluster effect. (*Note: e
 Using the model run in Question 1b, with a random intercept and random slope - report and interpret the correlation between random effects.
 
 
-
+The correlation between random effects of -0.45 indicates that classrooms that have larger intercepts are expected to have lower effects of gender on teacher-rated popularity.
 
 
