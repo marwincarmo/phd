@@ -1,0 +1,76 @@
+---
+title: "PSC205A Assignment 07: SEM"
+name: "Marwin Carmo"
+format: pdf
+---
+
+## Read in data
+
+```{r}
+library(lavaan)
+library(ggplot2)
+```
+
+
+```{r}
+mhs <- read.csv("mhs.csv", na.strings = ".")
+```
+
+## 1. Individual trajectories plot
+
+```{r}
+mot_data <- mhs |> 
+  dplyr::select(id, mot1:mot4) |> 
+  tidyr::pivot_longer(cols = c(mot1:mot4), 
+                      names_to = "timepoint", 
+                      names_prefix = "mot",
+                      names_transform = as.factor,
+                      values_to = "motivation") |> 
+  dplyr::filter(!is.na(motivation))
+
+ggplot(mot_data, aes(x = timepoint, y = motivation, group = id)) +
+  #geom_point()+
+  geom_line(color = "#0074D9")+
+  theme_minimal()+
+  labs(x = "Time", y = "Academic Motivation")
+```
+
+```{r}
+pc_data <- mhs |> 
+  dplyr::select(id, pc1:pc4) |> 
+  tidyr::pivot_longer(cols = c(pc1:pc4), 
+                      names_to = "timepoint", 
+                      names_prefix = "pc",
+                      names_transform = as.factor,
+                      values_to = "competence") |> 
+  dplyr::filter(!is.na(competence))
+
+ggplot(pc_data, aes(x = timepoint, y = competence, group = id)) +
+  #geom_point()+
+  geom_line(color = "#0074D9")+
+  theme_minimal()+
+  labs(x = "Time", y = "Perceived competence")
+```
+# 2. Latent Growth model
+
+```{r}
+mod_mot <- "i =~ 1*mot1 + 1*mot2 + 1*mot3 + 1*mot4
+           s =~ 0*mot1 + 1*mot2 + 2*mot3 + 3*mot4"
+
+fit_mot <- growth(mod_mot, data=mhs)
+summary(fit_mot)
+```
+```{r}
+mod_pc <- "i =~ 1*pc1 + 1*pc2 + 1*pc3 + 1*pc4
+           s =~ 0*pc1 + 1*pc2 + 2*pc3 + 3*pc4"
+
+fit_pc <- growth(mod_pc, data=mhs)
+summary(fit_pc)
+```
+# 3. Group differences
+
+```{r}
+fit_pc_inv <- growth(mod_pc, group = "female", data=mhs)
+summary(fit_pc_inv)
+```
+

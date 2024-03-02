@@ -1,5 +1,6 @@
 ---
 title: "HW 7"
+author: "Marwin Carmo"
 subtitle: Propensity Score Matching
 output: 
   pdf_document:
@@ -39,10 +40,11 @@ With the `hbo` data, use a linear regression to assess the effect of `type` on `
 
 
 ```{r echo = T, warning = F, message = F}
-
+mod1 <- lm(imdb_score ~ type, data = hbo)
+summary(mod1)
 ```
 
-* Answer here
+* The model shows that TV shows have a higher IMDB score on average than other types of media (*b* = 0.94, 95% CI [0.79, 1.10], *t*(1012) = 11.63, *p* < .001),
 
 
 # Question 2
@@ -54,16 +56,19 @@ We can't randomly assign media to be either a TV show or a movie, so let's redo 
 Display the matched regression output below.
 
 ```{r echo = T, warning = F, message = F}
+match1 <- matchit(type ~ rating + genre ,data=hbo, method='nearest')
+match1_df <- match.data(match1)
 
+mod2b <- lm(imdb_score ~ type, data = match1_df)
+summary(mod2b)
 ```
-
 
 
 ## Part b [1 pt.]
 
 When matched on `rating` and `genre`, do TV shows appear to be more highly rated than other types of media, at the $p < .05$ significant level? How does this compare to the original analysis above?
 
-* Answer here
+* In the matched model TV shows are still significantly highly rated than other types of media (*b* = 0.93, 95% CI [0.74, 1.13], *t*(498) = 9.39, *p* < .001). In this model the coefficient for the show type is slighly lower than in the original model.
 
 
 # Question 3
@@ -73,7 +78,12 @@ When matched on `rating` and `genre`, do TV shows appear to be more highly rated
 Re-do the propensity matched analysis, but this time use exact matching instead of nearest neighbor matching. Display the regression output below.
 
 ```{r}
+match2 <- matchit(type ~ rating + genre ,data=hbo, method='exact')
+match2_df <- match.data(match2)
 
+mod3a <- lm(imdb_score ~ type, data = match2_df)
+
+summary(mod3a)
 ```
 
 
@@ -82,16 +92,30 @@ Re-do the propensity matched analysis, but this time use exact matching instead 
 Did any subgroups get dropped?
 
 ```{r echo = T, warning = F, message = F}
+og_subgroups <-
+  hbo |>
+  distinct(rating, genre) |>
+  mutate(subgroups = paste(rating, genre)) |>
+  pull(subgroups)
 
+
+exact_matched_subgroups <-
+  match2_df |>
+  distinct(rating, genre) |>
+  mutate(subgroups = paste(rating, genre)) |>
+  pull(subgroups)
+
+length(setdiff(og_subgroups, exact_matched_subgroups))
 ```
 
-* Answer here
+* Yes, 36 subgroups.
 
 # Question 4 [1 pt.]
 
 Using the `stargazer()` function, create a table of the regressions in questions 1, 2 and 4. (1 pt.)
 
 ```{r, results='asis'}
-
+stargazer(mod1, mod2b, mod3a, type = "latex", header = FALSE, 
+          ci=TRUE, digits=2, title = "IMDB scores predicted by show type.")
 ```
 

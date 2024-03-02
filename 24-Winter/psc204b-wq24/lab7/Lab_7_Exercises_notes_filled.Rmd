@@ -1,0 +1,125 @@
+---
+title: "Lab 7 Exercises"
+output: html_document
+---
+
+```{r warning=FALSE, message=FALSE}
+library(MatchIt)
+library(dplyr)
+#library(stargazer)
+
+
+# Load the Age Religion Health data:
+arh <- read.csv("arh.csv") |>
+       select(id, smoke01, married01, depress2001, race,
+              sex, weight2004, church2001, school, see_dr90days) |>
+  na.omit()
+
+# convert sex to factor
+arh$sex <- as.factor(arh$sex)
+
+# convert church2001 to factor
+arh$church2001 <- as.factor(arh$church2001)
+
+# Recoding so that non-smoker is the reference group
+arh$smoke01 <- ifelse(arh$smoke01 == 2, "Non-smoker", "Smoker")
+arh$smoke01 <- as.factor(arh$smoke01)
+
+# Re-ordering levels so that the group with largest N is reference group
+arh$race <- factor(arh$race,
+                   levels = c("Black/African American",
+                              "Black/African American and some other race",
+                              "White/Caucasian",
+                              "White/Caucasian and some other race",
+                              "Hispanic/Latino",
+                              "American Indian or Alaskan Native"))
+# Re-ordering levels so that the group with largest N is reference group
+arh$married01 <- factor(arh$married01,
+                        levels = c("Married",
+                                   "Widowed",
+                                   "Divorced",
+                                   "Separated",
+                                   "Never Married"))
+
+```
+
+```{r}
+#Section 1: Hand calculation of propensity scores
+
+#Exercise 1: Using 'smoke01',or the label of whether someone smokes or not as the treatment, and sex, race, and marital status married01 as covariates, create a logistic regression model.
+model1 <- glm(smoke01 ~ sex + race + married01, data=arh, family='binomial')
+summary(model1)
+#Exercise 2: Obtain the predicted probabilities from this model and add as a new column to the arh dataset
+
+arh$pensity_scores <- predict(model1, type='response')
+
+#Exercise 3: Look at some of the propensity scores and write down what they would mean in this context
+arh%>% select(sex, race, married01,smoke01,pensity_scores) %>% arrange(sex, race, married01, smoke01, pensity_scores)%>% head(10)
+
+#Here, all subjects that have the combination of covariates female, married, Black/African American have about a 9% chance to be smokers
+
+#Exercise 4: Count the number of people per subgroup (hint: you will use group_by function)
+arh%>% group_by(sex, race, married01,smoke01,pensity_scores) %>% count(smoke01)
+
+#Exercise 5: Using the filter function, look at the count of smokers and nonsmokers in the male, Black/African American, Married subgroup.
+arh%>% group_by(sex, race, married01,smoke01,pensity_scores) %>% count(smoke01) %>% arrange(sex, race, married01, smoke01, pensity_scores) %>% filter(sex=='Male', race=='Black/African American', married01=='Married')
+
+
+```
+
+```{r}
+#Section 2: Using MatchIt package to perform a propensity score analysis
+library(MatchIt)
+#Exercise 1: Perform a linear regression to look at whether people who smoke cigarettes differ from non-smokers on the depression variable
+model2 <- lm(depress2001 ~ smoke01,data=arh )
+summary(model2)
+
+#Exercise 2: Use the nearest neighbor method in MatchIt to calculate propensity scores and propensity score match across individuals.
+match1 <- matchit(smoke01 ~ sex + race + married01,data=arh, method='nearest')
+match1_df <- match.data(match1)
+#summary(match1)
+
+
+#Exercise 3: Perform a linear regression using the matched data
+matched_lm1 <- lm(depress2001 ~ smoke01,data=match1_df )
+summary(matched_lm1)
+
+#Exercise 4: Compare between smoker/nonsmoker group numbers in original versus the matched dataset
+table(arh$smoke01)
+table(match1_df$smoke01)
+
+
+#Additional info: take a look at the matched dataset! It contains information about subclasses that are matched, distance, etc.
+
+
+#Exercise 5: randomize the order of the dataframe and re-run the propensity score analysis above (including the linear regression portion)
+randomizer <- sample(x=1:nrow(arh),size=nrow(arh))
+randomized <- arh[randomizer,]
+
+match_random <- matchit(smoke01 ~ sex + race + married01,data=randomized, method='nearest')
+match_random_df <- match.data(match_random)
+matched_lm_random <- lm(depress2001 ~ smoke01,data=match_random_df )
+summary(matched_lm_random)
+#Exercise 6: Use the exact matching method in MatchIt to perform a propensity score analysis (include the linear regression from the new matched data)
+match_exact <- matchit(smoke01 ~ sex + race + married01,data=arh, method='exact')
+match_exact_df <- match.data(match_exact)
+matched_lm_exact <- lm(depress2001 ~ smoke01,data=match_exact_df )
+summary(matched_lm_exact)
+
+#summary(match1)
+
+
+#Exercise 7: Now perform a weighted regression using the exact matched dataset
+matched_lm_exact_weighted <- lm(depress2001 ~ smoke01,data=match_exact_df, weights=weights )
+summary(matched_lm_exact_weighted)
+
+#Exercise 8: find which subgroups were excluded in the exact matching data. You will use a number of functions from dplyr including: distinct() which pulls unique values of a combination of columns, mutate() which creates a new column, and pull(), which is similar to $ but works better as part of the %>% pipeline.setdiff() will also be used to find differences between two sets.
+original_subgroups <- arh %>% distinct(race,sex,married01) %>% mutate(subgroups=paste(race,sex,married01)) %>% pull(subgroups)
+
+new_subgroups <- match_exact_df %>% distinct(race,sex,married01) %>% mutate(subgroups=paste(race,sex,married01)) %>% pull(subgroups)
+
+setdiff(original_subgroups,new_subgroups)
+```
+
+
+
