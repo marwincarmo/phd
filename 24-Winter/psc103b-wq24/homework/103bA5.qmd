@@ -12,30 +12,54 @@ filters:
 
 This week, we will be moving away from the NPAS dataset and using the version of the penguins dataset that we have been using in lab. Download this dataset from the Homework 5 assignment page on Canvas.
 
-The response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as `VC`). The variables we will be using today are:
+The variables we will be using today are:
 
-- `len`: tooth length ($\mu m$)
-- `supp`: Supplement type (OJ or VC)
-- `dose`: Dosage levels (0.5, 1, or 2)
+- `species`: The species of the penguin (Adelie, Chinstrap, or Gentoo)
+- `sex`: The sex of the penguin (male or female)
+- `bill_length_mm`: The bill length of the penguin, measured in mm 
+
 
 ```{r}
-hw_data <- ToothGrowth
-hw_data$dose <- factor(hw_data$dose)
+hw_data <- read.csv("../lab/data/penguins_103b.csv")
 ```
 
 
 # Question 1
 
-Suppose we were interested in conducting a factorial ANOVA with Supplement type and Dosage levels as our grouping variables, and tooth length as the outcome. 
+Suppose we were interested in conducting a factorial ANOVA with species and sex as our grouping variables, and bill length as the outcome. 
 
-Write out the 3 sets of null and alternative hypotheses for the factorial ANOVA –- one for each main effect and one for the interaction. (3 points)
+Write out the 3 sets of null and alternative hypotheses for the factorial ANOVA – one for each main effect and one for the interaction. (3 points)
+
+**Hypotheses for Main Effect of Species**
+
+$$
+H_0: \mu_{Adelie} = \mu_{Chinstrap} = \mu_{Gentoo}\\
+H_1: \text{At least one mean is not equal to the rest}
+$$
+Where $\mu$ represents the average bill length
+
+**Hypotheses for Main Effect of Sex**
+
+$$
+H_0: \mu_{Female} = \mu_{Male}\\
+H_1: \mu_{Female} \neq \mu_{Male}
+$$
+
+Where $\mu$ represents the average bill length (note that our alternative hypothesis can be so specific because we only have 2 groups).
+
+**Hypotheses for the Interaction**
+
+$$
+H_0: \text{There is no interaction between species and sex on bill length}\\
+H_1: \text{There is an interaction between species and sec on bill length}
+$$
 
 # Question 2
 
-Conduct the factorial ANOVA to test the hypotheses you wrote for question 1. Show your code and output. (1 point)
+Conduct the factorial ANOVA. Show your code and output. (1 point)
 
 ```{r}
-fact_anova <- aov(len ~ supp * dose, data = hw_data)
+fact_anova <- aov(bill_length_mm ~ species*sex, data = hw_data)
 summary(fact_anova)
 ```
 
@@ -43,20 +67,29 @@ summary(fact_anova)
 
 *If the main effect of dose is significant*: Conduct the Tukey Honest Significant Difference post-hoc test. Show your code. 
 
-*If the main effect of dose is not significant*: State "The main effect of dose was not significant". (1 point)
+*If the main effect of dose is not significant*: State "The main effect of species was not significant". (1 point)
 
 ```{r}
-TukeyHSD(fact_anova, "dose")
+TukeyHSD(fact_anova, which = "species")
 ```
 # Question 4
 
-If you conducted the Tukey HSD test in the previous question: Which doses were significantly different from each other? What was the difference (e.g., which group had the larger/smaller tooth length)? (1 point)
+If you conducted the Tukey HSD test in the previous question: Which groups were significantly different from each other? What was the difference (e.g., which group had the larger/smaller bill length)? (1 point)
+
+[Adelie penguins had significantly smaller bill lengths than both Chinstrap and Gentoo penguins, and Gentoo penguins had significantly smaller bill lengths than Chinstrap penguins.]{color=#b22222}
 
 # Question 5
 
-If the main effect of sex is significant: Calculate the means for each group. Show your code and output. 
+*If the main effect of sex is significant*: Calculate the means for each group. Show your code and output. 
 
-If the main effect of sex is not significant: State “The main effect of sex was not significant”. (1 point)
+*If the main effect of sex is not significant*: State "The main effect of sex was not significant". (1 point)
+
+[The mean bill length for female penguins was 42.61 mm, whereas the mean bill length for male penguins was 47.47 mm.]{color=#b22222}
+
+```{r}
+tapply(hw_data$bill_length_mm, hw_data$sex, mean)
+```
+
 
 # Question 8
 

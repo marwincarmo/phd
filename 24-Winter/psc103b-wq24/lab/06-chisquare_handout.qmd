@@ -11,7 +11,7 @@ Today, we will be learning about chi-square tests which can be used in a few dif
 But first, let's take a look at the data that we'll be using today. This is data that I adapted from AggieData, which provides statistics on the university, including the student population
 Here is the website in case you're interested: <https://aggiedata.ucdavis.edu/#student>. I've changed the total number to 1000 just to make the math a little bit easier, rather than working with tens of thousands but the percentages are the same as reported.
 
-|CLAS|CLAS | CA&ES | CBS | COE | Total|
+|   |CLAS | CA&ES | CBS | COE | Total|
 |:---|:---:|:-----:|:---:|:---:|:----:|
 |Freshmen |  276 |  147  | 173 | 111 | 707|
 |Total    | 417  | 223   | 216 | 144 | |
@@ -99,7 +99,7 @@ pchisq(test_stat, df = 3, lower.tail = FALSE)
 
 Do we reject or fail to reject the null? Reject the null! The 4 colleges are not being equally represented in the 2022 class.
 
-But do we know which college is not as expected? No - like the ANOVA, the chi-square test is an omnibus test. We know that one of the proportions is not as expected, but we don't know which one Of course, we can look at the frequencies and try to make a guess (e.g., the CLAS seems to have way more people than expected), and there are post-hoc tests you can do to formally test it.
+But do we know which college is not as expected? No - like the ANOVA, the chi-square test is an omnibus test. We know that one of the proportions is not as expected, but we don't know which one. Of course, we can look at the frequencies and try to make a guess (e.g., the CLAS seems to have way more people than expected), and there are post-hoc tests you can do to formally test it.
 
 As always, we can do this very easily in R using the `chisq.test()` function
 The arguments are: `chisq.test(observed frequencies, p = expected probabilities)`.
@@ -115,7 +115,8 @@ The other chi-square test we can do is the one when we have two categorical vari
 
 In this case, let's say we were interested in testing whether which college a new student was a part of was related to whether they entered as a freshman or transfer student.
 
-Remember that dependence means that knowing the value of one variable gives you an idea of what the value on the second variable is going to be. And independence means knowing the value of one variable doesn't tell you anything about the value of the other variable
+Remember that dependence means that knowing the value of one variable gives you an idea of what the value on the second variable is going to be. And independence means knowing the value of one variable doesn't tell you anything about the value of the other variable.
+
 So in this case, independence would mean knowing whether someone entered Davis as a freshman or transfer student tells you nothing about what college they joined.
 
 Here, we write out our hypotheses in words:
