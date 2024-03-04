@@ -1,12 +1,12 @@
 ---
-title: "PSC205A Assignment 07: SEM"
-name: "Marwin Carmo"
+title: "PSC205A Assignment 07: Longitudinal Multivariate"
+author: "Marwin Carmo"
 format: pdf
 ---
 
 ## Read in data
 
-```{r}
+```{r message=FALSE}
 library(lavaan)
 library(ggplot2)
 ```
@@ -17,6 +17,8 @@ mhs <- read.csv("mhs.csv", na.strings = ".")
 ```
 
 ## 1. Individual trajectories plot
+
+These plots show us that we should not expect an accentuated change over time in academic motivation and perceived competence. It is possible that the results show these variables remain stable over the four time points.
 
 ```{r}
 mot_data <- mhs |> 
@@ -53,24 +55,142 @@ ggplot(pc_data, aes(x = timepoint, y = competence, group = id)) +
 ```
 # 2. Latent Growth model
 
+Both models show a small positive slope, suggesting a slight positive growth of academic motivation and perceived competence over time. Additionally, for both models, the covariance between slope and intercept is non-significantly different from zero, meaning that initial values on the target variable do not influence the expected growth over time.
+
 ```{r}
 mod_mot <- "i =~ 1*mot1 + 1*mot2 + 1*mot3 + 1*mot4
            s =~ 0*mot1 + 1*mot2 + 2*mot3 + 3*mot4"
 
-fit_mot <- growth(mod_mot, data=mhs)
-summary(fit_mot)
+fit_mot <- growth(mod_mot, missing="fiml", data=mhs)
+summary(fit_mot, standardized=TRUE)
 ```
 ```{r}
 mod_pc <- "i =~ 1*pc1 + 1*pc2 + 1*pc3 + 1*pc4
            s =~ 0*pc1 + 1*pc2 + 2*pc3 + 3*pc4"
 
-fit_pc <- growth(mod_pc, data=mhs)
-summary(fit_pc)
+fit_pc <- growth(mod_pc, missing="fiml",data=mhs)
+summary(fit_pc , standardized=TRUE)
 ```
 # 3. Group differences
+
+Testing for differences in trajectories of perceived competence between males and females, it was found that males (`female = 0`) start at higher values in T1 than females (`female = 1`) but have a less steep slope of latent growth compared to the target group. That indicates that although males start with higher perceived competence, the change over time is more accentuated for females. For both groups, the covariance between intercept and slope is non-significantly different from zero, following the group trend of non-association between rate of change and initial values of perceived competence.
 
 ```{r}
 fit_pc_inv <- growth(mod_pc, group = "female", data=mhs)
 summary(fit_pc_inv)
 ```
 
+```{r}
+pc_data_sex <- mhs |> 
+  dplyr::select(id, female, pc1:pc4) |> 
+  tidyr::pivot_longer(cols = c(pc1:pc4), 
+                      names_to = "timepoint", 
+                      names_prefix = "pc",
+                      names_transform = as.factor,
+                      values_to = "competence") |> 
+  dplyr::mutate(female = factor(female)) |> 
+  dplyr::filter(!is.na(competence), !is.na(female))
+
+ggplot(pc_data_sex, aes(x = timepoint, y = competence, group = id, color=female)) +
+  #geom_point()+
+  geom_line()+
+  theme_minimal()+
+  labs(x = "Time", y = "Perceived competence")
+```
+
+# 4. Interrelations between perceived competence and motivation
+
+The correlation between motivation and competence intercepts is large and positive, suggesting that participants with higher starting values on motivation also start with higher values on perceived competence and vice-versa. Similar to the individual model analyses, none of the intercepts were significantly associated with the slopes, indicating no relation between starting values and change. However, as with the intercepts, the slopes' correlations of the two latent growths are significant, and positive, meaning that participants who change on one variable tend to change in the other in the same direction.
+
+
+```{r}
+mod_complete <- 
+" mot_i =~ 1*mot1 + 1*mot2 + 1*mot3 + 1*mot4
+  mot_s =~ 0*mot1 + 1*mot2 + 2*mot3 + 3*mot4
+  
+  pc_i =~ 1*pc1 + 1*pc2 + 1*pc3 + 1*pc4
+  pc_s =~ 0*pc1 + 1*pc2 + 2*pc3 + 3*pc4
+"
+
+fit_complete <- growth(mod_complete,missing="fiml", data=mhs)
+summary(fit_complete, standardized=TRUE)
+```
+
+# 5. Perceived competence growth curve analysis
+
+```{r}
+mod_pc_latent <- "
+
+ PC_1 =~ pc1_1 + pc2_1 + pc3_1 + pc4_1
+ PC_2 =~ pc1_2 + pc2_2 + pc3_2 + pc4_2
+ PC_3 =~ pc1_3 + pc2_3 + pc3_3 + pc4_3
+ PC_4 =~ pc1_4 + pc2_4 + pc3_4 + pc4_4
+ 
+ PCi =~ 1*PC_1 + 1*PC_2 + 1*PC_3 + 1*PC_4
+ PCs =~ 0*PC_1 + 1*PC_2 + 2*PC_3 + 3*PC_4
+
+"
+```
+
+
+### Group invariance
+
+Given the non-significant difference in the chi squared tests across the more restricted models, it is possible to assume that males and females are invariant in perceived competence across all levels of measurement invariance, except for the residuals.
+
+
+```{r warning=FALSE}
+
+fit.configural = sem(mod_pc_latent,data=mhs, group="female", missing="fiml", group.equal=c(""))
+fit.loadings   = sem(mod_pc_latent,data=mhs, group="female", missing="fiml", group.equal=c("loadings"))
+fit.intercepts = sem(mod_pc_latent,data=mhs, group="female", missing="fiml", group.equal=c("loadings","intercepts"))
+fit.varcov     = sem(mod_pc_latent,data=mhs, group="female", missing="fiml", group.equal=c("loadings","intercepts", "lv.variances","lv.covariances"))
+fit.regress    = sem(mod_pc_latent,data=mhs, group="female", missing="fiml", group.equal=c("loadings","intercepts", "lv.variances","lv.covariances","regressions"))
+fit.invariant  = sem(mod_pc_latent,data=mhs, group="female",
+                     group.equal=c("loadings","intercepts", "lv.variances","lv.covariances","regressions","residuals"))
+
+anova(fit.configural, fit.loadings, fit.intercepts, fit.varcov, fit.regress, fit.invariant) |> 
+  knitr::kable(caption = "Multiple group invariance test.", digits=3)
+
+```
+
+
+### Growth curve
+
+Similar to the results found in `Q2`, the correlation between intercept and slope is negative but non-significant. The growth curve slope of this model was positive, just as found in the analysis using composite scores. However, the statistical significance was not computed because the model failed to converge. We can suppose that this model also shows a positive growth of perceived competence over time.
+
+
+```{r warning=FALSE}
+fit_growth <- growth(mod_pc_latent,  missing="fiml", data=mhs)
+summary(fit_growth, standardized=TRUE, fit.measures=TRUE)
+```
+
+# 6. Extra
+
+Modeling motivation and competence as latent variables and examining their change yielded results similar to what was found by examining the growth change using composite scores. That is, there is a positive correlation between motivation and competence intercepts but no significant correlation between intercepts and slopes. The slopes of the two latent growths are correlated significantly and positively, just as the results using composite scores. Overall, that means that using composites or modeling the latent factors gives comparable results with little loss of information. 
+
+```{r}
+mod_complete_latent <- "
+
+ MOT_1 =~ mot1_1 + mot2_1 + mot3_1 + mot4_1
+ MOT_2 =~ mot1_2 + mot2_2 + mot3_2 + mot4_2
+ MOT_3 =~ mot1_3 + mot2_3 + mot3_3 + mot4_3
+ MOT_4 =~ mot1_4 + mot2_4 + mot3_4 + mot4_4
+ 
+ MOTi =~ 1*MOT_1 + 1*MOT_2 + 1*MOT_3 + 1*MOT_4
+ MOTs =~ 0*MOT_1 + 1*MOT_2 + 2*MOT_3 + 3*MOT_4
+
+ PC_1 =~ pc1_1 + pc2_1 + pc3_1 + pc4_1
+ PC_2 =~ pc1_2 + pc2_2 + pc3_2 + pc4_2
+ PC_3 =~ pc1_3 + pc2_3 + pc3_3 + pc4_3
+ PC_4 =~ pc1_4 + pc2_4 + pc3_4 + pc4_4
+ 
+ PCi =~ 1*PC_1 + 1*PC_2 + 1*PC_3 + 1*PC_4
+ PCs =~ 0*PC_1 + 1*PC_2 + 2*PC_3 + 3*PC_4
+
+"
+```
+
+```{r warning=FALSE}
+fit_growth_complete <- growth(mod_complete_latent,  missing="fiml", data=mhs)
+summary(fit_growth_complete, standardized=TRUE, fit.measures=TRUE)
+```
