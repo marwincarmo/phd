@@ -249,8 +249,6 @@ obs_matrix <- matrix(c(276, 147, 173, 111,
 obs_matrix
 ```
 
-- We can use this matrix as the argument of the `chisq.test()` function:
-
 :::fragment
 ```{r}
 chisq.test(x = obs_matrix)
@@ -279,6 +277,6 @@ agg_UCBAdmissions <- apply(UCBAdmissions, c(1, 2), sum)
 
 Reflect on the table you generated for a moment and think about what you expect to find. 
 
-With this new data set, run a chi-squared test to check if the data show evidence of sex bias in admission practices.
-
 What would be your null and alternative hypothesis?
+
+With this new data set, run a chi-squared test to check if the data show evidence of sex bias in admission practices.
