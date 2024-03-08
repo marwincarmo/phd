@@ -1,9 +1,7 @@
 ---
 title: "PSC 103B - Lab 4 Assignment"
 subtitle: "Answer Key"
-format:
-  docx:
-    reference-doc: ../word-styles-reference-01.docx
+format: pdf
 filters:
   - color.lua
 ---
@@ -89,16 +87,27 @@ If you conducted the Tukey HSD test in the previous question: Which groups were 
 ```{r}
 tapply(hw_data$bill_length_mm, hw_data$sex, mean)
 ```
+# Question 6
+
+*If you calculated the means in the previous question*: Which group (males or females) had the longer bill length? (1 point)
+
+# Question 7
+
+Was the interaction significant? What does this tell us (e.g., does the main effect of species depend on sex)? (1 point)
+
+[The interaction was not significant (p = .19), which means that the main effect of sex does not depend on species (or, that the main effect of species does not depend on the penguin’s sex).]{color=#b22222}
 
 
 # Question 8
 
 ```{r}
-interaction.plot(x.factor = hw_data$dose, # grouping variable on x axis
-                 trace.factor = hw_data$supp, # grouping variable as lines
-                 response = hw_data$len, # outcome variable
-                 fun = mean, # summary statistic
-                 type = "l", # graph lines
-                 col = c("black", "red"), xlab = "Dose (mg)", ylab = "Tooth Length (micron)", trace.label = "Supplement")
+interaction.plot(hw_data$species,
+                 hw_data$sex,
+                 hw_data$bill_length_mm,
+                 type = "l",
+                 xlab = "Species",
+                 ylab = "Mean Bill Length",
+                 trace.label = "Sex")
+
 ```
 
