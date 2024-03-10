@@ -127,11 +127,22 @@ expected_freq
 
 - The formula for this is $(O - E)^2 / E$
 
-::: fragment
+---
+
 :::{.callout-caution title="Exercise"}
-Compute the formula above using `obs_freq` and `expected_freq`, and save the results to an object named `diffs`. 
+Compute the formula below using `obs_freq` and `expected_freq`, and save the results to an object named `diffs`. 
 :::
-:::
+
+We want to find $(O - E)^2 / E$.
+
+```{r}
+obs_freq <- c(417, 223, 216, 144)
+N <- 1000
+expected_freq <- N * null_prob
+# diffs <- ?
+```
+
+
 
 ## Goodness of Fit Test
 
@@ -189,7 +200,7 @@ pchisq(test_stat, df = 3, lower.tail = FALSE)
 
 ::: fragment
 :::{.callout-caution title="Exercise"}
-Try to run the  `chisq.test()` function yourself first. 
+Try to run the  `chisq.test()` function yourself first.
 :::
 :::
 
@@ -201,9 +212,17 @@ chisq.test(obs_freq, p = c(.25, .25, .25, .25))
 
 ---
 
-Notice that we assumed equal probabilities for  this test, but we didn't have to; we could have expected whatever probabilities we wanted and then we would just need to specify them in `p`. 
+- Notice that we assumed equal probabilities for  this test, but we didn't have to; we could have expected whatever probabilities we wanted and then we would just need to specify them in `p`. 
 
-We also need to make sure that the order of observed frequencies and p are the same.
+- We also need to make sure that the order of observed frequencies and p are the same.
+
+- For example:
+
+::: fragment
+```{r eval=FALSE}
+chisq.test(obs_freq, p = c(.40, .35, .15, .10))
+```
+:::
 
 ## Chi-Square Test of Independence
 
@@ -219,13 +238,13 @@ We also need to make sure that the order of observed frequencies and p are the s
 
 - $H_0$: Entry status and college are independent of each other.
 
-- $H_A$: Entry status and college status are not independent.
+- $H_A$: Entry status and college are not independent.
 
 - Just like in the GoF test, the chi-square test of independence computes the difference between what we would expect if the variables were independent, and what we observed.
 
 ## Chi-Square Test of Independence
 
-- To do the test in R, we now need to give R either 2 vectors of data for each category or a table / matrix of the observed frequencies.
+- To do the test in `R`, we now need to give `R` either 2 vectors of data for each category or a table / matrix of the observed frequencies.
 
 :::fragment
 :::{.callout-caution title="Exercise"}
