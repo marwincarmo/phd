@@ -1,0 +1,320 @@
+---
+title: "Lab 7: Logistic Regression & GLM"
+subtitle: "PSC 103B"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    callout-icon: false
+    # height: 900
+    footer: "PSC 103B - Statistical Analysis of Psychological Data"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+execute:
+  echo: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, echo=FALSE}
+wine <- read.csv("data/wine.csv")
+```
+
+
+## Logistic regression
+
+- Appropriate for binary outcomes, which only takes on values of 0 or 1.
+
+- Oftentimes, 1 corresponds to a "success" of some type.
+
+- Logistic regression predicts the log-odds of success because there is a linear relationship between the log-odds and your predictors.
+
+## Today's dataset
+
+- We are going to demonstrate logistic regression with this dataset on red wine quality, which can be found at <https://archive.ics.uci.edu/ml/datasets/wine+quality>.
+
+- This dataset contains information on characteristics of the wine, such as the acidity, sugar, pH, alcohol content, etc. as well as a rating of the wine as "good" or "bad".
+
+- The rating was created by dichotomizing a quality variable (so that 
+anything with a quality score greater than 5 out of 9 was considered good).
+
+## Today's dataset
+
+```{r}
+dplyr::glimpse(wine$quality)
+```
+
+- We are going to create a second column that assigns this a numerical
+value (1 if the quality is good, 0 if it's bad).
+
+- That way, we can be sure our logistic regression is predicting
+the log-odds of a wine being good.
+
+:::fragment
+```{r}
+wine$quality_binary <- ifelse(wine$quality == "good", 1, 0)
+
+dplyr::glimpse(wine$quality_binary)
+```
+:::
+
+## Simple Logisitic Regression
+
+- Let's fit a logistic regression model with only one predictor -- alcohol content.
+
+- To fit a logistic regression function, we need to use a new function called `glm()`.
+
+- This function, for the most part, is similar to the `lm()`: `outcome var ~ independent var(s)`.
+
+- We just have to specify a family, using `family = "binomial"` (this tells `R` that the outcome variable is binary, and to use logistic regression).
+
+:::fragment
+```{r}
+simple_logreg <- glm(quality_binary ~ alcohol,
+                    data = wine,
+                    family = "binomial")
+```
+:::
+
+---
+
+```{r}
+summary(simple_logreg)
+```
+
+## Simple Logisitic Regression
+
+$$
+\log(Odds_{\text{Quality}}) = -10.76 + 1.06 \times \text{Alcohol}
+$$
+
+- The **intercept** of -10.76 means that a red wine that has 0 
+alcohol content has an expected log-odds score of -10.76.
+
+- The **slope** means that for every 1-unit increase in alcohol
+content, the log-odds of a wine being rated good increase
+by 1.06 points.
+
+- But how do we interpret a log-odds?
+
+- It is not intuitive, and that's why we transform the coefficients
+to be interpreted in terms of odds ratios. How can we do that?
+
+## Simple Logisitic Regression
+
+$$
+Odds_{\text{Good}} = \exp(-10.76 + 1.06 \times \text{Alcohol})
+$$
+
+or (using the rules of exponents),
+
+$$
+Odds_{\text{Good}} = \exp(-10.76) \times \exp(1.06 \times \text{Alcohol})
+$$
+
+## Interpreting the coefficients
+
+- **Intercept**: it is still the expected value when
+alcohol is 0. So when a wine has no alcohol content, the expected
+odds of being rated good are exp(-10.76), or .00002.
+
+- **Slope**: it is the multiplicative change in the odds for a 1-unit change in Alcohol. So when alcohol content increases by 1, the odds increase
+by a factor of (are multiplied by) exp(1.06) = 2.89, or a 289% increase in the odds.
+
+- Because 1.06 is positive, we know that as the alcohol content increases, the probability of a wine being considered good also increase.
+
+## Mean centering the predictors
+
+```{r}
+wine$alcohol_c <- wine$alcohol - mean(wine$alcohol, na.rm = TRUE)
+```
+
+```{r}
+logreg_centered <- glm(quality_binary ~ alcohol_c,
+                      data = wine,
+                      family = "binomial")
+
+summary(logreg_centered)
+```
+
+## Mean centering the predictors
+
+- Notice that the value of the slope hasn't changed, 
+but now our intercept is 0.24 -- what does this mean?
+
+- The expected log-odds of a wine with an average alcohol
+content being rated good is 0.24.
+
+- The odds of it being rated good are exp(.24) = 1.27
+so it's more likely to be rated good than it is to be rated bad.
+
+## Predicted probabilities
+
+- What is the probability that the wine will be rated "good"? 
+
+- Let's take the example of a Cabernet Sauvignon, which  generally has an alcohol content of 14%.
+
+:::fragment
+```{r}
+(logodds <- -10.76 + 1.06*14)
+```
+:::
+
+- The expected log-odds are 4.08, which again, are hard for us to interpret so let's transform those into odds.
+
+:::fragment
+```{r}
+(odds <- exp(logodds))
+```
+:::
+
+## Predicted probabilities
+
+- We can transform these odds into a probability using, $P = \frac{odds}{1 + odds}$
+
+:::fragment
+```{r}
+odds / (1 + odds)
+```
+:::
+
+- A wine with 14% alcohol has almost 100% (98.34%) chance of being rated good according to our model.
+
+## Predicted probabilities
+
+- A probability of 0.5 (equal chance) corresponds
+to an odds ratio of 1, which corresponds to a log-odds of 0.
+
+- Therefore, if something has a log-odds greater than 0,
+then that **increases** your chance of a success (probability
+greater than 0.5), and a log-odds less than 0 **decreases**
+your chance of success (probability less than 0.5).
+
+## Now you try
+
+:::{.callout-caution title="Exercise"}
+Fit a model predicting quality from the amount of chlorides, which can affect how salty a wine tastes. Interpret the coefficients in terms of log-odds and odds.
+:::
+
+## Multiple Logistic Regression
+
+- Just like in linear regression, we can add multiple predictors to our logistic regression model.
+
+:::fragment
+```{r}
+multiple_logreg <- glm(quality_binary ~ alcohol + sulphates,
+                      data = wine,
+                      family = "binomial")
+summary(multiple_logreg)
+```
+:::
+
+## Multiple Logistic Regression
+
+$$
+\log(Odds_{\text{Good}}) = -12.32 + 1.04 \times \text{Alcohol} + 2.67 \times \text{Sulphates}
+$$
+
+- Let's interpret these in terms of the odds
+
+- **Intercept**: The expected odds of a wine with no alcohol content and no sulphates is exp(-12.32) = .000004.
+
+- **Slope of Alcohol**: Holding the amount of sulphates constant,
+increasing the alcohol content by 1 increases the odds of a
+wine being rated as good by a factor of exp(1.04) = 2.83.
+
+- **Slope of Sulphates**: Holding the amount of alcohol constant,
+increasing the sulphates by 1 unit increases the odds of a
+wine being rated as good by a factor of exp(2.67) = 14.44.
+
+## Multiple Logistic Regression with interactions
+
+```{r}
+interact_logreg <- glm(quality_binary ~ alcohol + sulphates + I(alcohol*sulphates),
+                      data = wine,
+                      family = "binomial")
+summary(interact_logreg)
+```
+
+## General Linear Model
+
+- Many of the tests we learned in class can be rewritten as linear regressions with the help of dummy coding.
+
+- Let's revisit our ANOVA example from a few weeks ago
+where we wanted to examine bill length differences
+between different species of penguins.
+
+- We had to do an F-test to determine whether any of the means
+were different, and then a post-hoc test to see which means
+were different.
+
+## General Linear Model
+
+- We can fit this model as a regression model with dummy codes
+and this might help us make more specific comparisons
+right away.
+
+- A dummy code is a variable that assigns a value of 1 
+if a person is in one specific group, and 0 otherwise.
+
+- You can manually create these dummy codes, or if you 
+fit a regression model with a "factor" variable as a
+predictor, R will automatically create dummy codes.
+
+## General Linear Model
+
+```{r}
+# Load the palmerpenguins package
+library(palmerpenguins)
+```
+
+```{r}
+dummyreg <- lm(bill_length_mm ~ species, data = penguins)
+summary(dummyreg)
+```
+
+## General Linear Model
+
+- `R` automatically assigned one group to be our reference group
+and that's generally done by choosing the group that comes
+first alphabetically (in this case, Adelie).
+
+- This reference group has a score of 0 on the dummy code
+variables.
+
+- Now the slopes are the effects of the dummy codes
+for the other 2 species.
+
+## General Linear Model: coefficients
+
+- The intercept now represents the expected bill length
+for a penguin that has a 0 on both dummy codes. That is, 38.79 is the average bill length for Adelie
+penguins.
+
+- The slopes represent the difference between the mean
+of the reference group, and the mean of the group that the 
+dummy code is for:
+  - Chinstrap penguins have an average bill length 10.04 mm longer than the average bill length of Adelie penguins.
+  - Gentoo 
+penguins have an average bill length 8.71 mm longer than the average bill length of Adelie penguins.
+
+## General Linear Model: coefficients
+
+- Both these differences are significant! So unlike before where we had to do a post-hoc test to see which groups
+were different, we can automatically see which pairs are significantly different.
+
+- However, not all comparisons are represented - we can't say anything about the difference between Chinstrap and Gentoo penguins.

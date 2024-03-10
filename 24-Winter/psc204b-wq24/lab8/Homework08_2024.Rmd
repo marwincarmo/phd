@@ -1,0 +1,220 @@
+---
+title: "Homework 8"
+author: "Marwin Carmo"
+date: "03/08/2024"
+output: pdf_document
+---
+
+
+```{r message = F, echo = F, include = F}
+# The following code checks whether the packages needed for today are already installed, if not, they will be installed. 
+
+if (!require("dplyr")) install.packages("dplyr")
+if (!require("ggplot2")) install.packages("ggplot2")
+if (!require("leaps")) install.packages("leaps")
+if (!require("boot")) install.packages("boot")
+```
+
+
+```{r message = F, echo = F, include = F}
+# Load required packages
+source("model-selection-helpers.R")
+library(dplyr)
+library(ggplot2)
+library(leaps)
+library(boot)
+```
+
+The data for this homework concern the Nerdy Personality Attributes Scale, and were collected online from December 2015 -- December 2018 on the open-source psychometrics project . You can find more info [here](https://openpsychometrics.org/_rawdata/). The original dataset has been modified for this homeowrk and contains the following variables:
+
+* `nerdiness`: standardized nerdiness score (outcome variable)
+* `age`: participant age in years
+* `voted`: whether participant had recently voted in a national election (0 = no, 1 = yes)
+* `asd`: whether participant had ever been diagnosed with ASD (0 = no, 1 = yes)
+* The remaining variables correspond to self-reported personality scores (0 -- 7)
+    - `extraverted`
+    - `critical`
+    - `dependable`
+    - `anxious`
+    - `open`
+    - `reserved`
+    - `sympathetic`
+    - `disorganized`
+    - `calm`
+    - `uncreative`
+
+
+```{r message = F, echo = F, include = F}
+# Read in the data
+nerdy <- readRDS("nerdy.rds")
+```
+
+# 1. Model Selection Criterion
+
+## a) 
+
+Fit three linear regressions with `nerdiness` as the outcome and compute their MSE. Choose whatever predictors you would like but make sure that each regression has a different number of predictors. Which model has the lowest MSE? Describe your intuition on why this model has the lowest MSE. (1 pt.)
+
+```{r}
+mod1 <- lm(nerdiness ~ extraverted + critical + anxious + open + reserved + dependable + sympathetic + disorganized + calm + uncreative, data = nerdy)
+mod2 <- lm(nerdiness ~ extraverted + critical + dependable + sympathetic + disorganized + calm + uncreative, data = nerdy)
+mod3 <- lm(nerdiness ~ extraverted + critical + anxious + open + reserved + dependable, data = nerdy)
+
+mse_mod1 <- mean(resid(mod1)^2)
+mse_mod2 <- mean(resid(mod2)^2)
+mse_mod3 <- mean(resid(mod3)^2)
+```
+Model 1, including all variables as predictors, has the lower MSE. This model fits the data more closely than the other two. That implies that including all the variables in the data set as predictors might give us more accurate predictions on new data.
+
+## b) 
+
+Choose one of the model selection criterion we discussed in lab. Compute it for each of your regressions and plot them out. (1 pt.)
+
+```{r}
+model_list <- list(mod1, mod2, mod3)
+mod_sel_df <- data.frame(model_name = c("Model 1", "Model 2", "Model 3"),
+                         aic = sapply(model_list, aic))
+
+mod_sel_df |> 
+  ggplot(aes(x = model_name, y = aic)) +
+  geom_line(aes(group = 1)) +
+  geom_point(size = 2) +
+  labs(x = "Model",
+  y = "AIC",
+  title = "AIC of Each Model") +
+  theme_bw()
+```
+
+
+
+## c) 
+
+Which model was best according to your chosen criterion? Is this the same model with the lowest MSE in part a? Explain why you think they are or are not the same. (1 pt.)
+
+Model 1 also performed best when using AIC as the selection criteria. AIC considers both the goodness of fit and the model's complexity. Even with the added penalization due to the number of parameters, Model 1 was still the best choice. That suggests that the accuracy obtained by including all predictors counterbalances the penalization due to including more parameters.
+
+
+# 2.
+
+## a)
+
+Using the `regsubsets()` function, use best subsets selection to predict nerdiness. Set `nvmax = 13`. (1 pt. )
+
+```{r}
+best_subsets <- regsubsets(nerdiness ~ .,
+                           data = nerdy,
+                           nvmax = 13,
+                           method = "exhaustive")
+```
+
+
+## b)
+
+Using the information from the best subsets regression, plot the number of variables considered in each model against their respective BIC. Which model had the highest BIC? Which model had the lowest BIC, and what predictors did this model contain? (1 pt.)
+
+The highest BIC was obtained with the model with only 1 predictor. The lowest was given by the model with 7 predictors. The variables included in this model were: `extraverted`, `open`, `reserved`, `sympathetic`, `calm`, `uncreative`, and `asd`.
+
+```{r}
+bs_summ <- summary(best_subsets)
+
+bs_results <-data.frame(n.predictors = 1:13,
+                        BIC = c(bs_summ$bic))
+
+bs_results |> 
+  ggplot(aes(x = n.predictors, y = BIC)) +
+  geom_line(aes(group = 1)) +
+  geom_point() +
+  scale_x_continuous(breaks = 1:13) +
+  labs(x = "Number of predictors",
+       y = "BIC",
+       title = "BIC from Models Determined Via Best Subsets") +
+  theme_bw()
+```
+
+
+## c)
+
+Repeat the analysis using forward selection instead. Find the best model according to BIC. How many predictors does it contain? Are they the same predictors as the model chosen using best subsets? (1 pt.)
+
+This model contains 9 predictors. The forward selection model includes all predictors of the best subsets model except for `asd`. It also includes `critical`, `disorganized`, and `dependable`.
+
+
+```{r}
+sel <- step(object = lm(nerdiness ~ 1, data=nerdy),
+     scope = nerdiness ~ extraverted + critical + anxious + open + reserved + dependable + sympathetic + disorganized + calm + uncreative,
+     direction = "forward") 
+summary(sel)
+```
+
+
+# 3.
+
+## a)
+
+Split your data into two parts into a training set and a test set, and show the head of each dataset. Use 80% of the data for training. I have started the code for you below. Please do not modify it. (1 pt.)
+
+```{r}
+set.seed(1)
+prop <- 0.8
+n_rows <- nrow(nerdy)
+n_sample <- 0.8 * nrow(nerdy)
+training_idx <- sample(1:n_rows, size = n_sample)
+```
+
+```{r}
+training <- nerdy[training_idx, ]
+test <- nerdy[-training_idx, ]
+
+head(training)
+head(test)
+```
+
+
+## b) 
+
+Using the training data, fit two models predicting `nerdiness`. For the first, use `age`, `voted`, and `asd` as predictors. For the second, use all available predictors. Compute the LOOCV score for each. Which model has better predictive accuracy? (1 pt.)
+
+A better predictive accuracy was obtained by the model using all available predictors.
+
+```{r}
+training_model_1 <- lm(nerdiness ~ age + voted + asd, data = training)
+
+training_model_all <- lm(nerdiness ~ ., data = training)
+
+loocv(training_model_1)
+
+loocv(training_model_all)
+```
+
+## c) 
+
+Repeat part b, but this time use $k$-fold cross-validation using $k$ = 10. Which model has better predictive accuracy according to 10-fold CV? (1 pt.)
+
+A better predictive accuracy was obtained by the model using all available predictors.
+
+```{r}
+
+glm_model_1 <- glm(nerdiness ~ age + voted + asd, data = training, family = "gaussian")
+
+glm_model_all <- glm(nerdiness ~ ., data = training, family = "gaussian")
+
+cv_m1 <- cv.glm(data= training,glmfit = glm_model_1, K=10)
+cv_mfull <- cv.glm(data= training,glmfit = glm_model_all, K=10)
+
+cv_m1$delta[1]
+
+cv_mfull$delta[1]
+```
+
+
+## d) 
+
+Fit a regression to the test data using the predictors from the best model according to LOOCV. Can we interpret the coefficients for th model on this new data? Why or why not? If we can, are there any statistically significant predictors at the .05 level? (1 pt. )
+
+Even though this model contains all available predictors, it was chosen as the best representation of the data by model selection methods. Since it was not built with a theoretical background, it is not recommended to interpret the coefficients of a model that was derived from the same data.
+
+```{r}
+test_model <- lm(nerdiness ~ ., data = test)
+summary(test_model)
+```
+
