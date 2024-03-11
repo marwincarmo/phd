@@ -1,0 +1,65 @@
+---
+title: "The network of dysfunctional beliefs about sleep: a structural re-analysis of the DBAS-16"
+subtitle: "PSC205"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    callout-icon: false
+    # height: 900
+    footer: "PSC205 Applied Multivariate Statistics"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+execute:
+  echo: true
+editor_options: 
+  chunk_output_type: console
+---
+
+## Background
+
+- The Dysfunctional Beliefs and Attitudes About Sleep Scale is a widely used tool in clinical and research settings to examine sleep-related thoughts.
+
+- It is composed of 16 items, conformed into a 4-factor structure: (a) consequences of insomnia, (b) worry about sleep, (c) sleep expectations, (d) medication, and a fifth second-order general factor.
+
+- This study aimed to create a Brazilian-Portuguese adaptation of the Dysfunctional Beliefs and Attitudes about Sleep Scale (DBAS-16), analyzing its factorial structure, reliability, and construct validity. 
+
+## Methods
+
+### Participants
+
+- Participants with and without insomnia were recruited from March 2021 to July 2022 through social media.
+
+- The final sample consisted of 1385 participants, of which 80.78% were female, and 73.51% reported insomnia symptoms. The mean age was 38.39 years (SD = 9.79, range: 18--59). 
+
+## Methods
+
+### Instruments
+
+- Dysfunctional Beliefs and Attitudes About Sleep
+
+- Insomnia Severity Index
+
+- The Hospital Anxiety and Depression Scale
+
+## Methods
+
+### Statistical analyses
+
+- Confirmatory Factor Analyses (CFA) to test the original factor structure
+
+- 
