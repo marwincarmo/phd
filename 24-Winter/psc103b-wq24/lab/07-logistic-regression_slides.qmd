@@ -133,11 +133,16 @@ alcohol is 0. So when a wine has no alcohol content, the expected
 odds of being rated good are exp(-10.76), or .00002.
 
 - **Slope**: it is the multiplicative change in the odds for a 1-unit change in Alcohol. So when alcohol content increases by 1, the odds increase
-by a factor of (are multiplied by) exp(1.06) = 2.89, or a 289% increase in the odds.
+by a factor of (are multiplied by) $e^{1.06}$ = 2.89, or a 289% increase in the odds.
 
 - Because 1.06 is positive, we know that as the alcohol content increases, the probability of a wine being considered good also increase.
 
 ## Mean centering the predictors
+
+::: {.notes}
+Just like in linear regression, we can mean-center our predictor variables to improve the in-
+terpretation of our intercept – because a wine with an alcohol content of 0 is pretty unlikely
+:::
 
 ```{r}
 wine$alcohol_c <- wine$alcohol - mean(wine$alcohol, na.rm = TRUE)
@@ -159,7 +164,7 @@ but now our intercept is 0.24 -- what does this mean?
 - The expected log-odds of a wine with an average alcohol
 content being rated good is 0.24.
 
-- The odds of it being rated good are exp(.24) = 1.27
+- The odds of it being rated good are $e^{0.24}$ = 1.27
 so it's more likely to be rated good than it is to be rated bad.
 
 ## Predicted probabilities
@@ -229,8 +234,6 @@ $$
 \log(Odds_{\text{Good}}) = -12.32 + 1.04 \times \text{Alcohol} + 2.67 \times \text{Sulphates}
 $$
 
-- Let's interpret these in terms of the odds
-
 - **Intercept**: The expected odds of a wine with no alcohol content and no sulphates is exp(-12.32) = .000004.
 
 - **Slope of Alcohol**: Holding the amount of sulphates constant,
@@ -249,6 +252,8 @@ interact_logreg <- glm(quality_binary ~ alcohol + sulphates + I(alcohol*sulphate
                       family = "binomial")
 summary(interact_logreg)
 ```
+
+# General Linear Model
 
 ## General Linear Model
 
@@ -299,8 +304,27 @@ variables.
 - Now the slopes are the effects of the dummy codes
 for the other 2 species.
 
-## General Linear Model: coefficients
+---
 
+$$
+y_i = b_0 + b_1\text{Chinstrap} + b_2\text{Gentoo} 
+$$
+- If a penguin is from the Adelie species:
+
+$$
+y_i = b_0 + b_1(0) + b_2(0) 
+$$
+- If a penguin is from the Chinstrap species:
+
+$$
+y_i = b_0 + b_1(1) + b_2(0) 
+$$
+- If a penguin is from the Gentoo species:
+
+$$
+y_i = b_0 + b_1(0) + b_2(1) 
+$$
+---
 - The intercept now represents the expected bill length
 for a penguin that has a 0 on both dummy codes. That is, 38.79 is the average bill length for Adelie
 penguins.
