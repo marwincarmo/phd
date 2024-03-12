@@ -1,6 +1,6 @@
 ---
-title: "The network of dysfunctional beliefs about sleep: a structural re-analysis of the DBAS-16"
-subtitle: "PSC205"
+title: "Cross-cultural adaptation of the Dysfunctional Beliefs and Attitudes about Sleep scale"
+subtitle: "PSC205 Applied Multivariate Statistics"
 author: "Marwin Carmo"
 format: 
   revealjs:
@@ -36,6 +36,10 @@ editor_options:
 
 - It is composed of 16 items, conformed into a 4-factor structure: (a) consequences of insomnia, (b) worry about sleep, (c) sleep expectations, (d) medication, and a fifth second-order general factor.
 
+- There have been discrepancies among studies regarding the DBAS items and factors' accuracy in representing the underlying construct, indicating a need for additional psychometric research on this measurement tool.
+
+## Objectives
+
 - This study aimed to create a Brazilian-Portuguese adaptation of the Dysfunctional Beliefs and Attitudes about Sleep Scale (DBAS-16), analyzing its factorial structure, reliability, and construct validity. 
 
 ## Methods
@@ -60,6 +64,29 @@ editor_options:
 
 ### Statistical analyses
 
-- Confirmatory Factor Analyses (CFA) to test the original factor structure
+- 1st stage:
+  - Confirmatory Factor Analyses (CFA) as a first test for structural validity.
+  - Analyses of measurement invariance across insomnia severity status (good and bad sleepers) and across two administrations 14-days apart.
+  - McDonald's omega hierarchical ($\omega_h$) to estimate internal consistency.
+  - Convergent validity was assessed by estimating a structural equation model where the DBAS-16 factors, insomnia severity, and the HADS subscales of depression and anxiety were allowed to correlate.
 
-- 
+## Methods
+
+### Statistical analyses
+
+- 2nd stage:
+  - Given the poor CFA results, the sample was divided into two equal parts for the new stages of derivation and confirmation.
+  - The derivation step aimed to obtain an optimal network structure using the Exploratory Graph Analysis (EGA) framework.
+  - The confirmation phase was used to test if the new structure was replicated and test its plausibility against the theoretical model using CFA.
+  
+## Results so far
+
+- The four-factor structure had acceptable indices by traditional and dynamic fit indices: $\chi^2$ (98, N = 1385) = 974.41, RMSEA = .094 90% CI [.089, .100], CFI = .891, SRMR = .074.
+
+- The DBAS-16's original structure was noninvariant across good and bad sleepers.
+
+- The model structure and factor loadings remained consistent over the two timepoints.
+
+- Except for "expectations," DBAS-16 factors had positive moderate-to-strong correlations with insomnia severity, anxiety and depression.
+
+- EGA revealed that two dimensions better reflect this sample's underlying structure of dysfunctional beliefs and attitudes toward sleep.
