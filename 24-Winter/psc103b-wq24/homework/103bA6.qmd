@@ -1,0 +1,68 @@
+---
+title: "PSC 103B - Lab 6 Assignment"
+subtitle: "Answer Key"
+format: pdf
+filters:
+  - color.lua
+---
+
+# Question 1
+
+$$
+P_{CLAS} = \frac{465}{1000} = 0.465\\
+P_{CAES} = \frac{223}{1000} = 0.223\\
+P_{CBS} = \frac{191}{1000} = 0.191\\
+P_{CoE} = \frac{121}{1000} = 0.121\\
+$$
+
+# Question 2
+
+$$
+H_0: P = \{0.465,0.223,0.191,0.121\}\\
+H_1: P \neq \{0.465,0.223,0.191,0.121\}
+$$
+
+# Question 3
+
+The expected frequencies are:
+
+$E_{CLAS}$ = 1000 * 0.465 = 465
+$E_{CAES}$ = 1000 * 0.223
+$E_{CBS}$ = 1000 * 0.191 = 191
+$E_{CoE}$ = 1000 * 0.121 = 121
+
+Note: Because the sample sizes in 1993 and 2022 were the same, the expected frequencies are the same as the frequencies in 1993. However, if the sample sizes were not the same, you would need to multiply the 2022 total sample size by the hypothesized proportions. 
+
+# Question 4
+
+```{r}
+obs_freq_2022 <- c(417, 223, 216, 144)
+
+chisq.test(x = obs_freq_2022, p = c(.465, .223, .191, .121))
+
+```
+# Question 5
+
+We reject the null hypothesis because our p-value is less than .05. 2022 enrollment in the different colleges does not match the proportions of 1993. 
+
+# Question 6
+
+$H_0$: Time to graduation and college choice are independent of each other.
+
+$H_A$: Time to graduation and college choice are not independent of each other.
+
+# Question 7
+
+```{r}
+obs_matrix = matrix(c(72, 1238, 378, 51,
+                      30, 677, 216, 43,
+                      28, 803, 329, 38,
+                      5, 444, 243, 482),
+                    nrow = 4, byrow = FALSE)
+
+chisq.test(obs_matrix)
+
+```
+# Question 8
+
+We reject the null hypothesis. Time to graduation and college choice are related to each other.
