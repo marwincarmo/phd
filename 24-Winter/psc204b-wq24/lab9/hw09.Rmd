@@ -77,9 +77,9 @@ summary(mod1)
 ```
 
 
-* Intercept: The intercept tell us that 10.03 is the expected score on the preliminary exam when the GRE verbal score and the need for achievement are at its mean value.
-* Coefficient for `grev`: Holding need for achievement constant, we expect that preliminary exam increase by 0.45  units for a one standard deviation change in GRE Verbal scores.
-* Coefficient for `ach`: Holding GRE Verbal scores constant, we expect that preliminary exam increase by 0.32  units for a one standard deviation change in need for achievement scores.
+* Intercept: The intercept tells us that 10.03 is the expected score on the preliminary exam when the GRE verbal score and the need for achievement are at their mean value.
+* Coefficient for `grev`: Holding need for achievement constant, we expect that preliminary exam will increase by 0.45  units for a one standard deviation change in GRE Verbal scores.
+* Coefficient for `ach`: Holding GRE Verbal scores constant, we expect that preliminary exam will increase by 0.32  units for a one standard deviation change in need for achievement scores.
 * Better predictor: `grev`
 
 ## 2b [2 pts.]
@@ -106,7 +106,8 @@ quantile(coef_diffs, c(0.025, 0.975))
 ```
 
 
-* Answer: The 95% confidence interval of the difference between the of the 1000 simulated regression coefficients does not contain zero. This suggest us the difference between the two should be greater than zero, supporting the initial conclusions.
+* Answer: 
+The 95% confidence interval of 1000 simulations of the difference between regression coefficients does not contain zero. This suggests that the difference between the two should be greater than zero, supporting the initial conclusions.
 
 # Question 3
 
@@ -143,11 +144,11 @@ boot_diffs <- boot(abilities, boot_coef_diff, 10000)
 boot.ci(boot_diffs)
 ```
 
-* Answer: The 95% confidence intervals obtained by simulation are very close in value to those obtained by bootstrapping the differences. Either of those tell us that the difference between slopes is larger than zero more than 95% of the times.
+* Answer: The 95% confidence intervals obtained by simulation are very close in value to those obtained by bootstrapping the differences. Both tell us that the difference between slopes is larger than zero more than 95% of the time.
 
 
 # Question 4 [1 pt.]
 
 In 2 to 4 sentences, compare and contrast the simulation approach to obtain a confidence interval vs. the bootstrapped approach. The lecture slides are likely to be helpful here. 
 
-* Answer: The simulation approach assumes a known theoretical distribution for the data. We simulate many samples from this distribution, calculate the statistic of interest for each, and use those to form the confidence interval. In the bootstrapping approach, new samples are created by repeatedly drawing with replacement from the original data, and statistics are calculated on each resample to build the confidence interval.
+* Answer: The simulation approach assumes a known theoretical distribution for the data. We simulate many samples from this distribution, calculate the statistic of interest for each, and use those to form the confidence interval. In the bootstrapping approach, new samples are created by repeatedly drawing with replacements from the original data, and statistics are calculated on each resample to build the confidence interval.

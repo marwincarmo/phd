@@ -2,8 +2,6 @@
 title: "PSC 103B - Lab 6 Assignment"
 subtitle: "Answer Key"
 format: pdf
-filters:
-  - color.lua
 ---
 
 # Question 1
