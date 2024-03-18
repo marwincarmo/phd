@@ -1,0 +1,167 @@
+---
+title: "Cross-cultural adaptation and psychometric studies of the Dysfunctional Beliefs and Attitudes about Sleep scale and the Sleep Problem Acceptance Questionnaire"
+shorttitle:  ""
+
+author: 
+  - name        : "Marwin M I B Carmo"
+    affiliation : ""
+
+affiliation:
+  - id          : ""
+    institution : ""
+
+class: doc,11pt, twoside
+#lang: english
+figsintext: yes
+lineno: no
+footnotelist: no
+figurelist: no
+link-citations: true
+urlcolor: blue
+
+bibliography: ["Bibs/references.bib", "Bibs/r-references.bib"]
+csl: apa7.csl
+output: papaja::apa6_pdf
+    # includes:
+    #   after_body: 
+    #   #- Chapter01_files/Appendix_Chapter1.tex
+    #   - croco/Appendix.tex
+      
+header-includes:
+  - \setcounter{tocdepth}{3}
+  #- \addtolength\oddsidemargin {0.5cm}
+  #- \addtolength\evensidemargin {-0.5cm}
+  - \setlength{\parskip}{5pt}
+  - \linespread{2} 
+  - \usepackage{setspace} 
+  - \usepackage{tabu}
+  - \usepackage{ragged2e}
+  - \usepackage{graphicx}
+  - \usepackage{hyperref}
+  - \hypersetup{colorlinks = true, urlcolor = blue, linkcolor = blue, citecolor = red}
+  - \shorttitle{}
+  - \fancyheadoffset[L]{0pt}  
+  - \fancyhf{}
+  - \fancyhead[RO,LE]{\small\thepage} 
+  - \renewcommand{\headrulewidth}{0pt}
+  - \interfootnotelinepenalty=10000
+---
+
+<!--To remove the first two pages use the following code in ubuntu:
+pdftk myDocument.pdf cat 3-end output removedPages.pdf
+-->
+
+
+<!--\clearpage\mbox{}\thispagestyle{empty}\clearpage-->
+\newpage
+\setcounter{page}{1}
+
+\thispagestyle{empty}
+
+<!--\clearpage\mbox{}\thispagestyle{empty}\clearpage-->
+
+<!--
+\vspace*{\fill}
+\thispagestyle{empty}
+\begin{flushleft}
+1. Berichterstatter: Prof. Dr. XXX (Köln) \\
+2. Berichterstatter: Prof. Dr. XXX (Köln) \\  
+Diese Dissertation wurde von der Humanwissenschaftlichen Fakultät der Universität zu Köln im Juli 2018 angenommen.\\
+Tag der mündlichen Prüfung: XX.XX.2018
+\end{flushleft}
+
+\clearpage\mbox{}\thispagestyle{empty}\clearpage
+-->
+\newpage
+
+\begin{flushleft}
+{\setstretch{1.0}
+\tableofcontents
+}
+\end{flushleft}
+
+\newpage
+
+<!--clearpage\mbox{}\thispagestyle{empty}\clearpage-->
+
+\thispagestyle{empty}
+
+# Summary
+
+Insomnia disorder is characterized by frequent complaints about the quality and quantity of sleep. Prolonged exposure may cause physical and psychological damage. Negatively toned activity about sleep is a known reinforcer of insomnia. Because of that, treatments focusing on cognitive components of insomnia, such as Cognitive Behavior Therapy and Acceptance and Commitment Therapy, are popular alternatives or complements to drug therapy with known efficacy. Some specific tools to assess sleep-related cognitions are the Dysfunctional Beliefs and Attitudes about Sleep Scale (DBAS-16) -- measuring the strength of agreement to maladaptive beliefs about sleep--, and the Sleep Problem Acceptance Questionnaire (SPAQ), created to assess acceptance levels of sleep problems. Although these scales have been subject to psychometric scrutiny, it is necessary to test for validity evidence with a Brazilian-Portuguese-speaking sample to achieve valid, reliable, and reproducible results with such a population using these tools. Therefore, the present study proposes a cross-cultural adaptation and study of the psychometric properties and validity evidences of the DBAS-16 and the SPAQ. The target sample is between 18 and 59 years old, with participants with and without insomnia complaints. The steps of the cross-cultural adaptation process were: forward translation, synthesis, back-translation, review and, pre-testing. We collected data from 1397 individuals with a mean age of 38.4 years, of which 1130 were female and 1062 reported insomnia symptoms. The analysis plan includes: Non-parametric item response theory, Confirmatory Factor Analyses, Multiple-group CFA, Reliability estimates of internal consistency and temporal stability, test of convergent validity with related constructs, and exploratory analysis using the Network psychometric approach.
+
+\begin{flushleft}
+\emph{Keywords}: sleep-related cognitions, validity, insomnia, assessment.
+\end{flushleft}
+
+\newpage
+
+# Introduction
+
+Insomnia is a disorder characterized by dissatisfaction with sleep duration or quality [@americanpsychiatricassociation2013]. Several cognitive and behavioral models of insomnia emphasize the role of sleep-related thoughts in perpetuating the disorder [@espie2006,@harvey2002,@lundh2005,@morin1993,@ong2012,@perlis1997]. The frequently referenced model of A. G. Harvey [@harvey2002] proposes that negative thoughts and behaviors about sleep can trigger arousal and distress, leading to distorted perceptions of sleep and increased worry. These beliefs may also exacerbate cognitive activity and prevent sleep self-correction. The Microanalytic model [@morin1993insomnia] is also based on similar beliefs and is popular among experts studying insomnia processes [@marques2015].
+
+Current evidence suggests that beliefs and attitudes about sleep play a role in perpetuating insomnia [@akram2020,@chow2018,@harvey2017,@lancee2019], although some studies do not support this association [@norell-clarke2021]. The Microanalytic model [-@morin1993] proposes that insomnia maintenance involves a cyclic process of arousal, dysfunctional cognitions, maladaptive habits, and consequences. Arousal refers to excessive emotional, cognitive, or physiological activity, which can create core beliefs that guide information processing [@marques2015]. Consequences may include unrealistic expectations, rigid beliefs about sleep requirements, and increased worry about the causes and consequences of sleep disturbances. Subsequent unhealthy sleep practices may include daytime napping, excessive time in bed, or indiscriminate use of sleep medication. Real or perceived consequences are linked to diminished performance during the day [@sullivan2022].
+
+## Constructs and Their Relations
+
+
+Individuals with higher insomnia symptoms are typically strong endorsers of dysfunctional beliefs about sleep [@carney2006,@cronlein2014,@eidelman2016]. Cognitive-behavioral treatments target modifying such unhelpful beliefs and habits about sleep, leading to objective and subjective sleep quality improvements [@harvey2014,@montserratsanchez-ortuno2010,@belanger2006]. CBT-I has been shown to significantly improve beliefs and attitudes about sleep compared to controls, although the evidence quality is low [@edingerjackd.2021].
+
+Insomnia severity is a risk factor for anxiety @neckelmann2007] and depression [@blanken2020,@li2016], but some suggest the relationship may be reversed [@chen2017,@jansson-frojmark2008b]. A link between anxiety, depression, and dysfunctional beliefs about sleep is also expected. Beck's [-@beck1979cognitive] cognitive model for depression emphasizes inaccurate beliefs and maladaptive information processing. Unpleasant memories from negative experiences can cause anxiety [@brewin1996theoretical]. Thus, unrealistic attributions and expectations about sleep can lead to anxiety-provoking thoughts. There is also evidence that dysfunctional beliefs about sleep are an indirect pathway between insomnia and depression [@sadler2013].
+
+## Measurement of dysfunctional beliefs and attitudes about sleep
+
+The Dysfunctional Beliefs and Attitudes About Sleep Scale (DBAS) [@morin1993insomnia] is one of the earliest tools to evaluate sleep-related beliefs and attitudes. It is often used in research studies that examine sleep-related thoughts, particularly the 16-question version [@thakral2020]. Originally a 30-item self-report measure rated on a 100-mm scale of agreement/disagreement, it was shortened to 16 items and rated on an 11-point scale ranging from 0 (strongly disagree) to 10 (strongly agree) [@morin2007a]. The 16 items were selected based on response distribution, item-total correlations, and exploratory oblique factor analysis.
+
+A Confirmatory Factor Analysis was used to fit a 4-factor structure to the 16 items, with factors labeled (a) consequences of insomnia, (b) worry about sleep, (c) sleep expectations, (d) medication, and a fifth second-order general factor. [@morin2007a] have reported acceptable fit indices for the DBAS-16 but highlighted that items 10 ("sleep is unpredictable") and 13 ("insomnia resulting from chemical imbalance") with very low item-total correlations and factor loadings were kept because of their clinical relevance. Researchers have translated and validated the DBAS-16 across various cultures [e.g., @boysan2010,@dhyani2013,@lang2017], reporting good validity evidence overall.
+
+Before the development of the DBAS-16, alternative versions of the scale were proposed. [@espie2000] created a 10-item version based on the item's statistically significant score change after cognitive-behavioral therapy for insomnia. However, Edinger and Wohlgemuth's [-@edinger2001a] replication study did not fully reproduce the 3-factor structure of this version. Moreover, [@chungka-fai2016] found that the DBAS-16 outperformed 30- and 10-item versions in reproducibility, internal consistency, concurrent validity, and sensitivity to change.
+
+Recently, [@castillo2023] analyzed the DBAS-16 using Item Response Theory (IRT) with university students. They discovered that the "medication" and "expectations" factors had the lowest test information, while the "worry/helplessness" and "consequences'' subscales were highly informative in measuring the latent construct. Furthermore, the authors shortened the test by removing items 10, 13, and 16 to improve model fit.
+
+@clemente2023 proposed a 16-item version (DBAS-SF-16) of Morin's DBAS-30 after refining the scale items through sequential psychometric analysis. Exploratory factor analysis revealed two factors: "Consequences and Helplessness" and "Medication and Hopelessness." Four items from Morin's DBAS-16 did not meet the criteria for inclusion in DBAS-SF-16.
+
+
+## The present study
+
+In the study and treatment of insomnia, it is important to consider dysfunctional beliefs about sleep. The Dysfunctional Beliefs About Sleep questionnaire is essential to assess this. Examining the psychometric properties of any measure used to evaluate unobservable constructs is crucial to ensure precision [@mcneish2022a]. There have been discrepancies among studies regarding the DBAS items and factors' accuracy in representing the underlying construct, indicating a need for additional psychometric research on this measurement tool.
+
+The present study has two primary aims: 1) to create a Brazilian-Portuguese adaptation of the Dysfunctional Beliefs and Attitudes about Sleep Scale (DBAS-16). Using latent variable modeling, we will analyze its factorial structure, reliability, and construct validity. 2) To conduct an exploratory analysis using a psychometric network perspective. This approach models psychopathology as a network of causal interactions among symptoms rather than originating from a root cause, such as latent variable models, and has gained popularity in psychiatry and psychology [@borsboom2008,@borsboom2013,@bringmann2022].
+
+# Methods
+
+The current study is linked to a randomized controlled trial (RCT) of behavioral treatment for insomnia (Clinical trial: NCT04866914). The study was approved by the research ethics committee of the General Hospital of the University of São Paulo, School of Medicine (HC-FMUSP), São Paulo, Brazil (CAAE: 46284821.1.0000.0068). All participants signed a consent form prior to their inclusion. Participants then completed an online survey using REDCap electronic data capture tools [@harris2019redcap], including the Brazilian-Portuguese version of DBAS-16 and other auxiliary instruments. In order to test temporal stability, the same participants were emailed and asked to complete the same measures again 14 days later.
+
+## Participants
+
+Participants with and without insomnia were recruited from March 2021 to July 2022 through social media. The first group consisted of individuals already enrolled in behavioral treatment for insomnia. To include participants without insomnia, we requested volunteers who believed they had no sleeping issues. Interested individuals accessed the REDCap database platform and responded to an initial screening. The inclusion criteria were age between 18 and 59 years and had no reported difficulties reading or writing in Portuguese.
+
+Bad sleepers were categorized based on their complaints of insomnia. This includes experiencing difficulty falling asleep or staying asleep, as per the Diagnostic and Statistical Manual of Mental Disorders [@americanpsychiatricassociation2013] criteria. Additionally, participants' total score on the Insomnia Severity Index should not exceed 7 points [@bastien2001]. The participants were classified as good sleepers if none of these criteria was met.
+
+After removing those who did not complete a single item of DBAS-16 on the first administration, the final sample consisted of 1385 participants, of which 80.78% were female, and 73.51% reported insomnia symptoms. The mean age was 38.39 years (SD = 9.79, range: 18--59). Among those who reported race, there were 71.78% Whites, 23.83% Blacks, and 3.46% Asians. Most had a university degree (77.75%) and were active workers (76.96%).
+
+## Material
+
+To develop a Brazilian-Portuguese version of the DBAS-16, we mainly based our methods on Beaton's [@beaton2000] recommendations with additions from [@borsaAdaptacaoValidacaoInstrumentos2012]. The original English version was translated by three independent translators, two familiar with the instrument constructs and one an English teacher with no medical background. A committee of two clinical psychologists experts in insomnia synthesized the translated versions documenting their decisions in a form. Then, two native speakers of the source language back-translated the synthesized version to English for review by the first author of the original questionnaire. Next, we conducted a cognitive debriefing with 15 participants from different regions and educational levels to test the pre-final version. Of the participants, 12 were female, and the mean age was 43 years (range: 19--57). Overall, the participants understood the test items and instructions well, and only one term required alteration for better readability in the target language.
+
+## Additional measures
+
+- Insomnia Severity Index [ISI, @bastien2001,@morin2011a] is a seven-item questionnaire that assesses the severity of insomnia and its impact on a person's life. The scale ranges from 0 (no problems) to 4 (very severe problem) and categorizes respondents as having no insomnia (0--7), mild insomnia (8--14), moderate insomnia (15--21), or severe insomnia (22--28).A Confirmatory Factor Analysis (CFA) of the single-factor model produced an acceptable fit: $\chi^2$ (14) = 342.35, *p* < .001 RMSEA = .128 90% CI [.117, .140], CFI = .996, SRMR = .047, and good internal consistency reliability: $\omega_h$ = .942 [.937, .947].
+
+- The Hospital Anxiety and Depression Scale [HADS, @zigmond1983hospital] assesses psychological distress in non-psychiatric patients through two factors: Anxiety and Depression. Each factor has seven items that only measure emotions, not somatic symptoms. The score ranges from 0 to 21 for each factor. Scores of 0 to 8 indicate no anxiety/depression, while nine and above indicate their presence. The Brazilian-Portuguese version created by [@botega1995transtornos] was used. A two-factor model produced excellent CFA fit indices: $\chi^2$ (76) = 572.01, RMSEA = .068 90\% CI [.063, .073], CFI = .993, SRMR = .047, and good internal consistency reliability for both factors: $\omega_{h-depression}$ = .876 [.866, .886], $\omega_{h-anxiety}$ = .884 [.874, .892].
+
+## Data analysis
+
+### Data screening and item evaluation
+
+First, we examined response frequency and item statistics to assess item variation, distribution, and data entry. We also investigated inter-item correlations and searched for unusual response patterns by identifying multivariate outliers using Mahalanobis distance. Additionally, we used the generalized Cook's distance (gCD) with the R package *faoutlier* version 0.7.6 [@faoutlier] to identify any points of influence.
+
+### Assessing the factor structure
+
+We fitted the original model of the DBAS-16 [@morin2007a] to our full sample using Confirmatory Factor Analyses (CFA) as a first test for structural validity. This model is a four-factor structure and a higher-order general factor. But because the DBAS-16 is often modeled with disregard for the higher-order factor [@lang2017,@castillo2023,@boysan2010,@clemente2023], we also tested a four-factor model allowing factors to covary and compared the fit of both. We used normal theory maximum likelihood (ML) to estimate the structural model parameters [@rhemtulla2012]. To account for the severe non-normality in our data, we applied maximum likelihood estimation with robust standard errors and a mean and variance-adjusted test statistic (MLMV) \autocite{maydeu-olivares2017}. Our model fit evaluation relied on fit statistics including, chi-squared (\(\chi^2\)), Comparative Fit Index (CFI), Root Mean Square Error of Approximation (RMSEA), and Standardized Root Mean Squared Residual (SRMR). Obtaining confidence intervals (CI) for robust RMSEA and CFI involved computing the second-order corrected RMSEA CI based on the MLMV test statistic \autocite{savalei2018}. All the CFA analyses were conducted with the R packages \emph{lavaan} version 0.6.12 [@R-lavaan] and \emph{semTools} version 0.5-6 \autocite{R-semTools}.
+
+Traditionally, CFA studies use cutoff values of SRMR \(\le\) .08, RMSEA \(\le\) .06, and CFI, TLI, and RNI \(\ge\) .96 to evaluate model misspecification \autocite{hu1999}. These values have limitations because they were derived from particular conditions, making generalizations to other models limited and unwarranted \autocite{marsh2004}. Therefore, another advantage of using a ML estimation method is using dynamic fit index (DFI) cutoffs \autocite{mcneish2021}. In essence, DFI provides cutoff values that would have been derived had our model been used in simulations similar to the one conducted by Hu and Bentler \autocite*{hu1999}. DFI is calculated based on the number of factors in the model and assesses misspecification severity at sequential levels. We used the Dynamic Model Fit R Shiny application version 1.1.0 \autocite{wolf2020} to obtain DFI for our models.
+# References
+
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}

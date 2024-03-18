@@ -1,0 +1,463 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  ,doc,11pt, twoside,floatsintext]{apa6}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{english}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+% Manuscript styling
+\usepackage{upgreek}
+\captionsetup{font=singlespacing,justification=justified}
+
+% Table formatting
+\usepackage{longtable}
+\usepackage{lscape}
+% \usepackage[counterclockwise]{rotating}   % Landscape page setup for large tables
+\usepackage{multirow}		% Table styling
+\usepackage{tabularx}		% Control Column width
+\usepackage[flushleft]{threeparttable}	% Allows for three part tables with a specified notes section
+\usepackage{threeparttablex}            % Lets threeparttable work with longtable
+
+% Create new environments so endfloat can handle them
+% \newenvironment{ltable}
+%   {\begin{landscape}\centering\begin{threeparttable}}
+%   {\end{threeparttable}\end{landscape}}
+\newenvironment{lltable}{\begin{landscape}\centering\begin{ThreePartTable}}{\end{ThreePartTable}\end{landscape}}
+
+% Enables adjusting longtable caption width to table width
+% Solution found at http://golatex.de/longtable-mit-caption-so-breit-wie-die-tabelle-t15767.html
+\makeatletter
+\newcommand\LastLTentrywidth{1em}
+\newlength\longtablewidth
+\setlength{\longtablewidth}{1in}
+\newcommand{\getlongtablewidth}{\begingroup \ifcsname LT@\roman{LT@tables}\endcsname \global\longtablewidth=0pt \renewcommand{\LT@entry}[2]{\global\advance\longtablewidth by ##2\relax\gdef\LastLTentrywidth{##2}}\@nameuse{LT@\roman{LT@tables}} \fi \endgroup}
+
+% \setlength{\parindent}{0.5in}
+% \setlength{\parskip}{0pt plus 0pt minus 0pt}
+
+% Overwrite redefinition of paragraph and subparagraph by the default LaTeX template
+% See https://github.com/crsh/papaja/issues/292
+\makeatletter
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-1em}%
+  {\normalfont\normalsize\bfseries\itshape\typesectitle}}
+
+\renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-\z@\relax}%
+  {\normalfont\normalsize\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+\makeatother
+
+\makeatletter
+\usepackage{etoolbox}
+\patchcmd{\maketitle}
+  {\section{\normalfont\normalsize\abstractname}}
+  {\section*{\normalfont\normalsize\abstractname}}
+  {}{\typeout{Failed to patch abstract.}}
+\patchcmd{\maketitle}
+  {\section{\protect\normalfont{\@title}}}
+  {\section*{\protect\normalfont{\@title}}}
+  {}{\typeout{Failed to patch title.}}
+\makeatother
+
+\usepackage{xpatch}
+\makeatletter
+\xapptocmd\appendix
+  {\xapptocmd\section
+    {\addcontentsline{toc}{section}{\appendixname\ifoneappendix\else~\theappendix\fi\\: #1}}
+    {}{\InnerPatchFailed}%
+  }
+{}{\PatchFailed}
+\usepackage{csquotes}
+\setcounter{tocdepth}{3}
+\setlength{\parskip}{5pt}
+\linespread{2}
+\usepackage{setspace}
+\usepackage{tabu}
+\usepackage{ragged2e}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{colorlinks = true, urlcolor = blue, linkcolor = blue, citecolor = red}
+\shorttitle{}
+\fancyheadoffset[L]{0pt}
+\fancyhf{}
+\fancyhead[RO,LE]{\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\interfootnotelinepenalty=10000
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Cross-cultural adaptation and psychometric studies of the Dysfunctional Beliefs and Attitudes about Sleep scale and the Sleep Problem Acceptance Questionnaire},
+  pdfauthor={Marwin M I B Carmo},
+  pdflang={en-EN},
+  colorlinks=true,
+  linkcolor={Maroon},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Cross-cultural adaptation and psychometric studies of the Dysfunctional Beliefs and Attitudes about Sleep scale and the Sleep Problem Acceptance Questionnaire}
+\author{Marwin M I B Carmo\textsuperscript{}}
+\date{}
+
+
+\shorttitle{SHORT TITLE}
+
+\affiliation{\vspace{0.5cm}\textsuperscript{} }
+
+\begin{document}
+\maketitle
+
+\newpage
+\setcounter{page}{1}
+
+\thispagestyle{empty}
+
+\newpage
+
+\begin{flushleft}
+{\setstretch{1.0}
+\tableofcontents
+}
+\end{flushleft}
+
+\newpage
+
+\thispagestyle{empty}
+
+\hypertarget{summary}{%
+\section{Summary}\label{summary}}
+
+Insomnia disorder is characterized by frequent complaints about the quality and quantity of sleep. Prolonged exposure may cause physical and psychological damage. Negatively toned activity about sleep is a known reinforcer of insomnia. Because of that, treatments focusing on cognitive components of insomnia, such as Cognitive Behavior Therapy and Acceptance and Commitment Therapy, are popular alternatives or complements to drug therapy with known efficacy. Some specific tools to assess sleep-related cognitions are the Dysfunctional Beliefs and Attitudes about Sleep Scale (DBAS-16) -- measuring the strength of agreement to maladaptive beliefs about sleep--, and the Sleep Problem Acceptance Questionnaire (SPAQ), created to assess acceptance levels of sleep problems. Although these scales have been subject to psychometric scrutiny, it is necessary to test for validity evidence with a Brazilian-Portuguese-speaking sample to achieve valid, reliable, and reproducible results with such a population using these tools. Therefore, the present study proposes a cross-cultural adaptation and study of the psychometric properties and validity evidences of the DBAS-16 and the SPAQ. The target sample is between 18 and 59 years old, with participants with and without insomnia complaints. The steps of the cross-cultural adaptation process were: forward translation, synthesis, back-translation, review and, pre-testing. We collected data from 1397 individuals with a mean age of 38.4 years, of which 1130 were female and 1062 reported insomnia symptoms. The analysis plan includes: Non-parametric item response theory, Confirmatory Factor Analyses, Multiple-group CFA, Reliability estimates of internal consistency and temporal stability, test of convergent validity with related constructs, and exploratory analysis using the Network psychometric approach.
+
+\begin{flushleft}
+\emph{Keywords}: sleep-related cognitions, validity, insomnia, assessment.
+\end{flushleft}
+
+\newpage
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+Insomnia is a disorder characterized by dissatisfaction with sleep duration or quality (\protect\hyperlink{ref-americanpsychiatricassociation2013}{American Psychiatric Association, 2013}). Several cognitive and behavioral models of insomnia emphasize the role of sleep-related thoughts in perpetuating the disorder Perlis et al. (\protect\hyperlink{ref-perlis1997}{1997}). The frequently referenced model of A. G. Harvey (\protect\hyperlink{ref-harvey2002}{Harvey, 2002}) proposes that negative thoughts and behaviors about sleep can trigger arousal and distress, leading to distorted perceptions of sleep and increased worry. These beliefs may also exacerbate cognitive activity and prevent sleep self-correction. The Microanalytic model (\protect\hyperlink{ref-morin1993insomnia}{Morin, 1993}) is also based on similar beliefs and is popular among experts studying insomnia processes (\protect\hyperlink{ref-marques2015}{Marques et al., 2015}).
+
+Current evidence suggests that beliefs and attitudes about sleep play a role in perpetuating insomnia Lancee et al. (\protect\hyperlink{ref-lancee2019}{2019}), although some studies do not support this association (\protect\hyperlink{ref-norell-clarke2021}{Norell-Clarke et al., 2021}). The Microanalytic model (\protect\hyperlink{ref-morin1993}{1993}) proposes that insomnia maintenance involves a cyclic process of arousal, dysfunctional cognitions, maladaptive habits, and consequences. Arousal refers to excessive emotional, cognitive, or physiological activity, which can create core beliefs that guide information processing (\protect\hyperlink{ref-marques2015}{Marques et al., 2015}). Consequences may include unrealistic expectations, rigid beliefs about sleep requirements, and increased worry about the causes and consequences of sleep disturbances. Subsequent unhealthy sleep practices may include daytime napping, excessive time in bed, or indiscriminate use of sleep medication. Real or perceived consequences are linked to diminished performance during the day (\protect\hyperlink{ref-sullivan2022}{\textbf{sullivan2022?}}).
+
+\hypertarget{constructs-and-their-relations}{%
+\subsection{Constructs and Their Relations}\label{constructs-and-their-relations}}
+
+Individuals with higher insomnia symptoms are typically strong endorsers of dysfunctional beliefs about sleep Eidelman et al. (\protect\hyperlink{ref-eidelman2016}{2016}). Cognitive-behavioral treatments target modifying such unhelpful beliefs and habits about sleep, leading to objective and subjective sleep quality improvements Belanger et al. (\protect\hyperlink{ref-belanger2006}{2006}). CBT-I has been shown to significantly improve beliefs and attitudes about sleep compared to controls, although the evidence quality is low (\protect\hyperlink{ref-edingerjackd.2021}{D. et al., 2021}).
+
+Insomnia severity is a risk factor for anxiety Neckelmann et al. (\protect\hyperlink{ref-neckelmann2007}{2007}){]} and depression Li et al. (\protect\hyperlink{ref-li2016}{2016}), but some suggest the relationship may be reversed Jansson-Fröjmark \& Lindblom (\protect\hyperlink{ref-jansson-frojmark2008b}{2008}). A link between anxiety, depression, and dysfunctional beliefs about sleep is also expected. Beck's (\protect\hyperlink{ref-beck1979cognitive}{1979}) cognitive model for depression emphasizes inaccurate beliefs and maladaptive information processing. Unpleasant memories from negative experiences can cause anxiety (\protect\hyperlink{ref-brewin1996theoretical}{Brewin, 1996}). Thus, unrealistic attributions and expectations about sleep can lead to anxiety-provoking thoughts. There is also evidence that dysfunctional beliefs about sleep are an indirect pathway between insomnia and depression (\protect\hyperlink{ref-sadler2013}{Sadler et al., 2013}).
+
+\hypertarget{measurement-of-dysfunctional-beliefs-and-attitudes-about-sleep}{%
+\subsection{Measurement of dysfunctional beliefs and attitudes about sleep}\label{measurement-of-dysfunctional-beliefs-and-attitudes-about-sleep}}
+
+The Dysfunctional Beliefs and Attitudes About Sleep Scale (DBAS) (\protect\hyperlink{ref-morin1993insomnia}{Morin, 1993}) is one of the earliest tools to evaluate sleep-related beliefs and attitudes. It is often used in research studies that examine sleep-related thoughts, particularly the 16-question version (\protect\hyperlink{ref-thakral2020}{Thakral et al., 2020}). Originally a 30-item self-report measure rated on a 100-mm scale of agreement/disagreement, it was shortened to 16 items and rated on an 11-point scale ranging from 0 (strongly disagree) to 10 (strongly agree) (\protect\hyperlink{ref-morin2007a}{Morin et al., 2007}). The 16 items were selected based on response distribution, item-total correlations, and exploratory oblique factor analysis.
+
+A Confirmatory Factor Analysis was used to fit a 4-factor structure to the 16 items, with factors labeled (a) consequences of insomnia, (b) worry about sleep, (c) sleep expectations, (d) medication, and a fifth second-order general factor. (\protect\hyperlink{ref-morin2007a}{Morin et al., 2007}) have reported acceptable fit indices for the DBAS-16 but highlighted that items 10 (``sleep is unpredictable'') and 13 (``insomnia resulting from chemical imbalance'') with very low item-total correlations and factor loadings were kept because of their clinical relevance. Researchers have translated and validated the DBAS-16 across various cultures Lang et al. (\protect\hyperlink{ref-lang2017}{2017}), reporting good validity evidence overall.
+
+Before the development of the DBAS-16, alternative versions of the scale were proposed. (\protect\hyperlink{ref-espie2000}{\textbf{espie2000?}}) created a 10-item version based on the item's statistically significant score change after cognitive-behavioral therapy for insomnia. However, Edinger and Wohlgemuth's (\protect\hyperlink{ref-edinger2001a}{\textbf{edinger2001a?}}) replication study did not fully reproduce the 3-factor structure of this version. Moreover, (\protect\hyperlink{ref-chungka-fai2016}{Chung Ka-Fai et al., 2016}) found that the DBAS-16 outperformed 30- and 10-item versions in reproducibility, internal consistency, concurrent validity, and sensitivity to change.
+
+Recently, (\protect\hyperlink{ref-castillo2023}{\textbf{castillo2023?}}) analyzed the DBAS-16 using Item Response Theory (IRT) with university students. They discovered that the ``medication'' and ``expectations'' factors had the lowest test information, while the ``worry/helplessness'' and ``consequences'\,' subscales were highly informative in measuring the latent construct. Furthermore, the authors shortened the test by removing items 10, 13, and 16 to improve model fit.
+
+(\protect\hyperlink{ref-clemente2023}{\textbf{clemente2023?}}) proposed a 16-item version (DBAS-SF-16) of Morin's DBAS-30 after refining the scale items through sequential psychometric analysis. Exploratory factor analysis revealed two factors: ``Consequences and Helplessness'' and ``Medication and Hopelessness.'' Four items from Morin's DBAS-16 did not meet the criteria for inclusion in DBAS-SF-16.
+
+\hypertarget{the-present-study}{%
+\subsection{The present study}\label{the-present-study}}
+
+In the study and treatment of insomnia, it is important to consider dysfunctional beliefs about sleep. The Dysfunctional Beliefs About Sleep questionnaire is essential to assess this. Examining the psychometric properties of any measure used to evaluate unobservable constructs is crucial to ensure precision (\protect\hyperlink{ref-mcneish2022a}{McNeish, 2022}). There have been discrepancies among studies regarding the DBAS items and factors' accuracy in representing the underlying construct, indicating a need for additional psychometric research on this measurement tool.
+
+The present study has two primary aims: 1) to create a Brazilian-Portuguese adaptation of the Dysfunctional Beliefs and Attitudes about Sleep Scale (DBAS-16). Using latent variable modeling, we will analyze its factorial structure, reliability, and construct validity. 2) To conduct an exploratory analysis using a psychometric network perspective. This approach models psychopathology as a network of causal interactions among symptoms rather than originating from a root cause, such as latent variable models, and has gained popularity in psychiatry and psychology Bringmann et al. (\protect\hyperlink{ref-bringmann2022}{2022}).
+
+\hypertarget{methods}{%
+\section{Methods}\label{methods}}
+
+The current study is linked to a randomized controlled trial (RCT) of behavioral treatment for insomnia (Clinical trial: NCT04866914). The study was approved by the research ethics committee of the General Hospital of the University of São Paulo, School of Medicine (HC-FMUSP), São Paulo, Brazil (CAAE: 46284821.1.0000.0068). All participants signed a consent form prior to their inclusion. Participants then completed an online survey using REDCap electronic data capture tools (\protect\hyperlink{ref-harris2019redcap}{Harris et al., 2019}), including the Brazilian-Portuguese version of DBAS-16 and other auxiliary instruments. In order to test temporal stability, the same participants were emailed and asked to complete the same measures again 14 days later.
+
+\hypertarget{participants}{%
+\subsection{Participants}\label{participants}}
+
+Participants with and without insomnia were recruited from March 2021 to July 2022 through social media. The first group consisted of individuals already enrolled in behavioral treatment for insomnia. To include participants without insomnia, we requested volunteers who believed they had no sleeping issues. Interested individuals accessed the REDCap database platform and responded to an initial screening. The inclusion criteria were age between 18 and 59 years and had no reported difficulties reading or writing in Portuguese.
+
+Bad sleepers were categorized based on their complaints of insomnia. This includes experiencing difficulty falling asleep or staying asleep, as per the Diagnostic and Statistical Manual of Mental Disorders (\protect\hyperlink{ref-americanpsychiatricassociation2013}{American Psychiatric Association, 2013}) criteria. Additionally, participants' total score on the Insomnia Severity Index should not exceed 7 points (\protect\hyperlink{ref-bastien2001}{Bastien et al., 2001}). The participants were classified as good sleepers if none of these criteria was met.
+
+After removing those who did not complete a single item of DBAS-16 on the first administration, the final sample consisted of 1385 participants, of which 80.78\% were female, and 73.51\% reported insomnia symptoms. The mean age was 38.39 years (SD = 9.79, range: 18--59). Among those who reported race, there were 71.78\% Whites, 23.83\% Blacks, and 3.46\% Asians. Most had a university degree (77.75\%) and were active workers (76.96\%).
+
+\hypertarget{material}{%
+\subsection{Material}\label{material}}
+
+To develop a Brazilian-Portuguese version of the DBAS-16, we mainly based our methods on Beaton's (\protect\hyperlink{ref-beaton2000}{Beaton et al., 2000}) recommendations with additions from (\protect\hyperlink{ref-borsaAdaptacaoValidacaoInstrumentos2012}{Borsa et al., 2012}). The original English version was translated by three independent translators, two familiar with the instrument constructs and one an English teacher with no medical background. A committee of two clinical psychologists experts in insomnia synthesized the translated versions documenting their decisions in a form. Then, two native speakers of the source language back-translated the synthesized version to English for review by the first author of the original questionnaire. Next, we conducted a cognitive debriefing with 15 participants from different regions and educational levels to test the pre-final version. Of the participants, 12 were female, and the mean age was 43 years (range: 19--57). Overall, the participants understood the test items and instructions well, and only one term required alteration for better readability in the target language.
+
+\hypertarget{additional-measures}{%
+\subsection{Additional measures}\label{additional-measures}}
+
+\begin{itemize}
+\item
+  Insomnia Severity Index Morin et al. (\protect\hyperlink{ref-morin2011a}{2011}) is a seven-item questionnaire that assesses the severity of insomnia and its impact on a person's life. The scale ranges from 0 (no problems) to 4 (very severe problem) and categorizes respondents as having no insomnia (0--7), mild insomnia (8--14), moderate insomnia (15--21), or severe insomnia (22--28).A Confirmatory Factor Analysis (CFA) of the single-factor model produced an acceptable fit: \(\chi^2\) (14) = 342.35, \emph{p} \textless{} .001 RMSEA = .128 90\% CI {[}.117, .140{]}, CFI = .996, SRMR = .047, and good internal consistency reliability: \(\omega_h\) = .942 {[}.937, .947{]}.
+\item
+  The Hospital Anxiety and Depression Scale (HADS, \protect\hyperlink{ref-zigmond1983hospital}{Zigmond \& Snaith, 1983}) assesses psychological distress in non-psychiatric patients through two factors: Anxiety and Depression. Each factor has seven items that only measure emotions, not somatic symptoms. The score ranges from 0 to 21 for each factor. Scores of 0 to 8 indicate no anxiety/depression, while nine and above indicate their presence. The Brazilian-Portuguese version created by (\protect\hyperlink{ref-botega1995transtornos}{Botega et al., 1995}) was used. A two-factor model produced excellent CFA fit indices: \(\chi^2\) (76) = 572.01, RMSEA = .068 90\% CI {[}.063, .073{]}, CFI = .993, SRMR = .047, and good internal consistency reliability for both factors: \(\omega_{h-depression}\) = .876 {[}.866, .886{]}, \(\omega_{h-anxiety}\) = .884 {[}.874, .892{]}.
+\end{itemize}
+
+\hypertarget{data-analysis}{%
+\subsection{Data analysis}\label{data-analysis}}
+
+\hypertarget{data-screening-and-item-evaluation}{%
+\subsubsection{Data screening and item evaluation}\label{data-screening-and-item-evaluation}}
+
+First, we examined response frequency and item statistics to assess item variation, distribution, and data entry. We also investigated inter-item correlations and searched for unusual response patterns by identifying multivariate outliers using Mahalanobis distance. Additionally, we used the generalized Cook's distance (gCD) with the R package \emph{faoutlier} version 0.7.6 (\protect\hyperlink{ref-faoutlier}{\textbf{faoutlier?}}) to identify any points of influence.
+
+\hypertarget{assessing-the-factor-structure}{%
+\subsubsection{Assessing the factor structure}\label{assessing-the-factor-structure}}
+
+We fitted the original model of the DBAS-16 (\protect\hyperlink{ref-morin2007a}{Morin et al., 2007}) to our full sample using Confirmatory Factor Analyses (CFA) as a first test for structural validity. This model is a four-factor structure and a higher-order general factor. But because the DBAS-16 is often modeled with disregard for the higher-order factor (\protect\hyperlink{ref-clemente2023}{\textbf{clemente2023?}}), we also tested a four-factor model allowing factors to covary and compared the fit of both. We used normal theory maximum likelihood (ML) to estimate the structural model parameters (\protect\hyperlink{ref-rhemtulla2012}{Rhemtulla et al., 2012}). To account for the severe non-normality in our data, we applied maximum likelihood estimation with robust standard errors and a mean and variance-adjusted test statistic (MLMV) \autocite{maydeu-olivares2017}. Our model fit evaluation relied on fit statistics including, chi-squared (\(\chi^2\)), Comparative Fit Index (CFI), Root Mean Square Error of Approximation (RMSEA), and Standardized Root Mean Squared Residual (SRMR). Obtaining confidence intervals (CI) for robust RMSEA and CFI involved computing the second-order corrected RMSEA CI based on the MLMV test statistic \autocite{savalei2018}. All the CFA analyses were conducted with the R packages \emph{lavaan} version 0.6.12 (\protect\hyperlink{ref-R-lavaan}{\textbf{R-lavaan?}}) and \emph{semTools} version 0.5-6 \autocite{R-semTools}.
+
+Traditionally, CFA studies use cutoff values of SRMR \(\le\) .08, RMSEA \(\le\) .06, and CFI, TLI, and RNI \(\ge\) .96 to evaluate model misspecification \autocite{hu1999}. These values have limitations because they were derived from particular conditions, making generalizations to other models limited and unwarranted \autocite{marsh2004}. Therefore, another advantage of using a ML estimation method is using dynamic fit index (DFI) cutoffs \autocite{mcneish2021}. In essence, DFI provides cutoff values that would have been derived had our model been used in simulations similar to the one conducted by Hu and Bentler \autocite*{hu1999}. DFI is calculated based on the number of factors in the model and assesses misspecification severity at sequential levels. We used the Dynamic Model Fit R Shiny application version 1.1.0 \autocite{wolf2020} to obtain DFI for our models.
+\# References
+
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-akram2020}{}}%
+Akram, U., Gardani, M., Riemann, D., Akram, A., Allen, S. F., Lazuras, L., \& Johann, A. F. (2020). Dysfunctional sleep-related cognition and anxiety mediate the relationship between multidimensional perfectionism and insomnia symptoms. \emph{Cognitive Processing}, \emph{21}(1), 141--148. \url{https://doi.org/10.1007/s10339-019-00937-8}
+
+\leavevmode\vadjust pre{\hypertarget{ref-americanpsychiatricassociation2013}{}}%
+American Psychiatric Association (Ed.). (2013). \emph{Diagnostic and statistical manual of mental disorders: {DSM}-5} (5th ed). {American Psychiatric Association}.
+
+\leavevmode\vadjust pre{\hypertarget{ref-bastien2001}{}}%
+Bastien, C. H., Vallières, A., \& Morin, C. M. (2001). Validation of the {Insomnia Severity Index} as an outcome measure for insomnia research. \emph{Sleep Medicine}, \emph{2}(4), 297--307. \url{https://doi.org/10.1016/s1389-9457(00)00065-4}
+
+\leavevmode\vadjust pre{\hypertarget{ref-beaton2000}{}}%
+Beaton, D. E., Bombardier, C., Guillemin, F., \& Ferraz, M. B. (2000). Guidelines for the {Process} of {Cross-Cultural Adaptation} of {Self-Report Measures}: \emph{Spine}, \emph{25}(24), 3186--3191. \url{https://doi.org/10.1097/00007632-200012150-00014}
+
+\leavevmode\vadjust pre{\hypertarget{ref-beck1979cognitive}{}}%
+Beck, A. T. (1979). \emph{Cognitive therapy of depression}. Guilford press.
+
+\leavevmode\vadjust pre{\hypertarget{ref-belanger2006}{}}%
+Belanger, L., Savard, J., \& Morin, C. M. (2006). Clinical management of insomnia using cognitive therapy. \emph{Behavioral Sleep Medicine}, \emph{4}(3), 179--198. \url{https://doi.org/10.1207/s15402010bsm0403_4}
+
+\leavevmode\vadjust pre{\hypertarget{ref-blanken2020}{}}%
+Blanken, T. F., Borsboom, D., Penninx, B. W., \& Van Someren, E. J. (2020). Network outcome analysis identifies difficulty initiating sleep as a primary target for prevention of depression: A 6-year prospective study. \emph{Sleep}, \emph{43}(5), 1--6. \url{https://doi.org/gghm2s}
+
+\leavevmode\vadjust pre{\hypertarget{ref-borsaAdaptacaoValidacaoInstrumentos2012}{}}%
+Borsa, J. C., Damásio, B. F., \& Bandeira, D. R. (2012). {Adaptação e validação de instrumentos psicológicos entre culturas: algumas considerações}. \emph{Paidéia (Ribeirão Preto)}, \emph{22}(53), 423--432. \url{https://doi.org/10.1590/S0103-863X2012000300014}
+
+\leavevmode\vadjust pre{\hypertarget{ref-borsboom2008}{}}%
+Borsboom, D. (2008). Psychometric perspectives on diagnostic systems. \emph{Journal of Clinical Psychology}, \emph{64}(9), 1089--1108. \url{https://doi.org/10.1002/jclp.20503}
+
+\leavevmode\vadjust pre{\hypertarget{ref-borsboom2013}{}}%
+Borsboom, D., \& Cramer, A. O. J. (2013). Network {Analysis}: {An Integrative Approach} to the {Structure} of {Psychopathology}. \emph{Annual Review of Clinical Psychology}, \emph{9}(1), 91--121. \url{https://doi.org/10.1146/annurev-clinpsy-050212-185608}
+
+\leavevmode\vadjust pre{\hypertarget{ref-botega1995transtornos}{}}%
+Botega, N. J., Bio, M. R., Zomignani, M. A., Garcia Jr, C., \& Pereira, W. A. (1995). Transtornos do humor em enfermaria de clínica médica e validação de escala de medida (HAD) de ansiedade e depressão. \emph{Revista de Saude Publica}, \emph{29}, 359--363.
+
+\leavevmode\vadjust pre{\hypertarget{ref-boysan2010}{}}%
+Boysan, M., Merey, Z., Kalafat, T., \& Kağan, M. (2010). Validation of a brief version of the dysfunctional beliefs and attitudes about sleep scale in {Turkish} sample. \emph{Procedia - Social and Behavioral Sciences}, \emph{5}, 314--317. \url{https://doi.org/10.1016/j.sbspro.2010.07.095}
+
+\leavevmode\vadjust pre{\hypertarget{ref-brewin1996theoretical}{}}%
+Brewin, C. R. (1996). Theoretical foundations of cognitive-behavior therapy for anxiety and depression. \emph{Annual Review of Psychology}, \emph{47}(1), 33--57.
+
+\leavevmode\vadjust pre{\hypertarget{ref-bringmann2022}{}}%
+Bringmann, L. F., Albers, C., Bockting, C., Borsboom, D., Ceulemans, E., Cramer, A., Epskamp, S., Eronen, M. I., Hamaker, E., Kuppens, P., Lutz, W., McNally, R. J., Molenaar, P., Tio, P., Voelkle, M. C., \& Wichers, M. (2022). Psychopathological networks: {Theory}, methods and practice. \emph{Behaviour Research and Therapy}, \emph{149}, 104011. \url{https://doi.org/10.1016/j.brat.2021.104011}
+
+\leavevmode\vadjust pre{\hypertarget{ref-carney2006}{}}%
+Carney, C. E., \& Edinger, J. D. (2006). Identifying {Critical Beliefs About Sleep} in {Primary Insomnia}. \emph{Sleep}, \emph{29}(3), 342--350. \url{https://doi.org/10.1093/sleep/29.3.342}
+
+\leavevmode\vadjust pre{\hypertarget{ref-chen2017}{}}%
+Chen, P.-J., Huang, C. L.-C., Weng, S.-F., Wu, M.-P., Ho, C.-H., Wang, J.-J., Tsai, W.-C., \& Hsu, Y.-W. (2017). Relapse insomnia increases greater risk of anxiety and depression: Evidence from a population-based 4-year cohort study. \emph{Sleep Medicine}, \emph{38}, 122--129. \url{https://doi.org/10.1016/j.sleep.2017.07.016}
+
+\leavevmode\vadjust pre{\hypertarget{ref-chow2018}{}}%
+Chow, P. I., Ingersoll, K. S., Thorndike, F. P., Lord, H. R., Gonder-Frederick, L., Morin, C. M., \& Ritterband, L. M. (2018). Cognitive mechanisms of sleep outcomes in a randomized clinical trial of internet-based cognitive behavioral therapy for insomnia. \emph{Sleep Medicine}, \emph{47}, 77--85. \url{https://doi.org/10.1016/j.sleep.2017.11.1140}
+
+\leavevmode\vadjust pre{\hypertarget{ref-chungka-fai2016}{}}%
+Chung Ka-Fai, Ho Fiona Yan-Yee, \& Yeung Wing-Fai. (2016). Psychometric {Comparison} of the {Full} and {Abbreviated Versions} of the {Dysfunctional Beliefs} and {Attitudes} about {Sleep Scale}. \emph{Journal of Clinical Sleep Medicine}, \emph{12}(06), 821--828. \url{https://doi.org/10.5664/jcsm.5878}
+
+\leavevmode\vadjust pre{\hypertarget{ref-cronlein2014}{}}%
+Crönlein, T., Wagner, S., Langguth, B., Geisler, P., Eichhammer, P., \& Wetter, T. C. (2014). Are dysfunctional attitudes and beliefs about sleep unique to primary insomnia? \emph{Sleep Medicine}, \emph{15}(12), 1463--1467. \url{https://doi.org/gn3m9k}
+
+\leavevmode\vadjust pre{\hypertarget{ref-edingerjackd.2021}{}}%
+D., E. J., Todd, A. J., M., B. S., E., C. C., J., H. J., L., L. K., J., S. M., M., T. W., S., Z. E., Uzma, K., L., H. J., \& L., M. J. (2021). Behavioral and psychological treatments for chronic insomnia disorder in adults: An {American Academy} of {Sleep Medicine} systematic review, meta-analysis, and {GRADE} assessment. \emph{Journal of Clinical Sleep Medicine}, \emph{17}(2), 263--298. \url{https://doi.org/10.5664/jcsm.8988}
+
+\leavevmode\vadjust pre{\hypertarget{ref-dhyani2013}{}}%
+Dhyani, M., Rajput, R., \& Gupta, R. (2013). Hindi translation and validation of dysfunctional beliefs and attitudes about sleep ({DBAS} - 16). \emph{Industrial Psychiatry Journal}, \emph{22}(1), 80--85. \url{https://doi.org/10.4103/0972-6748.123639}
+
+\leavevmode\vadjust pre{\hypertarget{ref-eidelman2016}{}}%
+Eidelman, P., Talbot, L., Ivers, H., BÃÂlanger, L., Morin, C. M., \& Harvey, A. G. (2016). Change in {Dysfunctional Beliefs About Sleep} in {Behavior Therapy}, {Cognitive Therapy}, and {Cognitive-Behavioral Therapy} for {Insomnia}. \emph{Behavior Therapy}, \emph{47}(1), 102--115. \url{https://doi.org/10.1016/j.beth.2015.10.002}
+
+\leavevmode\vadjust pre{\hypertarget{ref-espie2006}{}}%
+Espie, C. A., Broomfield, N. M., MacMahon, K. M. A., Macphee, L. M., \& Taylor, L. M. (2006). The attention-intention-effort pathway in the development of psychophysiologic insomnia: A theoretical review. \emph{Sleep Medicine Reviews}, \emph{10}(4), 215--245. \url{https://doi.org/10.1016/j.smrv.2006.03.002}
+
+\leavevmode\vadjust pre{\hypertarget{ref-harris2019redcap}{}}%
+Harris, P. A., Taylor, R., Minor, B. L., Elliott, V., Fernandez, M., O'Neal, L., McLeod, L., Delacqua, G., Delacqua, F., Kirby, J., et al. (2019). The REDCap consortium: Building an international community of software platform partners. \emph{Journal of Biomedical Informatics}, \emph{95}, 103208.
+
+\leavevmode\vadjust pre{\hypertarget{ref-harvey2002}{}}%
+Harvey, A. G. (2002). A cognitive model of insomnia. \emph{Behaviour Research and Therapy}, \emph{40}(8), 869--893. \url{https://doi.org/fwxq35}
+
+\leavevmode\vadjust pre{\hypertarget{ref-harvey2014}{}}%
+Harvey, A. G., Bélanger, L., Talbot, L., Eidelman, P., Beaulieu-Bonneau, S., Fortier-Brochu, É., Ivers, H., Lamy, M., Hein, K., Soehner, A. M., Mérette, C., \& Morin, C. M. (2014). Comparative efficacy of behavior therapy, cognitive therapy, and cognitive behavior therapy for chronic insomnia: A randomized controlled trial. \emph{Journal of Consulting and Clinical Psychology}, \emph{82}(4), 670--683. \url{https://doi.org/10.1037/a0036606}
+
+\leavevmode\vadjust pre{\hypertarget{ref-harvey2017}{}}%
+Harvey, A. G., Dong, L., Bélanger, L., \& Morin, C. M. (2017). Mediators and treatment matching in behavior therapy, cognitive therapy and cognitive behavior therapy for chronic insomnia. \emph{Journal of Consulting and Clinical Psychology}, \emph{85}(10), 975--987. \url{https://doi.org/10.1037/ccp0000244}
+
+\leavevmode\vadjust pre{\hypertarget{ref-jansson-frojmark2008b}{}}%
+Jansson-Fröjmark, M., \& Lindblom, K. (2008). A bidirectional relationship between anxiety and depression, and insomnia? {A} prospective study in the general population. \emph{Journal of Psychosomatic Research}, \emph{64}(4), 443--449. \url{https://doi.org/10.1016/j.jpsychores.2007.10.016}
+
+\leavevmode\vadjust pre{\hypertarget{ref-lancee2019}{}}%
+Lancee, J., Effting, M., van der Zweerde, T., van Daal, L., van Straten, A., \& Kamphuis, J. H. (2019). Cognitive processes mediate the effects of insomnia treatment: Evidence from a randomized wait-list controlled trial. \emph{Sleep Medicine}, \emph{54}, 86--93. \url{https://doi.org/10.1016/j.sleep.2018.09.029}
+
+\leavevmode\vadjust pre{\hypertarget{ref-lang2017}{}}%
+Lang, C., Brand, S., Holsboer-Trachsler, E., Pühse, U., Colledge, F., \& Gerber, M. (2017). Validation of the {German} version of the short form of the dysfunctional beliefs and attitudes about sleep scale ({DBAS-16}). \emph{Neurological Sciences}, \emph{38}(6), 1047--1058. \url{https://doi.org/10.1007/s10072-017-2921-x}
+
+\leavevmode\vadjust pre{\hypertarget{ref-li2016}{}}%
+Li, L., Wu, C., Gan, Y., Qu, X., \& Lu, Z. (2016). Insomnia and the risk of depression: A meta-analysis of prospective cohort studies. \emph{BMC Psychiatry}, \emph{16}, 375. \url{https://doi.org/f9bsxr}
+
+\leavevmode\vadjust pre{\hypertarget{ref-lundh2005}{}}%
+Lundh, L.-G. (2005). The {Role} of {Acceptance} and {Mindfulness} in the {Treatment} of {Insomnia}. \emph{Journal of Cognitive Psychotherapy}, \emph{19}(1), 29--39. \url{https://doi.org/10.1891/jcop.19.1.29.66331}
+
+\leavevmode\vadjust pre{\hypertarget{ref-marques2015}{}}%
+Marques, D. R., Allen Gomes, A., Clemente, V., Santos, J. M., \& Castelo-Branco, M. (2015). Hyperarousal and failure to inhibit wakefulness in primary insomnia: "``Birds of a feather"? \emph{Sleep and Biological Rhythms}, \emph{13}(3), 219--228. \url{https://doi.org/10.1111/sbr.12115}
+
+\leavevmode\vadjust pre{\hypertarget{ref-mcneish2022a}{}}%
+McNeish, D. (2022). Limitations of the {Sum-and-Alpha Approach} to {Measurement} in {Behavioral Research}. \emph{Policy Insights from the Behavioral and Brain Sciences}, \emph{9}(2), 196--203. \url{https://doi.org/10.1177/23727322221117144}
+
+\leavevmode\vadjust pre{\hypertarget{ref-montserratsanchez-ortuno2010}{}}%
+Montserrat Sánchez-Ortuño, M., \& Edinger, J. D. (2010). A penny for your thoughts: {Patterns} of sleep-related beliefs, insomnia symptoms and treatment outcome. \emph{Behaviour Research and Therapy}, \emph{48}(2), 125--133. \url{https://doi.org/10.1016/j.brat.2009.10.003}
+
+\leavevmode\vadjust pre{\hypertarget{ref-morin1993insomnia}{}}%
+Morin, C. M. (1993). \emph{Insomnia: Psychological assessment and management.} Guilford press.
+
+\leavevmode\vadjust pre{\hypertarget{ref-morin2011a}{}}%
+Morin, C. M., Belleville, G., Bélanger, L., \& Ivers, H. (2011). \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3079939}{The {Insomnia Severity Index}: {Psychometric Indicators} to {Detect Insomnia Cases} and {Evaluate Treatment Response}}. \emph{Sleep}, \emph{34}(5), 601--608.
+
+\leavevmode\vadjust pre{\hypertarget{ref-morin1993}{}}%
+Morin, C. M., Stone, J., Trinkle, D., Mercer, J., \& Remsberg, S. (1993). Dysfunctional beliefs and attitudes about sleep among older adults with and without insomnia complaints. \emph{Psychology and Aging}, \emph{8}(3), 463--467. \url{https://doi.org/frwwvp}
+
+\leavevmode\vadjust pre{\hypertarget{ref-morin2007a}{}}%
+Morin, C. M., Vallières, A., \& Ivers, H. (2007). Dysfunctional {Beliefs} and {Attitudes} about {Sleep} ({DBAS}): {Validation} of a {Brief Version} ({DBAS-16}). \emph{Sleep}, \emph{30}(11), 1547--1554. \url{https://doi.org/10.1093/sleep/30.11.1547}
+
+\leavevmode\vadjust pre{\hypertarget{ref-neckelmann2007}{}}%
+Neckelmann, D., Mykletun, A., \& Dahl, A. A. (2007). Chronic insomnia as a risk factor for developing anxiety and depression. \emph{Sleep}, \emph{30}(7), 873--880. \url{https://doi.org/gf26g2}
+
+\leavevmode\vadjust pre{\hypertarget{ref-norell-clarke2021}{}}%
+Norell-Clarke, A., Hagström, M., \& Jansson-Fröjmark, M. (2021). Sleep-{Related Cognitive Processes} and the {Incidence} of {Insomnia Over Time}: {Does Anxiety} and {Depression Impact} the {Relationship}? \emph{Frontiers in Psychology}, \emph{12}. \url{https://doi.org/gk8x3v}
+
+\leavevmode\vadjust pre{\hypertarget{ref-ong2012}{}}%
+Ong, J. C., Ulmer, C. S., \& Manber, R. (2012). Improving sleep with mindfulness and acceptance: {A} metacognitive model of insomnia. \emph{Behaviour Research and Therapy}, \emph{50}(11), 651--660. \url{https://doi.org/f4fczt}
+
+\leavevmode\vadjust pre{\hypertarget{ref-perlis1997}{}}%
+Perlis, M. L., Giles, D. E., Mendelson, W. B., Bootzin, R. R., \& Wyatt, J. K. (1997). Psychophysiological insomnia: The behavioural model and a neurocognitive perspective. \emph{Journal of Sleep Research}, \emph{6}(3), 179--188. \url{https://doi.org/fcrnvj}
+
+\leavevmode\vadjust pre{\hypertarget{ref-rhemtulla2012}{}}%
+Rhemtulla, M., Brosseau-Liard, P. É., \& Savalei, V. (2012). When can categorical variables be treated as continuous? {A} comparison of robust continuous and categorical {SEM} estimation methods under suboptimal conditions. \emph{Psychological Methods}, \emph{17}(3), 354--373. \url{https://doi.org/10.1037/a0029315}
+
+\leavevmode\vadjust pre{\hypertarget{ref-sadler2013}{}}%
+Sadler, P., McLaren, S., \& Jenkins, M. (2013). A psychological pathway from insomnia to depression among older adults. \emph{International Psychogeriatrics}, \emph{25}(8), 1375--1383. \url{https://doi.org/10.1017/S1041610213000616}
+
+\leavevmode\vadjust pre{\hypertarget{ref-thakral2020}{}}%
+Thakral, M., Von Korff, M., McCurry, S. M., Morin, C. M., \& Vitiello, M. V. (2020). Changes in dysfunctional beliefs about sleep after cognitive behavioral therapy for insomnia: {A} systematic literature review and meta-analysis. \emph{Sleep Medicine Reviews}, \emph{49}, 101230. \url{https://doi.org/10.1016/j.smrv.2019.101230}
+
+\leavevmode\vadjust pre{\hypertarget{ref-zigmond1983hospital}{}}%
+Zigmond, A. S., \& Snaith, R. P. (1983). The hospital anxiety and depression scale. \emph{Acta Psychiatrica Scandinavica}, \emph{67}(6), 361--370.
+
+\end{CSLReferences}
+
+
+\end{document}
