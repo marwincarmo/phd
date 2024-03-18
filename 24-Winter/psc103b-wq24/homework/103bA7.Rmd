@@ -1,0 +1,115 @@
+---
+title: "PSC 103B Homework 7"
+subtitle: "Answer Key"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+wine <- read.csv("../lab/data/wine.csv")
+```
+
+## Question 1
+
+```{r}
+wine$quality_binary = ifelse(wine$quality == "good", 1, 0)
+
+mod1 = glm(quality_binary ~ residual.sugar, data = wine, family = "binomial")
+summary(mod1)
+
+```
+
+## Question 2
+
+$$
+\log(Odds) = 0.15 - 0.003 \times \text{ResidualSugar}
+$$
+
+The intercept of 0.15 means that a wine with 0 residual sugar has a log-odds of 0.15 of being rated good.
+
+The slope of -0.003 means that for every 1-unit increase in the residual sugar, the log-odds of the wine being rated good decrease by 0.003
+
+## Question 3
+
+$$
+\text{Odds} = e^{0.15 - 0.003 \times \text{ResidualSugar}}
+$$
+The intercept is 1.16, so when a wine has 0 residual sugar, the odds of it being rated good are 1.16 (it is 1.16 times as likely to be rated good as it is to be rated bad).
+
+The slope is 0.997, so for every 1-unit increase in residual sugar, the odds of the wine being rated good change by a factor of 0.997.
+
+## Question 4
+
+```{r}
+wine$residual.sugar_c = wine$residual.sugar - mean(wine$residual.sugar)
+mod2 = glm(quality_binary ~ residual.sugar_c, data = wine, family = "binomial")
+summary(mod2)
+
+```
+
+## Question 5
+
+The intercept in the log-odds is 0.14, which means that a wine with an average amount of residual sugar has a log-odds of 0.14 of being rated good. 
+
+The intercept in terms of the odds is 1.15, which means that a wine with an average amount of residual sugar is 1.15 times as likely to be rated good as it is to be rated bad.
+
+## Question 6
+
+- $\log(Odds) = 0.15 - 0.003 \times 13 = 11$
+
+- $\text{Odds} = e^{0.11} = 1.12$
+
+- $P = \frac{1.12}{1+1.12} = 0.53$
+
+A wine with a residual sugar content of 13 has a log-odds of 0.11 of being rated good, is 1.12 times as likely to be rated good as it is to be rated bad, and has a 53% probability of being rated good. 
+
+## Question 7
+
+```{r}
+mod3 = glm(quality_binary ~ residual.sugar + citric.acid, data = wine, family = binomial)
+summary(mod3)
+
+```
+
+## Question 8
+
+A wine with 0 residual sugar and 0 citric acid has a log-odds of -0.23 of being rated good.
+
+Every 1-unit increase in residual sugar, holding citric acid constant, decreases the log-odds by 0.04.
+
+Every 1-unit increase in citric acid, holding residual sugar constant, increases the log-odds by 1.71.
+
+## Question 9
+
+A wine with 0 residual sugar and 0 citric acid is 0.79 times as likely to be rated good as it is to be rated bad.
+
+For every 1-unit increase in residual sugar, holding citric acid constant, the odds of a wine being rated good change by a factor of 0.96.
+
+For every 1-unit increase in citric acid, holding residual sugar constant, the odds of a wine being rated good change by a factor of 5.53.
+
+## Question 10
+
+```{r}
+library(palmerpenguins)
+```
+
+
+
+```{r}
+dummymodel = lm(bill_length_mm ~ island, data = penguins)
+summary(dummymodel)
+
+```
+## Question 11
+
+The intercept is 45.26, which represents the average bill length of the reference group (Biscoe Island penguins).
+
+The slope of -1.09 means that Dream Island penguins have an average bill length that is 1.09 mm shorter than the average bill length of Biscoe Island penguins. But this difference is not significant.
+
+The slope of -6.31 means that Torgersen Island penguins have an average bill length that is 6.31 mm shorter than the average bill length of Biscoe Island penguins. This difference is significant.
+
+
+
