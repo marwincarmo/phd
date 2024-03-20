@@ -1,0 +1,117 @@
+---
+title: "Final exam"
+author: "Marwin Carmo"
+date: "Winter 2024"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message= FALSE, warning = FALSE)
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+
+# 1 Treatment effects 
+
+## a) No treatment effect
+
+```{r}
+set.seed(12)
+
+df_a <- data.frame(
+  x = rnorm(100, mean = 5, sd = 2),
+  y = 5 + rnorm(100, 0, 1),
+  group = rep(c("Control", "Treatment"), each = 50)
+)
+
+
+ggplot(df_a, aes(x = x, y = y )) +
+  geom_point(aes(shape = group),  size = 3) +
+  scale_shape_manual(values = c(16, 1)) +
+  geom_smooth(aes(color = group), method = "lm", se= FALSE) +
+  labs(x = "Covariate (x)", y = "Outcome (y)",
+       color = "Treatment", shape = "Treatment") +
+  theme_minimal()
+```
+## b) Constant treatment effect
+
+```{r}
+set.seed(12)  # For reproducibility 
+df <- data.frame(
+  x = rnorm(100, mean = 5, sd = 2),  # Covariate
+  y = c(rnorm(50, mean = 8, sd = 1), rnorm(50, mean = 12, sd = 1)),  # Outcome with treatment effect
+  group = rep(c("Control", "Treatment"), each = 50)  # Treatment indicator
+)
+
+# ggplot 
+ggplot(df, aes(x = x, y = y)) +
+  geom_point(aes(shape = group),  size = 3) +
+  scale_shape_manual(values = c(16, 1)) +
+  geom_smooth(aes(color = group), method = "lm", se= FALSE) +
+  labs(x = "Covariate (x)", y = "Outcome (y)",
+       color = "Treatment", shape = "Treatment") + 
+  theme_minimal()
+  
+```
+
+# c) Treatment effect increasing with x
+
+```{r}
+df$y <- df$y + df$x * as.numeric(df$group == "Treatment") 
+
+# Generate the new plot
+ggplot(df, aes(x = x, y = y)) +
+  geom_point(aes(shape = group),  size = 3) +
+  scale_shape_manual(values = c(16, 1)) +
+  geom_smooth(aes(color = group), method = "lm", se= FALSE) +
+  labs(x = "Covariate (x)", y = "Outcome (y)",
+       color = "Treatment", shape = "Treatment") + 
+  theme_minimal()
+```
+
+# 7 Logistic regression models 
+
+```{r}
+diabetes <- readr::read_csv("diabetes_pt1.csv")
+diabetes_test <- readr::read_csv("diabetes_holdout.csv")
+```
+
+## a
+
+```{r}
+mod7a_null <- glm(Outcome ~ 1, data = diabetes, family = "binomial")
+
+mod7a_1 <- glm(Outcome ~ Pregnancies + Glucose, data = diabetes, family = "binomial")
+
+mod7a_2 <- glm(Outcome ~ Pregnancies + Glucose + BloodPressure + SkinThickness, data = diabetes, family = "binomial")
+
+mod7a_3 <- glm(Outcome ~ Pregnancies + Glucose + BloodPressure + SkinThickness + Insulin + BMI + DiabetesPedigreeFunction + Age, data = diabetes, family = "binomial")
+
+models7a <- list(mod7a_null, mod7a_1, mod7a_2, mod7a_3)
+
+round(sapply(models7a, BIC),2)
+```
+## c
+
+
+```{r}
+round(exp(coef(mod7a_1)),2)
+```
+
+
+## d
+
+```{r}
+mod7d <- glm(Outcome ~ Pregnancies + Glucose, data = diabetes_test, family = "binomial")
+
+tableone::ShowRegTable(mod7d, exp=TRUE)
+```
+
+```{r}
+
+```
+
