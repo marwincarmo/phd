@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = FALSE, message= FALSE, warning = FALSE)
 ```{r}
 library(dplyr)
 library(ggplot2)
+library(lme4)
 ```
 
 
@@ -95,6 +96,7 @@ models7a <- list(mod7a_null, mod7a_1, mod7a_2, mod7a_3)
 
 round(sapply(models7a, BIC),2)
 ```
+
 ## c
 
 
@@ -111,7 +113,48 @@ mod7d <- glm(Outcome ~ Pregnancies + Glucose, data = diabetes_test, family = "bi
 tableone::ShowRegTable(mod7d, exp=TRUE)
 ```
 
-```{r}
+# 8 Multilevel Model
 
+```{r}
+cebu <- readRDS("cebu.rds")
 ```
+
+## A
+
+```{r}
+mod8a <- lmer(weightbb ~ HBBC + feedtype + (1 + HBBC|id), data = cebu)
+summary(mod8a)
+```
+## B
+
+```{r}
+mod8b <- lmer(weightbb ~ HBBC * feedtype + (1 + HBBC|id), data = cebu)
+summary(mod8b)
+```
+
+```{r}
+anova(mod8a, mod8b)
+```
+## Bonus
+
+```{r}
+highway <- readr::read_csv("highway.csSv")
+```
+
+```{r}
+highway_long <- highway |> 
+  tidyr::pivot_longer(cols = c(S1:S8),
+                      names_to = "Section",
+                      values_to = "accidents") |> 
+  dplyr::mutate(sample = factor(sample))
+```
+
+```{r}
+summary(glm(accidents ~ sample, family="poisson", data=highway_long))
+```
+```{r}
+highway_long |> 
+  dplyr::with_groups(sample, nrow)
+```
+
 
