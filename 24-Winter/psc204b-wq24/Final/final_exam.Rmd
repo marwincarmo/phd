@@ -135,10 +135,26 @@ summary(mod8b)
 ```{r}
 anova(mod8a, mod8b)
 ```
-## Bonus
+
+## e
 
 ```{r}
-highway <- readr::read_csv("highway.csSv")
+cebu$predicted <- predict(mod8b)
+
+ggplot(cebu, aes(x = HBBC, y = predicted)) +
+  geom_line(aes(group = id), alpha = 0.5) +
+  geom_smooth(method = "lm") +
+  theme_bw() +
+  labs(x = "Height", y = "Predicted weight") +
+  facet_wrap(~feedtype)
+```
+
+
+
+# Bonus
+
+```{r}
+highway <- readr::read_csv("highway.csv")
 ```
 
 ```{r}
@@ -150,11 +166,7 @@ highway_long <- highway |>
 ```
 
 ```{r}
-summary(glm(accidents ~ sample, family="poisson", data=highway_long))
-```
-```{r}
-highway_long |> 
-  dplyr::with_groups(sample, nrow)
+summary(glm(accidents ~ sample, family=poisson, data=highway_long))
 ```
 
 
