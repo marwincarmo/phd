@@ -1,0 +1,154 @@
+---
+title: "Homework Week 1"
+author: "Your Name"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+header-includes:
+  - \usepackage{amsmath}
+output:
+  html_notebook:
+    toc: yes
+    toc_float: yes
+subtitle: Week 1, Day 1
+---
+
+## 1. Conditional Probability
+
+In the class we talked about the example of Males being Alcoholics. Now, let's assume being female (F) AND alcoholic (A) has a probability $Pr(A,F)= 0.02$.
+
+- Compute the conditional probability $Pr(A | F)$: 
+
+```{r}
+# Solution
+```
+
+- Now, lets assume that being alcoholic has a prevalence of 4.5% in the general population. Compute the conditional probability of $Pr(F | A)$:
+```{r}
+# Solution
+```
+
+## 2. The deterministic nature of random coin throwing
+
+Suppose that, in an idealized world, the ultimate fate of a thrown coin heads or tails is deterministically given by the angle at which you throw the coin and its height above a table. Also in this ideal world, the heights and angles are discrete. However, the system is chaotic (highly sensitive to initial conditions), and the results of throwing a coin at a given angle and height are shown in the following Table.
+
+
+||**Height (m)** |
+--- | --- | --- | --- | --- | --- 
+ **Angle (degrees)** | **0.2** | **0.4** | **0.6** | **0.8** | **1** 
+**0** | T | H | T | T | H 
+ **45** | H | T | T | T | T 
+ **90** | H | H | T | T | H 
+ **135** | H | H | T | H | T 
+ **180** | H | H | T | H | H 
+ **225** | H | T | H | T | T 
+ **270** | H | T | T | T | H 
+ **315** | T | H | H | T | T 
+
+### Question 1:### 
+Suppose that all combinations of angles and heights are equally likely to be chosen. What is the probability that the coin lands heads up?
+
+**Answer 1:**
+Your answer goes here...
+
+### Question 2:###
+Now suppose that some combinations of angles and heights are more likely to be chosen than other, with the probabilities shown in the next Table. What are the new probabilities that the coin lands heads up?
+
+|   | **Height (m)** |
+| --- | --- | --- | --- | --- | --- |
+| **Angle (degrees)** | 0.2 | 0.4 | 0.6 | 0.8 | 1 |
+| **0** | 0.05 | 0.03 | 0.02 | 0.04 | 0.04 |
+| **45** | 0.03 | 0.02 | 0.01 | 0.05 | 0.02 |
+| **90** | 0.05 | 0.03 | 0.01 | 0.03 | 0.02 |
+| **135** | 0.02 | 0.03 | 0.04 | 0.00 | 0.04 |
+| **180** | 0.03 | 0.02 | 0.02 | 0.00 | 0.03 |
+| **225** | 0.00 | 0.01 | 0.04 | 0.03 | 0.02 |
+| **270** | 0.03 | 0.00 | 0.03 | 0.01 | 0.04 |
+| **315** | 0.02 | 0.03 | 0.03 | 0.02 | 0.01 |
+
+**Answer 2:**
+
+### Question 3: 
+Using the probabilities from Question 2.
+We force the coin-thrower to throw the coin at an angle of 45 degrees. What is the probability that the coin lands heads up? (This is about marginalizing)
+
+**Answer 3:**
+``` {r} 
+# Solution
+``` 
+
+### Question 4:
+Using the probabilities from Question 2.
+We force the coin-thrower to throw the coin at a height of 0.2m. What is the probability that the coin lands heads up?
+
+**Answer 4:**
+``` {r}
+# Solution
+```
+
+
+### Question 5: 
+If we constrained the angle and height to be fixed, what would happen in repetitions of the same experiment?
+ 
+ **Answer 5:**
+ 
+  
+ 
+## 3. Breast Cancer
+
+As discussed in class, Gerd Gigerenzer has been very vocal the last 30 years about how breast cancer screening may be misleading ([1996](https://psycnet.apa.org/fulltext/1996-10283-001.pdf?auth_token=250b09e2829d947b799bc4a876b4a63c2d039d84), [2015](https://pure.mpg.de/rest/items/item_2156092/component/file_3562691/content)). Let's see how the numbers stack up.
+
+We will focus on women in their 40ies, the test is based on a mammography:
+
+- The _sensitivity_ of breast cancer screening is $Pr(PositiveTest | cancer) = .87$. That is, given that someone has actually cancer, the test will return a positive result "PositiveTest" 87% of the time ([Lehman et. al 2017](https://pubs.rsna.org/doi/full/10.1148/radiol.2016161174?casa_token=l_f6SwnKpSAAAAAA%3A5oWHeBc_uJO1am4bEZLvAc3Oc8BhUcGX6EK3ayS9ZLGzjIiyvZiXl6IJxwT94gvHL8HxtGLc5142)).
+- The _baserate_, the current ten-year (40-50 years of age) probability of a cancer diagnosis or death for US women is $Pr(Cancer)=0.015$. That is, about 1/65 women (see [Table 2](https://www.cancer.org/content/dam/cancer-org/research/cancer-facts-and-statistics/breast-cancer-facts-and-figures/breast-cancer-facts-and-figures-2019-2020.pdf)). 
+- The _false positive rate_ (1-specificity), is the probability that a test returns a positive result given that the person has _not_ cancer: $Pr(PostiveTest | No-cancer)=0.095$. [We assume 9.5%](https://www.cancer.gov/types/breast/hp/breast-screening-pdq), which seems to be an optimistic estimate (see eg. Lehman et al. [2017](https://pubs.rsna.org/doi/full/10.1148/radiol.2016161174?casa_token=l_f6SwnKpSAAAAAA%3A5oWHeBc_uJO1am4bEZLvAc3Oc8BhUcGX6EK3ayS9ZLGzjIiyvZiXl6IJxwT94gvHL8HxtGLc5142)).
+
+Our goal is to find the conditional probability $Pr(cancer |PositiveTest)$; the probability of _actually_ having breast cancer when the test comes back positive. 
+We can use Bayes Theorem to find that probability. To be able to compute that quantity, we need to define the denominator $Pr(PositiveTest)$. 
+
+The denominator, also known as the marginal, reflects all ways that a test can come back positive. 
+In our case this would be the sum of two things:
+
+- $Pr(PostiveTest, cancer) = Pr(PositiveTest | cancer) \times Pr(cancer)$:  Positive tests in women who have cancer
+- $Pr(PostiveTest, No-cancer) = Pr(PositiveTest | No-cancer) \times Pr(No-cancer)$: False positives, positive tests in women who do _not_ have cancer
+- That is, the numerator can be defined as: 
+$Pr(PostitveTest) = Pr(PositiveTest | cancer) \times Pr(cancer) + Pr(PositiveTest | No-cancer) \times Pr(No-cancer)$: 
+
+
+Write up the Bayes theorem with the correct ingredients and compute the conditional probability for a woman in her 40ies  of having cancer, _given_ that the test came back positive: $Pr(cancer | PostiveTest)$
+
+**Answer:**
+ 
+You can use this template: $Pr(cancer | PositiveTest) =\frac{ Pr(PositiveTest|cancer)\times Pr(cancer) }{ Pr(PositiveTest | cancer) \times Pr(cancer) + Pr(PositiveTest | No-cancer) \times Pr(No-cancer) }=...$
+ 
+Compute that quantity in R:
+```{r}
+# Solution
+```
+
+#### Task 1:
+Create an [R-function](https://www.dataquest.io/blog/write-functions-in-r/) that computes the posterior probability and takes all the necessary parameters, such as sensitivity and specificity of the test, as well as baserate:
+
+```{r}
+## Brest Cabcer Function
+BC <- function() {
+  content
+}
+
+```
+
+#### Task 2
+Use this function to create three plots:
+
+ 1. Changes in $Pr(cancer|PostitveTest )$ given changes in sensitivity (sn) -- e.g. different screening methods have different sensitivity (see [here](https://www.cancer.gov/types/breast/hp/breast-screening-pdq))
+ 2. Changes in $Pr(cancer|PositiveTest)$ given changes in specificiyt (sp) -- e.g different screening methods have different specificity (1 - false positives) 
+ 3. Changes in $Pr(cancer|PostitveTest)$ given changes in baserate (bs) -- e.g for different ages (older women have higher rates)
+ 
+ $y$-axis represents $Pr(cancer|PostitveTest )$ and $x$-axis shows sn, sp, and bs
+ 
+Apply different ranges of sn, sp, and bs that seem reasonable
+ 
+ 
+```{r}
+## Plots
+
+```
