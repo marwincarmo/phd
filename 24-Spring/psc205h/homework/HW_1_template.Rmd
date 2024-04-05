@@ -1,13 +1,15 @@
 ---
 title: "Homework Week 1"
-author: "Your Name"
+author: "Marwin Carmo"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
-header-includes:
-  - \usepackage{amsmath}
 output:
+  html_document:
+    toc: true
+    df_print: paged
   html_notebook:
-    toc: yes
-    toc_float: yes
+    toc: true
+    toc_float: true
+header-includes: \usepackage{amsmath}
 subtitle: Week 1, Day 1
 ---
 
@@ -17,13 +19,29 @@ In the class we talked about the example of Males being Alcoholics. Now, let's a
 
 - Compute the conditional probability $Pr(A | F)$: 
 
+
+$$
+\begin{aligned}
+Pr(A|F) &= \frac{P(A,F)}{P(F)}\\
+&= \frac{0.02}{0.51}\\
+&= 0.039
+\end{aligned}
+$$
+
 ```{r}
-# Solution
+p_af <- 0.02
+p_f <- 51/100
+
+(p_a_f <- p_af/p_f)
 ```
 
 - Now, lets assume that being alcoholic has a prevalence of 4.5% in the general population. Compute the conditional probability of $Pr(F | A)$:
+
 ```{r}
-# Solution
+p_a <- 0.045
+
+(p_f_a <- p_af/p_a)
+
 ```
 
 ## 2. The deterministic nature of random coin throwing
@@ -36,18 +54,38 @@ Suppose that, in an idealized world, the ultimate fate of a thrown coin heads or
  **Angle (degrees)** | **0.2** | **0.4** | **0.6** | **0.8** | **1** 
 **0** | T | H | T | T | H 
  **45** | H | T | T | T | T 
- **90** | H | H | T | T | H 
+ **90** | H | H | T | T | H  
  **135** | H | H | T | H | T 
  **180** | H | H | T | H | H 
  **225** | H | T | H | T | T 
  **270** | H | T | T | T | H 
  **315** | T | H | H | T | T 
 
+
 ### Question 1:### 
 Suppose that all combinations of angles and heights are equally likely to be chosen. What is the probability that the coin lands heads up?
 
 **Answer 1:**
-Your answer goes here...
+
+```{r}
+heads <- data.frame(
+  A0 = c(0,1,0,0,1),
+  A45 = c(1,0,0,0,0),
+  A90 = c(1,1,0,0,1),
+  A135 = c(1,1,0,1,0),
+  A180 = c(1,1,0,1,1),
+  A225 = c(1,0,1,0,0),
+  A270 = c(1,0,0,0,1),
+  A315 = c(0,1,1,0,0)
+)
+```
+
+
+Total throws = 40
+
+Total heads = 19
+
+$P(H) = \frac{19}{40} = 0.475$
 
 ### Question 2:###
 Now suppose that some combinations of angles and heights are more likely to be chosen than other, with the probabilities shown in the next Table. What are the new probabilities that the coin lands heads up?
@@ -66,13 +104,32 @@ Now suppose that some combinations of angles and heights are more likely to be c
 
 **Answer 2:**
 
+```{r}
+probs <- data.frame(
+  A0 = c(0.05 , 0.03 , 0.02 , 0.04 , 0.04),
+  A45 = c(0.03 , 0.02 , 0.01 , 0.05 , 0.02),
+  A90 = c(0.05 , 0.03 , 0.01 , 0.03 , 0.02),
+  A135 = c( 0.02 , 0.03 , 0.04 , 0.00 , 0.04),
+  A180 = c(0.03 , 0.02 , 0.02 , 0.00 , 0.03),
+  A225 = c(0.00 , 0.01 , 0.04 , 0.03 , 0.02),
+  A270 = c(0.03 , 0.00 , 0.03 , 0.01 , 0.04),
+  A315 = c(0.02 , 0.03 , 0.03 , 0.02 , 0.01)
+)
+
+sum(sapply(probs[heads == 1], sum))
+```
+
+$P(H) = 0.5$
+
+
 ### Question 3: 
 Using the probabilities from Question 2.
 We force the coin-thrower to throw the coin at an angle of 45 degrees. What is the probability that the coin lands heads up? (This is about marginalizing)
 
 **Answer 3:**
+
 ``` {r} 
-# Solution
+0.03/sum(probs[,"A45"])
 ``` 
 
 ### Question 4:
@@ -81,7 +138,7 @@ We force the coin-thrower to throw the coin at a height of 0.2m. What is the pro
 
 **Answer 4:**
 ``` {r}
-# Solution
+sum(probs[1,][heads[1,]==1])/sum(probs[1,])
 ```
 
 
@@ -90,7 +147,7 @@ If we constrained the angle and height to be fixed, what would happen in repetit
  
  **Answer 5:**
  
-  
+If the angle and height are fixed for repetitions of the same experiment, the outcome would always be the same for each repetition. 
  
 ## 3. Breast Cancer
 
@@ -122,7 +179,12 @@ You can use this template: $Pr(cancer | PositiveTest) =\frac{ Pr(PositiveTest|ca
  
 Compute that quantity in R:
 ```{r}
-# Solution
+PositiveTest <- .87
+baserate <- .015
+PositiveTest_NoCancer <- .095
+
+P_Cancer_PT <- (PositiveTest * baserate) / ( (PositiveTest*baserate) + (PositiveTest_NoCancer*(1-baserate)) )
+P_Cancer_PT
 ```
 
 #### Task 1:
@@ -130,8 +192,9 @@ Create an [R-function](https://www.dataquest.io/blog/write-functions-in-r/) that
 
 ```{r}
 ## Brest Cabcer Function
-BC <- function() {
-  content
+BC <- function(PositiveTest, baserate, PositiveTest_NoCancer) {
+  P_Cancer_PT <- (PositiveTest * baserate) / ( (PositiveTest*baserate) + (PositiveTest_NoCancer*(1-baserate)) )
+  P_Cancer_PT
 }
 
 ```
@@ -149,6 +212,10 @@ Apply different ranges of sn, sp, and bs that seem reasonable
  
  
 ```{r}
-## Plots
+task2df <- data.frame(
+  sp = c(.01, .02, .1, .15,.2,.25)
+  sn = c(.7,.75,.8,.85,.9,.95),
+  br = c(.001,.01,.05,.10,.15,.20)
+)
 
 ```
