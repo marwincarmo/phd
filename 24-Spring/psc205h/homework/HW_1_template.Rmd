@@ -213,9 +213,33 @@ Apply different ranges of sn, sp, and bs that seem reasonable
  
 ```{r}
 task2df <- data.frame(
-  sp = c(.01, .02, .1, .15,.2,.25)
+  sp = c(.01, .02, .1, .15,.2,.25),
   sn = c(.7,.75,.8,.85,.9,.95),
   br = c(.001,.01,.05,.10,.15,.20)
-)
+  ) |> 
+  tidyr::pivot_longer(cols = sp:br, values_to = "new_vals", names_to = "name") |> 
+  dplyr::mutate(change = dplyr::case_when(
+    name == "sp" ~ BC(PositiveTest = .87, baserate = .015, PositiveTest_NoCancer = new_vals),
+    name == "sn" ~ BC(PositiveTest = new_vals, baserate = .015, PositiveTest_NoCancer = .095),
+    name == "br" ~ BC(PositiveTest = .87, baserate = new_vals, PositiveTest_NoCancer = .095)
+  ))
+
 
 ```
+
+
+
+```{r fig.width=10}
+library(ggplot2)
+
+task2df |> 
+  ggplot(aes(x = new_vals, y = change)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~name, scales="free",
+             labeller = labeller(name = c(br = "Baserate", sn = "Sensitivity", sp= "Specificity"))) +
+  labs(x = "New values", y = "Pr(cancer|PositiveTest)") +
+  theme_minimal(12)
+  
+```
+
