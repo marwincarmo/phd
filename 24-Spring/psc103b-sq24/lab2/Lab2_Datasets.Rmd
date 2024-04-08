@@ -225,5 +225,356 @@ Can we use it with a continuous variable?
 table(dat$e)
 ```
 
+We can also describe our data by calculating some descriptive statistics.
 
+Descriptive statistics functions
+
+- `mean()`
+- `var()`
+- `sd()`
+- `median()`
+
+For example if I want to calculate the mean of extraversion. I can use the `mean()` function but I have to tell the function what column in the data set I want to use 
+
+```{r}
+mean(big5$e) # What do you need to add to this line of code to calculate the mean of extraversion?
+```
+
+Did you get an NA? Why do you think that is? 
+
+Clue: are there any missing values in the variable extraversion? 
+
+```{r}
+mean(big5$e, na.rm = TRUE)
+```
+
+What about if I want to calculate the variance of extraversion? 
+
+```{r}
+var(big5$e, na.rm = TRUE)
+```
+
+And the standard deviation? 
+
+```{r}
+sd(big5$e, na.rm = TRUE)
+```
+
+Sometimes you'll want to compute your descriptive statistics by group.
+Specifically, you need to do this if your research question focuses
+on group differences (e.g., between experimental conditions or gender)
+
+You can do this using the group_by() and summarize() functions.
+For example, let's say that we want to know the means & standard deviations
+for agreeableness for cat people vs. dog peoplein our dataset.
+
+First, we have a small problem. Can you spot it by looking at this table?
+
+```{r}
+table(dat$fave_animal)
+```
+
+We're only interested in cat and dog people, but there are a bunch of people
+who said their favorite animal is something else, or "other". So first we need
+to separate the observations for cat and dog people from those other
+people's who have other favorite animals. One way to do that is to filter()
+our dataset.
+
+The `filter()` function works very similarly to the `select()` function we just
+learned about, but instead of selecting columns to keep, it selects rows to keep.
+This is a similar function to the filter function in spreadsheets, if you are
+familiar with those.
+
+Because this is a close cousin to `select()`, it also expects the dataframe
+you are trying to filter as the first argument. Then, you need to tell it
+which rows to keep. But how do you do that if rows don't have names like
+columns? You use a condition. For example, in this case, we want to keep
+only the people who are cat people or the people who are dog people. The 
+other kind of people in our dataset are "other" people, and we are not
+interested in them. So we want the rows (people) who are NOT "other".
+The way to tell R this is to use the following statement: `fave_animal != "other"`
+
+The symbol `!=` means "not equal", so we are telling the filter function to
+give us all rows where fave_animal is NOT equal to "other", which are the rows
+where fave_animal is equal to either cat or dog. There are other symbols you
+can use although some only work on numeric variables:
+
+- `==` means "equal to"
+- `>` means "greater than"
+- `<` means "smaller than"
+- `>=` means "greater or equal to"
+- `<=` means "smaller or equal to"
+
+Here is the complete line of code:
+
+```{r}
+filter(dat, fave_animal != "other")
+```
+
+We should save this new, smaller dataset
+
+```{r}
+cats_dogs <- filter(dat, fave_animal != "other")
+```
+
+Now you try it! Can you select only the rows with cat people? 
+
+```{r}
+cats_only <- filter(dat, fave_animal == "cat")
+```
+
+What about the rows with people who have extraversion higher than 3?
+
+```{r}
+high_e <- filter(dat, e > 3)
+```
+
+Great, now that we have a smaller dataset with only cat and dog people, we can calculate the means and SDs for agreeableness for each group. First, we start by grouping the dataset we have with `group_by().` Like `select()` and `filter()`, it expects the dataset as the first argument. The second argument should be the variable we want to use to make the groups, `fave_animal.` Finally, we want to use `summarize()` to get the mean of the variable `a`, and we want that mean to be called `M`. This is how we describe that.
+
+You can think of `group_by()` as sort of separating your dataset into smaller datasets based on the different levels of the variable you give it; so if I group by `fave_animal`, what's going on behind the scenes is R and tidyverse are splitting this into one dataset of cat people, and then one dataset of dog people.
+
+Then, `summarize()` will compute whatever descriptive you tell it in each of those datasets.
+
+```{r}
+group_by(cats_dogs, fave_animal) %>% 
+  summarize(M = mean(a))
+```
+
+When we run this, you'll see that it tells us the mean for each group is NA. Where have we seen this problem before? Can you fix it?
+
+```{r}
+group_by(cats_dogs, fave_animal) %>% 
+  summarize(M = mean(a, na.rm = TRUE))
+```
+
+How would I do the same thing except for the standard deviation?
+
+```{r}
+group_by(cats_dogs, fave_animal) %>% 
+  summarize(M = sd(a, na.rm = TRUE))
+```
+
+You can also group by more than one grouping variable. I'll make one from one of our continuous variables: extraversion (We haven't learned how to do this yet, so don't worry
+if the code below looks confusing, but you might be able to understand
+it based on the other things we already do know how to do. If you're
+curious, I encourage you to google :)).
+
+Let's separate our rows into "high" extraversion (>3) and "low" extraversion (<=3)
+
+```{r}
+cats_dogs <- mutate(
+  cats_dogs, # mutate is used to create a new variable in the dataframe cats_dogs
+  e_level = if_else(
+    e > 3, "high", "low"
+    )
+  ) # we're creating e_level, and saying that it's "high" 
+    # if e is bigger than 3, "low" otherwise
+```
+
+Now, let's summarize the means & standard deviations for agreeableness by favorite animal and extraversion level.
+
+```{r}
+group_by(cats_dogs, fave_animal, e_level) %>% 
+  summarize(M = mean(a, na.rm = TRUE))
+```
+
+You can see that all combinations of favorite animal and extraversion level
+that exist in the data are represented here, including cat and dog people
+who don't have a value for extraversion (and therefore don't have a value for 
+extraversion level).
+
+Now try to do it for SD:
+
+```{r}
+group_by(cats_dogs, fave_animal, e_level) %>% 
+  summarize(M = sd(a, na.rm = TRUE))
+```
+
+You can also summarize variables with more than one function at a time:
+
+```{r}
+group_by(cats_dogs, fave_animal) %>% 
+  summarize(M = mean(a, na.rm = TRUE), SD = sd(a, na.rm = TRUE)) 
+```
+
+
+\textcolor{red}{Remember, don't name your mean variable mean or your sd variable sd so they don't have the same name as the functions mean() and sd().}
+
+# Confidence Intervals
+
+We can create an interval around our mean. If we compute a 95% CI this only tells us that roughly 95%
+of intervals will contain the true population mean.
+
+Steps for calculating the confidence interval:
+
+1. Calculate the sample mean
+2. Calculate the standard error
+  - $SD = \sqrt{n}$
+  - Let's assume sd = 1
+3. Calculate the z-score multiplier for your desired CI
+  - When calculating a 95% CI for a normal distribution, this multiplier ($z_{95}$) always equals 1.96, but we'll learn to extract that value from a function in R so we can calculate other CIs
+4. Construct CI around sample mean
+  - $CI =\bar{x} \pm z_{95} \times SE$
+
+Let's calculate the confidence interval for extraversion for all the observations (dat)
+
+### Step 1
+
+```{r}
+e.mean <- mean(dat$e, na.rm = TRUE)
+```
+
+### Step 2
+
+How could we find out the sample size?
+
+```{r}
+n <- nrow(dat)
+se <- 1/sqrt(n)
+```
+
+### Step 3
+
+Let's find that multiplier! This part is a little confusing, so bear with me.
+So 1.96 is the value in the normal distribution that
+leaves 2.5% of the values to one side, and 2.5% to the other. There are several
+functions in R that can tell us the values we want for specific distributions
+and the functions for the normal distribution are called `_norm()` where `_` can be 
+`q`, `r`, `d`, and `p`. We'll only use `qnorm()` for now.
+
+`qnorm()` takes one argument and gives you one value back. It needs you to tell it
+what cumulative proportion of the normal curve you want (area under the curve)
+and in return, it will give you the z value (the value on the x axis) back. 
+For a visualization, run the three lines below. You should see a plot on the
+lower right side of the screen.
+
+```{r}
+x <- seq(-4, 4, length=100)
+Density <- dnorm(x)
+plot(x, Density,  type="l", lty=1)
+```
+Looking at this plot, if you started coloring the area under the curve from left to right,
+what value do you think would be on the x-axis when you hit 50%? You can test if you're right
+by asking `qnorm`:
+
+```{r}
+qnorm(.5)
+```
+
+Did you get the value you expected?
+
+But we don't want 50%, we want a value that will tell us what the x-axis value
+is on both sides when we color the middle 95% of the area under the curve.
+Look at the curve again. If we did that, how much would be left on each side?
+
+If you said 5%, that's a good guess, but it's wrong. The curve is symmetrical,
+so if you filled in 95% in the middle, you'd have 2.5% left on one side, and 2.5%
+left on the other! What we want to know, then, is what value do we give `qnorm`
+to get it to tell us what the x-axis value is when 2.5% is left.
+
+Imagine you're coloring under the curve from the left side all the way to right.
+How much do you need to fill in to leave 2.5%?
+
+```{r}
+qnorm(0.975)
+```
+Because the curve is symmetrical, you could also get the negative value by 
+entering 0.025 (2.5%) into `qnorm()`:
+
+```{r}
+qnorm(.025)
+```
+Check your understanding: what value would you give `qnorm()` if you wanted to find the multiplier to construct a 90% CI? What about a 99% CI?
+
+```{r}
+# 90% CI
+qnorm(0.95)
+
+# 99% CI
+qnorm(.995)
+```
+
+Let's save that `z_95` value so we can use it on the next step:
+
+```{r}
+z_95 <- qnorm(.975)
+```
+
+### Step 4
+
+```{r}
+lowerlim <- e.mean - (z_95 * se) #this is the lower limit of your CI
+upperlim <- e.mean + (z_95 * se) #this is the upper limit of your CI
+
+lowerlim
+upperlim
+```
+
+# Z scores
+
+We also talked about z scores in the lectures this past week.
+They're standardized values, where the mean of the variable is 0
+and the standard deviation is 1
+
+We can calculate z scores in R (or by hand!)
+
+Formula: $z = \frac{(x -\bar{x})}{\sigma_{x}} $
+
+- $x$ is a specific value, for example one person's extraversion score
+- $\bar{x}$ is the sample mean of extraversion
+- $\sigma_{x}$ is the sample standard deviation of extraversion 
+
+Let's calculate the z-score for one extraversion score:
+
+```{r}
+e.score <- dat[5 , "e"]
+
+e.sd <- sd(dat$e, na.rm = TRUE)
+```
+
+We already saved the mean for extraversion so we can use that here. Let's calculate the score:
+
+```{r}
+z.e <- (e.score - e.mean) / e.sd
+```
+
+How can we interpret this z-score?
+
+We can interpret this z-score as: This individual has an extraversion score that is about 2 standard deviations below the mean.
+
+The nice thing about R is that we don't need to calculate each z score one by one.
+We can just get R to calculate all of them at once for us. This is called a
+"vectorized operation" because the operations happen on a whole vector all at once!
+
+Let's repeat the steps above for all extraversion scores at once:
+
+```{r}
+e.scores <- dat$e 
+# this is the entire vector for all the extraversion scores, check it out!
+```
+
+We already have the SD and Mean for e, so all we need to do now is:
+
+```{r}
+zs.e <- (e.scores - e.mean) / e.sd
+```
+
+Look at zs.e, what does it look like? What is its mean and SD?
+
+```{r}
+zs.e
+
+mean(zs.e)
+
+sd(zs.e)
+```
+
+# Coding Challenge
+
+You're now going to do the things that we've covered in this lab but without code to follow along to. Work with each other, but don't copy others' answers!
+
+1. Pick a variable continuous from our dat dataset. In other words a variable other than `fave_animal` and `e_level`.
+2. Explore the variable by looking at it's mean, variance, sd and whether there are any missing values. Also calculate these statistics based on sub-groups.
+3. Calculate a confidence interval around the mean of that variable.
+4. Convert some (or all!) of the scores into z-scores.
 
