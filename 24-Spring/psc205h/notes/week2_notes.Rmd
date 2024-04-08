@@ -1,0 +1,27 @@
+---
+title: "Week 2: Bayes rule"
+output: html_notebook
+---
+
+## Probabilities versus probability densities
+
+When inverting the focus (not the outcome, but what parameter theta could have generated, or what is the most likely parameter given the data), we don't talk about probabilities but about likelihoods. What is the most likely value to have generated the data.
+
+Likelihood $\neq$ probability distribution.
+
+With Bayes rule we can transform likelihoods into probability distributions.
+
+```{r}
+pripred <- function(a = 1, b=1) {
+  
+  Prior <- rbeta(1, a, b)
+  X <- rbinom(n=1, size = 10, prob = Prior)
+  return(X)
+  
+}
+pripred()
+
+plot(table(replicate(2000, pripred())))
+
+```
+
