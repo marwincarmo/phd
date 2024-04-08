@@ -1,0 +1,36 @@
+---
+title: 'Lab 2: Working with datasets'
+subtitle: 'PSC 103B - Spring 2024'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Installing and loading packages
+
+There are many functions available in base R. By this I mean, if you open R right after installing it, there are a number of functions already available for you to use. All the functions we've used in last week's lab are base R functions. They're available as soon as you install R.
+
+But we can add more functions (other than the ones available in base R), by installing and loading packages that contain different functions.
+
+There's something important to understand about packages. There is a difference between installing and loading a package. First, you have to install the package. This downloads it onto your computer and puts it somewhere R can find it. You only have to install a package once (unless you uninstall and install R again).
+
+We can use the `install.packages()` function to do this. The name of the package goes in the parenthesis and must be **inside quotation marks**!
+
+```{r eval=FALSE}
+install.packages("tidyverse", dependencies = TRUE)
+```
+
+`dependencies = TRUE` will tell your computer to also install any packages that package needs to work properly. This usually makes for a smoother installation process. While you are doing this, you may be prompted to answer a question with yes (y) or no (n). You should answer that by typing y in the console and pressing enter. It's generally safe to answer the questions with yes if you don't understand them.
+
+After installing the package it is now on your computer. And you can easily use it **after** loading the package. Every time you open R you must load (But not install!) all the packages you want to use. You can use the library() function to do this. And you don't need quotation marks.  
+
+```{r}
+library(tidyverse)
+```
+
+Summary:
+
+- A package must be installed before it can be loaded (use `install.packages()`).
+- A package must be loaded before it can be used (use `library()`).
