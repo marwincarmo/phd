@@ -34,3 +34,196 @@ Summary:
 
 - A package must be installed before it can be loaded (use `install.packages()`).
 - A package must be loaded before it can be used (use `library()`).
+
+# Tidyverse
+
+In R, there are always multiple ways to do the same thing, so you might see
+code that looks different than what you're about to learn, but does the same thing. That's okay. Today we'll learn how to read data into R (for example, an excel file or other types of data you might have on your computer) and how to select and change the information on that dataset. We'll do all this using a set of packages called tidyverse. Tidyverse is nice because the functions are more intuitive, and we hope that will make it easier to learn. There are also plenty of online resources that can help you when you run into problems (which you inevitably will -- this is just a normal part of coding!).
+
+So if you haven't done that yet, go ahead and load tidyverse using the `library()` function.
+
+# Working Directory & Reading Data into R 
+
+There are different kinds of datafiles that you might want to read into R. Different data files often require different code to be read in successfully. Today we'll cover how to read in one kind of data file
+In the future, if you need to read in another kind and this code isn't working... Google it! An example google search... "How to read a .rda file in R".
+
+You should have all downloaded a the datafile 'Lab2Data.csv' from Canvas.  We'll go over how to load this dataset into R.
+
+(If you are using RStudio Could, this process will be a little different, 
+but not too complicated. You'll need to first upload the dataset
+you downloaded from canvas into RStudio Cloud using the upload button
+that's in the Files tab on the lower right hand corner of your screen.)
+
+First we need to set the working directory. We need to tell R where to look for the file we want to read into R. So we set the working directory to the folder where the data file is. If you just downloaded the datafile it'll likely be in your Downloads or Desktop folder. Check where the file is before setting the working directory!
+
+We can use the `setwd()` function. We can put the path to the folder inside the function. **IMPORTANT**: This path *MUST* be within quotations.
+
+```{r eval=FALSE}
+# Example
+setwd("C:/Users/marwin/OneDrive/Documentos/Rprojects/phd/24-Spring/psc103b-sq24/lab2") 
+       # You will need to change this ^^^ path!
+```
+
+The `getwd()` function tells you what folder is currently the working directly. This is helpful to check that the working directory is set to the folder you want.
+
+Another way to change the working directory in RStudio is by using the point & click options. Go to Session > Set Working Directory > Choose Directory. This will open up a new window. Navigate to the folder you want to be your working directory. When you get to that folder, click the option 'Open'. This also works for RStudio Cloud in a similar way. You can use `getwd()` to check that it worked.
+
+The kind of file we have now is a CSV file, or a comma separated values file. This is just a simplified type of spreadsheet that has rows and columns and values in the cells of those rows and columns.
+
+To read in a csv file, we can use the `read_csv()` function that comes in one of the packages in tidyverse. When you read in a datafile, you need to save it under some label. We'll save our data file as dat.
+
+```{r}
+dat <- read_csv(file = 'Lab2Data.csv')
+  # Name of data file needs to be within quotations
+```
+
+*Note*: never name your data "data". This is because `data()` is a function
+is R and if you name any of your variables or objects the same name
+as one of its functions, it won't know which one you're talking about.
+
+*Note 2*: `read_csv()` helpfully tells you the data type it assigned each
+of the columns you just read in. col_double means it's numeric, while
+col_character means... you guessed it, it's character!
+Can you guess what it says when it identifies one of the columns
+as being type logical?
+
+Let's look at our data:
+
+```{r}
+head(dat) 
+# prints out 5 first rows, to see whole dataset use View(dat) 
+# or click the object in the Environment pane on the right.
+
+```
+
+- Columns labels key 
+  - e = extraversion
+  - n = neuroticism 
+  - c = conscientiousness
+  - a = agreeableness
+  - o = openness
+  - pa = positive affect
+  - na = negative affect 
+  - ls = life satisfaction 
+
+We can look up some features of the dataset we just read in:
+
+```{r}
+class(dat) # What kind of data structure is dat? 
+```
+
+```{r}
+dim(dat) # What are the dimensions of dat? 
+```
+
+```{r}
+str(dat) 
+# This is a new function.
+# By looking at the output what do you think the str() function tells you? 
+```
+
+```{r}
+summary(dat)
+# The summary() function will give you the breakdown of a bunch of stats
+# for each column.
+```
+
+How many missing values are there in the extraversion variable?
+
+```{r}
+sum(is.na(dat$e))
+```
+
+If you look at the last answer we got, it's a little confusing to read, right? You have to start with the innermost thing, and think about what that is (a vector of numbers), and then imagine what the next function that's around that will do to it (test to see if it's NA or not and return a vector of TRUE/FALSES) and then what the other thing around it does (sums all the TRUE values). With just three steps, it's not too terrible, but you can imagine it can get a lot worse if you need to use a lot of functions, one on top of the other. It's just not natural for most people to read from the inside out. Thankfully, there's a better way!
+
+# Pipe
+
+This is called a pipe: `%>%` . You can insert one by holding Command+Shift+M (Mac) or Ctrl+Shift+M (Windows). So you don't have to type all the symbols. But what is it for? Basically, for sending the result of one operation into another function. Taking the example above, we could do the following:
+
+```{r}
+sum(is.na(dat$e))
+```
+
+or we could use a pipe, and do the following:
+
+```{r}
+dat$e %>% is.na() %>% sum()
+```
+
+The result of whatever comes before the pipe gets inserted into the function that comes after it. This makes it easier to read. You can also put each thing on a different line, like this:
+
+```{r}
+dat$e %>% 
+  is.na() %>% 
+  sum()
+```
+
+This might seem silly with short, simple functions like these, but as
+functions get more complex, this will make writing and reading code a lot
+easier and more organized.
+
+# Subsetting Datasets
+
+Last week we talked about subsetting vectors.
+
+```{r}
+ex.vec <- c(1:15)
+```
+
+Do you remember how to subset the 10th element in ex.vec?
+
+```{r}
+ex.vec[10]
+```
+
+And do you remember how to subset when we have a two-dimensional data structure? We can still use `[]` , but now we have to tell R what rows *and* what columns we want to subset `dat[r#, c#]`.
+
+If we only need one row (e.g., extraversion, the 2nd row), that's easy:
+
+```{r}
+dat[ , 2] # just leave the row number empty. Remember the comma though!
+dat[ ,"e"] # we can also do this
+dat$e #or this
+
+```
+
+But how do we do this if we want more columns? Try to use what we learned last week to pull out all the Big Five columns (e, a, c, n, and o) and save them to a new data frame, big5.
+
+```{r}
+big5 <- dat[,c("e", "a", "c", "n", "o")]
+```
+
+But that's a little clunky. There's a better way to do that using `select()`, one of the tidyverse functions. `select()` does exactly what it sounds like: it selects the columns you tell it to. All you need to do is tell it where to find the columns, and then which columns you want, like this:
+
+```{r}
+dat %>% 
+  select(c(e, a, c, n, o))
+
+```
+
+We can save that to a new object:
+
+```{r}
+big5 <- dat %>% 
+  select(c(e, a, c, n, o))
+```
+
+It knows to expect the first argument--that means the thing that comes first after the parenthesis--to be a dataframe, and everything that comes after to be column names in that dataframe. Please note that, within the select function (and many other tidyverse functions) you don't need to put the column names in quotes, which makes it simpler and faster to use.
+
+# Describing the Data
+
+A  useful way to count and display frequencies in R
+is the `table()` function. For example, we can use the `table()` function to count values in a column.
+
+```{r}
+table(dat$fave_animal)
+```
+
+Can we use it with a continuous variable? 
+
+```{r}
+table(dat$e)
+```
+
+
+
