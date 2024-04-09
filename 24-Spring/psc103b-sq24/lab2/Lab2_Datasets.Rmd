@@ -1,7 +1,12 @@
 ---
 title: 'Lab 2: Working with datasets'
 subtitle: 'PSC 103B - Spring 2024'
-output: pdf_document
+output: 
+  pdf_document:
+    latex_engine: lualatex
+    
+header-includes:
+  - \usepackage{amsmath}
 ---
 
 ```{r setup, include=FALSE}
@@ -264,9 +269,9 @@ Sometimes you'll want to compute your descriptive statistics by group.
 Specifically, you need to do this if your research question focuses
 on group differences (e.g., between experimental conditions or gender)
 
-You can do this using the group_by() and summarize() functions.
+You can do this using the `group_by()` and `summarize()` functions.
 For example, let's say that we want to know the means & standard deviations
-for agreeableness for cat people vs. dog peoplein our dataset.
+for agreeableness for cat people vs. dog people in our dataset.
 
 First, we have a small problem. Can you spot it by looking at this table?
 
@@ -277,7 +282,7 @@ table(dat$fave_animal)
 We're only interested in cat and dog people, but there are a bunch of people
 who said their favorite animal is something else, or "other". So first we need
 to separate the observations for cat and dog people from those other
-people's who have other favorite animals. One way to do that is to filter()
+people's who have other favorite animals. One way to do that is to `filter()`
 our dataset.
 
 The `filter()` function works very similarly to the `select()` function we just
@@ -409,7 +414,7 @@ Steps for calculating the confidence interval:
 
 1. Calculate the sample mean
 2. Calculate the standard error
-  - $SD = \sqrt{n}$
+  - $SE = \frac{SD}{\sqrt{n}}$
   - Let's assume sd = 1
 3. Calculate the z-score multiplier for your desired CI
   - When calculating a 95% CI for a normal distribution, this multiplier ($z_{95}$) always equals 1.96, but we'll learn to extract that value from a function in R so we can calculate other CIs
@@ -452,6 +457,7 @@ lower right side of the screen.
 x <- seq(-4, 4, length=100)
 Density <- dnorm(x)
 plot(x, Density,  type="l", lty=1)
+
 ```
 Looking at this plot, if you started coloring the area under the curve from left to right,
 what value do you think would be on the x-axis when you hit 50%? You can test if you're right
@@ -478,6 +484,7 @@ How much do you need to fill in to leave 2.5%?
 ```{r}
 qnorm(0.975)
 ```
+
 Because the curve is symmetrical, you could also get the negative value by 
 entering 0.025 (2.5%) into `qnorm()`:
 
@@ -518,7 +525,7 @@ and the standard deviation is 1
 
 We can calculate z scores in R (or by hand!)
 
-Formula: $z = \frac{(x -\bar{x})}{\sigma_{x}} $
+Formula: $z = \frac{(x -\bar{x})}{\sigma_{x}}$
 
 - $x$ is a specific value, for example one person's extraversion score
 - $\bar{x}$ is the sample mean of extraversion
@@ -564,16 +571,16 @@ Look at zs.e, what does it look like? What is its mean and SD?
 ```{r}
 zs.e
 
-mean(zs.e)
+mean(zs.e, na.rm = TRUE)
 
-sd(zs.e)
+sd(zs.e, na.rm = TRUE)
 ```
 
 # Coding Challenge
 
 You're now going to do the things that we've covered in this lab but without code to follow along to. Work with each other, but don't copy others' answers!
 
-1. Pick a variable continuous from our dat dataset. In other words a variable other than `fave_animal` and `e_level`.
+1. Pick a variable continuous from our dat dataset. In other words a variable other than `fave_animal` and `e`.
 2. Explore the variable by looking at it's mean, variance, sd and whether there are any missing values. Also calculate these statistics based on sub-groups.
 3. Calculate a confidence interval around the mean of that variable.
 4. Convert some (or all!) of the scores into z-scores.

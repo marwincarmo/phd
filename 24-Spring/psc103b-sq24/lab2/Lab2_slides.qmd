@@ -1,0 +1,578 @@
+---
+title: "Lab 2: Working with datasets"
+subtitle: "PSC 103B"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    callout-icon: false
+    # height: 900
+    footer: "PSC 103B - Statistical Analysis of Psychological Data"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+execute:
+  echo: true
+editor_options: 
+  chunk_output_type: console
+---
+
+## Who am I
+
+-   1st Year Graduate Student in Quantitative Psychology
+
+-   MSc in Psychiatry at University of Sao Paulo, Brazil
+
+-   Advised by Dr. Philippe Rast
+
+-   Studying intraindividual variability
+
+# Installing and loading packages
+
+## Installing and loading packages
+
+- We can add more functions (other than the ones available in base R), by installing and loading packages that contain different functions.
+
+- Before loading a package, we have to install it.
+
+- You only have to install a package once (unless you uninstall and install R again).
+
+- We can use the `install.packages()` function to do this.
+
+:::fragment
+```{r eval=FALSE}
+install.packages("tidyverse", dependencies = TRUE)
+```
+:::
+
+::: {.notes}
+dependencies = TRUE will tell your computer to also install any packages that package needs to work properly.
+:::
+
+## Installing and loading packages
+
+Every time you open R you must load (But not install!) all the packages you want to use.
+
+```{r}
+library(tidyverse)
+
+# ── Attaching core tidyverse packages ────────────────────────────────────────────── tidyverse 2.0.0 ──
+# ✔ dplyr     1.1.3     ✔ readr     2.1.4
+# ✔ forcats   1.0.0     ✔ stringr   1.5.0
+# ✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+# ✔ lubridate 1.9.3     ✔ tidyr     1.3.0
+# ✔ purrr     1.0.2     ── Conflicts ──────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+# ✖ dplyr::filter() masks stats::filter()
+# ✖ dplyr::lag()    masks stats::lag()
+# ℹ Use the conflicted package to force all conflicts to become errors
+```
+
+## Tidyverse
+
+- In R, there are always multiple ways to do the same thing.
+
+- Today we'll learn how to read data into R and how to select and change the information on that dataset.
+
+- We'll do all this using a set of packages called tidyverse.
+
+- Load tidyverse using the `library()` function.
+
+## Working Directory & Reading Data into R 
+
+- Download the datafile 'Lab2Data.csv' from Canvas.
+
+- We need to tell R where to look for the file we want to read into R.
+
+- We can use the `setwd()` function.
+
+:::fragment
+```{r eval=FALSE}
+# Example
+setwd("C:/Users/marwin/OneDrive/Documentos/Rprojects/phd/24-Spring/psc103b-sq24/lab2") 
+```
+:::
+
+## Working Directory & Reading Data into R 
+
+- The `getwd()` function tells you what folder is currently the working directly. This is helpful to check that the working directory is set to the folder you want.
+
+- The kind of file we have now is a CSV file.
+
+- To read in a csv file, we can use the `read_csv()` function. This function is part of the `readr` package, included when you install and load `tidyverse`.
+
+:::fragment
+```{r}
+dat <- read_csv(file = 'Lab2Data.csv')
+
+# Rows: 205 Columns: 10── Column specification ──────────────────────────────────────────────────────────────────────────────
+# Delimiter: ","
+# chr (1): fave_animal
+# dbl (9): id, e, n, c, a, o, pa, na, ls
+# ℹ Use `spec()` to retrieve the full column specification for this data.
+# ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+:::
+
+## Inspecting Data
+
+
+```{r}
+head(dat) 
+```
+
+::: columns
+::: {.column width="50%"}
+- e = extraversion
+- n = neuroticism 
+- c = conscientiousness
+- a = agreeableness
+:::
+
+::: {.column width="50%"}
+- o = openness
+- pa = positive affect
+- na = negative affect 
+- ls = life satisfaction 
+:::
+:::
+
+## Inspecting Data
+
+We can look up some features of the dataset we just read in:
+
+```{r}
+class(dat) # class
+```
+
+```{r}
+dim(dat) # dimension
+```
+
+```{r}
+str(dat) # structure
+```
+
+## Inspecting Data
+
+```{r}
+summary(dat)
+```
+## Inspecting Data
+
+How many missing values are there in the extraversion variable?
+
+```{r}
+sum(is.na(dat$e))
+```
+
+Let's break it down:
+
+- First, we start with a vector of numbers: `dat$e`
+
+- Next, we test to see if it's NA or not and return a vector of TRUE/FALSE.
+
+- Finally, we sum all the TRUE values.
+
+- Do you think that's hard to read whats going on? Many people think it is.
+
+## The pipe
+
+- This is called a pipe: `%>%`
+
+- You can insert one by holding Command+Shift+M (Mac) or Ctrl+Shift+M (Windows).
+
+- It works by sending the result of one operation into another function:
+
+:::fragment
+```{r}
+dat$e %>% 
+  is.na() %>% 
+  sum()
+```
+:::
+
+## Subsetting Datasets
+
+```{r}
+ex.vec <- c(1:15)
+```
+
+- Do you remember how to subset the 10th element in ex.vec?
+
+:::fragment
+```{r}
+ex.vec[10]
+```
+:::
+
+- If we have a two dimentional structure, we need to tell R what rows *and* what columns we want to subset `dat[r#, c#]`.
+
+## Subsetting Datasets
+
+- How can we extract the second row of our dataset?
+
+:::fragment
+```{r}
+dat[ , 2] 
+dat[ ,"e"] 
+dat$e 
+```
+:::
+
+## Subsetting Datasets
+
+- Try to use what we learned last week to pull out all the Big Five columns (e, a, c, n, and o) and save them to a new data frame, big5.
+
+:::fragment
+```{r}
+big5 <- dat[,c("e", "a", "c", "n", "o")]
+
+head(big5)
+```
+:::
+
+## Subsetting Datasets using `select()`
+
+- `select()` selects the columns you tell it to.
+
+- You need to tell it where to find the columns, and then which columns you want:
+
+:::fragment
+```{r}
+big5 <- dat %>% 
+  select(c(e, a, c, n, o))
+```
+:::
+
+- The first argument is the dataframe's name, and everything that comes after to be column names in that dataframe.
+
+## Describing the Data
+
+- A  useful way to count and display frequencies in R is the `table()` function.
+
+:::fragment
+```{r}
+table(dat$fave_animal)
+```
+:::
+
+- Can we use it with a continuous variable? 
+
+:::fragment
+```{r}
+table(dat$e)
+```
+:::
+
+## Describing the Data
+
+- We can also describe our data by calculating some descriptive statistics.
+
+- Descriptive statistics functions
+  - `mean()`
+  - `var()`
+  - `sd()`
+  - `median()`
+
+:::fragment
+```{r}
+mean(big5$e)
+```
+:::
+
+## Describing the Data
+
+- Why do we get an `NA`?
+
+:::fragment
+```{r}
+mean(big5$e, na.rm = TRUE)
+```
+:::
+
+:::fragment
+```{r}
+var(big5$e, na.rm = TRUE)
+```
+:::
+
+:::fragment
+```{r}
+sd(big5$e, na.rm = TRUE)
+```
+:::
+
+## Describing the Data
+
+- Sometimes you'll want to compute your descriptive statistics by group.
+
+- You can do this using the `group_by()` and `summarize()` functions.
+
+- For example, let's say that we want to know the means & standard deviations for agreeableness for cat people vs. dog people in our dataset.
+
+- First we need to separate the observations for cat and dog people.
+
+- The `filter()` function works very similarly to the `select()` function, but it selects rows to keep.
+
+## Filtering the Data
+
+- The first argument is the dataframe and the next ones are the rows to keep.
+
+- We want the rows (people) who are NOT "other".
+
+:::fragment
+```{r}
+filter(dat, fave_animal != "other")
+```
+:::
+
+## Conditional operators
+
+- `==` means "equal to"
+- `>` means "greater than"
+- `<` means "smaller than"
+- `>=` means "greater or equal to"
+- `<=` means "smaller or equal to"
+
+## Filtering the Data
+
+```{r}
+cats_dogs <- filter(dat, fave_animal != "other")
+```
+
+:::{.callout-caution title="Exercise"}
+Now you try it! Select only the rows with cat people **and** extraversion higher than 3. 
+:::
+
+:::fragment
+```{r}
+filter(dat, fave_animal == "cat", e > 3)
+```
+:::
+
+## Grouping and summarizing the data
+
+- Now that we have a smaller dataset with only cat and dog people, we can calculate the means and SDs for agreeableness for each group.
+
+- First, we start by grouping the dataset we have with `group_by().`
+
+- The first argument is the dataframe and the second the variable we want to use to make the groups
+
+:::fragment
+```{r}
+cats_dogs %>% 
+  group_by(fave_animal)
+```
+:::
+
+::: {.notes}
+You can think of `group_by()` as sort of separating your dataset into smaller datasets based on the different levels of the variable you give it; so if I group by `fave_animal`, what's going on behind the scenes is R and tidyverse are splitting this into one dataset of cat people, and then one dataset of dog people.
+:::
+
+## Grouping and summarizing the data
+
+- Then, we use `summarize()` to get the mean of the variable `a`. We want that mean to be called `M`.
+
+:::fragment
+```{r}
+cats_dogs %>% 
+  group_by(fave_animal) %>% 
+  summarize(M = mean(a, na.rm = TRUE))
+```
+:::
+
+## Grouping and summarizing the data
+
+- You can also group by more than one grouping variable.
+
+:::fragment
+```{r}
+cats_dogs <- mutate(
+  cats_dogs, # mutate is used to create a new variable in the dataframe cats_dogs
+  e_level = if_else(
+    e > 3, "high", "low"
+    )
+  ) # we're creating e_level, and saying that it's "high" 
+    # if e is bigger than 3, "low" otherwise
+```
+:::
+
+:::fragment
+```{r}
+cats_dogs %>% 
+  group_by(fave_animal, e_level) %>% 
+  summarize(M = mean(a, na.rm = TRUE))
+```
+:::
+
+## Grouping and summarizing the data
+
+- And summarize variables with more than one function at a time:
+
+```{r}
+cats_dogs %>% 
+  group_by(fave_animal) %>% 
+  summarize(M = mean(a, na.rm = TRUE), SD = sd(a, na.rm = TRUE)) 
+```
+
+# Confidence Intervals
+
+## Confidence Intervals
+
+Steps for calculating the confidence interval:
+
+- Calculate the sample mean
+- Calculate the standard error
+  - $SE = \frac{SD}{\sqrt{n}}$
+  - Let's assume sd = 1
+- Calculate the z-score multiplier for your desired CI
+  - When calculating a 95% CI for a normal distribution, $z_{95}$ equals 1.96.
+- Construct CI around sample mean
+  - $CI =\bar{x} \pm z_{95} \times SE$
+  
+## Confidence Intervals
+
+### Step 1
+
+```{r}
+e.mean <- mean(dat$e, na.rm = TRUE)
+e.mean
+```
+
+### Step 2
+
+```{r}
+n <- nrow(dat)
+se <- 1/sqrt(n)
+```
+
+## Confidence Intervals
+
+### Step 3
+
+1.96 is the value in the normal distribution that leaves 2.5% of the values to one side, and 2.5% to the other.
+
+```{r echo=FALSE}
+x <- seq(-4, 4, length=100)
+Density <- dnorm(x)
+plot(x, Density,  type="l", lty=1)
+
+x <- seq(1.96, 5, length = 100)
+z <- (dnorm(x))
+polygon(c(1.96, x, 8), c(0, z, 0), col = rgb(1, 0, 0, 0.5))
+
+x <- seq(-5, -1.96, length = 100)
+z <- (dnorm(x))
+polygon(c(-8, x, -1.96), c(0, z, 0), col = rgb(1, 0, 0, 0.5))
+```
+
+## Confidence Intervals
+
+- `qnorm()` will give us the z-value associated with the cumulative proportion of the normal curve we specify:
+
+:::fragment
+```{r}
+qnorm(0.975)
+```
+:::
+
+:::fragment
+```{r}
+qnorm(.025)
+```
+:::
+
+:::fragment
+```{r}
+z_95 <- qnorm(.975) # saving for the next step
+```
+:::
+
+## Confidence Intervals
+
+:::{.callout-caution title="Exercise"}
+What value would you give `qnorm()` if you wanted to find the multiplier to construct a 90% CI? What about a 99% CI? 
+:::
+
+:::fragment
+```{r}
+# 90% CI
+qnorm(0.95)
+
+# 99% CI
+qnorm(.995)
+```
+:::
+
+## Confidence Intervals
+
+### Step 4
+
+$CI =\bar{x} \pm z_{95} \times SE$
+
+```{r}
+lowerlim <- e.mean - (z_95 * se) #this is the lower limit of your CI
+upperlim <- e.mean + (z_95 * se) #this is the upper limit of your CI
+
+lowerlim
+upperlim
+```
+
+## Z scores
+
+- Z scores are standardized values, where the mean of the variable is 0
+and the standard deviation is 1.
+
+- $z = \frac{(x -\bar{x})}{\sigma_{x}}$
+
+- Let's calculate the z-score for one extraversion score:
+
+:::fragment
+```{r}
+e.score <- dat[5 , "e"]
+e.sd <- sd(dat$e, na.rm = TRUE)
+(z.e <- (e.score - e.mean) / e.sd)
+
+```
+:::
+
+- This individual has an extraversion score that is about 2 standard deviations below the mean.
+
+## Z scores
+
+- Let's repeat the steps above for all extraversion scores at once:
+
+:::fragment
+```{r}
+e.scores <- dat$e 
+zs.e <- (e.scores - e.mean) / e.sd
+```
+:::
+
+:::fragment
+```{r}
+mean(zs.e)
+
+sd(zs.e)
+```
+:::
+
+## Coding Challenge
+
+1. Pick a variable continuous from our dat dataset. In other words a variable other than `fave_animal` and `e`.
+2. Explore the variable by looking at it's mean, variance, sd and whether there are any missing values. Also calculate these statistics based on sub-groups.
+3. Calculate a confidence interval around the mean of that variable.
+4. Convert all of the scores into z-scores.

@@ -1,10 +1,10 @@
 ##########################################################################
 ###                           PSC 103B                                 ###
-###                          Spring 2022                               ###
+###                          Spring 2024                               ###
 ###                         Lab Session 2                              ###
 ###                                                                    ###
 ###                      Working with Datasets                         ###
-###                     Instructor: Danielle Siegel                    ###
+###                     Instructor: Marwin Carmo                       ###
 ###                    Created by: Simran Johal                        ### 
 ##########################################################################
 
