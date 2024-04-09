@@ -32,6 +32,9 @@ editor_options:
 
 ## Who am I
 
+
+-   Marwin Carmo (he/him)
+
 -   1st Year Graduate Student in Quantitative Psychology
 
 -   MSc in Psychiatry at University of Sao Paulo, Brazil
@@ -39,6 +42,8 @@ editor_options:
 -   Advised by Dr. Philippe Rast
 
 -   Studying intraindividual variability
+
+-   Office hours: Monday 1-2PM at Young Hall 266
 
 # Installing and loading packages
 
@@ -207,7 +212,7 @@ dat$e %>%
 ## Subsetting Datasets
 
 ```{r}
-ex.vec <- c(1:15)
+(ex.vec <- c(1:15))
 ```
 
 - Do you remember how to subset the 10th element in ex.vec?
@@ -222,19 +227,31 @@ ex.vec[10]
 
 ## Subsetting Datasets
 
-- How can we extract the second row of our dataset?
+How can we extract the second row of our dataset?
 
-:::fragment
 ```{r}
-dat[ , 2] 
 dat[ ,"e"] 
-dat$e 
 ```
-:::
 
 ## Subsetting Datasets
 
-- Try to use what we learned last week to pull out all the Big Five columns (e, a, c, n, and o) and save them to a new data frame, big5.
+How can we extract the second row of our dataset?
+
+```{r}
+dat[ ,"e"] 
+```
+
+## Subsetting Datasets
+
+How can we extract the second row of our dataset?
+
+```{r}
+dat$e
+```
+
+## Subsetting Datasets
+
+- Try to use what you learned last week to pull out all the Big Five columns (`e`, `a`,`c`, `n`, and `o`) and save them to a new data frame, `big5.`
 
 :::fragment
 ```{r}
@@ -400,13 +417,10 @@ cats_dogs %>%
 
 :::fragment
 ```{r}
-cats_dogs <- mutate(
-  cats_dogs, # mutate is used to create a new variable in the dataframe cats_dogs
-  e_level = if_else(
-    e > 3, "high", "low"
-    )
-  ) # we're creating e_level, and saying that it's "high" 
-    # if e is bigger than 3, "low" otherwise
+cats_dogs <- cats_dogs %>%
+  mutate(e_level = 
+           if_else(e > 3, "high", "low")
+         )
 ```
 :::
 
@@ -422,17 +436,17 @@ cats_dogs %>%
 
 - And summarize variables with more than one function at a time:
 
+:::fragment
 ```{r}
 cats_dogs %>% 
   group_by(fave_animal) %>% 
   summarize(M = mean(a, na.rm = TRUE), SD = sd(a, na.rm = TRUE)) 
 ```
+:::
 
 # Confidence Intervals
 
 ## Confidence Intervals
-
-Steps for calculating the confidence interval:
 
 - Calculate the sample mean
 - Calculate the standard error
@@ -459,16 +473,27 @@ n <- nrow(dat)
 se <- 1/sqrt(n)
 ```
 
+:::{.notes}
+- Calculate the sample mean
+- Calculate the standard error
+  - $SE = \frac{SD}{\sqrt{n}}$
+  - Let's assume sd = 1
+- Calculate the z-score multiplier for your desired CI
+  - When calculating a 95% CI for a normal distribution, $z_{95}$ equals 1.96.
+- Construct CI around sample mean
+  - $CI =\bar{x} \pm z_{95} \times SE$
+:::
+
 ## Confidence Intervals
 
 ### Step 3
 
 1.96 is the value in the normal distribution that leaves 2.5% of the values to one side, and 2.5% to the other.
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.align='center', fig.width=8}
 x <- seq(-4, 4, length=100)
 Density <- dnorm(x)
-plot(x, Density,  type="l", lty=1)
+plot(x, Density,  type="l", lty=1, xlab = "z-value", ylab = "Density")
 
 x <- seq(1.96, 5, length = 100)
 z <- (dnorm(x))
@@ -478,6 +503,17 @@ x <- seq(-5, -1.96, length = 100)
 z <- (dnorm(x))
 polygon(c(-8, x, -1.96), c(0, z, 0), col = rgb(1, 0, 0, 0.5))
 ```
+
+:::{.notes}
+- Calculate the sample mean
+- Calculate the standard error
+  - $SE = \frac{SD}{\sqrt{n}}$
+  - Let's assume sd = 1
+- Calculate the z-score multiplier for your desired CI
+  - When calculating a 95% CI for a normal distribution, $z_{95}$ equals 1.96.
+- Construct CI around sample mean
+  - $CI =\bar{x} \pm z_{95} \times SE$
+:::
 
 ## Confidence Intervals
 
@@ -564,15 +600,15 @@ zs.e <- (e.scores - e.mean) / e.sd
 
 :::fragment
 ```{r}
-mean(zs.e)
+mean(zs.e, na.rm = TRUE)
 
-sd(zs.e)
+sd(zs.e, na.rm = TRUE)
 ```
 :::
 
 ## Coding Challenge
 
-1. Pick a variable continuous from our dat dataset. In other words a variable other than `fave_animal` and `e`.
+1. Pick a variable continuous from our dat dataset. In other words a variable other than `fave_animal` and `e_level`.
 2. Explore the variable by looking at it's mean, variance, sd and whether there are any missing values. Also calculate these statistics based on sub-groups.
 3. Calculate a confidence interval around the mean of that variable.
 4. Convert all of the scores into z-scores.

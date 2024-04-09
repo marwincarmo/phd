@@ -580,7 +580,7 @@ sd(zs.e, na.rm = TRUE)
 
 You're now going to do the things that we've covered in this lab but without code to follow along to. Work with each other, but don't copy others' answers!
 
-1. Pick a variable continuous from our dat dataset. In other words a variable other than `fave_animal` and `e`.
+1. Pick a variable continuous from our dat dataset. In other words a variable other than `fave_animal` and `e_level`.
 2. Explore the variable by looking at it's mean, variance, sd and whether there are any missing values. Also calculate these statistics based on sub-groups.
 3. Calculate a confidence interval around the mean of that variable.
 4. Convert some (or all!) of the scores into z-scores.

@@ -1220,10 +1220,12 @@ Marwin Carmo
 
 </section><section id="who-am-i" class="slide level2"><h2>Who am I</h2>
 <ul>
+<li class="fragment"><p>Marwin Carmo (he/him)</p></li>
 <li class="fragment"><p>1st Year Graduate Student in Quantitative Psychology</p></li>
 <li class="fragment"><p>MSc in Psychiatry at University of Sao Paulo, Brazil</p></li>
 <li class="fragment"><p>Advised by Dr. Philippe Rast</p></li>
 <li class="fragment"><p>Studying intraindividual variability</p></li>
+<li class="fragment"><p>Office hours: Monday 1-2PM at Young Hall 266</p></li>
 </ul></section><section><section id="installing-and-loading-packages" class="title-slide slide level1 center"><h1>Installing and loading packages</h1>
 
 </section><section id="installing-and-loading-packages-1" class="slide level2"><h2>Installing and loading packages</h2>
@@ -1438,14 +1440,17 @@ display:block!important;
 </div>
 </section><section id="subsetting-datasets" class="slide level2"><h2>Subsetting Datasets</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>ex.vec <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>(ex.vec <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15</code></pre>
+</div>
 </div>
 <ul>
 <li class="fragment">Do you remember how to subset the 10th element in ex.vec?</li>
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>ex.vec[<span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>ex.vec[<span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 10</code></pre>
 </div>
@@ -1454,12 +1459,9 @@ display:block!important;
 <ul>
 <li class="fragment">If we have a two dimentional structure, we need to tell R what rows <em>and</em> what columns we want to subset <code>dat[r#, c#]</code>.</li>
 </ul></section><section id="subsetting-datasets-1" class="slide level2"><h2>Subsetting Datasets</h2>
-<ul>
-<li class="fragment">How can we extract the second row of our dataset?</li>
-</ul>
-<div class="fragment">
+<p>How can we extract the second row of our dataset?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>dat[ , <span class="dv">2</span>] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>dat[ ,<span class="st">&quot;e&quot;</span>] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 205 × 1
        e
@@ -1476,7 +1478,11 @@ display:block!important;
 10  2.3 
 # ℹ 195 more rows</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>dat[ ,<span class="st">&quot;e&quot;</span>] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="subsetting-datasets-2" class="slide level2"><h2>Subsetting Datasets</h2>
+<p>How can we extract the second row of our dataset?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>dat[ ,<span class="st">&quot;e&quot;</span>] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 205 × 1
        e
@@ -1493,7 +1499,11 @@ display:block!important;
 10  2.3 
 # ℹ 195 more rows</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>dat<span class="sc">$</span>e </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="subsetting-datasets-3" class="slide level2"><h2>Subsetting Datasets</h2>
+<p>How can we extract the second row of our dataset?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>dat<span class="sc">$</span>e</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  [1] 2.05 1.30 2.95 1.50 1.85 1.40 2.40 2.10 2.20 2.30 2.50   NA 2.65 2.00 3.00
  [16] 3.00 3.45 3.15 3.45 3.20 3.25 2.90 3.00 3.30 4.10 3.00 4.55 4.10 3.60 2.80
@@ -1511,16 +1521,16 @@ display:block!important;
 [196] 4.75 3.90 4.15 4.45 4.00 2.60 4.05 4.80 4.30 3.40</code></pre>
 </div>
 </div>
-</div>
-</section><section id="subsetting-datasets-2" class="slide level2"><h2>Subsetting Datasets</h2>
+</section><section id="subsetting-datasets-4" class="slide level2"><h2>Subsetting Datasets</h2>
 <ul>
-<li class="fragment">Try to use what we learned last week to pull out all the Big Five columns (e, a, c, n, and o) and save them to a new data frame, big5.</li>
+<li class="fragment">Try to use what you learned last week to pull out all the Big Five columns (<code>e</code>, <code>a</code>,<code>c</code>, <code>n</code>, and <code>o</code>) and save them to a new data frame, <code>big5.</code>
+</li>
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>big5 <span class="ot">&lt;-</span> dat[,<span class="fu">c</span>(<span class="st">&quot;e&quot;</span>, <span class="st">&quot;a&quot;</span>, <span class="st">&quot;c&quot;</span>, <span class="st">&quot;n&quot;</span>, <span class="st">&quot;o&quot;</span>)]</span>
-<span id="cb28-2"><a href="#cb28-2"></a></span>
-<span id="cb28-3"><a href="#cb28-3"></a><span class="fu">head</span>(big5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>big5 <span class="ot">&lt;-</span> dat[,<span class="fu">c</span>(<span class="st">&quot;e&quot;</span>, <span class="st">&quot;a&quot;</span>, <span class="st">&quot;c&quot;</span>, <span class="st">&quot;n&quot;</span>, <span class="st">&quot;o&quot;</span>)]</span>
+<span id="cb29-2"><a href="#cb29-2"></a></span>
+<span id="cb29-3"><a href="#cb29-3"></a><span class="fu">head</span>(big5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
       e     a     c     n     o
@@ -1542,8 +1552,8 @@ display:block!important;
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>big5 <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
-<span id="cb30-2"><a href="#cb30-2"></a>  <span class="fu">select</span>(<span class="fu">c</span>(e, a, c, n, o))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>big5 <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
+<span id="cb31-2"><a href="#cb31-2"></a>  <span class="fu">select</span>(<span class="fu">c</span>(e, a, c, n, o))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <ul>
@@ -1554,7 +1564,7 @@ display:block!important;
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="fu">table</span>(dat<span class="sc">$</span>fave_animal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="fu">table</span>(dat<span class="sc">$</span>fave_animal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
   cat   dog other 
@@ -1567,7 +1577,7 @@ display:block!important;
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="fu">table</span>(dat<span class="sc">$</span>e)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="fu">table</span>(dat<span class="sc">$</span>e)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 1.15 1.25  1.3  1.4  1.5  1.7 1.85    2 2.05  2.1  2.2  2.3 2.35  2.4 2.45  2.5 
@@ -1596,7 +1606,7 @@ display:block!important;
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a><span class="fu">mean</span>(big5<span class="sc">$</span>e)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="fu">mean</span>(big5<span class="sc">$</span>e)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] NA</code></pre>
 </div>
@@ -1608,7 +1618,7 @@ display:block!important;
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="fu">mean</span>(big5<span class="sc">$</span>e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a><span class="fu">mean</span>(big5<span class="sc">$</span>e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 3.266</code></pre>
 </div>
@@ -1616,7 +1626,7 @@ display:block!important;
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a><span class="fu">var</span>(big5<span class="sc">$</span>e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="fu">var</span>(big5<span class="sc">$</span>e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.4936372</code></pre>
 </div>
@@ -1624,7 +1634,7 @@ display:block!important;
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="fu">sd</span>(big5<span class="sc">$</span>e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a><span class="fu">sd</span>(big5<span class="sc">$</span>e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.7025932</code></pre>
 </div>
@@ -1644,7 +1654,7 @@ display:block!important;
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="fu">filter</span>(dat, fave_animal <span class="sc">!=</span> <span class="st">&quot;other&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="fu">filter</span>(dat, fave_animal <span class="sc">!=</span> <span class="st">&quot;other&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 146 × 10
       id     e     n     c     a     o    pa    na    ls fave_animal
@@ -1677,7 +1687,7 @@ display:block!important;
 <code>&lt;=</code> means “smaller or equal to”</li>
 </ul></section><section id="filtering-the-data-1" class="slide level2"><h2>Filtering the Data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a>cats_dogs <span class="ot">&lt;-</span> <span class="fu">filter</span>(dat, fave_animal <span class="sc">!=</span> <span class="st">&quot;other&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a>cats_dogs <span class="ot">&lt;-</span> <span class="fu">filter</span>(dat, fave_animal <span class="sc">!=</span> <span class="st">&quot;other&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-caution no-icon callout-titled callout-style-default">
 <div class="callout-body">
@@ -1691,7 +1701,7 @@ display:block!important;
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a><span class="fu">filter</span>(dat, fave_animal <span class="sc">==</span> <span class="st">&quot;cat&quot;</span>, e <span class="sc">&gt;</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a><span class="fu">filter</span>(dat, fave_animal <span class="sc">==</span> <span class="st">&quot;cat&quot;</span>, e <span class="sc">&gt;</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 50 × 10
       id     e     n     c     a     o    pa    na    ls fave_animal
@@ -1718,8 +1728,8 @@ display:block!important;
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a>cats_dogs <span class="sc">%&gt;%</span> </span>
-<span id="cb48-2"><a href="#cb48-2"></a>  <span class="fu">group_by</span>(fave_animal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a>cats_dogs <span class="sc">%&gt;%</span> </span>
+<span id="cb49-2"><a href="#cb49-2"></a>  <span class="fu">group_by</span>(fave_animal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 146 × 10
 # Groups:   fave_animal [2]
@@ -1756,9 +1766,9 @@ display:block!important;
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>cats_dogs <span class="sc">%&gt;%</span> </span>
-<span id="cb50-2"><a href="#cb50-2"></a>  <span class="fu">group_by</span>(fave_animal) <span class="sc">%&gt;%</span> </span>
-<span id="cb50-3"><a href="#cb50-3"></a>  <span class="fu">summarize</span>(<span class="at">M =</span> <span class="fu">mean</span>(a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>cats_dogs <span class="sc">%&gt;%</span> </span>
+<span id="cb51-2"><a href="#cb51-2"></a>  <span class="fu">group_by</span>(fave_animal) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-3"><a href="#cb51-3"></a>  <span class="fu">summarize</span>(<span class="at">M =</span> <span class="fu">mean</span>(a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
   fave_animal     M
@@ -1774,20 +1784,17 @@ display:block!important;
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a>cats_dogs <span class="ot">&lt;-</span> <span class="fu">mutate</span>(</span>
-<span id="cb52-2"><a href="#cb52-2"></a>  cats_dogs, <span class="co"># mutate is used to create a new variable in the dataframe cats_dogs</span></span>
-<span id="cb52-3"><a href="#cb52-3"></a>  <span class="at">e_level =</span> <span class="fu">if_else</span>(</span>
-<span id="cb52-4"><a href="#cb52-4"></a>    e <span class="sc">&gt;</span> <span class="dv">3</span>, <span class="st">&quot;high&quot;</span>, <span class="st">&quot;low&quot;</span></span>
-<span id="cb52-5"><a href="#cb52-5"></a>    )</span>
-<span id="cb52-6"><a href="#cb52-6"></a>  ) <span class="co"># we&#39;re creating e_level, and saying that it&#39;s &quot;high&quot; </span></span>
-<span id="cb52-7"><a href="#cb52-7"></a>    <span class="co"># if e is bigger than 3, &quot;low&quot; otherwise</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a>cats_dogs <span class="ot">&lt;-</span> cats_dogs <span class="sc">%&gt;%</span></span>
+<span id="cb53-2"><a href="#cb53-2"></a>  <span class="fu">mutate</span>(<span class="at">e_level =</span> </span>
+<span id="cb53-3"><a href="#cb53-3"></a>           <span class="fu">if_else</span>(e <span class="sc">&gt;</span> <span class="dv">3</span>, <span class="st">&quot;high&quot;</span>, <span class="st">&quot;low&quot;</span>)</span>
+<span id="cb53-4"><a href="#cb53-4"></a>         )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a>cats_dogs <span class="sc">%&gt;%</span> </span>
-<span id="cb53-2"><a href="#cb53-2"></a>  <span class="fu">group_by</span>(fave_animal, e_level) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-3"><a href="#cb53-3"></a>  <span class="fu">summarize</span>(<span class="at">M =</span> <span class="fu">mean</span>(a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a>cats_dogs <span class="sc">%&gt;%</span> </span>
+<span id="cb54-2"><a href="#cb54-2"></a>  <span class="fu">group_by</span>(fave_animal, e_level) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-3"><a href="#cb54-3"></a>  <span class="fu">summarize</span>(<span class="at">M =</span> <span class="fu">mean</span>(a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 3
 # Groups:   fave_animal [2]
@@ -1806,10 +1813,11 @@ display:block!important;
 <ul>
 <li class="fragment">And summarize variables with more than one function at a time:</li>
 </ul>
+<div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a>cats_dogs <span class="sc">%&gt;%</span> </span>
-<span id="cb55-2"><a href="#cb55-2"></a>  <span class="fu">group_by</span>(fave_animal) <span class="sc">%&gt;%</span> </span>
-<span id="cb55-3"><a href="#cb55-3"></a>  <span class="fu">summarize</span>(<span class="at">M =</span> <span class="fu">mean</span>(a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">SD =</span> <span class="fu">sd</span>(a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a>cats_dogs <span class="sc">%&gt;%</span> </span>
+<span id="cb56-2"><a href="#cb56-2"></a>  <span class="fu">group_by</span>(fave_animal) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-3"><a href="#cb56-3"></a>  <span class="fu">summarize</span>(<span class="at">M =</span> <span class="fu">mean</span>(a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">SD =</span> <span class="fu">sd</span>(a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
   fave_animal     M    SD
@@ -1818,10 +1826,10 @@ display:block!important;
 2 dog          3.75 0.644</code></pre>
 </div>
 </div>
+</div>
 </section></section><section><section id="confidence-intervals" class="title-slide slide level1 center"><h1>Confidence Intervals</h1>
 
 </section><section id="confidence-intervals-1" class="slide level2"><h2>Confidence Intervals</h2>
-<p>Steps for calculating the confidence interval:</p>
 <ul>
 <li class="fragment">Calculate the sample mean</li>
 <li class="fragment">Calculate the standard error
@@ -1843,29 +1851,85 @@ display:block!important;
 </ul></section><section id="confidence-intervals-2" class="slide level2"><h2>Confidence Intervals</h2>
 <h3 id="step-1">Step 1</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a>e.mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(dat<span class="sc">$</span>e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb57-2"><a href="#cb57-2"></a>e.mean</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1"></a>e.mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(dat<span class="sc">$</span>e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb58-2"><a href="#cb58-2"></a>e.mean</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 3.266</code></pre>
 </div>
 </div>
 <h3 id="step-2">Step 2</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dat)</span>
-<span id="cb59-2"><a href="#cb59-2"></a>se <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(dat)</span>
+<span id="cb60-2"><a href="#cb60-2"></a>se <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="confidence-intervals-3" class="slide level2"><h2>Confidence Intervals</h2>
+<aside class="notes"><ul>
+<li>Calculate the sample mean</li>
+<li>Calculate the standard error
+<ul>
+<li><span class="math inline">\(SE = \frac{SD}{\sqrt{n}}\)</span></li>
+<li>Let’s assume sd = 1</li>
+</ul>
+</li>
+<li>Calculate the z-score multiplier for your desired CI
+<ul>
+<li>When calculating a 95% CI for a normal distribution, <span class="math inline">\(z_{95}\)</span> equals 1.96.</li>
+</ul>
+</li>
+<li>Construct CI around sample mean
+<ul>
+<li><span class="math inline">\(CI =\bar{x} \pm z_{95} \times SE\)</span></li>
+</ul>
+</li>
+</ul><style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside></section><section id="confidence-intervals-3" class="slide level2"><h2>Confidence Intervals</h2>
 <h3 id="step-3">Step 3</h3>
 <p>1.96 is the value in the normal distribution that leaves 2.5% of the values to one side, and 2.5% to the other.</p>
 
-<img data-src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABIAAAAMACAMAAABrYew+AAAAz1BMVEUAAAAAADoAAGYAOjoAOmYAOpAAZrY6AAA6OgA6Ojo6OmY6OpA6ZmY6ZpA6ZrY6kNtmAABmADpmOgBmOjpmZjpmZmZmZpBmkLZmkNtmtttmtv+AAACQOgCQOjqQZgCQZjqQZmaQkDqQkJCQkLaQtraQttuQtv+Q2/+2ZgC2Zjq2kDq2kGa2kLa2tpC2tra2ttu227a229u22/+2///bkDrbkGbbtmbbtpDbtrbb27bb29vb2//b////f3//tmb/25D/27b/29v//7b//9v///9ImVsCAAAACXBIWXMAAB2HAAAdhwGP5fFlAAAgAElEQVR4nO3da3sTR5qA4RYxETAhsGQUhsMus7uwmPEi1uAAdohtkP7/b9puHWydpequqvdQz/0hQ7gmovut8oNax2oMAEIq6QMAUC4CBEAMAQIghgABEEOAAIghQADEECAAYggQADEECIAYAgRADAECIIYAARBDgACIIUAAxBAgAGIIEAAxBAiAGAIEQAwBAiCGAAEQQ4AAiCFAAMQQIABiCBAAMQQIgBgCBEAMAQIghgABEEOAAIghQADEECAAYggQADEECIAYAgRADAECIIYAARBDgACIIUAAxBAgAGIIEAAxBAiAGAIEQAwBAiCGAAEQQ4AAiCFAAMQQIABiCBAAMQQIgBgCBEAMAQIghgABEEOAAIghQADEECAAYggQADEECIAYAgRADAECIIYAARBDgACIIUAAxBAgAGIIEAAxBAiAGAIEQAwBAiCGAAEQQ4AAiCFAAMQQIABiCBAAMQQIgBgCBEAMAQIghgABEEOAAIghQADEECAAYggQADEECIAYAgRADAECIIYAARBDgACIIUAAxBAgAGIIEAAxBAiAGAIEQAwBAiCGAAEQQ4AAiCFAAMQQIABiCBAAMQQIgBgCBEAMAQIghgABEEOAAIghQADEECAAYggQADEECIAYAgRADAECIIYAARBDgACIIUAAxBAgAGIIEAAxBAiAGAIEQAwBAiCGAAEQQ4AAiCFAAMQQIABiCBAAMQQIgBgCBEAMAQIghgABEEOAAIghQADEECAAYggQADEECIAYAgRADAECIIYAARBDgACIIUAAxBAgAGIIEAAxBAiAGAIEQAwBAiCGAAEQQ4AAiCFAAMQQ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" width="576" class="r-stretch"></section><section id="confidence-intervals-4" class="slide level2"><h2>Confidence Intervals</h2>
+<img data-src="data:image/png;base64,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" width="768" class="r-stretch quarto-figure-center"><aside class="notes"><ul>
+<li>Calculate the sample mean</li>
+<li>Calculate the standard error
+<ul>
+<li><span class="math inline">\(SE = \frac{SD}{\sqrt{n}}\)</span></li>
+<li>Let’s assume sd = 1</li>
+</ul>
+</li>
+<li>Calculate the z-score multiplier for your desired CI
+<ul>
+<li>When calculating a 95% CI for a normal distribution, <span class="math inline">\(z_{95}\)</span> equals 1.96.</li>
+</ul>
+</li>
+<li>Construct CI around sample mean
+<ul>
+<li><span class="math inline">\(CI =\bar{x} \pm z_{95} \times SE\)</span></li>
+</ul>
+</li>
+</ul><style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside></section><section id="confidence-intervals-4" class="slide level2"><h2>Confidence Intervals</h2>
 <ul>
 <li class="fragment">
 <code><a href="https://rdrr.io/r/stats/Normal.html">qnorm()</a></code> will give us the z-value associated with the cumulative proportion of the normal curve we specify:</li>
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a><span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a><span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.959964</code></pre>
 </div>
@@ -1873,7 +1937,7 @@ display:block!important;
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1"></a><span class="fu">qnorm</span>(.<span class="dv">025</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a><span class="fu">qnorm</span>(.<span class="dv">025</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -1.959964</code></pre>
 </div>
@@ -1881,7 +1945,7 @@ display:block!important;
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1"></a>z_95 <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(.<span class="dv">975</span>) <span class="co"># saving for the next step</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a>z_95 <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(.<span class="dv">975</span>) <span class="co"># saving for the next step</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </section><section id="confidence-intervals-5" class="slide level2"><h2>Confidence Intervals</h2>
@@ -1897,13 +1961,13 @@ display:block!important;
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a><span class="co"># 90% CI</span></span>
-<span id="cb65-2"><a href="#cb65-2"></a><span class="fu">qnorm</span>(<span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1"></a><span class="co"># 90% CI</span></span>
+<span id="cb66-2"><a href="#cb66-2"></a><span class="fu">qnorm</span>(<span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.644854</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a><span class="co"># 99% CI</span></span>
-<span id="cb67-2"><a href="#cb67-2"></a><span class="fu">qnorm</span>(.<span class="dv">995</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1"></a><span class="co"># 99% CI</span></span>
+<span id="cb68-2"><a href="#cb68-2"></a><span class="fu">qnorm</span>(.<span class="dv">995</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2.575829</code></pre>
 </div>
@@ -1913,14 +1977,14 @@ display:block!important;
 <h3 id="step-4">Step 4</h3>
 <p><span class="math inline">\(CI =\bar{x} \pm z_{95} \times SE\)</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1"></a>lowerlim <span class="ot">&lt;-</span> e.mean <span class="sc">-</span> (z_95 <span class="sc">*</span> se) <span class="co">#this is the lower limit of your CI</span></span>
-<span id="cb69-2"><a href="#cb69-2"></a>upperlim <span class="ot">&lt;-</span> e.mean <span class="sc">+</span> (z_95 <span class="sc">*</span> se) <span class="co">#this is the upper limit of your CI</span></span>
-<span id="cb69-3"><a href="#cb69-3"></a></span>
-<span id="cb69-4"><a href="#cb69-4"></a>lowerlim</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1"></a>lowerlim <span class="ot">&lt;-</span> e.mean <span class="sc">-</span> (z_95 <span class="sc">*</span> se) <span class="co">#this is the lower limit of your CI</span></span>
+<span id="cb70-2"><a href="#cb70-2"></a>upperlim <span class="ot">&lt;-</span> e.mean <span class="sc">+</span> (z_95 <span class="sc">*</span> se) <span class="co">#this is the upper limit of your CI</span></span>
+<span id="cb70-3"><a href="#cb70-3"></a></span>
+<span id="cb70-4"><a href="#cb70-4"></a>lowerlim</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 3.12911</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1"></a>upperlim</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a>upperlim</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 3.40289</code></pre>
 </div>
@@ -1933,9 +1997,9 @@ display:block!important;
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a>e.score <span class="ot">&lt;-</span> dat[<span class="dv">5</span> , <span class="st">&quot;e&quot;</span>]</span>
-<span id="cb73-2"><a href="#cb73-2"></a>e.sd <span class="ot">&lt;-</span> <span class="fu">sd</span>(dat<span class="sc">$</span>e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb73-3"><a href="#cb73-3"></a>(z.e <span class="ot">&lt;-</span> (e.score <span class="sc">-</span> e.mean) <span class="sc">/</span> e.sd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a>e.score <span class="ot">&lt;-</span> dat[<span class="dv">5</span> , <span class="st">&quot;e&quot;</span>]</span>
+<span id="cb74-2"><a href="#cb74-2"></a>e.sd <span class="ot">&lt;-</span> <span class="fu">sd</span>(dat<span class="sc">$</span>e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb74-3"><a href="#cb74-3"></a>(z.e <span class="ot">&lt;-</span> (e.score <span class="sc">-</span> e.mean) <span class="sc">/</span> e.sd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          e
 1 -2.015391</code></pre>
@@ -1950,8 +2014,20 @@ display:block!important;
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1"></a>e.scores <span class="ot">&lt;-</span> dat<span class="sc">$</span>e </span>
-<span id="cb75-2"><a href="#cb75-2"></a>zs.e <span class="ot">&lt;-</span> (e.scores <span class="sc">-</span> e.mean) <span class="sc">/</span> e.sd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1"></a>e.scores <span class="ot">&lt;-</span> dat<span class="sc">$</span>e </span>
+<span id="cb76-2"><a href="#cb76-2"></a>zs.e <span class="ot">&lt;-</span> (e.scores <span class="sc">-</span> e.mean) <span class="sc">/</span> e.sd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1"></a><span class="fu">mean</span>(zs.e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -2.382223e-17</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1"></a><span class="fu">sd</span>(zs.e, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
 </div>
 </div>
 </section><section id="coding-challenge" class="slide level2"><h2>Coding Challenge</h2>
