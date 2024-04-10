@@ -1,0 +1,96 @@
+---
+title: "Homework Week 2"
+author: "name"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r, message = FALSE, echo = FALSE}
+## Load packages
+library(ggplot2)
+```
+
+# Probability and Likelihood
+
+This task is meant to explore the relation among R's probability functions and to gain an intuition on how the basic functions operate that we discussed. 
+
+## Binomial Distribution
+We discussed the Paternal Discrepancy example where 2 out of 10 kids were from another biological father. We used the binomial distribution.
+
+### Question 1
+In R the probability mass function (pmf) for the Binomial distribution can be called with `dbinom(x, size, prob)`. 
+The probability that 2 out of 10 kids are PD, given $\theta=.2$ can be obtained with 
+```{r}
+## eg. 2 PD in sample of 10 kids with probabiliyt of PD = 20%
+dbinom(2, 10, .2)
+```
+
+On slide 19 we fixed the data to 2 out of 10 kids being PD and we plotted the resulting probability.
+Repeat this here with PD prevalence $\theta \in (5\%, 50\%, 80\%)$. You should obtain three different probabilities:
+
+```{r}
+## 
+```
+
+Briefly comment on what these results mean and why they differ.
+
+**Answer:**
+
+
+### Question 2 
+
+We saw that keeping $\theta$ fixed in $p(X|\theta)$ results in valid probability distributions.
+
+* Keep $\theta$ fixed at .2 but provide different $X$'s. That is, show with `dbinom()` what happens for all possible values of PD, from 0 to 10 and show that the binomial distribution with fixed $\theta$ results actually in a valid pmf over all possible X. 
+```{r}
+## 
+```
+
+* Graph the resulting probabilities across all $X$ in a bar plot:
+```{r}
+## 
+```
+
+### Question 3
+Now, let's keep the data fixed and vary the parameter.
+
+* Plot the likelihood from `dbinom()` with varying $\theta$ and fixed PD data (2 out of 10 kids are PD):
+```{r}
+## 
+```
+
+### Question 4
+This is not something we directly talked about, but think of how we can numerically approximate an integral: The area under the curve can be approached by splitting up the area into bars (rectangles) with decreasing width. The base of the bars, dx, is reduced in size and the sum of all bars is approximating the area under the curve (aka. [Riemann sum](https://en.wikipedia.org/wiki/Riemann_sum)).
+
+Use this approach to approximate the area under the curve of the likelihood function $\left[ \mathcal{L}(\theta|X=2) = \binom{10}{2}\theta^2(1-\theta)^{10-2} \right]$ by computing the area as the sum of bars with $d\theta=0.01$ on the $\theta$-axis. Provide the sum and show a barplot illustrating the approach.
+
+```{r}
+## 
+```
+
+### Question 5
+
+Confirm area under curve $\mathcal{L}(\theta|X=2) = \binom{10}{2}\theta^2(1-\theta)^{10-2}$ analytically.
+
+Hint: Integrate over $\theta$ and feel free to make use of Wolfram's [Integral Calculator](https://www.wolframalpha.com/calculators/integral-calculator/), Linux's Maxima, or similar.
+
+$$\begin{aligned}
+	\text{Area} &= \int_0^1 \binom{10}{2} \theta^2(1-\theta)^8 \text{d}\theta \\
+		&= \ldots
+\end{aligned}$$
+
+How close is your solution from Q4 to the analytically derived solution?
+
+
+### Bonus question:
+For those who breezed through it and can't get enough:
+
+Three sequences of three tosses with the same coin were recorded: H, H, T, then T, H, H, and finally, H, T, H.
+Write up the likelihood function and find the value of $\theta$ that maximizes these sequences of independent coin throws:
+
+
+**Answer**
