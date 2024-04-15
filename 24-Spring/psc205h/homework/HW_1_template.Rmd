@@ -213,9 +213,9 @@ Apply different ranges of sn, sp, and bs that seem reasonable
  
 ```{r}
 task2df <- data.frame(
-  sp = c(.01, .02, .1, .15,.2,.25),
-  sn = c(.7,.75,.8,.85,.9,.95),
-  br = c(.001,.01,.05,.10,.15,.20)
+  sp = seq( 0, 1, length.out = 100 ),#c(.01, .02, .1, .15,.2,.25),
+  sn =seq( 0, 1, length.out = 100 ),# c(.7,.75,.8,.85,.9,.95),
+  br = seq( 0, 1, length.out = 100 )#c(.001,.01,.05,.10,.15,.20)
   ) |> 
   tidyr::pivot_longer(cols = sp:br, values_to = "new_vals", names_to = "name") |> 
   dplyr::mutate(change = dplyr::case_when(
@@ -234,12 +234,32 @@ library(ggplot2)
 
 task2df |> 
   ggplot(aes(x = new_vals, y = change)) +
-  geom_point() +
+  #geom_point() +
   geom_line() +
   facet_wrap(~name, scales="free",
              labeller = labeller(name = c(br = "Baserate", sn = "Sensitivity", sp= "Specificity"))) +
   labs(x = "New values", y = "Pr(cancer|PositiveTest)") +
   theme_minimal(12)
   
+```
+
+```{r}
+BC <- function(sn, sp, bs ) {
+  bs_n <- 1 - bs
+  fn <- 1 - sp
+  num <- sn * bs
+  den <- sn * bs + bs_n * fn
+  num/den   
+}
+
+range <- seq( 0, 1, length.out = 100 )
+
+df <- data.frame(
+    snvar = BC( sn = range, sp = .87, bs = .015 ),
+    spvar = BC( sn = .87, sp = range, bs = .015 ),
+    bsvar = BC( sn = range, sp = .87, bs = range),
+    range = range)
+
+head(df)
 ```
 

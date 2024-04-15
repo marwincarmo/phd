@@ -33,12 +33,15 @@ On slide 19 we fixed the data to 2 out of 10 kids being PD and we plotted the re
 Repeat this here with PD prevalence $\theta \in (5\%, 50\%, 80\%)$. You should obtain three different probabilities:
 
 ```{r}
-## 
+theta <- c(.05, .5, .8)
+
+dbinom(2, 10, theta)
 ```
 
 Briefly comment on what these results mean and why they differ.
 
-**Answer:**
+**Answer:** Each of these values represent the probability of 2 out of 10 kids being PD given different probabilities for a PD child.  The largest probability among these three values is obtained when $\theta = 50\%$. The rate of 2 out of 10 kids having a true biological father different to their supposed
+biological father is more likely under $\theta = 50\%$  than in any of the other values.
 
 
 ### Question 2 
@@ -46,13 +49,35 @@ Briefly comment on what these results mean and why they differ.
 We saw that keeping $\theta$ fixed in $p(X|\theta)$ results in valid probability distributions.
 
 * Keep $\theta$ fixed at .2 but provide different $X$'s. That is, show with `dbinom()` what happens for all possible values of PD, from 0 to 10 and show that the binomial distribution with fixed $\theta$ results actually in a valid pmf over all possible X. 
+
 ```{r}
-## 
+theta_fixed <- dbinom (0:10 , 10, 0.2)
+theta_fixed
+
+# we show that it results in a valid pmf beause adding up all 
+# these values result in a cumulative probability of 1.
+
+sum(theta_fixed)
 ```
 
 * Graph the resulting probabilities across all $X$ in a bar plot:
 ```{r}
-## 
+library(ggplot2)
+
+probs <- data.frame(
+  p = theta_fixed,
+  pd = 0:10
+)
+
+probs |> 
+  ggplot(aes(x = pd, y = p)) +
+  geom_bar(stat =  "identity") + 
+  theme_minimal() +
+  labs(
+    x = "PD",
+    y = "pmf"
+  )
+
 ```
 
 ### Question 3
@@ -60,7 +85,22 @@ Now, let's keep the data fixed and vary the parameter.
 
 * Plot the likelihood from `dbinom()` with varying $\theta$ and fixed PD data (2 out of 10 kids are PD):
 ```{r}
-## 
+
+theta_vals <- seq(0, 1, by=0.01)
+
+likelihoods <- dbinom(2, 10, theta_vals)
+
+pd_fixed <- data.frame(
+  theta = theta_vals,
+  likelihoods = likelihoods
+)
+
+ggplot(pd_fixed, aes(x = theta, y = likelihoods)) +
+  geom_line() +
+  theme_minimal() +
+  labs(x=expression(theta), 
+     y="Likelihood")
+
 ```
 
 ### Question 4
@@ -69,7 +109,16 @@ This is not something we directly talked about, but think of how we can numerica
 Use this approach to approximate the area under the curve of the likelihood function $\left[ \mathcal{L}(\theta|X=2) = \binom{10}{2}\theta^2(1-\theta)^{10-2} \right]$ by computing the area as the sum of bars with $d\theta=0.01$ on the $\theta$-axis. Provide the sum and show a barplot illustrating the approach.
 
 ```{r}
-## 
+ggplot(pd_fixed, aes(x = theta, y = likelihoods)) +
+  geom_bar(stat= "identity", width = .01, fill = "white", color="black") +
+  theme_minimal()+
+  labs(x=expression(theta), 
+     y="Likelihood")
+```
+
+```{r}
+# sum
+sum(likelihoods*0.01)
 ```
 
 ### Question 5
@@ -80,10 +129,12 @@ Hint: Integrate over $\theta$ and feel free to make use of Wolfram's [Integral C
 
 $$\begin{aligned}
 	\text{Area} &= \int_0^1 \binom{10}{2} \theta^2(1-\theta)^8 \text{d}\theta \\
-		&= \ldots
+		&= 0.0909091
 \end{aligned}$$
 
 How close is your solution from Q4 to the analytically derived solution?
+
+*The results obtained analytically are almost identical to that obtained with Riemann sum.*
 
 
 ### Bonus question:
@@ -92,5 +143,21 @@ For those who breezed through it and can't get enough:
 Three sequences of three tosses with the same coin were recorded: H, H, T, then T, H, H, and finally, H, T, H.
 Write up the likelihood function and find the value of $\theta$ that maximizes these sequences of independent coin throws:
 
-
 **Answer**
+
+$$
+\begin{aligned}
+\mathcal{L}(\theta|X_1=2,X_2=2,X_3=2) &= Pr(X_1=2,X_2=2,X_3=2|\theta) \\
+&=Pr(X_1=2)\times Pr(X_2=2) \times Pr(X_3=2)\\
+&= \left[\binom{10}{2}\theta^2(1-\theta)^{10-2}\right]^3\\
+&=\binom{10}{2}^3\theta^6(1-\theta)^{24}\\
+&= 3\log(45)+6\log(\theta)+24\log(1-\theta)\\
+\frac{\partial l}{\partial \theta} &=\frac{6}{\theta} + \frac{24}{\theta-1}
+\end{aligned}
+$$
+Setting to zero to solve for $\theta$,
+
+$$
+\theta= \frac{1}{5}
+$$
+
