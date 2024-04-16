@@ -1,0 +1,156 @@
+---
+title: "Beyond Average Scores: Identification of Consistent and Inconsistent Academic Achievement"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    # height: 900
+    footer: "Quantitative Research Seminar - 05/02/2024"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+## Motivation
+
+- Average performance does not provide information on the *consistency* of academic achievement over time or within a cluster.
+
+- Consider two students with a final grade of 75% at the year's end:
+  - One had scores ranging from 50% to 100%.
+  - The other maintained a steady 75%.
+
+- Inconsistent performance may reflect unaccounted factors influencing learning.
+
+## Our approach
+
+- Identify clustering units (students, classrooms, etc.) that exhibit unusually high or low consistency (residual variance) in academic achievement.
+
+- Mixed effects location scale model (MELSM) can be used to model residual variances.
+
+- We present an adaptation of the MELSM by means of shrinking random effects to their fixed effect using the Spike and Slab regularization
+
+## MELSM for Educational Data
+
+- Educational data is classically analyzed by means of multilevel or mixed effects models (MLM):
+  - Schools are level-2 units and students' test scores are the level-1 units.
+
+- MLM assumes constant residual variance (scale)
+
+- MELSM include a sub-model to addresses potential differences in the residual variance.
+
+- The unexplained residual variance might provide insights over and above the expected academic achievement
+that is captured in the conditional means, or location parameter.
+
+---
+
+The starting point is the standard linear mixed effects model for $i = 1,2,...,n_j$ students, and $j = 1, 2, \ldots, S$ schools, specified as
+
+
+\begin{equation}
+  \label{eq:mixedmodel-lvl1}
+  \textrm{Level 1:} \quad y_{ij} = \beta_{0j} + \beta_{1j} X_{ij} + e_{ij}
+\end{equation}
+
+\begin{aligned}
+  \label{eq:mixedmodel-lvl2}
+  \textrm{Level 2:}\quad \beta_{0j} &= \gamma_{00} + \gamma_{01}W_j + u_{0j} \\
+                       \beta_{1j} &= \gamma_{10} + \gamma_{11}W_j + u_{1j}
+\end{aligned}
+
+\begin{equation}
+  \label{eq:bcov}
+  \begin{pmatrix} u_0 \\ u_1 \end{pmatrix} \sim \mathcal{N}
+    \begin{Bmatrix} 
+        \begin{pmatrix} 0 \\ 0  \end{pmatrix},
+        \begin{pmatrix} \tau^2_{u_{0}} \\ \tau_{u_{0}u_{1}} & \tau^2_{u_{1}}
+        \end{pmatrix}
+    \end{Bmatrix}
+\end{equation}
+
+\begin{equation}
+  e_{ij} \sim \mathcal{N} (0, \sigma_{\epsilon}^2)
+\end{equation}
+
+---
+
+Next, we introduce a scale model for the residual variance
+
+\begin{equation}
+  \label{eq:var-lvl1}
+  \textrm{Level 1:} \quad \sigma^2_{\epsilon_{ij}} = \exp(\alpha_{0j} + \alpha_{1j}X_{ij})
+\end{equation}
+
+\begin{aligned}
+  \label{eq:var-lvl2}
+  \textrm{Level 2:}\quad \alpha_{0j} &= \eta_{00} + \eta_{01}X_j + t_{0j} \\
+                       \alpha_{1j} &= \eta_{10} + \eta_{11}X_j + t_{1j}
+\end{aligned}
+
+---
+
+The random effects from the *scale* and *location* of the model come from a multivariate Gaussian Normal distribution with zero means:
+
+\begin{equation}
+  \label{eq:random-cov}
+  \textbf{v}=
+  \begin{bmatrix} u_0 \\ u_1 \\ t_0 \\ t_1 \end{bmatrix} \sim \mathcal{N}
+    \begin{Bmatrix} 
+        \boldsymbol{0}=
+        \begin{bmatrix} 0 \\ 0 \\ 0 \\ 0 \end{bmatrix},
+        \boldsymbol{\Sigma}=
+        \begin{bmatrix} \tau^2_{u_0} \\ 
+                        \tau_{u_0u_1} & \tau^2_{u_1} \\
+                        \tau_{u_0t_0} & \tau_{u_1t_0} & \tau^2_{t_0} \\
+                        \tau_{u_0t_1} & \tau_{u_1t_1} & \tau_{t_0t_1} & \tau^2_{t_1}
+        \end{bmatrix}
+    \end{Bmatrix}
+\end{equation}
+
+---
+
+Alternatively, we can express the relation among the random effects on the location and scale models via the Cholesky parameterization.
+
+$\boldsymbol{\Sigma}$ can be decomposed into $\bm\Sigma = \bm{\tau}\bm{\Omega\tau}'$
+
+\begin{equation}
+\label{eq:cholesky_approach}
+\textbf{L} = 
+    \begin{pmatrix}
+        1 & 0 & 0 & 0\\
+        \rho_{u_0u_1} & \sqrt{1 - l^2_{21}} & 0 & 0 \\
+        \rho_{u_0t_0} & \frac{\rho_{u_1t_0} - l_{21} l_{31}}{l_{22}} & \sqrt{1 - l^2_{31} - l^2_{32}} & 0\\
+        \rho_{u_0t_1} & \frac{\rho_{u_1t_1} - l_{21} l_{41}}{l_{22}} & \frac{\rho_{t_0t_1} - l_{31} l_{41} - l_{32} l_{42}}{l_{33}} & \sqrt{1 - l^2_{41} - l^2_{42} - l^2_{43}}
+    \end{pmatrix}
+\end{equation}
+
+---
+
+If we multiply $\textbf{L}$ by the random effect standard deviations, $\bm{\tau}$ and scale it with a standard normally distributed $\bm{z}$, we obtain $\textbf{v}$
+
+\begin{equation}
+    \textbf{v} = \bm{\tau}\textbf{L}\bm{z}.
+\end{equation}
+The individual elements of $\textbf{v}$, for our example with two location and two scale random effects, are defined as
+\begin{equation}
+\begin{aligned}
+    u_0 &= \tau_{u_0}z_1\\
+    u_1 &= \tau_{u_1}(\rho_{u_ou_1}z_1 + z_2\sqrt{1-l_{21}^2})\\
+    t_0 &= \tau_{t_0}(\rho_{u_ot_0}z_1 + l_{32}z_2 + z_3\sqrt{1-l_{31}^2-l_{32}^2})\\
+    t_1 &= \tau_{t_1}(\rho_{u_ot_1}z_1 + l_{42}z_2 + l_{43}z_3 + z_4\sqrt{1-l_{41}^2-l_{31}^2-l_{32}^2})
+\end{aligned}
+\end{equation}
