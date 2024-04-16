@@ -7,7 +7,7 @@ output: html_notebook
 
 When inverting the focus (not the outcome, but what parameter theta could have generated, or what is the most likely parameter given the data), we don't talk about probabilities but about likelihoods. What is the most likely value to have generated the data.
 
-Likelihood $\neq$ probability distribution.
+Likelihood $\neq$ probability distribution. The area under the curve does not necessarily sums to 1.
 
 With Bayes rule we can transform likelihoods into probability distributions.
 

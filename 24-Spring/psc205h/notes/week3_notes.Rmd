@@ -1,0 +1,84 @@
+---
+title: "Week 3: Posterior distribution"
+output: html_notebook
+---
+
+## Exercise 1
+
+```{r}
+n <- 30
+prior <- runif(1000, 0, 1)
+
+pp <- function(a=0, b=1, n=1, size=30) {
+  prior <- runif(1, a, b)
+  X <- rbinom(n, size, prior)
+  return(X)
+}
+
+reps <- 10000
+out <- replicate(reps, pp())
+
+
+barplot ( table ( out )/ reps )
+
+```
+
+## Exercise 2:
+
+```{r}
+
+out2 <- replicate(reps, pp(.5, 1))
+barplot ( table ( out2 )/ reps )
+
+
+```
+
+The denominator is a normalizing constant (summing across all values of $\theta$).
+
+**Conjugate prior**: If the prior and likelihood multiplied result in some known probability distribution.
+
+## Exercise 3
+
+```{r}
+#x <- seq (0 ,1 , length.out = 100)
+alpha <- 1
+beta <- 1
+#prior <- dbeta (x, alpha , beta )
+
+z <- 2
+N <- 20
+
+posterior <- rbeta(1, z+alpha, n-z+beta) # P(Theta|x)
+
+X <- rbinom(1, N, posterior)
+
+
+ppd <- function() {
+  
+  alpha <- 1
+  beta <- 1
+#prior <- dbeta (x, alpha , beta )
+
+  z <- 2
+  N <- 20
+
+  posterior <- rbeta(1, z+alpha, n-z+beta) # P(Theta|x)
+
+  X <- rbinom(1, N, posterior)
+  return(X)
+}
+
+replicate(1000, ppd()) |> hist()
+```
+
+```{r}
+x <- seq(0,1,length.out=100)
+
+alpha <- 50
+beta <- 1
+prior <- dbeta(x, alpha, beta)
+plot(x, prior, type='l')
+```
+
+
+
