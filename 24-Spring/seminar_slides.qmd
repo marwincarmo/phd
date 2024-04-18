@@ -1,5 +1,6 @@
 ---
 title: "Beyond Average Scores: Identification of Consistent and Inconsistent Academic Achievement"
+subtitle: "Quantitative Research Seminar"
 author: "Marwin Carmo"
 format: 
   revealjs:
@@ -19,7 +20,7 @@ format:
     margin-right: "0"
     width: 1400
     # height: 900
-    footer: "Quantitative Research Seminar - 05/02/2024"
+    footer: "Beyond Average Scores: Identification of Consistent and Inconsistent Academic Achievement"
     logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
 editor: source
 editor_options: 
@@ -44,7 +45,7 @@ editor_options:
 
 - We present an adaptation of the MELSM by means of shrinking random effects to their fixed effect using the Spike and Slab regularization
 
-## MELSM for Educational Data
+## MELSM
 
 - Educational data is classically analyzed by means of multilevel or mixed effects models (MLM):
   - Schools are level-2 units and students' test scores are the level-1 units.
@@ -55,6 +56,14 @@ editor_options:
 
 - The unexplained residual variance might provide insights over and above the expected academic achievement
 that is captured in the conditional means, or location parameter.
+
+## MELSM
+
+- MELSM does not model the residuals themselves but, instead, the error \textit{variance} $\boldsymbol{\varphi}$ from which the residuals are realized.
+
+- MELSM \textit{simultaneously} estimate the means and the residual variance.
+
+- The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$.
 
 ---
 
@@ -92,13 +101,13 @@ Next, we introduce a scale model for the residual variance
 
 \begin{equation}
   \label{eq:var-lvl1}
-  \textrm{Level 1:} \quad \sigma^2_{\epsilon_{ij}} = \exp(\alpha_{0j} + \alpha_{1j}X_{ij})
+  \textrm{Level 1:} \quad \sigma^2_{\epsilon_{ij}} = \exp(\alpha_{0j} + \alpha_{1j}M_{ij})
 \end{equation}
 
 \begin{aligned}
   \label{eq:var-lvl2}
-  \textrm{Level 2:}\quad \alpha_{0j} &= \eta_{00} + \eta_{01}X_j + t_{0j} \\
-                       \alpha_{1j} &= \eta_{10} + \eta_{11}X_j + t_{1j}
+  \textrm{Level 2:}\quad \alpha_{0j} &= \eta_{00} + \eta_{01}P_j + t_{0j} \\
+                       \alpha_{1j} &= \eta_{10} + \eta_{11}P_j + t_{1j}
 \end{aligned}
 
 ---
@@ -125,7 +134,7 @@ The random effects from the *scale* and *location* of the model come from a mult
 
 Alternatively, we can express the relation among the random effects on the location and scale models via the Cholesky parameterization.
 
-$\boldsymbol{\Sigma}$ can be decomposed into $\bm\Sigma = \bm{\tau}\bm{\Omega\tau}'$
+$\boldsymbol{\Sigma}$ can be decomposed into $\boldsymbol\Sigma = \boldsymbol{\tau}\boldsymbol{\Omega\tau}'$
 
 \begin{equation}
 \label{eq:cholesky_approach}
@@ -140,12 +149,12 @@ $\boldsymbol{\Sigma}$ can be decomposed into $\bm\Sigma = \bm{\tau}\bm{\Omega\ta
 
 ---
 
-If we multiply $\textbf{L}$ by the random effect standard deviations, $\bm{\tau}$ and scale it with a standard normally distributed $\bm{z}$, we obtain $\textbf{v}$
+If we multiply $\textbf{L}$ by the random effect standard deviations, $\boldsymbol{\tau}$ and scale it with a standard normally distributed $\boldsymbol{z}$, we obtain $\textbf{v}$
 
 \begin{equation}
-    \textbf{v} = \bm{\tau}\textbf{L}\bm{z}.
+    \textbf{v} = \boldsymbol{\tau}\textbf{L}\boldsymbol{z}.
 \end{equation}
-The individual elements of $\textbf{v}$, for our example with two location and two scale random effects, are defined as
+
 \begin{equation}
 \begin{aligned}
     u_0 &= \tau_{u_0}z_1\\
@@ -154,3 +163,131 @@ The individual elements of $\textbf{v}$, for our example with two location and t
     t_1 &= \tau_{t_1}(\rho_{u_ot_1}z_1 + l_{42}z_2 + l_{43}z_3 + z_4\sqrt{1-l_{41}^2-l_{31}^2-l_{32}^2})
 \end{aligned}
 \end{equation}
+
+---
+
+## Advantages of MELSM
+
+- Account for possible correlations among location and scale effects.
+
+- For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.
+
+- Overcomes the limitations of multi-stage approaches and outperform the classic mixed effects model in in- and out of sample performance.
+
+## Variable selection
+
+- Spike-and-slab approach
+
+- 
+
+# Model Formulation
+
+## The common variance model
+
+\begin{align}
+\label{eq:likelihood}
+y_{ij} & \sim  \mathcal{N}(\beta_{0j}, \exp[\alpha_{0j}]).
+\end{align}
+This includes a location $\beta_{0j}$ and scale $\alpha_{0j}$ intercept for each person. We employ the non-centered parameterization for hierarchical models--i.e., 
+\begin{align}
+\label{eq:latent}
+\beta_{0j} &= \gamma_{00} + \tau^{\mu} \cdot z^\mu_j \\ \nonumber
+z^\mu_j &\sim \mathcal{N}(0,1) \\ \nonumber
+\gamma_{00} &\sim \mathcal{N}(0, 1)  \\ \nonumber
+\tau^{\mu} &\sim \mathcal{S}\boldsymbol{t}^{+}(\nu = 10, 0, 1).
+\end{align}
+
+---
+
+\begin{align}
+\alpha_{0j} &= \eta_{00} + \tau^{\sigma}_*\left(z^\mu_i\rho  + z^\sigma_i\sqrt{1-\rho^2}\right)  \\ \nonumber
+z^\sigma_i &\sim \mathcal{N}(0,1) \\ \nonumber
+z_{f} &\sim \mathcal{N}(0, 1) \\ \nonumber
+\rho &= F^{-1}(z_{f}) 
+\end{align}
+
+$\tau^{\sigma}_*$, which is the random effects standard deviation of the scale intercepts.
+
+This is where the spike and slab prior distribution is introduced.
+
+---
+
+\begin{align}
+\label{eq:scale_ss}
+\tau^{\sigma}_* &=  \delta \text{ } \cdot \text{ } \tau^{\sigma}  \\ \nonumber
+\delta &\sim \text{Bernoulli}(\pi) \\ \nonumber
+\tau^{\sigma} &\sim \mathcal{S}\boldsymbol{t}^{+}(\nu = 10, 0, 1)
+\end{align}
+
+For each MCMC iteration, a 0 or 1 is drawn from the Bernoulli distribution with the prior probability of sampling a 1 denoted $\pi$.
+
+\begin{equation}
+\tau^{\sigma}_* = \begin{cases}
+0, & \text{if }\delta = 0 , \\
+\tau^{\sigma}, & \text{if }\delta = 1
+\end{cases}
+\end{equation}
+
+We set a prior of $\delta = 0.5$ to indicate lack of preference about inclusion or exclusion of a random effect.
+---
+
+The posterior model probabilities can then be computed as
+
+\begin{align}
+Pr(\mathcal{M}_u | \textbf{Y}) = \frac{1}{S} \sum_{s = 1}^S \delta_s,
+\end{align}
+
+where $S = \{1,...,s\}$ denotes the posterior samples.
+
+Assuming equal prior odds
+
+\begin{align}
+BF_{0u} = \frac{1 - Pr(\mathcal{M}_u | \textbf{Y})}{Pr(\mathcal{M}_u | \textbf{Y})}
+\end{align}
+
+## The membership model
+
+- So far we focused on whether there is evidence for a common within-person variance.
+
+- We can ask then if there is evidence for a common ICC or reliability.
+
+- If there is, which (or how many) individuals belong to the common variance model?
+
+---
+
+\begin{align}
+\label{eq:mm}
+\eta_{0i}^* &= z^\mu_i\rho  + z^\sigma_i\sqrt{1-\rho^2}  \\ \nonumber
+\eta_{0i} &= \eta_0 + \tau^{\sigma} \big(\eta_{0i}^*  \text{ } \cdot \text{ } \delta_i\big) \\ \nonumber
+z^\sigma_i &\sim \mathcal{N}(0,1) \\ \nonumber
+\delta_i &\sim \text{Bernoulli}(\pi).
+\end{align}
+
+The subscript to the indicator ($\delta_i$) assigns each person a prior inclusion probability.
+
+\begin{equation}
+\label{eq:mm_delta}
+\eta_{0i} = \begin{cases}
+\eta_{0}, & \text{if }\delta_i = 0 , \\
+\eta_0 + \tau^{\sigma}\left(z^\mu_i\rho  + z^\sigma_i\sqrt{1-\rho^2}\right), & \text{if }\delta_i = 1
+\end{cases}.
+\end{equation}
+
+---
+
+Individual $i$ is a member of the common ICC model when $\delta_i = 0$.
+
+This specification allows each individual to have their own person-specific estimate or the fixed effect average. 
+
+Each individual has a posterior probability of membership for belonging to the common ICC model.
+
+Assuming equal prior odds
+
+\begin{align}
+\label{eq:bf_i}
+BF_{0ui} = \frac{Pr(\eta_{0i} = \eta_0| \textbf{Y} )}{1 - Pr(\eta_{0i} = \eta_0| \textbf{Y} )}.
+\end{align}
+
+## Estimation
+
+## Illustrative example

@@ -1,0 +1,118 @@
+---
+title: "Homework Week 3"
+author: "name"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r, message = FALSE, echo = FALSE}
+## Load packages
+library(ggplot2)
+```
+
+## Question 1
+This is from Slide 49:
+
+   - We used the prior predictive distribution earlier - then fixed X = 2.
+   - Now, assume we observed 20 kids, **3** are PD
+   - Prior: $Beta(1,1)$
+   - Likelihood: $Binomial(20,\theta)$
+   - $Pr(X=3|\theta) \times Pr(\theta)$
+   - Posterior: $Beta(3+1, 20-3+1) = Beta(4, 18)$
+
+Posterior Predictive Algorithm:
+
+   - Sample from posterior to obtain $\theta_i$
+   - Sample from sampling distribution, here $Binomial(20,\theta)$, to obtain $data'_i$
+
+Sample 10,000 times and plot distribution with a barplot
+
+
+* Answer 1:
+```{r}
+## Code for sampling goes here
+```
+
+## Question 2
+
+We keep the example conditions from Question 1. 
+
+Now we want to make inference about our posterior:
+
+   - Provide the *Mean* and *Median* of the posterior distribution
+   - Provide the 95\% Credible Interval (CrI) for the posterior distribution. The lower end of this interval is the point at which 2.5\% of the left side of the PDF are located. The upper is the point at which 97.5\% of the area under the PDF is located.
+
+There's two ways to do this -- show both: 
+
+   1. *Sampling:* Sample 1000 $\theta$ values from the posterior $p(\theta|X)$ and compute the _M_, _Mdn_ and _CrI_. The CrI is reported like a confidence interval: CrI[lower_number; upper_number]. Median and CrI can be obtained with the `quantile()` function in R.
+   2. *Analytic solution:* The posterior is a known PDF -- compute the _M_ from the analytic solution and compute the _Mdn_ and _CrI_ with the help of R's `qbeta(p, shape1, shape2)` to find the quantiles of the Beta distribution. The parameter p indicates the probability, or area under the curve of the PDF, from the left side. 2.5\% would be 0.025. 
+   3. *Interpret* the credible interval 
+
+```{r}
+## Code
+```
+
+
+
+### Question 3
+
+Now, lets assume we observed 5 PD kids and 50 non-PD. This time we have different prior believes
+
+   - Prior 1: Beta( 1, 10)
+   - Prior 2: Beta( 5, 5)
+   - Prior 3: Beta(10, 1)
+	
+Show the effect of the different priors on the posterior by superposing the PDF's in the same plot. 
+
+```{r}
+## Code
+```
+
+
+# Conjugate Normal
+## Question 4
+
+So far, we have focused on a binomial distribution. Now, let's assume we measured the intelligence of 30 independent individuals. We think that intelligence is normally distributed and is described by a mean $\mu$ and a variance $\sigma^2$. 
+From previous studies we know that intelligence is consistently hovering around 100. Accordingly, our prior for $\mu$ will have a mean of $\mu_0=100$. Given that we are fairly sure that the population means are close to 100, we chose a small SD of $\sigma_0=10$. With this, we assume that 65\% of the population means are somewhere between 90, and 110. 
+Moreover, we _know_ that in the population intelligence has a SD of 15. That is, here we assume $\sigma$ to be known.
+
+Note the difference between the mean ($\mu$) and standard deviation ($\sigma$) for the _likelihood_ versus the mean ($\mu_0$) and standard deviation ($\sigma_0$) of the _prior_.  $\mu_0$ reflects to most likely location of the population mean and $\sigma_0$ described the strength of our believe.
+
+Our model can be written as: 
+
+\begin{align}
+y \sim & N(\mu, \sigma) \quad [\text{Likelihood}] \\
+ & \mu ~ \sim N(\mu_0 = 100, \sigma_0 = 10) \quad [\text{Prior}]\\ 
+ & \sigma = 15   \quad [\text{Known and constant}]
+\end{align}
+
+Conveniently, we chose a normal prior for $\mu$ and assume $\sigma$ to be known, which means that we can obtain the posterior analytically. 
+Even better,  we can look up the posterior for this situation in a table (eg. on [Wikipedia](https://en.wikipedia.org/wiki/Conjugate_prior#When_likelihood_function_is_a_continuous_distribution) ):
+
+$$ N\left( \frac{1}{\frac{1}{\sigma_0^2} + \frac{n}{\sigma^2}} \left(\frac{\mu_0}{\sigma_0^2} + \frac{\sum_{i=1}^n x_i}{\sigma^2}\right), \left(\frac{1}{\sigma_0^2} + \frac{n}{\sigma^2}\right)^{-1} \right) $$
+
+Now we obtain 30 independent measurements. We'll use `set.seed(433)` so that we all have the same data: X = `r set.seed(433); rbinom(30, 200, .65)`.
+
+Compute the posterior, assuming known variance and plot the posterior. Add lines to indicate the lower and upper CrI. 
+```{r}
+## Observed data are generated as follows:
+set.seed(433)
+x <- rbinom(30, 200, .65)
+set.seed(NULL )
+
+## your code:
+```
+
+Generate samples from the posterior predictive distribution and compare them to the observed values visually. That is, find a way to juxtapose the observations with the sampled data
+```{r}
+## Comment
+```
+
+Still here? Great! Now compute the 90% predictive interval (90% interval from the posterior predictive distribution) and compare it to the CrI from the posterior:
+```{r}
+## Comment
+```
