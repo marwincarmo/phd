@@ -1298,34 +1298,21 @@ Marwin Carmo
 <li class="fragment"></li>
 </ul>
 </section>
-<section>
-<section id="model-formulation" class="title-slide slide level1 center">
-<h1>Model Formulation</h1>
-
-</section>
-<section id="the-common-variance-model" class="slide level2">
-<h2>The common variance model</h2>
+<section id="the-priors" class="slide level2">
+<h2>The priors</h2>
 <p><span class="math display">\[\begin{align}
 \label{eq:likelihood}
-y_{ij} &amp; \sim  \mathcal{N}(\beta_{0j}, \exp[\alpha_{0j}]).
-\end{align}\]</span> This includes a location <span class="math inline">\(\beta_{0j}\)</span> and scale <span class="math inline">\(\alpha_{0j}\)</span> intercept for each person. We employ the non-centered parameterization for hierarchical models–i.e., <span class="math display">\[\begin{align}
-\label{eq:latent}
-\beta_{0j} &amp;= \gamma_{00} + \tau^{\mu} \cdot z^\mu_j \\ \nonumber
-z^\mu_j &amp;\sim \mathcal{N}(0,1) \\ \nonumber
-\gamma_{00} &amp;\sim \mathcal{N}(0, 1)  \\ \nonumber
-\tau^{\mu} &amp;\sim \mathcal{S}\boldsymbol{t}^{+}(\nu = 10, 0, 1).
+y_{ij} &amp; \sim  \mathcal{N}(\beta_{0j} + \beta_{1j}X_{ij}, \exp[\alpha_{0j} + \alpha_{1j}M_{ij}]).
 \end{align}\]</span></p>
-</section>
-<section class="slide level2">
-
+<p>The priors for the unknown parameters <span class="math inline">\(\gamma\)</span> and <span class="math inline">\(\eta\)</span> are</p>
 <p><span class="math display">\[\begin{align}
-\alpha_{0j} &amp;= \eta_{00} + \tau^{\sigma}_*\left(z^\mu_i\rho  + z^\sigma_i\sqrt{1-\rho^2}\right)  \\ \nonumber
-z^\sigma_i &amp;\sim \mathcal{N}(0,1) \\ \nonumber
-z_{f} &amp;\sim \mathcal{N}(0, 1) \\ \nonumber
-\rho &amp;= F^{-1}(z_{f})
+\boldsymbol{\gamma}, \boldsymbol{\eta} \sim  \mathcal{N}(0, 1000)\\
 \end{align}\]</span></p>
-<p><span class="math inline">\(\tau^{\sigma}_*\)</span>, which is the random effects standard deviation of the scale intercepts.</p>
-<p>This is where the spike and slab prior distribution is introduced.</p>
+<p><span class="math inline">\(\tau^{\sigma}_*\)</span> is the random effects standard deviation of the scale intercepts. This is where the spike and slab prior distribution is introduced.</p>
+<p><span class="math display">\[\begin{align}
+\alpha_{0j} &amp;= \eta_{00} + \tau^{\sigma}_*\left(z^\mu_i\rho  + z^\sigma_i\sqrt{1-\rho^2}\right)  \\
+z^\sigma_i &amp;\sim \mathcal{N}(0,1) \\
+\end{align}\]</span></p>
 </section>
 <section class="slide level2">
 
@@ -1404,7 +1391,7 @@ BF_{0ui} = \frac{Pr(\eta_{0i} = \eta_0| \textbf{Y} )}{1 - Pr(\eta_{0i} = \eta_0|
 <p>Beyond Average Scores: Identification of Consistent and Inconsistent Academic Achievement</p>
 </div>
 </div>
-</section></section>
+</section>
     </div>
   </div>
 
