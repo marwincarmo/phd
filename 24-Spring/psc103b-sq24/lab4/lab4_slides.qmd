@@ -107,7 +107,7 @@ H0_prob <- c(clubs = .25, diamonds = .25, hearts = .25, spades = .25)
 
 ## Chi Square Goodness of Fit Test
 
-- $H_1$: *At least one* of the suit-choice probabilities isn't .25. How would you write that?
+- $H_1$: *At least one* of the suit-choice probabilities isn't .25. How would you write that? Remember that probabilities must sum to 1.
 
 - $H_1$: P $\neq$ (.25, .25, .25, .25)
 
@@ -167,6 +167,8 @@ expected_freq
 
 - If they are very different, we reject H0.
 
+- But how do we know how far is **too far** from the expected values? 
+
 ## Chi Square Goodness of Fit Test
 
 ### Step 1: Compute "error" scores
@@ -176,3 +178,42 @@ expected_freq
 ```
 
 Bigger numbers = more discrepancy between observed and expected frequency.
+
+- We can use these error scores to calculate the goodness of fit statistic
+
+:::fragment
+```{r}
+goodness_of_fit <- sum(error_scores) # This is our goodness of fit statistic
+```
+:::
+
+## Chi Square Goodness of Fit Test
+
+### Step 1: Compute "error" scores
+
+The closer the observed frequencies are to the prediction by H0 (expected frequencies), the __________ the goodness of fit statistic will get. [Larger or smaller?]
+
+- Larger!
+
+- How large is large enough to reject H0?
+
+## Chi Square Goodness of Fit Test
+
+### Step 2: Compare our statistic to the chi-square distribution
+
+```{r echo=FALSE}
+
+x1 <- seq(0, 30, by = .1)
+y_df5 <- dchisq(x = x1, df = 5)
+y_df10 <- dchisq(x = x1, df = 10)
+y_df15 <- dchisq(x = x1, df = 15)
+
+tibble(x1, y_df5, y_df10, y_df15) %>%
+  pivot_longer(-x1, names_to = "dfs", names_prefix = "y_df", values_to = "value") %>%
+  mutate(dfs = ordered(dfs, levels = c(5, 10, 15))) %>% 
+  ggplot(aes(x = x1, y = value, color = dfs)) +
+  geom_line(size = 1.5, alpha = .9) +
+  labs(x = "", y = "density") +
+  theme_classic()
+```
+

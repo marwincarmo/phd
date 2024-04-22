@@ -36,7 +36,7 @@ Sample 10,000 times and plot distribution with a barplot
 ```{r}
 ppa <- function( alpha=1, beta=1, z=3, N=20) {
 
-  posterior <- rbeta(1, z+alpha, N-z+beta) # P(Theta|x)
+  posterior <- rbeta(1, z+alpha, N-z+beta)
 
   X <- rbinom(1, N, posterior)
   return(X)
@@ -170,14 +170,14 @@ Generate samples from the posterior predictive distribution and compare them to 
 
 ```{r}
 
-pp_normal <- function( location, scale) {
+pp_normal <- function( mean, sd) {
 
-  posterior_mean <- rnorm(1, location, scale)
+  posterior_mean <- rnorm(1, mean, sd)
   iq <- rnorm(1, posterior_mean, 15)
   return(iq)
 }
 
-sampled_data <- replicate(1000, pp_normal(location, scale))
+sampled_data <- replicate(1000, pp_normal(mean=location, sd=scale))
 
 data.frame(
   data = c(x, sampled_data),
