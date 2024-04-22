@@ -156,7 +156,7 @@ sigma_zero <- 10
 sigma <- 15
 mu_zero <- 100
 location <- (1/ ( (1/sigma_zero^2) + (n/sigma^2))) * ( (mu_zero/sigma_zero^2) + (sum(x)/sigma^2))
-scale <- ((1/sigma_zero^2) + (n/sigma^2))^(-1)
+scale <- sqrt(((1/sigma_zero^2) + (n/sigma^2))^(-1))
 
 y <- dnorm(seq(100, 160, length.out =100),  location, scale)
 plot(seq(100, 160, length.out =100), y, 

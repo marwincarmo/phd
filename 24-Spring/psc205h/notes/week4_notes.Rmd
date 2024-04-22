@@ -1,0 +1,12 @@
+---
+title: "Week 4: Evaluatin of model fit"
+output: html_notebook
+---
+
+- Bayesian p-value: A good model would have a p-value of .05. Extreme values sit on top of the extreme values you have observed. Generally, they're a good if between .10-.09(?)
+
+## Predictive accuracy
+
+- elpd is never observed but is approximated. We can measure the distance for which model is closer to the real model. We have to approximate the distribution who could have generated the data.
+
+

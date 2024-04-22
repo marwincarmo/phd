@@ -1,0 +1,326 @@
+---
+title: "R-Script to generate lecture slides for W4"
+author: "Philippe Rast"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+## Load packages
+```{r, message = FALSE}
+library(ggplot2)
+```
+
+From the HW 3:
+
+# Conjugate Normal
+## Question 5
+
+So far, we have focused on a binomial distribution. Now, let's assume we measured the intelligence of 30 independent individuals. We think that intelligence is normally distributed and is described by a mean $\mu$ and a variance $\sigma^2$. From previous studies we know that intelligence is consistently hovering around 100. Accordingly, our prior for $\mu$ will have mean of 100. Give that we are fairly sure that the population means are close to 100, we chose a small SD of 10. With this, we assume that 65\% of the population means are somewhere between 90, and 110. 
+Moreover, we _know_ that in the population intelligence has an SD of 15. That is, here we assume $\sigma$ to be known. 
+
+Our model can be written as: 
+
+\begin{align}
+y \sim & N(\mu, \sigma) \quad [\text{Likelihood}] \\
+ & \mu ~ \sim N(\mu_0 = 100, \sigma_0 = 10) \quad [\text{Prior}]\\ 
+ & \sigma = 15   \quad [\text{Constant}]
+\end{align}
+
+Conveniently, we chose a normal prior for $\mu$ and assume $\sigma$ to be known, which means that we can obtain the posterior analytically. 
+Even better,  we can look up the posterior for this situation in a table (eg. on [Wikipedia](https://en.wikipedia.org/wiki/Conjugate_prior#When_likelihood_function_is_a_continuous_distribution) ):
+
+$$ N\left( \frac{1}{\frac{1}{\sigma_0^2} + \frac{n}{\sigma^2}} \left(\frac{\mu_0}{\sigma_0^2} + \frac{\sum_{i=1}^n x_i}{\sigma^2}\right), \left(\frac{1}{\sigma_0^2} + \frac{n}{\sigma^2}\right)^{-1} \right) $$
+
+Now we obtain 30 independent measurements: X = `r set.seed(433); rbinom(30, 200, .65).
+
+Compute the posterior, assuming known variance
+```{r}
+## Observed data are generated as follows:
+set.seed(433)
+x <- rbinom(30, 200, .65)
+set.seed(NULL )
+
+## your code:
+conjugate <- function( sigma, pr_mu, pr_sigma =  15, n, x) {
+    loc <- 1/( 1/pr_sigma^2 + n/sigma^2  )*( pr_mu / pr_sigma^2 + sum(x )/sigma^2)
+    scl <- sqrt( (1/pr_sigma^2 + n/sigma^2 )^(-1) )
+    print(c(loc,scl) )
+}
+
+conj_param <- conjugate( sigma = 15, pr_mu = 100, pr_sigma = 10, n = length(x), x = x)
+conj_param
+
+plot(seq(20:200 ), dnorm(seq(20:200 ), conj_param[1], conj_param[2] ), type = 'l', "Posterior of the Mean")
+abline(v = mean(x ) )
+qnorm(0.025, conj_param[1], conj_param[2] )
+
+```
+Generate samples from the posterior predictive distribution and compare them to the observed values visually. That is, find a way to juxtapose the observations with the sampled data
+
+```{r}
+rep <-  30
+mu <- rnorm(rep, conj_param[1], conj_param[2] )
+xrep <- rnorm(rep, mu, 15)
+
+df <- data.frame( X =  c(xrep, x ), y = c( rep('predicted', rep), rep('observed', length(x ) ) ))
+df
+
+ppc1 <- ggplot(df, aes( x =  X, y =  y, col = y)) + geom_jitter( position = position_jitter(height = .1 ) )
+ggsave(filename = "../figure/ppchw.pdf", plot = ppc1, height = 3, width = 5 )
+
+## Alternatively
+
+pdf(file = "../figure/ppchist.pdf", width = 11, height = 5)
+op <- par(mfcol = c(3,5 )) 
+hist(x, ylim = c(0, 15 ), xlim =  c(70, 180 ), col = "red", breaks = round((max(x)-min(x))/4))
+for( i in 1:14 ) {
+    mu <- rnorm(rep, conj_param[1], conj_param[2] )
+    xrep <- rnorm(rep, mu, 15)
+    hist(xrep, ylim = c(0, 10 ), xlim =  c(70, 180 ), breaks =  round((max(xrep)-min(xrep))/4))
+}
+dev.off( )
+op
+
+for( i in 1:100 ) {
+    mu <- rnorm(rep, conj_param[1], conj_param[2] )
+    xrep <- rnorm(rep, mu, 15)
+    lines(density(xrep), col = "#0066ff75" )
+}
+lines(density(x ), col = "red", lwd =  2 )
+
+
+
+pdf(file = "../figure/ppcdens.pdf", width = 6, height =  5 )
+set.seed(234 )
+plot(density(xrep ), ylim =  c(0, 0.06 ), col = "#0066ff10" , main =  "", xlab =  expression(mu ))
+for( i in 1:1000 ) {
+    mu <- rnorm(rep, conj_param[1], conj_param[2] )
+    xrep <- rnorm(rep, mu, 15)
+    lines(density(xrep), col = "#0066ff25" )
+}
+lines(density(x ), col = "red", lwd =  2 )
+dev.off( )
+
+max(x )
+
+
+
+pdf(file = "../figure/bayesP1.pdf", width = 9, height =  7 )
+op <- par(mfcol = c(3,5 )) 
+#hist(x, ylim = c(0, 15 ), xlim =  c(70, 180 ), col = "red", breaks = round((max(x)-min(x))/4))
+set.seed(6)
+for( i in 1:15 ) {
+    mu <- rnorm(rep, conj_param[1], conj_param[2] )
+    xrep <- rnorm(rep, mu, 15)
+    hist(xrep, ylim = c(0, 10 ), xlim =  c(70, 180 ), breaks =  round((max(xrep)-min(xrep))/4), col = ifelse(max(xrep )>max(x ), "red", "black" ))
+}
+op
+dev.off( )
+
+
+pdf(file = "../figure/bayesP2.pdf", width = 6, height =  5 )
+plot(density(xrep ), ylim =  c(0, 0.06 ), col = "#0066ff10" , main =  "", xlab =  expression(mu ))
+z <- 0
+for( i in 1:1000 ) {
+    mu <- rnorm(rep, conj_param[1], conj_param[2] )
+    xrep <- rnorm(rep, mu, 15)
+    lines(density(xrep), col = ifelse(max(xrep )>max(x ), "#fa000025", "#0066ff" )  )
+    z <- z + ifelse(max(xrep )>max(x ), 1, 0)
+}
+text(x =  160, y = 0.04, paste0("Probability of blue: ", round(1 - z/1000, 2)))
+dev.off( )
+
+```
+
+Compute the 90% predictive interval (90% interval from the posterior predicitve distribution) 
+```{r}
+rep <-  1000
+mu <- rnorm(rep, conj_param[1], conj_param[2] )
+xrep <- rnorm(rep, mu, 15)
+
+L <- sort(xrep)[1000*.05]
+U <- sort(xrep)[1000*.95]
+
+L;U
+
+## 90% CrI, comes from posterior only
+conj_param[1] + 1.64*conj_param[2] 
+conj_param[1] - 1.64*conj_param[2] 
+
+```
+
+Comment: Our model does capture the whole range of the observed data but it does not reflect that distribution. This can mean two things - our model was too restrictive and not able to capture the nature of the sample, or, our sample is not representative of the population -- either way, data and posterior predictions suggest that there is a mismatch.
+
+## For class:
+
+### PD intervals:
+```{r}
+conj_param <- conjugate( sigma = 15, pr_mu = 50, pr_sigma = 10, n = length(x), x = x)
+conj_param
+
+param <- seq(80,150, length.out = 200)
+plot(param,  dnorm(param, 100, 10 ), col = "blue" , type = 'l', main =  "Posterior Distribution with 95 % CrI",
+     ylab = "Probability Density", ylim =  c(0, 0.16 ),
+     xlab =  expression(mu)) ## Prior
+
+
+## Likelihood: 
+llik <- NA
+for( i in 1:length(param) ) {
+    llik[i] <- sum( dnorm(x, param[i], 15, log = T ) )
+}
+
+exp(llik)
+
+## For visualization purpose, prior is inflated 
+lines(param,  exp(llik)*1e+47, col =  "red")
+
+## Posterior
+lines(param, dnorm(param, post[1], post[2] ))
+
+df <- data.frame(param = param, llik =  exp(llik)*1e+47, prior =  dnorm(param, 100, 10 ), posterior = dnorm(param, conj_param[1], conj_param[2] ))
+head(df)
+
+pri <- ggplot(df, aes(x =  param, y = prior ) ) + geom_line( col =  "blue" ) +
+    scale_y_continuous(limits =  c(0, 0.16 ) ) + ylab("Density") + xlab(expression(mu) )
+pri
+num <- pri + geom_line( aes( y =  llik ), col =  "red" )
+num
+posterior  <- num + geom_line(aes( y = posterior ) )
+posterior
+
+conj_param[1]
+L <- qnorm(0.025, conj_param[1], conj_param[2] )
+L
+U <- qnorm(0.975, conj_param[1], conj_param[2] )
+U
+
+post2 <- posterior + geom_area( mapping = aes(x = ifelse(param>L & param < U, param, NA), y =  posterior ) , fill =  "red" , alpha =  .5)
+post2
+
+ggsave(filename = "../figure/pri1.pdf", plot = pri, width = 4, height = 2.5 )
+ggsave(filename = "../figure/lik1.pdf", plot = num, width = 4, height = 2.5 )
+ggsave(filename = "../figure/post1.pdf", plot = posterior, width = 4, height = 2.5 )
+ggsave(filename = "../figure/post_cri1.pdf", plot = post2, width = 4, height = 2.5 )
+
+
+## Posterior only
+param <- seq(110,135, length.out = 200)
+df <- data.frame(param = param, llik =  exp(llik)*1e+47, prior =  dnorm(param, 100, 10 ), posterior = dnorm(param, conj_param[1], conj_param[2] ))
+
+L <- qnorm(0.05, conj_param[1], conj_param[2] )
+L
+cri1 <- ggplot(df, aes(x =  param, y = posterior ) ) + geom_line() +
+    scale_y_continuous(limits =  c(0, 0.16 ) ) + ylab("Density") + xlab(expression(mu) ) + ggtitle("95% CrI")+
+    geom_area( mapping = aes(x = ifelse(param>L & param < max(param ), param, NA), y =  posterior ) , fill =  "red" , alpha =  .5)
+
+L <- qnorm(0.25, conj_param[1], conj_param[2] )
+U <- qnorm(0.75, conj_param[1], conj_param[2] )
+L;U
+cri1
+cri2 <- ggplot(df, aes(x =  param, y = posterior ) ) + geom_line() +
+    scale_y_continuous(limits =  c(0, 0.16 ) ) + ylab("Density") + xlab(expression(mu) ) + ggtitle("50% CrI")+
+    geom_area( mapping = aes(x = ifelse(param>L & param < U, param, NA), y =  posterior ) , fill =  "red" , alpha =  .5)
+cri2
+
+L <- min( param )
+
+conj_param
+
+dnorm(120, conj_param[1], conj_param[2])
+
+L <- 110
+U <- qnorm(0.085, conj_param[1], conj_param[2] )
+U  
+cri3 <- ggplot(df, aes(x =  param, y = posterior ) ) + geom_line() +
+    scale_y_continuous(limits =  c(0, 0.16 ) ) + ylab("Density") + xlab(expression(mu) ) + ggtitle("8.5% CrI") +
+    geom_area( mapping = aes(x = ifelse(param>L & param < U, param, NA), y =  posterior ) , fill =  "red" , alpha =  .5)
+cri3
+
+ggsave(filename = "../figure/cri1.pdf", plot = cri1, width = 2, height = 3)
+ggsave(filename = "../figure/cri2.pdf", plot = cri2, width = 2, height = 3)
+ggsave(filename = "../figure/cri3.pdf", plot = cri3, width = 2, height = 3)
+
+
+```
+
+### PPD intervals
+## AIC
+```{r}
+## AIC for given sd
+-2*( sum( dnorm(x, mean(x), 15, log =  TRUE)) - 1 )
+
+## same as (exactly like eq's on slide 44
+-2*( sum( log( dnorm(x, mean(x), 15))) - 1 )
+
+
+## for exstimated model with mu and sigma estimated
+-2*( sum( dnorm(x, mean(x), sd(x), log =  TRUE)) - 2 )
+m1 <- lm(x ~ 1 )
+AIC(m1 )
+
+```
+
+## WAIC
+```{r}
+## Data points
+head(x)
+
+conj_param <- conjugate( sigma = 15, pr_mu = 50, pr_sigma = 10, n = length(x), x = x)
+conj_param
+
+## Sample from the posterior
+repl <- 1000
+mu_post <- rnorm(repl, conj_param[1], conj_param[2])
+head(mu_post)
+
+
+## We could use the mu_post to create Posterior Prdictive distribution\
+ppd <- NA
+for(s in seq_len(repl)) {
+  ppd[s] = rnorm(1, mu_post[1],  15)
+}
+hist(ppd)
+
+
+lpd <- NA
+varlog <- NA
+for(i in 1:length(x)) {
+  lpd[i] <- log( mean(dnorm(x[i], mu_post, 15)) ) ## This is our likelihood function with known sigma
+  varlog[i] <- var( log( dnorm(x[i], mu_post, 15) ) )
+}
+
+head(lpd)
+head(varlog)
+
+k_waic <-  sum( varlog ) 
+k_waic
+sum( lpd )
+
+elppd <- sum( lpd ) - k_waic
+waic <- -2*elppd
+waic
+
+
+## Now, try with eg sigma = 10 in conjugate function
+
+```
+## LOO-CV
+with actual trainting and test set
+```{r}
+
+pd <- NA
+
+sig <- 10
+repl <-  1000
+for(i in 1:length(x ) ) {
+    conj_param <- conjugate( sigma = sig, pr_mu = 100, pr_sigma = 10, n = length(x)-1, x = x[-i])
+    mu_loocv <- rnorm(repl, conj_param[1], conj_param[2] )
+    pd[i] <- log( sum( 1/repl * dnorm(x[i], mu_loocv, sig ) ))
+}
+-2 * sum( pd )
+
+```
