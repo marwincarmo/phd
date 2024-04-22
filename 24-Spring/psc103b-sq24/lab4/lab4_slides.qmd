@@ -44,7 +44,135 @@ And read in the data with this "new" function
 cards <- read_rds('Lab4Data.rds')
 ```
 
+
+:::.{note}
+Today the data we'll use is in an .rds file. 
+This is a type of R file that allows you to save a little bit more information with your dataframe or other object (for example, if you have a column full of numbers that you
+want to be stored as type character instead, saving an .rds will
+allow you to do that). The downside to .rds files is that
+it's not possible to view it as easily outside of R,
+like a .csv file is (you could simply open it using any
+spreadsheet software).
+:::
+
+## Today's dataset
+
+- 200 people were asked to imagine a shuffled deck of cards and mentally pick one card at random. 
+
+- Then they were asked to randomly pick another card. 
+
+- This data set records the suit choice for the first and second choices for each participant. 
+
+- Participants didn't  physically pick a card, they were asked to imagine randomly picking a card.
+
+## Today's dataset
+
 ```{r}
 head(cards)
 ```
 
+- `id`: participant ID
+- `choice_1`: card suit for first pick 
+- `choice_2`: card suit for second pick 
+
+---
+
+```{r}
+table(cards$choice_1)
+```
+
+- Any inital impressions? 
+
+- What would it look like if people chose cards randomly?
+
+- Do people really choose cards randomly?
+
+## Chi Square Goodness of Fit Test
+
+- Let's say our theory is "people don't choose cards randomly" 
+
+- $H_0$: All four suits are chosen with equal probability, or
+
+- $H_0$: P = (P1, P2, P3, P4), where P is a vector or set of probabilities.
+
+- If the suits are equally represented, what proportions do we expect?
+
+- $H_0$: P = (.25, .25, .25, .25)
+
+:::fragment
+```{r}
+H0_prob <- c(clubs = .25, diamonds = .25, hearts = .25, spades = .25)
+```
+:::
+
+## Chi Square Goodness of Fit Test
+
+- $H_1$: *At least one* of the suit-choice probabilities isn't .25. How would you write that?
+
+- $H_1$: P $\neq$ (.25, .25, .25, .25)
+
+## Chi Square Goodness of Fit Test
+
+- We can save our observed frequencies for the first choice in an object:
+
+:::fragment
+```{r}
+observed_freq <- table(cards$choice_1)
+
+observed_freq
+```
+:::
+
+- We can compare these two pieces of information to test our H0.
+
+## Chi Square Goodness of Fit Test
+
+- We can transform the H0 probabilities into the frequencies we would expect to see if H0 were true
+
+- First, we need to write our total sample size:
+
+:::fragment
+```{r}
+N <- 200
+```
+:::
+
+- And we can multiply this by our expected probabilities to get the expected frequencies:
+
+:::fragment
+```{r}
+expected_freq <- H0_prob * N
+expected_freq
+```
+:::
+
+## Chi Square Goodness of Fit Test
+
+$H_0$: P = (.25, .25, .25, .25)
+
+$H_1$: P $\neq$ (.25, .25, .25, .25)
+
+Look at the data again. Do you think H0 or H1 is more likely to be true?
+
+```{r}
+observed_freq
+expected_freq
+```
+
+## Chi Square Goodness of Fit Test
+
+- What we want to do now is compare the expected results with the observed results.
+
+- If they are similar enough, we don't reject H0.
+
+- If they are very different, we reject H0.
+
+## Chi Square Goodness of Fit Test
+
+### Step 1: Compute "error" scores
+
+```{r}
+(error_scores <- (observed_freq - expected_freq)^2 / expected_freq)
+```
+
+Bigger numbers = more discrepancy between observed and expected frequency.
