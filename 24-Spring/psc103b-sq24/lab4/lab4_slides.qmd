@@ -201,7 +201,9 @@ The closer the observed frequencies are to the prediction by H0 (expected freque
 
 ### Step 2: Compare our statistic to the chi-square distribution
 
-```{r echo=FALSE}
+Notice how the shape of the distribution changes as the degrees of freedom (df) increase.
+
+```{r echo=FALSE, center=TRUE}
 
 x1 <- seq(0, 30, by = .1)
 y_df5 <- dchisq(x = x1, df = 5)
@@ -216,4 +218,145 @@ tibble(x1, y_df5, y_df10, y_df15) %>%
   labs(x = "", y = "density") +
   theme_classic()
 ```
+
+## Chi Square Goodness of Fit Test
+
+### Step 2: Compare our statistic to the chi-square distribution
+
+- To compare our statistic to the chi-square distribution, we can use the `pchisq()` function. 
+
+- The chi-square distribution needs a df, where `df = number of categories - 1`.
+
+::: fragment
+```{r}
+pchisq(q = goodness_of_fit, df = 3, lower.tail = FALSE)
+```
+:::
+
+:::.{note}
+We want the probability of getting this value or *more* extreme, so we want information about the upper tail, so lower.tail = FALSE 
+:::
+
+## Chi Square Goodness of Fit Test
+
+### Step 3: Decide if our p-value is big or small
+
+- Is the p value you got from the `pchisq()` function larger or smaller than .05? 
+
+- Can we reject H0? 
+
+- What does this mean?
+
+## Chi Square Goodness of Fit Test
+
+### Step 3B: Compute the Bayes factor
+
+```{r}
+library(BayesFactor)
+```
+
+## An easier way to test it
+
+- We can do this very easily in R using the `chisq.test()` function. The arguments are: `chisq.test(observed frequencies, p = expected probabilities)`.
+
+::: fragment
+:::{.callout-caution title="Exercise"}
+Try to run the  `chisq.test()` function yourself first.
+:::
+:::
+
+::: fragment
+```{r}
+chisq.test(observed_freq, p = c(.25, .25, .25, .25))
+```
+:::
+
+---
+
+- Notice that we assumed equal probabilities for  this test, but we didn't have to; we could have expected whatever probabilities we wanted and then we would just need to specify them in `p`. 
+
+- We also need to make sure that the order of observed frequencies and p are the same.
+
+- For example:
+
+::: fragment
+```{r eval=FALSE}
+chisq.test(obs_freq, p = c(.40, .35, .15, .10))
+```
+:::
+
+## The Chi Square test of Independence
+
+- Another type of $\chi^2$ test is the one when we have two categorical variables, and we're interested in testing whether or not they're related or dependent on each other.
+
+- **Dependence** means that knowing the value of one variable gives you an idea of what the value on the second variable is going to be.
+
+- **Independence** means knowing the value of one variable doesn't tell you anything about the value of the other variable.
+
+## Chi-Square Test of Independence
+
+- $H_0$: The choice of suit in the second imagination exercise is independent of the first.
+
+- $H_A$: The choice of the first and the second suits are not independent.
+
+- Just like in the GoF test, the chi-square test of independence computes the difference between what we would expect if the variables were independent, and what we observed.
+
+## Chi-Square Test of Independence
+
+- If `Choice1` and `Choice2` are independent variables, knowing what someone picked as their first choice won't help us guess what they picked as their second choice. 
+
+- Another way to think about this is that the probability of someone picking a suit for `Choice1` is not related to the probability of picking a suit for `Choice2`.
+
+## Chi-Square Test of Independence
+
+We can use the `table()` function to get the number of observations for each combination of two variables, like this:
+
+```{r}
+cont_tab<-table(Choice1 = cards$choice_1, Choice2 = cards$choice_2)
+cont_tab
+```
+
+## Chi-Square Test of Independence
+
+- Since our goal is to see if two variables are independent, we need to give the function both variables.
+
+- When we do that, by default the function will do a chi-square test of independence between the two categorical variables.
+
+:::fragment
+```{r}
+chisq.test(x=cards$choice_1, y = cards$choice_2)
+```
+:::
+
+## Chi-Square Test of Independence with Bayes factor
+
+```{r}
+contingencyTableBF(cont_tab, sampleType = "indepMulti", fixedMargin = "cols")
+```
+
+What can we conclude about the two variables? 
+
+## Now you try
+
+- You will use a data set built-in in `R` named `UCBAdmissions` . 
+
+- It refers to aggregate data on applicants to graduate school at Berkeley for the six largest departments in 1973 classified by admission and sex.
+
+- It is a 3-dimensional array resulting from cross-tabulating 4526 observations on 3 variables. Look at it by calling `UCBAdmissions` on your console.
+
+## Now you try
+
+Aggregate data over departments running the following code:
+
+```{r}
+agg_UCBAdmissions <- apply(UCBAdmissions, c(1, 2), sum)
+agg_UCBAdmissions
+```
+
+What would be your null and alternative hypothesis? What you expect to find. 
+
+With this new data set, run a chi-squared test to check if the data show evidence of sex bias in admission practices. Compute either a p-value or a BF (or both!).
+
+
+
 
