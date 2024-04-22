@@ -34,7 +34,16 @@ Sample 10,000 times and plot distribution with a barplot
 
 * Answer 1:
 ```{r}
-## Code for sampling goes here
+ppa <- function( alpha=1, beta=1, z=3, N=20) {
+
+  posterior <- rbeta(1, z+alpha, N-z+beta) # P(Theta|x)
+
+  X <- rbinom(1, N, posterior)
+  return(X)
+}
+
+replicate(10000, ppa()) |> 
+  hist()
 ```
 
 ## Question 2
@@ -53,9 +62,27 @@ There's two ways to do this -- show both:
    3. *Interpret* the credible interval 
 
 ```{r}
-## Code
-```
+# Simulation
+dat <- rbeta(1000, 4, 18)
 
+## Mean
+mean(dat)
+
+## Median and CrI
+quantile(dat, c(.025, .5, .975))
+
+# Analytic solution
+
+## Mean
+alpha <- 4
+beta <- 18
+alpha/(alpha+beta)
+
+## Median and CrI
+qbeta(c(.025, .5, .975), alpha, beta)
+
+```
+The credible interval indicates that 95% of the posterior probability lies in the range of 0.054 and 0.36.
 
 
 ### Question 3
@@ -69,7 +96,25 @@ Now, lets assume we observed 5 PD kids and 50 non-PD. This time we have differen
 Show the effect of the different priors on the posterior by superposing the PDF's in the same plot. 
 
 ```{r}
-## Code
+
+z <- 5
+N <- 55
+x <- seq (0 ,1 , length.out = 100)
+  
+prior_df <- data.frame(
+  x = rep(seq (0 ,1 , length.out = 100), by=3),
+  Prior = rep(c("Beta( 1, 10)", "Beta( 5, 5)", "Beta(10, 1)"), each=100),
+  posterior = c(dbeta(x, z+1, N-z+10), dbeta(x, z+5, N-z+5), dbeta(x, z+10, N-z+1))
+)
+
+prior_df |> 
+  ggplot(aes(x = x, y=posterior, color=Prior)) +
+  geom_line() +
+  theme_minimal() +
+  labs(
+    x = "X",
+    y = "Posterior"
+  )
 ```
 
 
@@ -98,6 +143,7 @@ $$ N\left( \frac{1}{\frac{1}{\sigma_0^2} + \frac{n}{\sigma^2}} \left(\frac{\mu_0
 Now we obtain 30 independent measurements. We'll use `set.seed(433)` so that we all have the same data: X = `r set.seed(433); rbinom(30, 200, .65)`.
 
 Compute the posterior, assuming known variance and plot the posterior. Add lines to indicate the lower and upper CrI. 
+
 ```{r}
 ## Observed data are generated as follows:
 set.seed(433)
@@ -105,14 +151,48 @@ x <- rbinom(30, 200, .65)
 set.seed(NULL )
 
 ## your code:
+n <- 30
+sigma_zero <- 10
+sigma <- 15
+mu_zero <- 100
+location <- (1/ ( (1/sigma_zero^2) + (n/sigma^2))) * ( (mu_zero/sigma_zero^2) + (sum(x)/sigma^2))
+scale <- ((1/sigma_zero^2) + (n/sigma^2))^(-1)
+
+y <- dnorm(seq(100, 160, length.out =100),  location, scale)
+plot(seq(100, 160, length.out =100), y, 
+     type='l', xlab = "IQ", ylab = "Posterior")
+
+abline(v=qnorm(.025,  location, scale), col="red", lwd=1.5)
+abline(v=qnorm(.975,  location, scale), col="red", lwd=1.5)
 ```
 
 Generate samples from the posterior predictive distribution and compare them to the observed values visually. That is, find a way to juxtapose the observations with the sampled data
+
 ```{r}
-## Comment
+
+pp_normal <- function( location, scale) {
+
+  posterior_mean <- rnorm(1, location, scale)
+  iq <- rnorm(1, posterior_mean, 15)
+  return(iq)
+}
+
+sampled_data <- replicate(1000, pp_normal(location, scale))
+
+data.frame(
+  data = c(x, sampled_data),
+  value = rep(c("Observed", "Posterior"),c(30, 1000))
+) |> 
+  ggplot(aes(x =data, fill = value )) +
+  geom_density(alpha=.5) +
+  theme_minimal()
 ```
 
 Still here? Great! Now compute the 90% predictive interval (90% interval from the posterior predictive distribution) and compare it to the CrI from the posterior:
 ```{r}
-## Comment
+# 90% predictive interval
+quantile(sampled_data, c(.05, .95))
+
+# 90% CrI
+qnorm(c(.05, .95), location, scale)
 ```

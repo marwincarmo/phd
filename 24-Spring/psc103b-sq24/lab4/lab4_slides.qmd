@@ -1,0 +1,50 @@
+---
+title: "Lab 4: Chi Square Tests"
+subtitle: "PSC 103B"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    callout-icon: false
+    # height: 900
+    footer: "PSC 103B - Statistical Analysis of Psychological Data"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+execute:
+  echo: true
+editor_options: 
+  chunk_output_type: console
+---
+
+## Packages and data
+
+First of all, lets load tidyverse
+
+```{r}
+library(tidyverse)
+```
+
+And read in the data with this "new" function
+
+```{r}
+cards <- read_rds('Lab4Data.rds')
+```
+
+```{r}
+head(cards)
+```
+
