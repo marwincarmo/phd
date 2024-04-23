@@ -169,27 +169,27 @@ expected_freq
 
 - But how do we know how far is **too far** from the expected values? 
 
-## Chi Square Goodness of Fit Test
+## Step 1: Compute "error" scores
 
-### Step 1: Compute "error" scores
+- To conduct the GoF test, we need to compute the error score to measure the difference between what we expected and what we observed.
 
-```{r}
-(error_scores <- (observed_freq - expected_freq)^2 / expected_freq)
-```
+- We compare this to a distribution to see how big that difference is, and if it's big enough to reject the null.
 
-- Bigger numbers = more discrepancy between observed and expected frequency.
-
-- We can use these error scores to calculate the goodness of fit statistic
+- The formula for this is $(O - E)^2 / E$
 
 :::fragment
 ```{r}
-goodness_of_fit <- sum(error_scores) # This is our goodness of fit statistic
+(error_scores <- (observed_freq - expected_freq)^2 / expected_freq)
 ```
 :::
 
-## Chi Square Goodness of Fit Test
+:::fragment
+```{r}
+(goodness_of_fit <- sum(error_scores)) # This is our goodness of fit statistic
+```
+:::
 
-### Step 1: Compute "error" scores
+## Step 1: Compute "error" scores
 
 The closer the observed frequencies are to the prediction by H0 (expected frequencies), the __________ the goodness of fit statistic will get. [Larger or smaller?]
 
@@ -197,9 +197,7 @@ The closer the observed frequencies are to the prediction by H0 (expected freque
 
 - How large is large enough to reject H0?
 
-## Chi Square Goodness of Fit Test
-
-### Step 2: Compare our statistic to the chi-square distribution
+## Step 2: Compare our statistic to the chi-square distribution
 
 Notice how the shape of the distribution changes as the degrees of freedom (df) increase.
 
@@ -220,9 +218,7 @@ tibble(x1, y_df5, y_df10, y_df15) %>%
   theme_classic()
 ```
 
-## Chi Square Goodness of Fit Test
-
-### Step 2: Compare our statistic to the chi-square distribution
+## Step 2: Compare our statistic to the chi-square distribution
 
 - To compare our statistic to the chi-square distribution, we can use the `pchisq()` function. 
 
@@ -238,9 +234,7 @@ pchisq(q = goodness_of_fit, df = 3, lower.tail = FALSE)
 We want the probability of getting this value or *more* extreme, so we want information about the upper tail, so lower.tail = FALSE 
 :::
 
-## Chi Square Goodness of Fit Test
-
-### Step 3: Decide if our p-value is big or small
+## Step 3: Decide if our p-value is big or small
 
 - Is the p value you got from the `pchisq()` function larger or smaller than .05? 
 
@@ -248,9 +242,7 @@ We want the probability of getting this value or *more* extreme, so we want info
 
 - What does this mean?
 
-## Chi Square Goodness of Fit Test
-
-### Step 3B: Compute the Bayes factor
+## Step 3B: Compute the Bayes factor
 
 ```{r}
 library(BayesFactor)
@@ -258,10 +250,9 @@ library(BayesFactor)
 
 
 ```{r}
-proportionBF(c(35,51,64,50), rep(200, 4), .25)
+proportionBF(y = c(35,51,64,50), N = rep(200, 4), p = .25)
 
 ```
-
 
 ## An easier way to test it
 

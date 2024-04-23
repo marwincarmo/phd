@@ -15,7 +15,7 @@
 library(tidyverse)
 
 # And set our working directory 
-setwd("C:/Users/dpsiegel/Box/PSC 103B/Labs/Lab 4")
+setwd("PATH TO THE FOLDER")
 
 # Whenever you're writing an R script like this one (whether it's for
 # the homework or something else) you should get into the habit of loading
