@@ -45,7 +45,7 @@ cards <- read_rds('Lab4Data.rds')
 ```
 
 
-:::.{note}
+::: {.notes}
 Today the data we'll use is in an .rds file. 
 This is a type of R file that allows you to save a little bit more information with your dataframe or other object (for example, if you have a column full of numbers that you
 want to be stored as type character instead, saving an .rds will
@@ -177,7 +177,7 @@ expected_freq
 (error_scores <- (observed_freq - expected_freq)^2 / expected_freq)
 ```
 
-Bigger numbers = more discrepancy between observed and expected frequency.
+- Bigger numbers = more discrepancy between observed and expected frequency.
 
 - We can use these error scores to calculate the goodness of fit statistic
 
@@ -203,7 +203,8 @@ The closer the observed frequencies are to the prediction by H0 (expected freque
 
 Notice how the shape of the distribution changes as the degrees of freedom (df) increase.
 
-```{r echo=FALSE, center=TRUE}
+```{r echo=FALSE}
+#| fig-align: "center"
 
 x1 <- seq(0, 30, by = .1)
 y_df5 <- dchisq(x = x1, df = 5)
@@ -233,7 +234,7 @@ pchisq(q = goodness_of_fit, df = 3, lower.tail = FALSE)
 ```
 :::
 
-:::.{note}
+::: {.notes}
 We want the probability of getting this value or *more* extreme, so we want information about the upper tail, so lower.tail = FALSE 
 :::
 
@@ -255,9 +256,16 @@ We want the probability of getting this value or *more* extreme, so we want info
 library(BayesFactor)
 ```
 
+
+```{r}
+proportionBF(c(35,51,64,50), rep(200, 4), .25)
+
+```
+
+
 ## An easier way to test it
 
-- We can do this very easily in R using the `chisq.test()` function. The arguments are: `chisq.test(observed frequencies, p = expected probabilities)`.
+- We can do this very easily in R using the `chisq.test()` function. The arguments are: `chisq.test(x = observed frequencies, p = expected probabilities)`.
 
 ::: fragment
 :::{.callout-caution title="Exercise"}
@@ -281,7 +289,7 @@ chisq.test(observed_freq, p = c(.25, .25, .25, .25))
 
 ::: fragment
 ```{r eval=FALSE}
-chisq.test(obs_freq, p = c(.40, .35, .15, .10))
+chisq.test(observed_freq, p = c(.40, .35, .15, .10))
 ```
 :::
 
@@ -328,10 +336,12 @@ chisq.test(x=cards$choice_1, y = cards$choice_2)
 ```
 :::
 
+- We could also use the matrix we created earlier `chisq.test(cont_tab)`
+
 ## Chi-Square Test of Independence with Bayes factor
 
 ```{r}
-contingencyTableBF(cont_tab, sampleType = "indepMulti", fixedMargin = "cols")
+contingencyTableBF(x = cont_tab, sampleType = "indepMulti", fixedMargin = "cols")
 ```
 
 What can we conclude about the two variables? 
