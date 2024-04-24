@@ -65,6 +65,14 @@ that is captured in the conditional means, or location parameter.
 
 - The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$.
 
+## Advantages of MELSM
+
+- Account for possible correlations among location and scale effects.
+
+- For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.
+
+- Overcomes the limitations of multi-stage approaches and outperform the classic mixed effects model in in- and out of sample performance.
+
 ---
 
 The starting point is the standard linear mixed effects model for $i = 1,2,...,n_j$ students, and $j = 1, 2, \ldots, S$ schools, specified as
@@ -132,9 +140,13 @@ The random effects from the *scale* and *location* of the model come from a mult
 
 ---
 
-Alternatively, we can express the relation among the random effects on the location and scale models via the Cholesky parameterization.
+- $\boldsymbol{\Sigma}$ can be decomposed into $\boldsymbol\Sigma = \boldsymbol{\tau}\boldsymbol{\Omega\tau}'$ to specify independent priors for each element of $\boldsymbol{\tau}$ and $\boldsymbol{\Omega}$.
 
-$\boldsymbol{\Sigma}$ can be decomposed into $\boldsymbol\Sigma = \boldsymbol{\tau}\boldsymbol{\Omega\tau}'$
+- $\boldsymbol{\tau}$ is a diagonal matrix where the diagonal elements are the random-effect variances.
+
+- $\boldsymbol{\Omega}$ is the correlation matrix that contains the covariances among all random effects.
+
+## Cholesky transformation
 
 \begin{equation}
 \label{eq:cholesky_approach}
@@ -149,7 +161,7 @@ $\boldsymbol{\Sigma}$ can be decomposed into $\boldsymbol\Sigma = \boldsymbol{\t
 
 ---
 
-If we multiply $\textbf{L}$ by the random effect standard deviations, $\boldsymbol{\tau}$ and scale it with a standard normally distributed $\boldsymbol{z}$, we obtain $\textbf{v}$
+If we multiply $\textbf{L}$ by the random effect standard deviations, $\boldsymbol{\tau}$, and scale it with a standard normally distributed $\boldsymbol{z}$, we obtain $\textbf{v}$
 
 \begin{equation}
     \textbf{v} = \boldsymbol{\tau}\textbf{L}\boldsymbol{z}.
@@ -157,48 +169,106 @@ If we multiply $\textbf{L}$ by the random effect standard deviations, $\boldsymb
 
 \begin{equation}
 \begin{aligned}
-    u_0 &= \tau_{u_0}z_1\\
-    u_1 &= \tau_{u_1}(\rho_{u_ou_1}z_1 + z_2\sqrt{1-l_{21}^2})\\
-    t_0 &= \tau_{t_0}(\rho_{u_ot_0}z_1 + l_{32}z_2 + z_3\sqrt{1-l_{31}^2-l_{32}^2})\\
-    t_1 &= \tau_{t_1}(\rho_{u_ot_1}z_1 + l_{42}z_2 + l_{43}z_3 + z_4\sqrt{1-l_{41}^2-l_{31}^2-l_{32}^2})
+    u_{0j} &= \tau_{u_0}z^\mu_j\\
+    u_{1j} &= \tau_{u_1}(\rho_{u_{0j}u_{1j}} + \sqrt{1-l_{21}^2})z^\mu_j\\
+    t_{0j} &= \tau_{t_0}(\rho_{u_{0j}t_{0j}} + l_{32} + \sqrt{1-l_{31}^2-l_{32}^2})z^\sigma_j\\
+    t_{1j} &= \tau_{t_1}(\rho_{u_{0j}t_{1j}} + l_{42} + l_{43} + \sqrt{1-l_{41}^2-l_{31}^2-l_{32}^2})z^\sigma_j
 \end{aligned}
 \end{equation}
 
 ---
 
-## Advantages of MELSM
-
-- Account for possible correlations among location and scale effects.
-
-- For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.
-
-- Overcomes the limitations of multi-stage approaches and outperform the classic mixed effects model in in- and out of sample performance.
 
 ## Variable selection
 
-- Spike-and-slab approach
+\begin{equation}
+\begin{aligned}
+    u_{0j} &= \tau_{u_0}z^\mu_j\\
+    u_{1j} &= \tau_{u_1}(\rho_{u_{0j}u_{1j}} + \sqrt{1-l_{21}^2})z^\mu_j\\
+    t_{0j} &= \tau_{t_0}\color{red}{\delta_j}(\rho_{u_{0j}t_{0j}} + l_{32} + \sqrt{1-l_{31}^2-l_{32}^2})z^\sigma_j\\
+    t_{1j} &= \tau_{t_1}\color{red}{\delta_j}(\rho_{u_{0j}t_{1j}} + l_{42} + l_{43} + \sqrt{1-l_{41}^2-l_{31}^2-l_{32}^2})z^\sigma_j
+\end{aligned}
+\end{equation}
 
-- 
 
-## The priors
+## The Spike-and-slab approach
+
+::: columns
+::: {.column width="50%"}
+
+- A two component mixture
+a. A "spike", that is a Dirac measure concentrated at zero.
+b. A diffuse "slab" component surrounding zero.
+:::
+
+::: {.column width="50%"}
+:::fragment
+![Rouder et al. (2018)](rouder2018.png){fig-align="center" width=65%}
+:::
+:::
+:::
+
+::: {.notes}
+A Dirac measure is a measure whose (unit) mass is concentrated on a single point x of a space X.
+:::
+
+## The Spike-and-slab approach
+
+- An indicator variable ($\delta$) is included in the prior to allow switching between the spike and slab  throughout the MCMC sampling process.
+
+- For example, this allows for switching between a fixed effect $\tau^{\sigma} = 0$ ($\mathcal{M}_0$) and random effects model $\tau^{\sigma} > 0$ ($\mathcal{M}_u$)--i.e.,
+
+:::fragment
+\begin{equation}
+\tau^{\sigma}_* = \begin{cases}
+0, & \text{if }\delta = 0 , \\
+\tau^{\sigma}, & \text{if }\delta = 1
+\end{cases}
+\end{equation}
+:::
+
+---
+
+The posterior model probabilities can then be computed as
+
+\begin{align}
+Pr(\mathcal{M}_u | \textbf{Y}) = \frac{1}{S} \sum_{s = 1}^S \delta_s,
+\end{align}
+
+where $S = \{1,...,s\}$ denotes the posterior samples.
+
+Assuming equal prior odds
+
+\begin{align}
+BF = \frac{1 - Pr(\mathcal{M}_u | \textbf{Y})}{Pr(\mathcal{M}_u | \textbf{Y})}
+\end{align}
+
+
+## Model formulation
+
+### Likelihood
 
 \begin{align}
 \label{eq:likelihood}
-y_{ij} & \sim  \mathcal{N}(\beta_{0j} + \beta_{1j}X_{ij}, \exp[\alpha_{0j} + \alpha_{1j}M_{ij}]).
+y_{ij} & \sim  \mathcal{N}(\beta_{0j} + \beta_{1j}X_{ij}, \exp[\alpha_{0j} + \alpha_{1j}M_{ij}])
 \end{align}
 
-The priors for the unknown parameters $\gamma$ and $\eta$ are
+## Model formulation
+
+### Location
 
 \begin{align}
-\boldsymbol{\gamma}, \boldsymbol{\eta} \sim  \mathcal{N}(0, 1000)\\
+\beta_{0j} &= \gamma_{0} + \tau_{u_0}z^\mu_j\\
+\beta_{1j} &= \gamma_{1} + \tau_{u_1}(\rho_{u_{0j}u_{1j}} + \sqrt{1-l_{21}^2})z^\mu_j\\
+z^\mu &\sim \mathcal{N}(0,1) \\ 
+\gamma_{u_0}, \gamma_{u_1} &\sim  \mathcal{N}(0, 1000)\\
+\tau_{u_0}, \tau_{u_1} &\sim \mathcal{S}\boldsymbol{t}^{+}(\nu = 0, 1, 3)\\ 
 \end{align}
+
 
 $\tau^{\sigma}_*$ is the random effects standard deviation of the scale intercepts. This is where the spike and slab prior distribution is introduced.
 
-\begin{align}
-\alpha_{0j} &= \eta_{00} + \tau^{\sigma}_*\left(z^\mu_i\rho  + z^\sigma_i\sqrt{1-\rho^2}\right)  \\
-z^\sigma_i &\sim \mathcal{N}(0,1) \\ 
-\end{align}
+
 
 ---
 
@@ -278,6 +348,11 @@ Assuming equal prior odds
 BF_{0ui} = \frac{Pr(\eta_{0i} = \eta_0| \textbf{Y} )}{1 - Pr(\eta_{0i} = \eta_0| \textbf{Y} )}.
 \end{align}
 
+## Illustrative example
+
+- The data for this empirical example come from the Highschool and Beyond study (Raudenbush & Bryk, 2002)
+
+- We are interested in identifying clustering units (schools) that exhibit either unusually large or unusually small within-cluster variance – indicating either inconsistent or consistent academic achievement.
+
 ## Estimation
 
-## Illustrative example
