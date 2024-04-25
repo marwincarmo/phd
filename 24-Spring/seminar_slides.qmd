@@ -216,13 +216,13 @@ A Dirac measure is a measure whose (unit) mass is concentrated on a single point
 
 - An indicator variable ($\delta$) is included in the prior to allow switching between the spike and slab  throughout the MCMC sampling process.
 
-- For example, this allows for switching between a fixed effect $\tau^{\sigma} = 0$ ($\mathcal{M}_0$) and random effects model $\tau^{\sigma} > 0$ ($\mathcal{M}_u$)--i.e.,
+- For example, this allows for switching between a fixed effect $t_{pj} = 0$ ($\mathcal{M}_0$) and random effects model $t_{pj} > 0$ ($\mathcal{M}_u$)--i.e.,
 
 :::fragment
 \begin{equation}
-\tau^{\sigma}_* = \begin{cases}
-0, & \text{if }\delta = 0 , \\
-\tau^{\sigma}, & \text{if }\delta = 1
+t_{pj} = \begin{cases}
+0, & \text{if }\delta_{pj} = 0 , \\
+t_{pj}, & \text{if }\delta_{pj} = 1
 \end{cases}
 \end{equation}
 :::
@@ -251,9 +251,9 @@ BF = \frac{1 - Pr(\mathcal{M}_u | \textbf{Y})}{Pr(\mathcal{M}_u | \textbf{Y})}
 \begin{align}
 \label{eq:likelihood}
 y_{ij} &\sim \mathcal{N}(\mu_{j}, \sigma^2_{j})\\
-\mu_j &= X^\mu_{ijk}\gamma_{k} + Z^\mu_{jk}u_{pj}\\
-\sigma^2_j &= \exp(X^\sigma_{ij}\zeta_j + W^\sigma_{kj}t_{pj})\\
-\textbf{v} &= \boldsymbol{\tau}\textbf{L}\boldsymbol{\delta}\textbf{z}\\
+\mu_j &= X^\mu_{kij}\gamma_{k} + Z^\mu_{pj}u_{pj}\\
+\sigma^2_j &= \exp(X^\sigma_{kij}\eta_k + Z^\sigma_{pj}t_{pj})\\
+\textbf{v} &= \boldsymbol{\tau}\textbf{L}\color{red}{\boldsymbol{\delta}}\textbf{z}\\
 
 \delta_{pj} &\sim \text{Bernoulli}(0.5)\\
 z_{pj} &\sim \mathcal{N}(0, 1)
@@ -265,94 +265,35 @@ z_{pj} &\sim \mathcal{N}(0, 1)
 
 ### Priors
 
-\begin{align}
-\beta_{0j} &= \gamma_{0} + \tau_{u_0}z^\mu_j\\
-\beta_{1j} &= \gamma_{1} + \tau_{u_1}(\rho_{u_{0j}u_{1j}} + \sqrt{1-l_{21}^2})z^\mu_j\\
-z^\mu &\sim \mathcal{N}(0,1) \\ 
-\gamma_{u_0}, \gamma_{u_1} &\sim  \mathcal{N}(0, 1000)\\
-\tau_{u_0}, \tau_{u_1} &\sim \mathcal{S}\boldsymbol{t}^{+}(\nu = 0, 1, 3),
-\end{align}
-
-
-$\tau^{\sigma}_*$ is the random effects standard deviation of the scale intercepts. This is where the spike and slab prior distribution is introduced.
-
----
-
-\begin{align}
-\label{eq:scale_ss}
-\tau^{\sigma}_* &=  \delta \text{ } \cdot \text{ } \tau^{\sigma}  \\ \nonumber
-\delta &\sim \text{Bernoulli}(\pi) \\ \nonumber
-\tau^{\sigma} &\sim \mathcal{S}\boldsymbol{t}^{+}(\nu = 10, 0, 1)
-\end{align}
-
-For each MCMC iteration, a 0 or 1 is drawn from the Bernoulli distribution with the prior probability of sampling a 1 denoted $\pi$.
+Fixed effects location:
 
 \begin{equation}
-\tau^{\sigma}_* = \begin{cases}
-0, & \text{if }\delta = 0 , \\
-\tau^{\sigma}, & \text{if }\delta = 1
-\end{cases}
+  \gamma_{k} \sim  \mathcal{N}(0, 1000)
 \end{equation}
 
-We set a prior of $\delta = 0.5$ to indicate lack of preference about inclusion or exclusion of a random effect.
----
-
-The posterior model probabilities can then be computed as
-
-\begin{align}
-Pr(\mathcal{M}_u | \textbf{Y}) = \frac{1}{S} \sum_{s = 1}^S \delta_s,
-\end{align}
-
-where $S = \{1,...,s\}$ denotes the posterior samples.
-
-Assuming equal prior odds
-
-\begin{align}
-BF_{0u} = \frac{1 - Pr(\mathcal{M}_u | \textbf{Y})}{Pr(\mathcal{M}_u | \textbf{Y})}
-\end{align}
-
-## The membership model
-
-- So far we focused on whether there is evidence for a common within-person variance.
-
-- We can ask then if there is evidence for a common ICC or reliability.
-
-- If there is, which (or how many) individuals belong to the common variance model?
-
----
-
-\begin{align}
-\label{eq:mm}
-\eta_{0i}^* &= z^\mu_i\rho  + z^\sigma_i\sqrt{1-\rho^2}  \\ \nonumber
-\eta_{0i} &= \eta_0 + \tau^{\sigma} \big(\eta_{0i}^*  \text{ } \cdot \text{ } \delta_i\big) \\ \nonumber
-z^\sigma_i &\sim \mathcal{N}(0,1) \\ \nonumber
-\delta_i &\sim \text{Bernoulli}(\pi).
-\end{align}
-
-The subscript to the indicator ($\delta_i$) assigns each person a prior inclusion probability.
+Fixed effects scale:
 
 \begin{equation}
-\label{eq:mm_delta}
-\eta_{0i} = \begin{cases}
-\eta_{0}, & \text{if }\delta_i = 0 , \\
-\eta_0 + \tau^{\sigma}\left(z^\mu_i\rho  + z^\sigma_i\sqrt{1-\rho^2}\right), & \text{if }\delta_i = 1
-\end{cases}.
+  \eta_{k} \sim  \mathcal{N}(0, 1000)
 \end{equation}
 
----
+## Model formulation
 
-Individual $i$ is a member of the common ICC model when $\delta_i = 0$.
+### Priors
 
-This specification allows each individual to have their own person-specific estimate or the fixed effect average. 
+Random effects standard deviation:
 
-Each individual has a posterior probability of membership for belonging to the common ICC model.
+\begin{equation}
+  \tau_{p} \sim  \text{Gamma}(1, 3)
+\end{equation}
 
-Assuming equal prior odds
+Random effects correlation:
 
-\begin{align}
-\label{eq:bf_i}
-BF_{0ui} = \frac{Pr(\eta_{0i} = \eta_0| \textbf{Y} )}{1 - Pr(\eta_{0i} = \eta_0| \textbf{Y} )}.
-\end{align}
+\begin{aligned}
+  \textbf{L} &\sim \text{LKJ}(\eta = 1)\\
+  \boldsymbol{\Omega} = \textbf{L}'\textbf{L}
+\end{aligned}
+
 
 ## Illustrative example
 
