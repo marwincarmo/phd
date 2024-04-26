@@ -242,18 +242,6 @@ We want the probability of getting this value or *more* extreme, so we want info
 
 - What does this mean?
 
-## Step 3B: Compute the Bayes factor
-
-```{r}
-library(BayesFactor)
-```
-
-
-```{r}
-proportionBF(y = c(35,51,64,50), N = rep(200, 4), p = .25)
-
-```
-
 ## An easier way to test it
 
 - We can do this very easily in R using the `chisq.test()` function. The arguments are: `chisq.test(x = observed frequencies, p = expected probabilities)`.
@@ -283,6 +271,10 @@ chisq.test(observed_freq, p = c(.25, .25, .25, .25))
 chisq.test(observed_freq, p = c(.40, .35, .15, .10))
 ```
 :::
+
+## Reporting the results
+
+> Of the 200 participants in the experiment, 64 selected hearts as their first choice, 51 selected diamonds, 50 selected spades, and 35 selected clubs. A chi-square goodness of fit test was conducted to test whether the choice probabilities were identical for all four suits. The results were statistically significant ($\chi^2$(3) = 8.44, *p* = .038) with $\alpha$ = .05. Therefore, we can reject the null hypothesis that all four suits are chosen with equal probability.
 
 ## The Chi Square test of Independence
 
@@ -332,10 +324,17 @@ chisq.test(x=cards$choice_1, y = cards$choice_2)
 ## Chi-Square Test of Independence with Bayes factor
 
 ```{r}
+library(BayesFactor)
 contingencyTableBF(x = cont_tab, sampleType = "indepMulti", fixedMargin = "cols")
 ```
 
 What can we conclude about the two variables? 
+
+> There is large evidence in favor of an association between the first and second card choice (BF = 420.8)
+
+## Reporting the results
+
+> The chi square test of independence revealed a significant association  between the first and second card choice ($\chi^2$(9) = 29.24, *p* < .001). This suggests that people's first choice of card suit is not independent from their second choice, and is therefore, not random.
 
 ## Now you try
 
@@ -358,6 +357,7 @@ What would be your null and alternative hypothesis? What you expect to find.
 
 With this new data set, run a chi-squared test to check if the data show evidence of sex bias in admission practices. Compute either a p-value or a BF (or both!).
 
+*Hint*: the aggregated data is in matrix form.
 
 
 
