@@ -216,7 +216,11 @@ A Dirac measure is a measure whose (unit) mass is concentrated on a single point
 
 - An indicator variable ($\delta$) is included in the prior to allow switching between the spike and slab  throughout the MCMC sampling process.
 
+
+- The subscript to the indicator ($\delta_i$) assigns each person a prior inclusion probability.
+
 - For example, this allows for switching between a fixed effect $t_{pj} = 0$ ($\mathcal{M}_0$) and random effects model $t_{pj} > 0$ ($\mathcal{M}_u$)--i.e.,
+
 
 :::fragment
 \begin{equation}
@@ -302,4 +306,11 @@ Random effects correlation:
 - We are interested in identifying clustering units (schools) that exhibit either unusually large or unusually small within-cluster variance – indicating either inconsistent or consistent academic achievement.
 
 ## Estimation
+
+we use spike and slap as a way of identifying those who are more consitent/inconsistent.
+
+threshold of p >.75 because that reflects a BF > 3
+
+why not cutoff standard deviation? because how would we define it? also advantages of bayesian modeling?
+
 
