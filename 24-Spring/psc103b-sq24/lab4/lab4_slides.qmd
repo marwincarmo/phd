@@ -193,7 +193,7 @@ expected_freq
 
 The closer the observed frequencies are to the prediction by H0 (expected frequencies), the __________ the goodness of fit statistic will get. [Larger or smaller?]
 
-- Larger!
+- Smaller!
 
 - How large is large enough to reject H0?
 

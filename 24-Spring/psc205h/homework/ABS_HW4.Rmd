@@ -1,0 +1,169 @@
+---
+title: "Homework Week 4"
+author: "name"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r, message = FALSE, echo = FALSE}
+## Load packages
+library(ggplot2)
+```
+
+# Prerequisites
+Let's use the Normal posterior from last week's HW; the same we discussed in the class of week 4, based on the model ($\mathcal{M}1$)
+Our model can be written as: 
+
+\begin{align}
+y \sim & N(\mu, \sigma) \quad [\text{Likelihood}] \\
+ & \mu ~ \sim N(\mu_0 = 100, \sigma_0 = 10) \quad [\text{Prior}]\\ 
+ & \sigma = 15   \quad [\text{Constant}]
+\end{align}
+
+```{r}
+conjugate <- function( sigma, pr_mu, pr_sigma, n, x) {
+    loc <- 1/( 1/pr_sigma^2 + n/sigma^2  )*( pr_mu / pr_sigma^2 + sum(x )/sigma^2)
+    scl <- sqrt( (1/pr_sigma^2 + n/sigma^2 )^(-1) )
+    return(c(loc,scl) )
+}
+```
+
+With the data from HW3:
+```{r}
+
+set.seed(433)
+x <- rbinom(30, 200, .65)
+set.seed(NULL )
+```
+
+Hence, the mean (location) and SD (scale) for our posterior can be computed as
+```{r}
+conj_param <- conjugate(sigma = 15, pr_mu =  100, pr_sigma = 10, n = length(x), x = x )
+## Mean
+conj_param[1]
+## SD
+conj_param[2]
+```
+
+# Question 1
+ - Compute LOO-CV for our given example -- you can use the code from the slides (I omitted some lines in the handout such as `pd <- NA`, to initialize some of the objects)
+```{r}
+## Code:
+## Initialize pd
+pd <- NA
+## Whenever we assign values to an object in a loop (as we do for pd) we need to create (or initialize) them before entering that loop
+
+sig <- 15
+repl <-  1000
+
+for(i in 1:length(x ) ) {
+    conj_param <- conjugate( sigma = sig, pr_mu = 100, pr_sigma = 10, n = length(x)-1, x = x[-i])
+    mu_loocv <- rnorm(repl, conj_param[1], conj_param[2] )
+    pd[i] <- log( sum( 1/repl * dnorm(x[i], mu_loocv, sig ) ))
+}
+-2 * sum( pd )
+```
+ 
+# Question 2
+Predictive measures are only useful in comparison to other alternative models.
+Assume that the population value for $\sigma$, the standard deviation of your likelihood, is 10, instead of 15. 
+This model will be called $\mathcal{M}2$ so that 
+\begin{align}
+y \sim & N(\mu, \sigma) \quad  \\
+ & \mu ~ \sim N(\mu_0 = 100, \sigma_0 = 10) \\ 
+ & \sigma = \mathbf{10}
+\end{align}
+
+ - Show the code and comment on which model you prefer (note that "smaller is better" in terms of predictive measures):
+```{r}
+## Code:
+
+loocv <- function(x, sig, pr_mu, pr_sigma, repl=1000) {
+  
+  pd <- NA
+
+for(i in 1:length(x ) ) {
+    conj_param <- conjugate( sigma = sig, pr_mu = pr_mu, pr_sigma = pr_sigma, n = length(x)-1, x = x[-i])
+    mu_loocv <- rnorm(repl, conj_param[1], conj_param[2] )
+    pd[i] <- log( sum( 1/repl * dnorm(x[i], mu_loocv, sig ) ))
+}
+-2 * sum( pd )
+}
+
+loocv(x, sig = 10, pr_mu = 100, pr_sigma = 10, repl=1000)
+```
+$\mathcal{M}2$ is preferred because it yields a smaller LOO-CV value (i.e., a better predictive measure).
+
+# Question 3
+## Question 3.1
+ - Visualize changes in LOO-CV over a range of different assumptions about the SD parameter of the likelihood (eg. SD ranging from 3-15). 
+ I.e., create a plot where LOO-CV is on the y-axis and changes in the SD parameter on the x-axis.
+
+```{r}
+## Code:
+
+range <- 3:25
+
+res <- purrr::map_dbl(range, ~loocv(x=x, sig=.x, pr_mu=100, pr_sigma=10,repl = 1000))
+
+plot(x=range, y=res, type='l', xlab="SD", ylab="LOO-CV")
+```
+-  Can you identify the optimal value of $\sigma$?
+
+```{r}
+## Code:
+
+range[which(res==min(res))]
+```
+
+- Model that minimizes LOO-CV is at about: $\sigma = 6$
+
+## Question 3.2
+Now, go back to the original assumptions of $\mathcal{M}1$, but change up the prior $\sigma_0$ over, eg., 2 -- 20.
+Create again a plot that relates LOO-CV to these different choices of the SD ($\sigma_0$) of the prior
+
+```{r}
+## Code:
+
+range_sigma0 <- 1:20
+
+res_sigma0 <- purrr::map_dbl(range_sigma0, ~loocv(x=x, sig=15, pr_mu=100, pr_sigma=.x,repl = 1000))
+
+plot(x=range_sigma0, y=res_sigma0, type='l', xlab=expression(sigma_0), ylab="LOO-CV")
+```
+
+- Comment on what is going on here: We can expect the larger prior values to have a very small influence on the LOO-CV beyond a certain point.
+
+# Question 4
+
+Write out the code to compute AIC and DIC. 
+For AIC, check out slide 44 where AIC is defined. 
+For DIC, check out slides 46 and for the computation of the penalty _k_ check out the computation of penalty for WAIC. The DIC and WAIC penalty are computed the same way with the exception that the DIC penalty is multiplies the variability by 2.
+
+Compute AIC and DIC for the first model $\mathcal{M}1$:
+
+```{r}
+## Code:
+
+# AIC:
+elpd_aic <- sum(log(dnorm(x, mean(x), 15))) - 1
+-2*elpd_aic
+
+# DIC:
+mu_post <- rnorm(repl, conj_param[1], conj_param[2])
+
+varlog <- NA
+for (i in 1: length (x)) {
+  
+  varlog [i] <- var ( log ( dnorm (x[i], mu_post , 15) ) )
+}
+
+k_dic <- 2*sum(varlog)
+elpd_dic <- sum(log(dnorm(x, conj_param[1], 15))) - k_dic
+-2*elpd_dic
+
+```
