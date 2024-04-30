@@ -1,0 +1,269 @@
+---
+title: "Homework Week 5"
+author: "name"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r, message = FALSE, echo = FALSE}
+## Load packages
+library(ggplot2)
+```
+Ok... this homework stretches the limit of what we know and can do, but the idea here is to show that we can already fit quite intricate models without even having started to look into dedicated software.
+We will work with some distributions that are not too common in frequentist applications, but rather standard in Bayesian models. 
+
+# Earthquake 
+After an earthquake has rattled our city, we have been asked to assess the damage. We are sent out to sample 1000 homes within bands of 1 km width within a 100 km radius of the epicenter.  That is, within each of the 1 Km bands, we sample randomly 1000 homes and record the number that are damaged.
+
+Given that the number of damaged property is a count variable and we sampled randomly we can assume that damage in one property is independent  of damage at another property, and that damage is  identically distributed: Hence, we choose to use a [Poisson](https://en.wikipedia.org/wiki/Poisson_distribution) model: $X_t \sim Poisson(\lambda_d),$ with $\lambda_d = 1000\exp(-\mu d)\psi$.
+
+ - $\mu$ describes the rate per kilometer at which the [intensity](https://www.usgs.gov/natural-hazards/earthquake-hazards/science/earthquake-magnitude-energy-release-and-shaking-intensity?qt-science_center_objects=0#qt-science_center_objects) of the earthquake diminishes as one moves away from the epicenter. (I made this all up - but a quick internet search revealed this is all a bit more complicated (surprise!). Geologists seem to rely on the "Intensity attenuation law" to obtain an integer scale that ranges from 1 to 10 to describe intensity as a function of distance (e.g., [Pasolini (2008)](https://core.ac.uk/download/pdf/11011494.pdf)). We pretend that we can quantify the intenisity attenuation by the  change rate $\mu$). 
+
+ - $\psi$ gives the proportion of homes that may take damage
+ - $d$ takes distance to epicenter and ranges from 0, 99 km
+
+Your priors for the paramters assume: $\mu \sim \Gamma(1,10)$ (this is a [Gamma distribution](https://en.wikipedia.org/wiki/Gamma_distribution)) and $\psi \sim Beta(16,4)$ (and this is the [Beta distribution](https://en.wikipedia.org/wiki/Beta_distribution)). You may look at some of the distributions in the [Distribution Zoo](https://ben18785.shinyapps.io/distribution-zoo/)
+
+```{r, echo = FALSE}
+set.seed(523 )
+y <- NA
+for( i in 1:100 ) {
+    mu <- rgamma(1,8,100) # 
+    psi <- rbeta(1,32,6) 
+    d <- i - 1
+    lambda_d <-  1000*exp(-mu*d)*psi 
+    y[i] <- rpois(1,lambda = lambda_d )
+}
+
+#plot(0:99, y, ylab = "Damage", xlab = "Distance (KM)")
+quake <- data.frame(d =  0:99, damage = y )
+```
+
+The data is in the `quake` object
+```{r}
+head(quake)
+plot(quake$d, quake$damage, ylab = "damage ", xlab = "Distance (d)")
+```
+
+ - `d` is distance to epicenter
+ - `damage` count of property damage out of 1000 sampled homes at the given distance
+
+## Q1 
+ - Report the expectation (mean) for your priors and explain how the affect the your outcome from the poisson distribution (wikipedia lists the expecation functions). 
+
+### Answer Q1: 
+ - Gamma defined with shape and rate: $\mathbb{E}[X_{\mu}] = \frac{\alpha}{\beta} = 0.1$; $SD(X)=\sqrt{\frac{\alpha}{\beta^2}} =$ `r sqrt(1/10^2)`
+ - Beta: $\mathbb{E}[X_{\psi}] = \frac{\alpha}{\alpha + \beta} = 0.80$; $SD(X) = \sqrt{\frac{\alpha\beta}{(\alpha + \beta)^2 (\alpha + \beta  + 1)}} =$ `r sqrt((16+4)^2/( (16 + 4)^2*(16 + 4 + 1)  ))`
+
+The mean of the Poisson distribution is $\lambda$. Here we defined that paramters as the product of $\mu$ and $\psi$:  $\lambda_d = 1000\exp(-\mu d)\psi$.
+```{r}
+d <- 0:99
+plot( 1000 * exp( -0.1 * d) * 0.8, type =  'l', main = "Mean of lambda")
+lines(1000 * exp( -0.1 * d) * 0.50, type =  'l', col =  'red')
+lines(1000 * exp( -0.05 * d)* 0.80, type =  'l', col =  'blue')
+text(x = 10, y =  80, "psi = 0.5", col =  'red')
+text(x = 40, y =  200, "mu = 0.05", col =  'blue')
+```
+
+Note that variance of $\lambda$ in Pois is $\lambda$. As such, random Poisson draws could end up with a count that is more than 1000 -- wich would not make sense in this context. 
+```{r}
+max(rpois(10000, 1000))
+```
+
+## Q2
+ - Write up the full model, i.e., likelihood and prior:
+ 
+### Answer Q2:
+
+\begin{align}
+y &\sim Pois(\lambda_d) \hspace{20pt} \left[\text{Likelihood}\right]\\
+\lambda_d &=  1000\exp(-\mu d)\psi\\
+\mu &\sim \Gamma(1,10)  \hspace{22pt} \left[\text{Prior}\right]\\
+\psi &\sim Beta(16,4)  \hspace{11pt} \left[\text{Prior}\right]
+\end{align}
+
+## Q3
+
+ - Obtain the _prior_ predictive distribution and plot it. Note that $d$ is coded as `0:99`
+
+```{r}
+## Code:
+
+y <- array(NA, dim =  c(1000, 100 ) )
+for(i in 1:1000 ) {
+    mu <- rgamma(1, 1,10 )
+    psi <- rbeta(1, 16,4 )
+    for( d in 0:99 ) {
+        lambda_d <- 1000*exp(-mu * d )*psi
+        y[i, d+1] <- rpois(1, lambda_d )
+    }
+}
+
+plot(0:99, y[1,], ylim =  c(0, 1000), cex =  .8, col =  "#FF203425", pch = 16)
+for( i in 2:1000  ) {
+    points(0:99, y[i,],  cex = 0.8, col =  "#FF203425", pch =  16)
+}
+
+```
+
+
+## Q4 {.tabset}
+This one is hard. If you're up for the challange do it - if you find yourself spending too much time (more than you're willing to put in), skip to the hint and use that to move on...
+
+Write a sampler that finds the two parameters of interest $\mu$ and $\psi$ given the data.
+
+ - I used a Metropolis Hastings sampler for this problem. Given that $\mu$ and $\psi$ are constrained I would use the log-Normal function we've briefly discussed in the classe (eg. `rlnorm(1, (log(mu_0) - stepsize_mu^2/2), stepsize_mu`) 
+ - Chapter 13 in Ben Lambert's Book is very helpful in this regard
+
+### Your Solution
+```{r}
+## Code
+```
+ 
+### Hint: The Numerator
+
+Here, I create the numerator of our model: Likelihood $\times$ prior. The likelihood is a Poission density function and the two priors for $\mu$ and $\psi$ are Gamma and Beta, respectively: 
+```{r}
+
+## create function that returns log of numerator
+l.numerator <- function(mu, psi, damage, distance) { 
+  num <- sum( dpois(x = damage, lambda = 1000*exp(-mu*distance)*psi, log = TRUE), # likelihood
+             dgamma(mu, 10, 100, log = TRUE), # prior for mu
+             dbeta(psi, 16, 4, log =  TRUE))  # prior for psi
+       return( num )
+}
+
+
+l.numerator(0.1, 0.7, damage = quake$damage, distance = quake$d)
+```
+
+### Philippe's Solution: Metropolis-Hastings Sampler
+This is my version of a MH sampler. Before going through it, look at chapter 13.8 in Lambert. 
+```{r}
+## MH
+metropolis_hastings <- function(damage, distance, stepsize_mu =  1, stepsize_psi =  1, iterations = 2000, chains = 4 ) {
+  ## Initiate objects where our samples will be stored
+  samp_val_mu <- array(NA, dim = c(iterations, chains))
+  samp_val_psi <- array(NA, dim = c(iterations, chains))
+
+  ## Loop through number of chains
+  for(k in 1:chains) {
+    ## Metropolis Hastings Algorithm:
+    ## Step 1 start chains at a random point between 0 and 1. 
+    mu_0 <-  runif(1, 0, 1)
+    psi_0 <- runif(1, 0, 1)
+
+    ## loop through iterations one chain at a time (this could be parallelized)
+    for(i in seq_len(iterations) ) {
+      ## generate proposal
+      mu <- rlnorm(1, (log(mu_0) - stepsize_mu^2/2), stepsize_mu)
+      n_psi <- rlnorm(1, (log(psi_0) - stepsize_psi^2/2), stepsize_mu)
+      psi <- n_psi
+
+      ## r is the ratio of the proposed parameters at the step and the previous step.
+      ## Given that we operate at the log scale, ratios turn into subtracions. Note that we have to add a correction to the
+      ## ratio, as shown in eg. 13.13 in Lambert
+      r <-
+        ( l.numerator(mu = mu,   psi = psi,   damage = damage, distance = distance )  -
+          l.numerator(mu = mu_0, psi = psi_0, damage = damage, distance = distance )
+        ) + (
+          ( dnorm(mu_0, mu, stepsize_mu, log = TRUE) + dnorm(psi_0, psi, stepsize_mu, log = TRUE) ) - 
+          ( dnorm(mu, mu_0, stepsize_mu, log = TRUE) + dnorm(psi, psi_0, stepsize_mu, log = TRUE) )
+        )
+      
+      ## accept proposal if r = 1 or runif(0,1)>r
+      ## WATCH OUT: This is all on log scale! Hence, r>=0
+      if(r >= 0) {
+        mu_0 <- mu
+        psi_0 <- psi
+      } else { if(r > log( runif(1,0,1) )) {
+                 mu_0 <- mu
+                 psi_0 <- psi
+               }
+      }
+
+      ## Store sampled values in chain
+      samp_val_mu[i,k] <- mu_0
+      samp_val_psi[i,k] <- psi_0
+    }
+  }
+  return(
+    list('mu' = samp_val_mu, 'psi' = samp_val_psi)
+  )
+}
+
+## Run the sampler and store samples in object `sampled`
+sampled <- metropolis_hastings(damage = quake$damage, distance = quake$d,
+                               stepsize_mu = .015, stepsize_psi = .015, iteration = 2000)
+str( sampled )
+```                     
+
+## 
+
+ - Plot the chains and comment on convergence and mixing
+ - Compute the mean and the 95% CrI around $\mu$ and $\psi$
+```{r}
+op <- par( mfcol = c(2,2 ) ) 
+plot(sampled$mu[,1], type =  'l', main =  "All samples (including burn-in)", ylim =  c(0, 1), ylab = "mu")
+for( i in 2:ncol(sampled[[1]]) ) {
+    lines(sampled[[1]][,i], col =  i )
+}
+plot(sampled$psi[ ,1], type =  'l', main =  "All samples (including burn-in)", ylim =  c(0, 1), ylab = "psi")
+for( i in 2:ncol(sampled[[2]]) ) {
+    lines(sampled[[2]][ ,i], col =  i )
+}
+plot(sampled$mu[1000:2000,1], type =  'l', main =  "No burn-in", ylim = c(0.055, 0.065), ylab = "mu")
+for( i in 2:ncol(sampled[[1]]) ) {
+    lines(sampled$mu[1000:2000,i], col =  i )
+}
+plot(sampled$psi[1000:2000,1], type =  'l', main =  "No burn-in", ylim = c(0.65, 0.78), ylab = "psi")
+for( i in 2:ncol(sampled[[2]]) ) {
+    lines(sampled$psi[1000:2000,i], col =  i )
+}
+
+mean(sampled[[1]][1000:2000,] )
+mean(sampled[[2]][1000:2000,] )
+quantile(sampled[[1]][1000:2000,], probs = c(.025, .975 ))
+quantile(sampled[[2]][1000:2000,], probs = c(.025, .975 ))
+
+```
+
+
+## Q5 
+
+  - Posterior Predictive Check: Use the _Posterior_ Predictive Distribution to compare the results of our model to the data, and comment on the findings 
+  - Drop the burn-in samples, ie. only use the second half of the sampled values 
+```{r}
+## Code:
+
+## subset Posterior, take 500
+sel <- sample(1000:2000, 500)
+mu <- c(sampled[[1]][sel,])
+psi <- c(sampled[[2]][sel,])
+d <- 0:99 
+
+head(mu )
+
+yrep <- matrix(NA, ncol = 100, nrow = 2000 )
+
+for(i in 1:2000 ) {
+    lambda_d <-  1000*exp(-mu[i]*d)*psi[i]
+    yrep[i,] <- rpois(100, lambda = lambda_d )    
+}
+
+plot(density(yrep[1,], from =  0, to = 1000), col = "#0f63bd25" , ylim = c(0, 0.007 ), xlim = c(0, 1000))
+for(i in 2:500 ) {
+    lines(density(yrep[i,], from =  0, to = 1000), col = "#0f63bd25") 
+}
+lines(density(quake$damage, from =  0, to = 1000), col =  'red', lwd = 2)
+
+plot(d, yrep[1,], col = "#0f63bd20" )
+for(i in 2:500 ) {
+    points(d, yrep[i,], col = "#0f63bd20") 
+}
+points(d, quake$damage, col =  'red', pch = 16)
+```
