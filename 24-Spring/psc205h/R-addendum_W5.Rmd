@@ -1,0 +1,601 @@
+---
+title: "R-Script to generate lecture slides for W5"
+author: "Philippe Rast"
+header-includes: 
+  - \usepackage{amsmath}	
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+## Load packages
+```{r, message = FALSE}
+library(ggplot2)
+```
+
+## Obtaining Posterior
+
+ - Sampling across a given grid
+
+e.g. grid sampling
+```{r}
+## Data
+set.seed(235)
+x <-  rnorm(30, 74, 5 )
+x
+set.seed(NULL)
+
+## Search grid along possible mu values
+grid <- seq(65, 80, length.out = 100 )
+
+
+non_normalized <- function(x, gridpoint) {
+    ## Mu obtains value at searchgrid
+    mu <- gridpoint
+    ## Prior
+    prior <- dnorm(mu, 70, 5)
+    ## Likelihood
+    lik <- exp(sum(dnorm(x, mu, 10, log = TRUE) ))
+    ## obtain likelihood x prior
+    numerator <- lik * prior
+    ## return non-normalized density
+    return(numerator)
+}
+
+mu_post <- NA
+for(i in 1:100 ) {
+    mu_post[i] <- non_normalized(x, gridpoint = grid[i] )
+}
+
+#pdf(file = "../figure/grid1.pdf", width = 6, height = 4)
+plot(grid, mu_post, type =  'h', main =  "Non-normalized")
+#dev.off()
+
+grid[which(mu_post == max(mu_post))]
+```
+So far, non-normalized:
+```{r}
+sum(mu_post)
+
+sum( mu_post/sum(mu_post ))
+
+## normalize posterior
+norm_post <- mu_post/sum(mu_post)
+plot(norm_post, type = 'h', main = "Normalized")
+sum(norm_post )
+```
+
+To obtain posterior mean we can do $ \mathcal{E}\left[ p( \theta | X) \right] = \sum \theta \times p(\theta | X)$. Note that we sum up here, because by using `grid`, we essentially disctetized our problem
+
+```{r}
+## Mean
+sum( grid * norm_post )
+```
+
+### Two unknown parameters
+
+```{r}
+## Expand grid search to 3d
+## sigma is unknown too
+
+non_normalized2 <- function(x, gridpoint_mu, gridpoint_sigma) {
+    ## Mu obtains value at searchgrid
+    mu <- gridpoint_mu
+    sigma <- gridpoint_sigma
+    ## Prior
+    prior_mu <- dnorm(mu, 70, 5)
+    ## gamma prior: mean is given as shape\rate; mode as (shape-1)/rate
+    prior_sigma <- dgamma(sigma, 4, 1)   
+    ## Likelihood
+    lik <- exp(sum(dnorm(x, mu, sigma, log = TRUE) ))
+    ## obtain likelihood x prior
+    numerator <- lik * prior_mu * prior_sigma
+    ## return non-normalized density
+    return(numerator)
+}
+
+
+## Search grid along possible mu values
+grid_mu <- seq(70, 80, length.out = 100 )
+grid_sigma <- seq(0, 10, length.out = 100 )
+
+## Create gridplane
+gridplane <- expand.grid(grid_mu, grid_sigma ) 
+
+
+for(i in seq_len(nrow(gridplane)) ) {
+    gridplane[i,3] <- non_normalized2(x, gridpoint_mu = gridplane[i,1], gridpoint_sigma = gridplane[i,2] )
+}
+
+head( gridplane )
+
+library( lattice )
+names(gridplane ) <- c('mu', 'sigma', 'density' )
+
+#pdf(file = "../figure/grid3d.pdf", height =  6, width = 5)
+wireframe( density ~ mu * sigma, data = gridplane, scales=list(arrows=FALSE), shade =  TRUE,
+          par.settings = list(axis.line = list(col = 'transparent')))
+#dev.off( )
+```
+This becomes tedious with increasing number of parameters.
+
+Alternative:
+
+ - Quadrature points (approximating integral)
+   -Also inefficient with increasing number of parameters
+
+
+## Exploiting the proportionality
+
+Given that $p(\theta | X) \propto p(X|\theta)\times p(\theta)$
+
+Relative distribution properties are maintained. That is, we can obtain all features of posterior from the non-normalized version.
+
+How would we obtain information of that? 
+
+Two points, $\theta_a$ and $\theta_b$ maintain their relative position to each other:
+
+### Non-normalized
+```{r}
+## Search grid along possible mu values
+grid <- seq(65, 80, length.out = 100 )
+mu_post <- NA
+
+for(i in 1:100 ) {
+    mu_post[i] <- non_normalized(x, gridpoint = grid[i] )
+}
+
+#pdf(file = "../figure/nonnorm.pdf", height = 6, width = 6 )
+plot(grid, mu_post, type =  'l', main =  "Non-normalized")
+points(70, non_normalized(x, gridpoint = 70 ))
+text(70, non_normalized(x, gridpoint = 70 ), label =  'A', adj = 2)
+
+points(72, non_normalized(x, gridpoint = 72 ))
+text(72, non_normalized(x, gridpoint = 72 ), label =  'B', adj = 2)
+#dev.off( )
+
+## ratio
+r <- non_normalized(x, gridpoint = 70 ) / non_normalized(x, gridpoint = 72 )
+r
+```
+
+### Normalized
+```{r}
+den <- sum(  mu_post )
+mu_norm <- mu_post/den
+
+#pdf(file = "../figure/normalize.pdf", height = 6, width = 6 )
+plot(grid, mu_norm, type =  'l', main =  "Normalized")
+points(70, non_normalized(x, gridpoint = 70 )/den)
+text(70, non_normalized(x, gridpoint = 70 )/den, label =  'A', adj = 2)
+
+points(72, non_normalized(x, gridpoint = 72 )/den)
+text(72, non_normalized(x, gridpoint = 72 )/den, label =  'B', adj = 2)
+#dev.off( )
+
+## ratio
+rn <- (non_normalized(x, gridpoint = 70 )/den) / (non_normalized(x, gridpoint = 72 )/den)
+rn; r
+```
+Ratio for normalized and non-normalized is the same because
+
+\begin{equation*}
+\frac{p(\theta_a|X)}{p(\theta_b|X)}=\frac{\frac{p( X | \theta_a )\times p(\theta_a)}{p(X)}}{\frac{p( X | \theta_b )\times p(\theta_b)}{p(X)}} = \frac{p( X | \theta_a )\times p(\theta_a)}{p( X | \theta_b )\times p(\theta_b)}
+\Rightarrow \frac{\propto p( X | \theta_a )\times p(\theta_a)}{\propto p( X | \theta_b )\times p(\theta_b)} 
+\end{equation*}
+
+
+ - Knowledge of the un-normalized posterior suffices to tell us the relative sampling frequency at each point in parameter space versus all others
+ 
+### Problem:
+Finding the sampling frequency for a given point versus all other points is unfeasible! 
+
+### Solution?
+If we could sample from the un-normalzed posterior, we would be able to infer all we need!
+
+ - Ideally: Independent sampling like `rnorm(n, mu, sigma)`
+ - Not possible as we would need to normalize posterior (just what we're trying to avoid)
+
+ * Dependent sampling
+
+## MCMC
+
+Code up a simple Random Walk Metropolis Sampler
+Algorithm:
+
+ 1. Generate starting position for the parameter $\theta_0 = S$
+ 2. Draw a candidate parameter $\theta_c$ from a proposal density $g(.)$
+ 3. Compute ratio $r$ as:
+	$$
+	r =\begin{cases}
+		1 & \text{if $p(\theta_{t+1} | X) \geq p(\theta_{t} | X)$} \\
+		\frac{p(\theta_{t+1})}{p(\theta_{t}|\theta)}  & \text{if $p(\theta_{t+1} | X) < p(\theta_{t}|X)$}
+	\end{cases}
+	$$
+ 
+ 5. Sample from $p \sim \mathcal{U}(0,1)$. If $p < r$ move forward
+
+## Simple Normal example with known $\sigma$
+Let's keep above example
+```{r}
+
+chain <- NA
+
+## step 1
+theta_0 <-  runif(1, 0, 100)
+theta_0
+
+chain_length <- 2000
+
+for(i in seq_len(chain_length ) ) {
+    stepsize <- 1
+    step <-  rnorm(1, 0, stepsize)
+    theta_c <- theta_0 + step
+    ## ratio
+    r <- non_normalized(x, gridpoint = theta_c )/non_normalized(x, gridpoint = theta_0 )
+    ## accept proposal if r >= 1 or r > runif(0,1)
+    if(r >= 1) {theta_0 <- theta_c} else {
+                                      if(r > runif(1,0,1)) theta_0 <- theta_c
+                                  }
+    chain[i] <- theta_0
+}
+
+
+
+
+#pdf(file = "../figure/rwm.pdf", height = 5, width =  4)
+plot(chain, type =  'l' , ylab =  expression(mu ), xlab =  "Step")
+abline(v = 1000, lty = 3)
+#dev.off()
+
+#pdf(file = "../figure/rwm_h.pdf" , height = 5, width =  4)
+hist(chain[1000:2000], xlab =  expression(mu ))
+#dev.off()
+
+mean(chain[1000:2000])
+sd(chain[1000:2000] )
+
+
+## Repeat with multiple chains
+metropolis <- function(data, stepsize =  1, iterations = 2000, chains = 4 ) {
+    x <- data
+    x
+    ## Number of chains
+    samp_val <- array(NA, dim = c(iterations, chains))
+    ## Number of iterations
+    chain_length <- iterations
+    ## Chain
+    for(k in 1:chains) {
+    ## Metropolis Algorithm:
+        ## step 1: Start chain
+        theta_0 <-  runif(1, 25, 150)
+        ## 
+        for(i in seq_len(chain_length ) ) {
+            step <-  rnorm(1, 0, stepsize)
+            theta_c <- theta_0 + step
+            ## ratio
+            r <- non_normalized(x, gridpoint = theta_c )/non_normalized(x, gridpoint = theta_0 )
+            if(is.na(r )) r <- 0
+            ## accept proposal if r = 1 or runif(0,1)>r
+            if(r >= 1) {theta_0 <- theta_c} else {
+                                              if(r > runif(1,0,1)) theta_0 <- theta_c
+                                          }
+            samp_val[i,k] <- theta_0
+        }
+    }
+    return(samp_val )
+}
+
+mod1 <- metropolis(data = x, stepsize =  1)
+head(mod1)
+
+#pdf(file = "../figure/rwm4.pdf", height = 5, width =  4)
+plot(mod1[,1], type =  'l', ylim =  c(40,140) , ylab =  expression(mu ), xlab =  "Step")
+for (i in 2:ncol(mod1)) {
+  lines(mod1[, i], col = i)
+}
+abline(v = 1000, lty = 3)
+#dev.off( )
+
+
+mean(mod1[1000:2000,])
+sd(mod1[1000:2000,] )
+
+#pdf(file = "../figure/rwm_d.pdf" , height = 5, width =  4)
+plot(density(mod1[1000:2000,] ) ,xlab =  expression(mu ))
+#dev.off( )
+```
+
+
+## 2 param
+
+```{r}
+metropolis_hastings <- function(data, stepsize_mu =  1, stepsize_sig =  1, iterations = 2000, chains = 4 ) {
+    x <- data
+    ## Number of chains
+    samp_val_mu <- array(NA, dim = c(iterations, chains))
+    samp_val_sig <- array(NA, dim = c(iterations, chains))
+    ## Number of iterations
+    chain_length <- iterations
+    ## Chain
+    for(k in 1:chains) {
+    ## Metropolis Hastings Algorithm:
+        ## step 1: Start chain
+        theta_0 <-  runif(1, 50, 100)
+        sig_0 <- runif(1, 0.001, 10 )
+        ## 
+        for(i in seq_len(chain_length ) ) {
+            ## Generate Proposals:
+            ## mean
+            step_mu <-  rnorm(1, 0, stepsize_mu)
+            theta_c <- theta_0 + step_mu
+            ## variance
+            ## mean of log-normal defined as mean(rlnorm(10000, (log(2) - stepsize^2/2), stepsize))
+            sig_c <- rlnorm(1, (log(sig_0) - stepsize_sig^2/2), stepsize_sig)
+            ##
+            ## ratio
+            r <- (non_normalized2(x, gridpoint_mu = theta_c, gridpoint_sigma = sig_c) /
+              non_normalized2(x, gridpoint_mu = theta_0, gridpoint_sigma = sig_0))  *
+                (exp(dnorm(theta_0, theta_c, stepsize_mu, log = TRUE) + dlnorm(sig_0, sig_c, stepsize_sig, log = TRUE)) /
+                 exp(dnorm(theta_c, theta_0, stepsize_mu, log = TRUE) + dlnorm(sig_c, sig_0, stepsize_sig, log = TRUE)))
+            ##
+            if(is.na( r )) r <- 0
+            ##
+            ## accept proposal if r >= 1 or r > runif(0,1)
+            if(r >= 1) {
+                theta_0 <- theta_c
+                sig_0 <- sig_c
+            } else { if(r > runif(1,0,1)) {
+                         theta_0 <- theta_c
+                         sig_0 <- sig_c
+                     }
+            }
+            ## Store values in chain
+            samp_val_mu[i,k] <- theta_0
+            samp_val_sig[i,k] <- sig_0
+        }
+    }
+    return(
+        list(samp_val_mu, samp_val_sig)
+    )
+}
+
+sampled <- metropolis_hastings(x, stepsize_mu = 1, stepsize_sig = 1, iteration = 15000)
+
+#pdf(file = "../figure/MHmu.pdf", width = 4, height =  5)
+plot(sampled[[1]][,1], type =  'l', ylim =  c(50, 120 ), main =  "Mean")
+for( i in 2:ncol(sampled[[1]]) ) {
+    lines(sampled[[1]][,i], col =  i )
+}
+#dev.off()
+
+#pdf(file = "../figure/MHsigma.pdf", width = 4, height =  5)
+plot(sampled[[1]][,1], type =  'l', ylim =  c(0, 20 ), main = "Sigma")
+for( i in 2:ncol(sampled[[2]]) ) {
+    lines(sampled[[2]][,i], col =  i )
+}
+#dev.off()
+
+#pdf(file = "../figure/MHsigma2.pdf", width = 5.5, height =  5)
+niter <- nrow(sampled[[2]])
+plot(density( sampled[[2]][(niter/2):niter,] ), ylab =  "Density", xlab = expression(sigma ), main =  "Density Plot with quantiles at 5%, 50%, and 90%" )
+qtl <- quantile(sampled[[2]][(niter/2):niter,], probs = c(.05, .5, .95 ))
+qtl
+abline(v =  qtl[1], lty =  3); abline(v =  qtl[2] , lty =  2); abline(v =  qtl[3] , lty =  3) 
+text(qtl[1], 0, label =  round(qtl[1], 2), adj = 1)
+text(qtl[2], 0, label =  round(qtl[2], 2))
+text(qtl[3], 0, label =  round(qtl[3], 2), adj = 0)
+#dev.off()
+
+#pdf(file = "../figure/MH2.pdf", width = 5.5, height =  5)
+plot( sampled[[1]][,1], sampled[[2]][,1], type =  'l',
+     xlim =  c(min(sampled[[1]]), max(sampled[[1]]) ),
+     ylim =  c(min(sampled[[2]]), max(sampled[[2]]) ),
+     xlab =  expression(hat(mu)), 
+     ylab =  expression(hat(sigma)),
+     main =  "Metropolis-Hastings", col = '#34ff1280') 
+lines( sampled[[1]][,2], sampled[[2]][,2], col =  '#640f1260')
+lines( sampled[[1]][,3], sampled[[2]][,3], col =  '#10302560')
+lines( sampled[[1]][,4], sampled[[2]][,4], col =  '#5050ff60')
+#dev.off( )
+```
+
+
+## Judging Convergence
+Warm-up is discarded:
+```{r}
+sampled <- metropolis_hastings(x, stepsize_mu = 1, stepsize_sig = 1, iteration = 15000)
+
+#pdf(file = "../figure/good.pdf", width = 4, height =  5)
+
+plot(sampled[[1]][,1], type =  'l', ylim =  c(50, 120 ), main =  "Mean")
+for( i in 2:ncol(sampled[[1]]) ) {
+    lines(sampled[[1]][,i], col =  i )
+}
+
+#dev.off()
+
+
+
+chain_length <- nrow( sampled[[1]] )
+chain_length
+
+## Only chains after burn-in
+samp_mu <- sampled[[1]][(chain_length/2):chain_length,]
+var(samp_mu[,3])
+
+## Within chains variance
+## Obtain sample variance and average across all chains
+W <- mean( apply(samp_mu, 2, var ) )
+W
+
+## Between chains variance
+## This is already divding the estimate by n, hence, no need to do B/n in the Rhat equation
+B <- var( colMeans( samp_mu ) )
+B
+
+n <- nrow(samp_mu )
+n
+
+## Rhat
+Rhat <- sqrt( ( ((n-1)*W/n) + B ) / W )
+round(Rhat, 3)
+
+
+################################
+## Split Chains
+################################
+## Newer version: As per BDA3
+## Split Rhat (as in stan)
+kept_chain <- nrow( samp_mu )-1
+kept_chain
+
+stan_samp <- cbind(samp_mu[1:(kept_chain/2), ], samp_mu[(kept_chain/2 + 1):kept_chain,])
+head(stan_samp)
+
+W <- mean( apply(stan_samp, 2, var ) )
+## Between chains variance
+B <- var( colMeans( stan_samp ) )
+n <- nrow(stan_samp )
+
+## Rhat
+## The correction (n-1)/n takes into account warm-up phase
+Rhat <- sqrt( ( ((n-1)*W/n) + B ) / W )
+Rhat
+
+
+## library(rstan )
+## model <- '
+## data {
+##  vector[30] x;
+## }
+## parameters {
+##  real mu;
+##  real sigma;
+## }
+## model {
+##  mu ~ normal(70, 10);
+##  sigma ~ gamma(4,1);
+##  x ~ normal(mu, sigma);
+## }
+## '
+
+## X <- list(x = x )
+
+## fitted <- stan(model_code = model, data = X, iter =  1000)
+## print(fitted)
+
+```
+
+
+## Effective Sample size
+
+```{r}
+## Effective sample size n_eff is computed on split chains after warm-up is discarded
+
+T <- kept_chain
+T
+
+m <- ncol( stan_samp ) ## cf Gelman et al; BDA3, p 284
+m
+
+varest <- ( ((n-1)*W/n) + (B/n) ) 
+varest
+
+## Illustrate for a single chain
+
+sumr <- 1
+i <- 0
+while(sumr > 0 ) {
+    i <- i + 1
+    r1 <- acf(stan_samp[,1], plot =  FALSE , lag.max =  i-1)$acf
+    r2 <- acf(stan_samp[,1], plot =  FALSE , lag.max =  i)$acf
+    sumr <- c(r1)[i]+c(r2)[i+1]
+}
+
+sumr
+i
+
+## Single chain
+m1 <- 1
+
+n_eff <- m1*T / (1 + 2*sum(sum(r1)) )
+
+n_eff
+```
+
+## Gibbs sampling
+
+We again sample our problem. Our likelihood is Normal with both paramters $\mu$ and \sigma$ unknown. 
+Given that in gibbs we sample, assuming that the other values are given, $p(\mu|\sigma, x)$, and $p(\sigma|\mu,x)$, we can define both posterior distributions using the conjugate appropriate priors. 
+
+```{r}
+x
+
+## reuse our posterior from conjugate for ease 
+posterior_mu <- function( sigma, pr_mu, pr_sigma, n, x) {
+    loc <- 1/( 1/pr_sigma^2 + n/sigma^2  )*( pr_mu / pr_sigma^2 + sum(x )/sigma^2)
+    scl <- sqrt( (1/pr_sigma^2 + n/sigma^2 )^(-1) )
+    mu <- rnorm(1, loc, scl)
+    return( mu )
+}
+
+posterior_sigma <- function( mu, pr_a, pr_b, n, x) {
+    a <- pr_a + n/2
+    b <- sqrt( pr_b + sum((x - mean(x))^2)/2 )
+    sigma <-  1/rgamma(1, a, b) 
+    return( sigma )
+}
+
+
+gibbs <- function(data, iterations = 2000, chains = 4 ) {
+    x <- data
+    ## starting values
+    mu_c <- matrix(rnorm(chains, 70, 10 ), nrow =  iterations, ncol =  chains, byrow = TRUE)
+    sigma_c <- matrix(rgamma(chains, 4, 1), nrow = iterations, ncol = chains, byrow =  TRUE)
+
+    for( k in seq_len(chains ) ) {
+        for( i in 2:iterations ) {
+            ## determine order, mu first or sigma first
+            order <- sample(2, 1)
+            ## step 2 and 3
+            if(order == 1) {
+                mu_c[i,k] <- posterior_mu(sigma =  sigma_c[i-1,k], pr_mu = 70, pr_sigma = 5, n =  length(x), x =  x)
+                sigma_c[i,k] <- posterior_sigma(mu = mu_c[i,k], pr_a = 4, pr_b = 1, length(x), x =  x )
+            } else {
+                sigma_c[i,k] <- posterior_sigma(mu = mu_c[i-1,k], pr_a = 4, pr_b = 1, length(x), x =  x )
+                mu_c[i,k] <- posterior_mu(sigma =  sigma_c[i,k], pr_mu = 70, pr_sigma = 5, n =  length(x), x =  x)
+            }
+        }
+    }
+    return(list(mu_c, sigma_c ) )
+}
+
+sampled <- gibbs(data = x,  iterations = 1000 )
+
+niter <- nrow(sampled[[2]])
+plot(density( sampled[[2]][(niter/2):niter,] ), ylab =  "Density", xlab = expression(sigma ), main =  "Density Plot with quantiles at 5%, 50%, and 90%" )
+qtl <- quantile(sampled[[2]][(niter/2):niter,], probs = c(.05, .5, .95 ))
+qtl
+abline(v =  qtl[1], lty =  3); abline(v =  qtl[2] , lty =  2); abline(v =  qtl[3] , lty =  3) 
+text(qtl[1], 0, label =  round(qtl[1], 2), adj = 1)
+text(qtl[2], 0, label =  round(qtl[2], 2))
+text(qtl[3], 0, label =  round(qtl[3], 2), adj = 0)
+
+#pdf(file = "../figure/gibbs.pdf", width =  6, height =  4)
+plot( sampled[[1]][,1], sampled[[2]][,1], type =  'l',
+     xlim =  c(min(sampled[[1]]), max(sampled[[1]]) ),
+     ylim =  c(min(sampled[[2]]), max(sampled[[2]]) ),
+     xlab =  expression(hat(mu)), 
+     ylab =  expression(hat(sigma)),
+     main =  "Gibbs") 
+lines( sampled[[1]][,2], sampled[[2]][,2], col =  2)
+lines( sampled[[1]][,3], sampled[[2]][,3], col =  3)
+lines( sampled[[1]][,4], sampled[[2]][,4], col =  4)
+#dev.off( )
+
+acf(sampled[[1]][,1] )
+## Not the best idea to use conjugate distributions for illustration as this restults in independent sampling 
+```

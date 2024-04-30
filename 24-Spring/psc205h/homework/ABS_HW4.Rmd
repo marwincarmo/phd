@@ -1,6 +1,6 @@
 ---
 title: "Homework Week 4"
-author: "name"
+author: "Marwin Carmo"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
   html_document:
@@ -136,7 +136,7 @@ res_sigma0 <- purrr::map_dbl(range_sigma0, ~loocv(x=x, sig=15, pr_mu=100, pr_sig
 plot(x=range_sigma0, y=res_sigma0, type='l', xlab=expression(sigma_0), ylab="LOO-CV")
 ```
 
-- Comment on what is going on here: We can expect the larger prior values to have a very small influence on the LOO-CV beyond a certain point.
+- Comment on what is going on here: We can expect the larger prior values of $\sigma_0$ to have a very small influence on the LOO-CV beyond $\sigma_0 \approx 6$.
 
 # Question 4
 
