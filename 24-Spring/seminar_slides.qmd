@@ -1,5 +1,5 @@
 ---
-title: "Beyond Average Scores: Identification of Consistent and Inconsistent Academic Achievement"
+title: "A holistic view of academic performance: Beyond Averages with MELSM and Spike-and-Slab"
 subtitle: "Quantitative Research Seminar"
 author: "Marwin Carmo"
 format: 
@@ -20,7 +20,7 @@ format:
     margin-right: "0"
     width: 1400
     # height: 900
-    footer: "Beyond Average Scores: Identification of Consistent and Inconsistent Academic Achievement"
+    footer: "Beyond Averages with MELSM and Spike-and-Slab"
     logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
 editor: source
 editor_options: 
@@ -34,16 +34,47 @@ editor_options:
 - Consider two students with a final grade of 75% at the year's end:
   - One had scores ranging from 50% to 100%.
   - The other maintained a steady 75%.
+  
+- Their experiences and level of mastery of different topics are almost certainly different.
+
+## Motivation
 
 - Inconsistent performance may reflect unaccounted factors influencing learning.
 
-## Our approach
+-  Understanding the nature of inconsistency may shed light on systemic issues within the school environment that not only affect academic outcomes, but also contribute to students’ social and emotional development (Spörlein & Schlueter, 2018).
 
-- Identify clustering units (students, classrooms, etc.) that exhibit unusually high or low consistency (residual variance) in academic achievement.
+## Motivation
 
-- Mixed effects location scale model (MELSM) can be used to model residual variances.
+- A new educational program is shown to increase mean achievement
 
-- We present an adaptation of the MELSM by means of shrinking random effects to their fixed effect using the Spike and Slab regularization
+- However, it also increases achievement dispersion such that the number of students failing to meet minimum level of achievement increases.
+
+```{r eval=FALSE}
+set.seed(1235)
+library(ggplot2)
+
+df <- data.frame(
+  id = 1:40,
+  grades1 = pmax(pmin(round(rnorm(40, mean = .60, sd = .10), 2), 1), 0),
+  grades2 = pmax(pmin(round(rnorm(40, mean = .75, sd = .35), 2), 1), 0)
+)
+
+#df$g1_color = ifelse(df$grades1 < 0.5, "Fail", "Pass")
+
+ggplot(df, aes(x = id, y = grades1)) +
+  geom_line( color="grey") +
+  geom_point(shape=21, color="black", fill="#69b3a2", size=4) +
+  geom_hline(yintercept = 0.5, linetype = "dashed", color="red") +
+  geom_hline(yintercept = mean(df$grades1),  color="darkblue") +
+  theme_minimal()
+```
+
+
+## Our goal
+
+- To identify clustering units (students, classrooms, etc.) that exhibit either unusually large or unusually small within-cluster variance.
+
+- We present an adaptation of the Mixed effects location scale model (MELSM) by means of shrinking random effects to their fixed effect using the Spike and Slab regularization
 
 ## MELSM
 
@@ -55,13 +86,13 @@ editor_options:
 - MELSM include a sub-model to addresses potential differences in the residual variance.
 
 - The unexplained residual variance might provide insights over and above the expected academic achievement
-that is captured in the conditional means, or location parameter.
+that is captured in the conditional means.
 
 ## MELSM
 
-- MELSM does not model the residuals themselves but, instead, the error \textit{variance} $\boldsymbol{\varphi}$ from which the residuals are realized.
+- Does not model the residuals themselves but, instead, the error \textit{variance} $\boldsymbol{\varphi}$ from which the residuals are realized.
 
-- MELSM \textit{simultaneously} estimate the means and the residual variance.
+- It *simultaneously* estimate the means and the residual variance.
 
 - The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$.
 
@@ -85,8 +116,8 @@ The starting point is the standard linear mixed effects model for $i = 1,2,...,n
 
 \begin{aligned}
   \label{eq:mixedmodel-lvl2}
-  \textrm{Level 2:}\quad \beta_{0j} &= \gamma_{00} + \gamma_{01}W_j + u_{0j} \\
-                       \beta_{1j} &= \gamma_{10} + \gamma_{11}W_j + u_{1j}
+  \textrm{Level 2:}\quad \beta_{0j} &= \gamma_{00} + \gamma_{01}W_{1j} + u_{0j} \\
+                       \beta_{1j} &= \gamma_{10} + \gamma_{11}W_{2j} + u_{1j}
 \end{aligned}
 
 \begin{equation}
@@ -114,8 +145,8 @@ Next, we introduce a scale model for the residual variance
 
 \begin{aligned}
   \label{eq:var-lvl2}
-  \textrm{Level 2:}\quad \alpha_{0j} &= \eta_{00} + \eta_{01}P_j + t_{0j} \\
-                       \alpha_{1j} &= \eta_{10} + \eta_{11}P_j + t_{1j}
+  \textrm{Level 2:}\quad \alpha_{0j} &= \eta_{00} + \eta_{01}P_{1j} + t_{0j} \\
+                       \alpha_{1j} &= \eta_{10} + \eta_{11}P_{2j} + t_{1j}
 \end{aligned}
 
 ---
@@ -148,6 +179,8 @@ The random effects from the *scale* and *location* of the model come from a mult
 
 ## Cholesky transformation
 
+ Next, we can factorize $\boldsymbol\Omega$ via the Cholesky $\textbf{L}$ of $\boldsymbol\Omega = \textbf{L}'\textbf{L}$.
+
 \begin{equation}
 \label{eq:cholesky_approach}
 \textbf{L} = 
@@ -158,6 +191,10 @@ The random effects from the *scale* and *location* of the model come from a mult
         \rho_{u_0t_1} & \frac{\rho_{u_1t_1} - l_{21} l_{41}}{l_{22}} & \frac{\rho_{t_0t_1} - l_{31} l_{41} - l_{32} l_{42}}{l_{33}} & \sqrt{1 - l^2_{41} - l^2_{42} - l^2_{43}}
     \end{pmatrix}
 \end{equation}
+
+::: {.notes}
+To simplify computation by removing redundant effects and ensure that the resulting estimate matrix is positive definite
+:::
 
 ---
 
@@ -180,6 +217,8 @@ If we multiply $\textbf{L}$ by the random effect standard deviations, $\boldsymb
 
 
 ## Variable selection
+
+An indicator variable ($\delta$) is included in the prior to allow switching between the spike and slab  throughout the MCMC sampling process.
 
 \begin{equation}
 \begin{aligned}
@@ -214,29 +253,32 @@ A Dirac measure is a measure whose (unit) mass is concentrated on a single point
 
 ## The Spike-and-slab approach
 
-- An indicator variable ($\delta$) is included in the prior to allow switching between the spike and slab  throughout the MCMC sampling process.
+- The subscript to the indicator ($\delta_i$) assigns each unit a prior inclusion probability.
 
+- When a 0 is sampled, the portion after the fixed effect drops out of the equation.
 
-- The subscript to the indicator ($\delta_i$) assigns each person a prior inclusion probability.
-
-- For example, this allows for switching between a fixed effect $t_{pj} = 0$ ($\mathcal{M}_0$) and random effects model $t_{pj} > 0$ ($\mathcal{M}_u$)--i.e.,
+- For that particular MCMC sample, their estimate will then be equivalent to the average ($\alpha_{0j} =   \eta_{00}$)--i.e., 
 
 
 :::fragment
 \begin{equation}
-t_{pj} = \begin{cases}
-0, & \text{if }\delta_{pj} = 0 , \\
-t_{pj}, & \text{if }\delta_{pj} = 1
-\end{cases}
+\label{eq:mm_delta}
+\alpha_{0j} = \begin{cases}
+\eta_{00}, & \text{if }\delta_i = 0 , \\
+\eta_{00} + t_{0j}, & \text{if }\delta_i = 1
+\end{cases}.
 \end{equation}
 :::
 
+::: {.notes}
+Thus, for each iteration, this specification allows each individual to have their own person-specific estimate or the fixed effect average. 
+:::
 ---
 
-The posterior model probabilities can then be computed as
+The posterior inclusion probabilities (PIP) can then be computed as
 
 \begin{align}
-Pr(\mathcal{M}_u | \textbf{Y}) = \frac{1}{S} \sum_{s = 1}^S \delta_s,
+Pr(\alpha_{0j} = \eta_{00} | \textbf{Y}) = 1 - \frac{1}{S} \sum_{s = 1}^S \delta_{js},
 \end{align}
 
 where $S = \{1,...,s\}$ denotes the posterior samples.
@@ -244,7 +286,7 @@ where $S = \{1,...,s\}$ denotes the posterior samples.
 Assuming equal prior odds
 
 \begin{align}
-BF = \frac{1 - Pr(\mathcal{M}_u | \textbf{Y})}{Pr(\mathcal{M}_u | \textbf{Y})}
+BF = \frac{Pr(\alpha_{0j} = \eta_{00} | \textbf{Y})}{1- Pr(\alpha_{0j} = \eta_{00} | \textbf{Y})}
 \end{align}
 
 
@@ -295,7 +337,7 @@ Random effects correlation:
 
 \begin{aligned}
   \textbf{L} &\sim \text{LKJ}(\eta = 1)\\
-  \boldsymbol{\Omega} = \textbf{L}'\textbf{L}
+  \boldsymbol{\Omega} &= \textbf{L}'\textbf{L}
 \end{aligned}
 
 
@@ -305,12 +347,45 @@ Random effects correlation:
 
 - We are interested in identifying clustering units (schools) that exhibit either unusually large or unusually small within-cluster variance – indicating either inconsistent or consistent academic achievement.
 
-## Estimation
+## Model formulation
 
-we use spike and slap as a way of identifying those who are more consitent/inconsistent.
+Location
+
+\begin{aligned}
+  \text{mAch}_{ij} &= \gamma_0 + u_{0j} + (\gamma_1 + u_{1j})\text{SES}_{ij} + \gamma_2\text{Sector}_{ij} + e_{ij}
+\end{aligned}
+
+$$
+e_{ij} \sim \mathcal{N} (0, \sigma_{\epsilon_{ij}}^2)
+$$
+
+Scale
+
+\begin{aligned}
+  \sigma_{\epsilon_{ij}}^2 = \exp(\eta_0 + t_{0j} + \eta_1 \text{SES}_{ij})
+\end{aligned}
+
+## Software and estimation
+
+- The model was fitted using NIMBLE package in R (de Valpine, et al., 2017).
+
+- The fitted model used four chains of 1,000 interations after a burn-in period of 1,000 iterations which resulted in a total of 2,000 samples from the posterior distribution.
+
+## Partial results
+
+
+
+we use spike and slab as a way of identifying those who are more consitent/inconsistent.
 
 threshold of p >.75 because that reflects a BF > 3
 
 why not cutoff standard deviation? because how would we define it? also advantages of bayesian modeling?
 
+## Next steps
+
+- Finish the `ivd` package for R.
+
+- Build a ShinyApp to illustrate the package functionalities.
+
+- Communicate the results to the scientific community.
 
