@@ -1,6 +1,6 @@
 ---
 title: "A holistic view of academic performance: Beyond Averages with MELSM and Spike-and-Slab"
-subtitle: "Quantitative Research Seminar"
+subtitle: "Quantitative Research Seminar - 05/02/2024"
 author: "Marwin Carmo"
 format: 
   revealjs:
@@ -35,7 +35,7 @@ editor_options:
   - One had scores ranging from 50% to 100%.
   - The other maintained a steady 75%.
   
-- Their experiences and level of mastery of different topics are almost certainly different.
+- Their level of mastery of different topics are almost certainly different.
 
 ## Motivation
 
@@ -177,6 +177,8 @@ The random effects from the *scale* and *location* of the model come from a mult
 
 - $\boldsymbol{\Omega}$ is the correlation matrix that contains the covariances among all random effects.
 
+- In this way, we can specify independent priors for each element of $\boldsymbol{\tau}$ and $\boldsymbol{\Omega}$.
+
 ## Cholesky transformation
 
  Next, we can factorize $\boldsymbol\Omega$ via the Cholesky $\textbf{L}$ of $\boldsymbol\Omega = \textbf{L}'\textbf{L}$.
@@ -235,16 +237,18 @@ An indicator variable ($\delta$) is included in the prior to allow switching bet
 ::: columns
 ::: {.column width="50%"}
 
+![Rouder et al. (2018)](rouder2018.png){fig-align="center" width=65%}
+
+:::
+
+::: {.column width="50%"}
+
 - A two component mixture
 a. A "spike", that is a Dirac measure concentrated at zero.
 b. A diffuse "slab" component surrounding zero.
 :::
 
-::: {.column width="50%"}
-:::fragment
-![Rouder et al. (2018)](rouder2018.png){fig-align="center" width=65%}
-:::
-:::
+
 :::
 
 ::: {.notes}
@@ -343,9 +347,13 @@ Random effects correlation:
 
 ## Illustrative example
 
-- The data for this empirical example come from the Highschool and Beyond study (Raudenbush & Bryk, 2002)
+- The data for this empirical example comes from the 1982 study "High School and Beyond" (Raudenbush & Bryk, 2002)
 
-- We are interested in identifying clustering units (schools) that exhibit either unusually large or unusually small within-cluster variance – indicating either inconsistent or consistent academic achievement.
+- `mAch`: a numeric vector of Mathematics achievement scores.
+
+- `ses`: a numeric vector of socio-economic scores.
+
+- `sector`: a factor with levels `Public` and `Catholic`.
 
 ## Model formulation
 
@@ -367,19 +375,20 @@ Scale
 
 ## Software and estimation
 
-- The model was fitted using NIMBLE package in R (de Valpine, et al., 2017).
+- The model was fitted using `NIMBLE` package in `R` (de Valpine, et al., 2017). 
 
-- The fitted model used four chains of 1,000 interations after a burn-in period of 1,000 iterations which resulted in a total of 2,000 samples from the posterior distribution.
+- [What is NIMBLE](https://r-nimble.org/what-is-nimble)?
+  - "NIMBLE is a system for building and sharing analysis methods for statistical models, especially for hierarchical models and computationally-intensive methods."
+
+- The fitted model used four chains of 1,000 iterations after a burn-in period of 1,000 iterations which resulted in a total of 2,000 samples from the posterior distribution.
 
 ## Partial results
 
+![](img/pip_plot.png)
 
+## Partial results
 
-we use spike and slab as a way of identifying those who are more consitent/inconsistent.
-
-threshold of p >.75 because that reflects a BF > 3
-
-why not cutoff standard deviation? because how would we define it? also advantages of bayesian modeling?
+![](img/funnel_plot.png)
 
 ## Next steps
 
@@ -389,3 +398,8 @@ why not cutoff standard deviation? because how would we define it? also advantag
 
 - Communicate the results to the scientific community.
 
+<!-- we use spike and slab as a way of identifying those who are more consitent/inconsistent. -->
+
+<!-- threshold of p >.75 because that reflects a BF > 3 -->
+
+<!-- why not cutoff standard deviation? because how would we define it? also advantages of bayesian modeling? -->
