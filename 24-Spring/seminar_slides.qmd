@@ -85,8 +85,7 @@ ggplot(df, aes(x = id, y = grades1)) +
 
 - MELSM include a sub-model to addresses potential differences in the residual variance.
 
-- The unexplained residual variance might provide insights over and above the expected academic achievement
-that is captured in the conditional means.
+- The unexplained residual variance might provide insights over and above the expected academic achievement that is captured in the conditional means.
 
 ## MELSM
 
@@ -268,8 +267,8 @@ A Dirac measure is a measure whose (unit) mass is concentrated on a single point
 \begin{equation}
 \label{eq:mm_delta}
 \alpha_{0j} = \begin{cases}
-\eta_{00}, & \text{if }\delta_i = 0 , \\
-\eta_{00} + t_{0j}, & \text{if }\delta_i = 1
+\eta_{00}, & \text{if }\delta_j = 0 , \\
+\eta_{00} + t_{0j}, & \text{if }\delta_j = 1
 \end{cases}.
 \end{equation}
 :::
@@ -290,7 +289,7 @@ where $S = \{1,...,s\}$ denotes the posterior samples.
 Assuming equal prior odds
 
 \begin{align}
-BF = \frac{Pr(\alpha_{0j} = \eta_{00} | \textbf{Y})}{1- Pr(\alpha_{0j} = \eta_{00} | \textbf{Y})}
+BF_{01} = \frac{Pr(\alpha_{0j} = \eta_{00} | \textbf{Y})}{1- Pr(\alpha_{0j} = \eta_{00} | \textbf{Y})}
 \end{align}
 
 
@@ -384,11 +383,20 @@ Scale
 
 ## Partial results
 
-![](img/pip_plot.png)
+![](img/pip_plot.png){fig-align="center"}
+
+::: {.notes}
+PIPs ranged from .25 to 1, in supporting of including random effects. This spread of PIPs indicates considerable fluctuations in the level of support for whether schools differ from the average variance in math achievement. They span from ‘moderate’ evidence in favor of belonging to the average effect on one end to ‘extreme’ evidence in favor of different from it on the other.
+:::
+
 
 ## Partial results
 
-![](img/funnel_plot.png)
+![](img/funnel_plot.png){fig-align="center"}
+
+::: {.notes}
+The PIPs make a V-shape in that they decrease as the magnitude of the effect approaches zero and increase again as they move away from zero. Individuals with larger random effects should have more evidence to support that they differ from the average effect. This plot shows that mostly consistent schools should have a random effect on the variance.
+:::
 
 ## Next steps
 
