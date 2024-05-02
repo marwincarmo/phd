@@ -31,7 +31,7 @@ editor_options:
 
 - Average performance does not provide information on the *consistency* of academic achievement over time or within a cluster.
 
-- Consider two students with a final grade of 75% at the year's end:
+- Consider two schools with a final average grade of 75% at the year's end:
   - One had scores ranging from 50% to 100%.
   - The other maintained a steady 75%.
   
@@ -72,7 +72,7 @@ ggplot(df, aes(x = id, y = grades1)) +
 
 ## Our goal
 
-- To identify clustering units (students, classrooms, etc.) that exhibit either unusually large or unusually small within-cluster variance.
+- Propose a methodology to identify clustering units (students, classrooms, etc.) that exhibit either unusually large or unusually small within-cluster variance.
 
 - We present an adaptation of the Mixed effects location scale model (MELSM) by means of shrinking random effects to their fixed effect using the Spike and Slab regularization
 
@@ -89,9 +89,9 @@ ggplot(df, aes(x = id, y = grades1)) +
 
 ## MELSM
 
-- Does not model the residuals themselves but, instead, the error \textit{variance} $\boldsymbol{\varphi}$ from which the residuals are realized.
+- Does not model the residuals themselves but, instead, the error **variance** ($\sigma^2$) from which the residuals are realized.
 
-- It *simultaneously* estimate the means and the residual variance.
+- It *simultaneously* estimates the means and the residual variance.
 
 - The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$.
 
@@ -135,7 +135,7 @@ The starting point is the standard linear mixed effects model for $i = 1,2,...,n
 
 ---
 
-Next, we introduce a scale model for the residual variance
+With MELSM we also allow the residual variance to differ among *i*-students within *j*-schools to obtain $\sigma^2_{\epsilon_{ij}}$
 
 \begin{equation}
   \label{eq:var-lvl1}
@@ -170,11 +170,20 @@ The random effects from the *scale* and *location* of the model come from a mult
 
 ---
 
+\begin{equation}
+\boldsymbol{\Sigma}=
+        \begin{bmatrix} \tau^2_{u_0} \\ 
+                        \tau_{u_0u_1} & \tau^2_{u_1} \\
+                        \tau_{u_0t_0} & \tau_{u_1t_0} & \tau^2_{t_0} \\
+                        \tau_{u_0t_1} & \tau_{u_1t_1} & \tau_{t_0t_1} & \tau^2_{t_1}
+        \end{bmatrix}
+\end{equation}
+
 - $\boldsymbol{\Sigma}$ can be decomposed into $\boldsymbol\Sigma = \boldsymbol{\tau}\boldsymbol{\Omega\tau}'$ to specify independent priors for each element of $\boldsymbol{\tau}$ and $\boldsymbol{\Omega}$.
 
-- $\boldsymbol{\tau}$ is a diagonal matrix where the diagonal elements are the random-effect variances.
+- $\boldsymbol{\tau}$ is a diagonal matrix of the random-effects standard deviations.
 
-- $\boldsymbol{\Omega}$ is the correlation matrix that contains the covariances among all random effects.
+- $\boldsymbol{\Omega}$ is the correlation matrix among all random effects.
 
 - In this way, we can specify independent priors for each element of $\boldsymbol{\tau}$ and $\boldsymbol{\Omega}$.
 
@@ -256,11 +265,11 @@ A Dirac measure is a measure whose (unit) mass is concentrated on a single point
 
 ## The Spike-and-slab approach
 
-- The subscript to the indicator ($\delta_i$) assigns each unit a prior inclusion probability.
+- The subscript to the indicator ($\delta_j$) assigns each school a prior inclusion probability.
+
+- For each school we obtain a probabilistic measure on whether the random effect is to be included or not.
 
 - When a 0 is sampled, the portion after the fixed effect drops out of the equation.
-
-- For that particular MCMC sample, their estimate will then be equivalent to the average ($\alpha_{0j} =   \eta_{00}$)--i.e., 
 
 
 :::fragment
@@ -397,6 +406,10 @@ PIPs ranged from .25 to 1, in supporting of including random effects. This sprea
 ::: {.notes}
 The PIPs make a V-shape in that they decrease as the magnitude of the effect approaches zero and increase again as they move away from zero. Individuals with larger random effects should have more evidence to support that they differ from the average effect. This plot shows that mostly consistent schools should have a random effect on the variance.
 :::
+
+## Partial results
+
+![](img/avg.png){fig-align="center"}
 
 ## Next steps
 
