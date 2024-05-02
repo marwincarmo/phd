@@ -185,8 +185,6 @@ The random effects from the *scale* and *location* of the model come from a mult
 
 - $\boldsymbol{\Omega}$ is the correlation matrix among all random effects.
 
-- In this way, we can specify independent priors for each element of $\boldsymbol{\tau}$ and $\boldsymbol{\Omega}$.
-
 ## Cholesky transformation
 
  Next, we can factorize $\boldsymbol\Omega$ via the Cholesky $\textbf{L}$ of $\boldsymbol\Omega = \textbf{L}'\textbf{L}$.
@@ -385,10 +383,11 @@ Scale
 
 - The model was fitted using `NIMBLE` package in `R` (de Valpine, et al., 2017). 
 
-- [What is NIMBLE](https://r-nimble.org/what-is-nimble)?
-  - "NIMBLE is a system for building and sharing analysis methods for statistical models, especially for hierarchical models and computationally-intensive methods."
+- [NIMBLE](https://r-nimble.org/what-is-nimble) is a system for building and sharing analysis methods for statistical models, especially for hierarchical models and computationally-intensive methods."
 
 - The fitted model used four chains of 1,000 iterations after a burn-in period of 1,000 iterations which resulted in a total of 2,000 samples from the posterior distribution.
+
+- The Gelman and Rubins scale reduction factor $\hat{R}$ was < 1.1 for all parameters. This ensures that all samples mixed well and sampled from the typical set.
 
 ## Partial results
 
