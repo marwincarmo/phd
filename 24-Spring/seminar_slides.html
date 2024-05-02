@@ -1160,8 +1160,8 @@ Marwin Carmo
 <li class="fragment">
 <p>Consider two schools with a final average grade of 75% at the year’s end:</p>
 <ul>
-<li class="fragment">One had scores ranging from 50% to 100%.</li>
-<li class="fragment">The other maintained a steady 75%.</li>
+<li class="fragment">In one school, students had scores ranging from 50% to 100%.</li>
+<li class="fragment">In the other, they maintained a steady 75%.</li>
 </ul>
 </li>
 <li class="fragment"><p>Their level of mastery of different topics are almost certainly different.</p></li>
@@ -1192,8 +1192,8 @@ Marwin Carmo
 </ul></section><section id="advantages-of-melsm" class="slide level2"><h2>Advantages of MELSM</h2>
 <ul>
 <li class="fragment"><p>Account for possible correlations among location and scale effects.</p></li>
-<li class="fragment"><p>For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.</p></li>
 <li class="fragment"><p>Overcomes the limitations of multi-stage approaches and outperform the classic mixed effects model in in- and out of sample performance.</p></li>
+<li class="fragment"><p>Allows the inclusion of specific predictors. For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.</p></li>
 </ul></section><section class="slide level2"><p>The starting point is the standard linear mixed effects model for <span class="math inline">\(i = 1,2,...,n_j\)</span> students, and <span class="math inline">\(j = 1, 2, \ldots, S\)</span> schools, specified as</p>
 <p><span class="math display">\[\begin{equation}
   \label{eq:mixedmodel-lvl1}
@@ -1216,7 +1216,7 @@ Marwin Carmo
 <p><span class="math display">\[\begin{equation}
   e_{ij} \sim \mathcal{N} (0, \sigma_{\epsilon}^2)
 \end{equation}\]</span></p>
-</section><section class="slide level2"><p>With MELSM we also allow the residual variance to differ among <span class="math inline">\(i\)</span>-students within <span class="math inline">\(j\)</span>-schools to obtain <span class="math inline">\(\sigma^2_{\epsilon_{ij}}\)</span></p>
+</section><section class="slide level2"><p>With MELSM we also allow the residual variance to differ among <span class="math inline">\(i\)</span>-students within <span class="math inline">\(j\)</span>-schools to obtain <span class="math inline">\(\sigma^2_{\epsilon_\color{red}{ij}}\)</span></p>
 <p><span class="math display">\[\begin{equation}
   \label{eq:var-lvl1}
   \textrm{Level 1:} \quad \sigma^2_{\epsilon_{ij}} = \exp(\alpha_{0j} + \alpha_{1j}M_{ij})

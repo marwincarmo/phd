@@ -32,8 +32,8 @@ editor_options:
 - Average performance does not provide information on the *consistency* of academic achievement over time or within a cluster.
 
 - Consider two schools with a final average grade of 75% at the year's end:
-  - One had scores ranging from 50% to 100%.
-  - The other maintained a steady 75%.
+  - In one school, students had scores ranging from 50% to 100%.
+  - In the other, they maintained a steady 75%.
   
 - Their level of mastery of different topics are almost certainly different.
 
@@ -93,9 +93,9 @@ ggplot(df, aes(x = id, y = grades1)) +
 
 - Account for possible correlations among location and scale effects.
 
-- For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.
-
 - Overcomes the limitations of multi-stage approaches and outperform the classic mixed effects model in in- and out of sample performance.
+
+- Allows the inclusion of specific predictors. For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.
 
 ---
 
@@ -129,7 +129,7 @@ The starting point is the standard linear mixed effects model for $i = 1,2,...,n
 
 ---
 
-With MELSM we also allow the residual variance to differ among $i$-students within $j$-schools to obtain $\sigma^2_{\epsilon_{ij}}$
+With MELSM we also allow the residual variance to differ among $i$-students within $j$-schools to obtain $\sigma^2_{\epsilon_\color{red}{ij}}$
 
 \begin{equation}
   \label{eq:var-lvl1}
