@@ -392,7 +392,7 @@ The ^R statistic measures the ratio of the average variance of samples within ea
 
 ## Partial results
 
-![](img/pip_plot.png){fig-align="center"}
+![](img/pip.png){fig-align="center"}
 
 ::: {.notes}
 PIPs ranged from .25 to 1, in supporting of including random effects. This spread of PIPs indicates considerable fluctuations in the level of support for whether schools differ from the average variance in math achievement. They span from ‘moderate’ evidence in favor of belonging to the average effect on one end to ‘extreme’ evidence in favor of different from it on the other.
