@@ -43,12 +43,6 @@ editor_options:
 
 -  Understanding the nature of inconsistency may shed light on systemic issues within the school environment that not only affect academic outcomes, but also contribute to students’ social and emotional development (Spörlein & Schlueter, 2018).
 
-## Motivation
-
-- A new educational program is shown to increase mean achievement
-
-- However, it also increases achievement dispersion such that the number of students failing to meet minimum level of achievement increases.
-
 ```{r eval=FALSE}
 set.seed(1235)
 library(ggplot2)
@@ -135,7 +129,7 @@ The starting point is the standard linear mixed effects model for $i = 1,2,...,n
 
 ---
 
-With MELSM we also allow the residual variance to differ among *i*-students within *j*-schools to obtain $\sigma^2_{\epsilon_{ij}}$
+With MELSM we also allow the residual variance to differ among $i$-students within $j$-schools to obtain $\sigma^2_{\epsilon_{ij}}$
 
 \begin{equation}
   \label{eq:var-lvl1}
@@ -226,7 +220,7 @@ If we multiply $\textbf{L}$ by the random effect standard deviations, $\boldsymb
 
 ## Variable selection
 
-An indicator variable ($\delta$) is included in the prior to allow switching between the spike and slab  throughout the MCMC sampling process.
+An indicator variable ($\delta$) is included in the prior to allow switching between the spike and slab  throughout the Markov Chain Monte Carlo (MCMC) sampling process.
 
 \begin{equation}
 \begin{aligned}
@@ -237,6 +231,9 @@ An indicator variable ($\delta$) is included in the prior to allow switching bet
 \end{aligned}
 \end{equation}
 
+::: {.notes}
+A Monte Carlo process refers to a simulation that samples many random values from a posterior distribution of interest.
+:::
 
 ## The Spike-and-slab approach
 
@@ -387,7 +384,11 @@ Scale
 
 - The fitted model used four chains of 1,000 iterations after a burn-in period of 1,000 iterations which resulted in a total of 2,000 samples from the posterior distribution.
 
-- The Gelman and Rubins scale reduction factor $\hat{R}$ was < 1.1 for all parameters. This ensures that all samples mixed well and sampled from the typical set.
+- The Gelman and Rubin's (1992) scale reduction factor $\hat{R}$ was lower than 1.1 for all parameters. This ensures that all samples mixed well and sampled from the typical set.
+
+::: {.notes}
+The ^R statistic measures the ratio of the average variance of samples within each chain to the variance of the pooled samples across chains; if all chains are at equilibrium, these will be the same and ^R will be one. If the chains have not converged to a common distribution, the ^R statistic will be greater than one.
+:::
 
 ## Partial results
 

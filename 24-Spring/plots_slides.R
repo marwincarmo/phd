@@ -86,7 +86,7 @@ plt <- ggplot(df_pip, aes(x = ordered, y = pip)) +
   xlab("Sorted Index") +
   ylab("Posterior Inclusion Probability")
 plt
-
+ggsave(filename= "pip.png", path = "24-Spring/img", width = 8, height = 6, dpi=300)
 
 # V-plot ------------------------------------------------------------------
 
@@ -104,8 +104,8 @@ df_merged |>
   geom_point( ) +  
   guides(color = FALSE) + 
   labs(x = "Within-School Variance")+
-  geom_text(data = subset(out_summary, pip >= 0.68),
-            aes(label = school),
+  geom_text(data = subset(df_pip, pip >= 0.75),
+            aes(label = id),
             nudge_x = -0.015,
             size = 3)
 
