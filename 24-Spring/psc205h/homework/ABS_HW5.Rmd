@@ -94,6 +94,8 @@ E(\psi)&=\frac{\alpha}{\alpha+\beta}\\
 &=\frac{4}{4+16}
 \end{align}
 
+$\mu$ and $\psi$ compose the only parameter $\lambda$ the Poisson distribution takes. These priors will define the mean and variance of the distribution because both are represente by $\lambda$.
+
 ## Q2
  - Write up the full model, i.e., likelihood and prior:
  
