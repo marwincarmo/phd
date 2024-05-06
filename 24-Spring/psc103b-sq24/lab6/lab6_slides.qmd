@@ -1,0 +1,162 @@
+---
+title: "Lab 6: Multiple Comparisons & Factorial ANOVA"
+subtitle: "PSC 103B"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    callout-icon: false
+    # height: 900
+    footer: "PSC 103B - Statistical Analysis of Psychological Data"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+execute:
+  echo: true
+editor_options: 
+  chunk_output_type: console
+---
+
+## Packages and data
+
+First of all, lets load tidyverse
+
+```{r}
+library(tidyverse)
+```
+
+And read in the data
+
+```{r}
+nerdy <- read_csv('NPAS_Lab6.csv')
+```
+
+## ANOVA recap
+
+- Rerun one-way anova from last week's lab on new dataset:
+
+:::fragment
+```{r}
+my.anova <- lm(formula = nerdy_selfreport ~ continent, data = nerdy)
+
+anova(my.anova) 
+```
+:::
+
+## ANOVA recap
+
+- Rerun linear contrasts with new means
+
+:::fragment
+```{r}
+nerdy %>% 
+  group_by(continent) %>% 
+  summarize(M = mean(nerdy_selfreport))
+```
+:::
+
+## ANOVA recap
+
+- Contrast 1- Americas and Europe
+
+:::fragment
+```{r}
+psi_1 <- 1 * 5.52 + (-1) * 5.20
+ss_psi1 <- (200 * psi_1^2) / (1^2 + (-1)^2)
+ms_psi1 <- ss_psi1 / 1
+f_psi1 <- ms_psi1 / 2.0992
+pf(f_psi1, df1 = 1, df2 = 995, lower.tail = FALSE)
+```
+:::
+
+- Contrast 2- Asia vs all other groups
+
+:::fragment
+```{r}
+psi_2 <- -0.25 * (5.33 + 5.52 + 5.20 + 5.50) + 1 * 5.1
+ss_psi2 <- (200 * psi_2^2) / ((-0.25)^2 + (-0.25)^2 + (-0.25)^2 + (-0.25)^2 + 1^2)
+ms_psi2 <- ss_psi2 / 1
+f_psi2 <- ms_psi2 / 2.0992
+pf(f_psi2, df1 = 1, df2 = 995, lower.tail = FALSE)
+```
+:::
+
+
+## Multiple Comparisons: A Priori
+
+- In this scenario, the comparisons you conduct had been planned in advance, before you even looked at the data.
+
+- These are known as a priori tests.
+
+- Because you did not make your decision of which comparisons to make based on the data you only have to correct for the tests that you actually conducted.
+
+## Multiple Comparisons: A Priori
+
+- In this first scenario, let's assume that I had planned to do my 2 comparisons in advance
+
+- Then to ensure that the total error rate for my comparisons remains below 5%, I simply divide 5% by the number of tests that I conduct.
+
+:::fragment
+```{r}
+.05/2
+```
+:::
+
+- And now I can compare my p-values from last week's comparisons to this new alpha
+
+:::fragment
+```{r}
+pf(f_psi1, df1 = 1, df2 = 995, lower.tail = FALSE)
+pf(f_psi2, df1 = 1, df2 = 995, lower.tail = FALSE)
+```
+:::
+
+## Multiple Comparisons: Post-Hoc
+
+- Let's move to a scenario where I *didn't* plan those two comparisons in advance.
+
+- Instead, I chose to make those comparisons based on how the means looked - for example, the mean of Asia appears to be lower than the other continents.
+
+- This is known as a **post-hoc test**, and is typically more exploratory.
+
+- I now have to correct for all the tests I could have chosen to do if my data had looked any different.
+
+## Multiple Comparisons: Post-Hoc
+
+- There are two common post-hoc tests: Scheffe's and Tukey's.
+
+- We use the Scheffe correction if our comparisons involve  any combination of complex *and* pairwise contrasts.
+
+- And the Tukey correction if we're only interested in the pairwise comparisons
+
+## Multiple Comparisons: Post-Hoc
+
+- Since we have one complex contrast and one pairwise contrast, we use the Scheffe correction.
+
+- It involves calculating a new critical F value that you compare your calculated F statistic to.
+
+- The new critical F value is $(J-1)\times F_{\alpha}$
+
+- $F_{\alpha}$ is the value that cuts off 5% of the F distribution with df (J-1, N-J).
+
+:::fragment
+```{r}
+# We had 5 groups, and 1000 participants, so our new critical F is
+J <- 5
+N <- 1000
+(J-1)*qf(.05, 4, N-J, lower.tail = FALSE)
+```
+:::
