@@ -1,0 +1,154 @@
+---
+title: "R-Script to generate lecture slides for W6"
+author: "Philippe Rast"
+header-includes: 
+  - \usepackage{amsmath}	
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+## Load packages
+```{r, message = FALSE}
+library(ggplot2)
+```
+
+## Markovian Die
+
+Independent die: Sampling form all siz sides, independently
+
+Dependent (Markovian) die: Sampling can only happen from the next closest numner
+
+```{r}
+set.seed(9037)
+d <- NA
+mn <- NA
+draws <- 400
+for(i in 1:draws ) {
+  if(i == 1) d[1] <- sample(1:6, 1)
+  if(d[i] == 1) d[i+1] <- sample(c(6,2), 1)
+  if(d[i] == 2) d[i+1] <- sample(c(1,3), 1)
+  if(d[i] == 3) d[i+1] <- sample(c(2,4), 1)
+  if(d[i] == 4) d[i+1] <- sample(c(3,5), 1)
+  if(d[i] == 5) d[i+1] <- sample(c(4,6), 1)
+  if(d[i] == 6) d[i+1] <- sample(c(5,1), 1)
+  mn[i] <- mean(d)
+}
+
+
+## Independent draws:
+mni <- NA
+di <- NA
+for(i in 1:draws ) {
+  di[i] <- sample(1:6, 1)
+  mni[i] <- mean(di)
+}
+
+acf(d)
+
+pdf(file = "MarkovianDie.pdf", width = 5, height = 4)
+plot(1:draws, mni, type =  'l', ylim = c(1,6 ), col = "red", ylab = "Die Values", xlab = "Number of throws"); abline(h = 3.5, tly = 3)
+lines(1:draws, mn)
+dev.off( )
+
+```
+
+## Posterior Space vs. NLP
+
+```{r}
+#library(plotly )
+
+kd <- with(MASS::geyser, MASS::kde2d(duration, waiting, n = 50))
+str(kd)
+
+
+pdf(file = "posteriorspace.pdf", width = 6, height = 6)
+lattice::wireframe(kd$z, drape = T, colorkey = F, par.settings = list(axis.line = list(col = 'transparent')), zlab = "Density", xlab = "", ylab = "",  aspect = c(.4, .4))
+dev.off( )
+pdf(file = "nlp.pdf", width = 6, height = 6)
+lattice::wireframe(-kd$z, drape = T, colorkey = F, par.settings = list(axis.line = list(col = 'transparent')), zlab = "NLP", xlab = "", ylab = "",  aspect = c(.4, .4))
+dev.off( )
+```
+
+
+## Basic Stan
+
+```{r}
+library(rstan )
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+## Load Model
+sm <- stan_model("basic.stan")
+
+
+## Load Data
+head(swiss)
+
+stan_data <- list(x = swiss$Education,
+                  y = swiss$Infant.Mortality,
+                  n = nrow(swiss))
+
+fitted <- sampling(sm, data = stan_data )
+
+fitted
+
+library(brms )
+
+bfit <- brm(Infant.Mortality ~ Education, swiss )
+bfit
+brms::stancode(bfit )
+
+
+brms::WAIC(bfit)
+brms::loo(bfit )
+
+```
+
+
+## Run HW 5
+```{r}
+quake <- read.csv("quake.csv")
+
+quake_fit <- brm( damage ~ d, data = quake, family = poisson)
+summary(quake_fit)
+## Adapt model to be the more similar to the one from the HW: We can't really make it the same with brms as we have sigma that is weighing the whole exp(-mu*d)*sigma.
+quake_fit <- brm( damage ~ I(-1*d), data = quake, family = poisson,
+                 prior = c(
+                   set_prior("gamma(1, 10)", class = "b", lb = 0)          # Gamma prior for the slope
+                   # b classes are regression weights
+                   # I(-1*d) to force to be positive
+                 ))
+
+
+brms::prior_summary(quake_fit )
+summary(quake_fit)
+
+
+exp(6.57)
+## In the homework, we have 1000*psi approx 710 (1000*0.716)
+
+## In the homework d is distance and the regression weight is mu = 0.060
+```
+
+### Prior Predictive Distribution
+```{r}
+## Instruct bmrs to only sample from the 
+quake_fit <- brm( damage ~ d, data = quake, family = poisson,
+                 sample_prior = TRUE) # will save information needed for prior pred dist
+
+## Generate prior predictive samples
+prior_pred <- prior_draws(quake_fit, nsamples = 500)
+head( prior_pred )
+
+plot(prior_pred )
+
+bayesplot::color_scheme_set("blue")
+bayesplot::mcmc_hist(prior_pred, bins = 50)
+plot(1:10)
+X11( )
+options(device="X11")
+```
+
+### Posterior Predictive 

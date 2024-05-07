@@ -1,0 +1,161 @@
+---
+title: "Homework Week 6"
+author: "name"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r, message = FALSE, echo = FALSE}
+## Load packages
+library( bayesplot )
+library( rstan )
+# use multiple cores
+options(mc.cores =  parallel::detectCores())
+# compile model and save it 
+rstan_options(auto_write = TRUE)
+```
+
+# Question 1
+
+Code up the model from Week 4 in stan where our model ($\mathcal{M}1$) was: 
+
+\begin{align}
+y \sim & N(\mu, \sigma) \quad [\text{Likelihood}] \\
+ & \mu ~ \sim N(\mu_0 = 100, \sigma_0 = 10) \quad [\text{Prior}]\\ 
+ & \sigma = 15   \quad [\text{Constant}]
+\end{align}
+
+You can write the model into an rmarkdown chunk that calls `stan` and provides the `output.var=` as the model name:  "model1". This calls `stan_model()` for you in the background.
+The model should also contain a `generated_quantities{}` block that generates values for the predictive distribution and computes the log likelihood. 
+
+```{stan output.var = "model1"}
+// Paste the model1.stan code here:
+data {
+  int<lower=0> N; // Sample size
+  real y[N];    // Observations  
+  real<lower=0> sigma; // Sigma is known
+}
+
+parameters {
+  real mu; // Parameter to be estimated
+}
+
+model {
+  // Prior
+  mu ~ normal(100, 10);
+  
+  // Likelihood
+  y ~ normal(mu, sigma);
+}
+
+generated quantities {
+  real y_rep[N];
+  real log_lik[N];
+  // stan forced me to do a loop... no idea why??
+  for( i in 1:N ){
+	y_rep[i] = normal_rng( mu, sigma );
+  }
+  for(n in 1:N) {
+    log_lik[n] = normal_lpdf(y[n] | mu, sigma);
+  }
+}
+
+```
+
+# Question 2
+Now sample from the  model given this data:
+```{r}
+set.seed(433)
+y <- rbinom(30, 200, .65)
+set.seed(NULL )
+```
+
+Create the data list, so that stan can sample your model 
+```{r}
+## Create data-list object
+Y <-  list( y =  y, N = length( y ), sigma =  15)
+
+## Alternativelye, if stan model was saved externally do this instead:
+## model1 <- stan_model(file = "./model1.stan" )
+
+## Sampling happens here:
+fit1 <- sampling( model1, data = Y )
+
+
+
+```
+
+Print the model results, parse the table so that only "mu" is printed:
+```{r}
+## Results:
+print( fit1, pars = c( "mu" ) )
+```
+
+# Question 3
+Now, adapt your stan code to represent this model:
+
+\begin{align}
+y \sim & N(\mu, \sigma) \quad [\text{Likelihood}] \\
+ & \mu ~ \sim N(\mu_0 = 100, \sigma_0 = 10) \quad [\text{Prior on }\mu]\\ 
+ & \sigma ~ \sim \Gamma(10, 1 )   \quad [\text{Prior on }\sigma]
+\end{align}
+
+and save the file into "model2.stan"
+
+```{stan output.var = "model2"}
+data {
+  int<lower=0> N; // Sample size
+  real y[N];    // Observations  
+}
+
+parameters {
+  real mu; // Parameter to be estimated
+  real<lower=0> sigma; // Sigma is unknown
+}
+
+model {
+  // Prior
+  mu ~ normal(100, 10);
+  sigma ~ gamma(10,1);
+  // Likelihood
+  y ~ normal(mu, sigma);
+}
+
+generated quantities {
+  real y_rep[N];
+  real log_lik[N];
+  // stan forced me to do a loop... no idea why??
+  for( i in 1:N ){
+	y_rep[i] = normal_rng( mu, sigma );
+  }
+  for(n in 1:N) {
+    log_lik[n] = normal_lpdf(y[n] | mu, sigma);
+  }
+}
+
+```
+
+Sample and print output:
+```{r}
+fit2 <- sampling(model2, data =  Y )
+print( fit2, pars =  c("mu", "sigma" ) )
+```
+
+# Question 4
+Now extract both posterior samples with `ppd_mod1 <- extract(fit1, "y_rep" )` which creates a list. The quantities of interest are in `ppd_mod1$y_rep`. Plot the posterior predictive distribution of both models (model1 and model2). 
+
+```{r}
+## Draws from the posterior predictive distribution for model 1: 
+ppd_mod1 <- extract(fit1, "y_rep" )
+ppd_mod2 <- extract(fit2, "y_rep" )
+
+dim( ppd_mod1$y_rep )
+
+ppc_dens_overlay( y = y, yrep = ppd_mod1$y_rep[ sample(1:4000, 100 ),] )
+
+ppc_dens_overlay( y = y, yrep = ppd_mod2$y_rep[ sample(1:4000, 100 ),] )
+```
