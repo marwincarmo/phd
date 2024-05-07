@@ -99,15 +99,15 @@ pf(f_psi2, df1 = 1, df2 = 995, lower.tail = FALSE)
 
 - In this scenario, the comparisons you conduct had been planned in advance, before you even looked at the data.
 
-- These are known as a priori tests.
+- These are known as *a priori* tests.
 
 - Because you did not make your decision of which comparisons to make based on the data you only have to correct for the tests that you actually conducted.
 
 ## Multiple Comparisons: A Priori
 
-- In this first scenario, let's assume that I had planned to do my 2 comparisons in advance
+- Assume that I had planned to do my 2 comparisons in advance
 
-- Then to ensure that the total error rate for my comparisons remains below 5%, I simply divide 5% by the number of tests that I conduct.
+- Then to ensure that the total error rate for my comparisons remains below 5%, I divide 5% by the number of tests that I conduct.
 
 :::fragment
 ```{r}
@@ -115,7 +115,7 @@ pf(f_psi2, df1 = 1, df2 = 995, lower.tail = FALSE)
 ```
 :::
 
-- And now I can compare my p-values from last week's comparisons to this new alpha
+- Now I compare my p-values from last week's comparisons to this new alpha
 
 :::fragment
 ```{r}
@@ -142,7 +142,7 @@ pf(f_psi2, df1 = 1, df2 = 995, lower.tail = FALSE)
 
 - And the Tukey correction if we're only interested in the pairwise comparisons
 
-## Multiple Comparisons: Post-Hoc
+## Multiple Comparisons: Scheffe's post-Hoc
 
 - Since we have one complex contrast and one pairwise contrast, we use the Scheffe correction.
 
@@ -157,6 +157,227 @@ pf(f_psi2, df1 = 1, df2 = 995, lower.tail = FALSE)
 # We had 5 groups, and 1000 participants, so our new critical F is
 J <- 5
 N <- 1000
-(J-1)*qf(.05, 4, N-J, lower.tail = FALSE)
+(J-1)*qf(.05, df1 = 4, df2 = N-J, lower.tail = FALSE)
 ```
+:::
+
+## Multiple Comparisons: Scheffe's post-Hoc
+
+- Compare our calculated F statistics to this value:
+
+- Americas vs Europe: 
+  - 4.88 < 9.52
+
+- Asia vs all:
+  - 6.3 < 9.5
+
+- Do not reject $H_0$ of both tests.
+
+## Multiple Comparisons: Tukey's Honest Significant Difference (HSD)
+
+- What if we were only interested in pairwise comparisons such as Europe vs the Americas, and Americas vs. Oceania?
+
+- We can do a Tukey correction (a.k.a Tukey's HSD test).
+
+- Tukey correction is considering a smaller family of tests than Scheffe, so it typically has higher power.
+
+## Multiple Comparisons: Tukey's HSD
+
+- To run the Tukey's test in R we need a different function for the ANOVA, the `aov()` function:
+
+:::fragment
+```{r}
+# the input is the same as the lm() function from last week
+my.anova <- aov(nerdy_selfreport ~ continent, data = nerdy)
+```
+:::
+
+- We can use `summary()` to get the ANOVA table .
+
+:::fragment
+```{r}
+summary(my.anova)
+```
+:::
+
+---
+
+Now, for the Tukey test, we use the `TukeyHSD()` function:
+
+```{r}
+TukeyHSD(my.anova)
+```
+
+
+::: {.notes}
+Now we can see all the possible pairwise comparisons
+Along with an estimate of the mean difference
+Confidence interval limits for that difference
+and (importantly for us) a p-value
+This is the p-value based on the Studentized Range distribution
+and we can compare it to our usual alpha level of .05
+:::
+
+## Factorial ANOVA
+
+- Up until now, we've done a one-way ANOVA, where we only had a single grouping variable.
+
+- What would we do if we had more than one grouping variable?
+
+- With the factorial ANOVA we can see the effect of each grouping variable on their own, but also their potential interaction.
+
+## Factorial ANOVA
+
+Factorial ANOVA allow us examine in one test: 
+
+- is there an effect of Grouping Variable 1 (at least one mean is different in those groups)? 
+- is there an effect of Grouping Variable 2? 
+
+- is there an interaction between the 2 variables (so that the effect of Grouping Variable 1 depends on Grouping Variable 2, or vice versa)?
+
+## Factorial ANOVA
+
+- **Main effect**: When the average outcome changes consistently across different levels of one factor, regardless of the other factors. Imagine studying how exercise and diet affect weight loss. If people lose more weight with exercise regardless of their diet, that's a main effect of exercise.
+
+- **Interaction**: When the effect of one factor changes depending on the level of another factor. Back to the exercise and diet example, if exercise leads to more weight loss only for people on a specific diet, there's an interaction.
+
+
+## Factorial ANOVA
+
+- The NPAS dataset also had information on participants' biological sex (`gender`).
+
+- What if we were interested in whether continent *and* sex had significant effects on self-reported nerdiness?
+
+- Let's look at the means of each group.
+
+---
+
+::: columns
+::: {.column width="50%"}
+```{r}
+nerdy %>%
+  group_by(continent) %>%
+  summarize("Mean" = mean(nerdy_selfreport))
+```
+:::
+
+::: {.column width="50%"}
+```{r echo=FALSE}
+ggplot(data = nerdy, aes(x = continent, y = nerdy_selfreport))+
+  geom_boxplot(aes(fill=continent))+
+  theme_minimal()+
+  labs(x = "Continent", y = "Self-Reported Nerdiness")
+```
+:::
+:::
+
+---
+
+::: columns
+::: {.column width="50%"}
+```{r}
+nerdy %>%
+  group_by(gender) %>%
+  summarize("Mean" = mean(nerdy_selfreport))
+```
+:::
+
+::: {.column width="50%"}
+```{r echo=FALSE}
+ggplot(data = nerdy, aes(x = gender, y = nerdy_selfreport))+
+  geom_boxplot(aes(fill=gender))+
+  theme(legend.position = "none")+
+  theme_minimal()+
+  labs(x = "Gender", y = "Self-Reported Nerdiness")
+```
+:::
+:::
+
+---
+
+::: columns
+::: {.column width="50%"}
+```{r}
+nerdy %>%
+  group_by(continent, gender) %>%
+  summarize("Mean" = mean(nerdy_selfreport))
+```
+:::
+
+::: {.column width="50%"}
+```{r echo=FALSE}
+#| fig-align: "center"
+
+ggplot(data = nerdy, aes(x = continent, y = nerdy_selfreport,
+                             fill = gender))+
+  geom_boxplot()+
+  theme(legend.position = "none")+
+  theme_minimal()+
+  labs(x = "Continent", y = "Self-Reported Nerdiness")
+```
+:::
+:::
+
+## Factorial ANOVA
+
+- Hypothesis for the main effect of continent
+
+  - $H_0: \mu_{Americas} = \mu_{Africa} = \mu_{Asia}= \mu_{Europe}= \mu_{Oceania}$ 
+
+  - $H_A$: At least one mean is significantly different from the rest.
+
+- Hypothesis for the main effect of gender
+
+  - $H_0: \mu_{female} = \mu_{male}$
+
+  - $H_A$: $H_0: \mu_{female} \neq \mu_{male}$ (note that because there are only 2 groups, we can be more specific with our alternative hypothesis).
+  
+## Factorial ANOVA
+
+- For the interaction of continent x gender (we can write this in words):
+
+  - $H_0$: There is no interaction between continent and gender.
+
+  - $H_A$: There is an interaction between continent and gender.
+
+## Factorial ANOVA
+
+Now let's run the factorial ANOVA test in `R`.
+
+We "multiply" our two predictors to include an interaction between them.
+
+:::{fragment}
+```{r}
+my.anova2 <- lm(nerdy_selfreport ~ continent * gender, data = nerdy)
+anova(my.anova2)
+```
+:::
+
+## Write up these results
+
+We conducted a 5 (Continent: Americas, Asia, Africa, Europe, and Ocenia) x 
+2 (Gender: Male, Female) factorial ANOVA. There was a statistically
+significant effect of continent (F(4, 990) = 3.24, *p* = .01). There
+was also a statistically significant effect of gender 
+(F(1, 990) = 6.23, *p* = .01), such that females self-reported as being
+more nerdy (M = 5.45, SD = 1.36) than males (M = 5.22, SD = 1.54).
+The interaction between continent and gender was not significant,
+F(4, 990) = 1.30, *p* = .27.
+
+## Computing the Bayes Factor
+
+```{r}
+library(BayesFactor)
+
+nerdy$continent <- as.factor(nerdy$continent)
+nerdy$gender <- as.factor(nerdy$gender)
+
+anovaBF(nerdy_selfreport ~ continent * gender, data = nerdy, whichModels="top")
+```
+
+
+## Now you try
+
+:::{.callout-caution title="Exercise"}
+Run a factorial ANOVA using `nerdy_scale` as your outcome and testing the interaction between the penguin `gender` and `continent` . What can you conclude? Practice writing up the null and alternative hypothesis.
 :::

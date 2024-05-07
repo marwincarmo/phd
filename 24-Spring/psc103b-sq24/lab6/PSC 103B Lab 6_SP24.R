@@ -4,7 +4,7 @@
 #              &                ## 
 ##      Factorial ANOVA         ##
 ##                              ##
-##        Spring 2022           ##
+##        Spring 2024           ##
 ##################################
 
 ##### Multiple Comparisons #####
@@ -31,7 +31,10 @@
 # First, let's load the necessary packages and read in our data
 
 library(tidyverse)
-setwd("C:/Users/dpsiegel/Box/PSC 103B/Labs/Lab 6")
+
+# Uncomment below and put your working directory inside if needed...
+# setwd("")
+
 nerdy = read.csv("NPAS_Lab6.csv") ##base R version of read_csv from tidyverse
 
 # And to remind ourselves of what the dataset looks like:
@@ -304,6 +307,26 @@ anova(my.anova2)
 # more nerdy (M = 5.45, SD = 1.36) than males (M = 5.22, SD = 1.54).
 # The interaction between continent and gender was not significant,
 # F(4, 990) = 1.30, p = .27.
+
+# Computing a Bayes factor
+
+# We can also compute a Bayes Factor for each independent variable in this
+# factorial ANOVA. There are a few different ways to compute it, but the
+# way I'm doing in the code below compares the full model (i.e., including
+# all predictors and the interaction between them) with reduced models,
+# each with a single effect omitted.
+
+library(BayesFactor)
+
+anovaBF(nerdy_selfreport ~ continent * gender, data = nerdy, whichModels="top")
+
+# Notice that, assuming equal prior probabilities, we have convincing evidence
+# that the there isn't an interaction between continent and gender. That is,
+# given our data, the probability that the data generating process does not
+# include an interaction term (numerator) is far greater than the probability that
+# this same process includes an interaction term (denominator).
+# For gender and continent, the evidence our data provides against or in favor 
+# of the inclusion of these coefficients is less convincing (1/3 < BF < 3). 
 
 # You Try! Run the factorial ANOVA using nerdy_scale as your outcome
 # and gender and continent as your predictors.
