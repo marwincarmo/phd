@@ -1,0 +1,150 @@
+---
+title: "Homework Week 6"
+author: "name"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r, message = FALSE, echo = FALSE}
+## Load packages
+library( bayesplot )
+library( rstan )
+# use multiple cores
+options(mc.cores =  parallel::detectCores())
+# compile model and save it 
+rstan_options(auto_write = TRUE)
+```
+
+# Question 1
+
+Code up the model from Week 4 in stan where our model ($\mathcal{M}1$) was: 
+
+\begin{align}
+y \sim & N(\mu, \sigma) \quad [\text{Likelihood}] \\
+ & \mu ~ \sim N(\mu_0 = 100, \sigma_0 = 10) \quad [\text{Prior}]\\ 
+ & \sigma = 15   \quad [\text{Constant}]
+\end{align}
+
+There's two ways to do this in a rmarkdown:
+
+   1) You can write the model into an rmarkdown chunk that calls `stan` and provides the `output.var=` as the model name:  "model1". This calls `stan_model()` for you in the background.
+   2) Write a 'model1.stan' file and load and compile it with 'stan_model(file = "model1.stan" )'
+
+The model should also contain a `generated_quantities{}` block that generates values for the predictive distribution 'y_rep' and computes the log likelihood for each value as 'log_lik'. 
+
+In your code, remove the 'eval = FALSE' or set it to 'TRUE', otherwise the chunk will not be evaluated.
+```{stan output.var = "model1", eval=TRUE}
+// Paste the model1.stan code here:
+data {
+  int<lower=0> N;
+  vector[N] y;
+}
+
+parameters {
+  real mu;
+  real<lower=0> sigma;
+}
+
+model {
+  // Prior
+  mu ~ normal(100, 10);
+  sigma ~ normal(15, 0);
+  
+}
+
+generated quantities {
+  real y_rep[N];
+  real log_lik[N];
+  for( i in 1:N ){
+	y_rep[i] = normal_rng( mu, sigma );
+  }
+  for(n in 1:N) {
+    log_lik[n] = normal_lpdf(y[n] | mu, sigma);
+  }
+}
+```
+
+If you save the code in an external file 'model1.stan', do this instead:
+```{r}
+## Load and compile the model
+model1 <- stan_model(file = "./model1.stan" )
+```
+
+# Question 2
+Now sample from the  model given this data:
+```{r}
+set.seed(433)
+y <- rbinom(30, 200, .65)
+set.seed(NULL )
+```
+
+Save the data as a list, so that stan can sample your model: 
+```{r}
+## Create a data list:
+stan_data <- list(y = y,
+                  N = length(y))
+## Sample:
+fitted <- sampling(model1, data = stan_data )
+```
+
+Print the model results, parse the table so that only "mu" is printed:
+```{r}
+## Results:
+```
+
+# Question 3
+Now, adapt your stan code to represent this model:
+
+\begin{align}
+y \sim & N(\mu, \sigma) \quad [\text{Likelihood}] \\
+ & \mu ~ \sim N(\mu_0 = 100, \sigma_0 = 10) \quad [\text{Prior on }\mu]\\ 
+ & \sigma ~ \sim \Gamma(10, 1 )   \quad [\text{Prior on }\sigma]
+\end{align}
+
+and save the file into "model2.stan"
+
+```{stan output.var = "model2", eval = FALSE}
+// Stan model 2 code:
+data {
+  
+}
+
+parameters {
+   
+}
+
+model {
+ 
+}
+
+generated quantities {
+
+}
+```
+
+Sample and print output:
+```{r}
+## Code:
+
+```
+
+# Question 4
+Now extract both posterior samples with `ppd_mod1 <- extract(fit1, "y_rep" )` which creates a list. The quantities of interest are in `ppd_mod1$y_rep`. Plot the posterior predictive distribution of both models (model1 and model2). Check out the function 'ppc_dens_overlay()' from the 'bayesplot' package. 
+
+```{r}
+## Code:
+## Draws from the posterior predictive distribution 
+
+```
+
+# Question 5
+
+Write the same model, as in Question 3, with brms and recreate the plot for that model as in Question 4:
+
+```{r}
+## Code:
+```
