@@ -112,7 +112,7 @@ y \sim & N(\mu, \sigma) \quad [\text{Likelihood}] \\
 
 and save the file into "model2.stan"
 
-```{stan output.var = "model2", eval = FALSE}
+```{stan output.var = "model2", eval = TRUE}
 // Stan model 2 code:
 data {
   int<lower=1> N;
