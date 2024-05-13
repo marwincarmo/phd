@@ -13,6 +13,7 @@ output:
 ## Load packages
 library( bayesplot )
 library( rstan )
+library(brms)
 # use multiple cores
 options(mc.cores =  parallel::detectCores())
 # compile model and save it 
@@ -176,20 +177,24 @@ Write the same model, as in Question 3, with brms and recreate the plot for that
 ```{r}
 ## Code:
 
-library(brms)
-
 brm_mod <- brms::brm(y ~ 1,
           family = gaussian(),
           data = as.data.frame(stan_data),
           prior = prior(normal(100, 10), class = Intercept) +
-            prior(gamma(10, 1), class = sigma))
+            prior(gamma(10, 1), class = sigma),
+          file = "model_hw6.rds")
 
-pp <- posterior_predict(brm_mod)
+
 ```
+
+
 ```{r}
-library(tidybayes)
-as.data.frame(stan_data) |> 
-  add_predicted_draws(brm_mod)
+
+brm_mod <- readRDS("model_hw6.rds")
+
+pp <- brms::posterior_predict(brm_mod)
+
+ppc_dens_overlay(y, pp)
 
 ```
 
