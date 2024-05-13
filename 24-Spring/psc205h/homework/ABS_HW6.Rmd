@@ -38,22 +38,24 @@ The model should also contain a `generated_quantities{}` block that generates va
 
 In your code, remove the 'eval = FALSE' or set it to 'TRUE', otherwise the chunk will not be evaluated.
 ```{stan output.var = "model1", eval=TRUE}
+
 // Paste the model1.stan code here:
 data {
-  int<lower=0> N;
+  int<lower=1> N;
   vector[N] y;
+  real<lower=0> sigma;
 }
 
 parameters {
   real mu;
-  real<lower=0> sigma;
+  
 }
 
 model {
   // Prior
   mu ~ normal(100, 10);
-  sigma ~ normal(15, 0);
-  
+  // likelihood
+  y ~ normal(mu, sigma);
 }
 
 generated quantities {
@@ -69,7 +71,7 @@ generated quantities {
 ```
 
 If you save the code in an external file 'model1.stan', do this instead:
-```{r}
+```{r eval=FALSE}
 ## Load and compile the model
 model1 <- stan_model(file = "./model1.stan" )
 ```
@@ -86,7 +88,8 @@ Save the data as a list, so that stan can sample your model:
 ```{r}
 ## Create a data list:
 stan_data <- list(y = y,
-                  N = length(y))
+                  N = length(y),
+                  sigma = 15)
 ## Sample:
 fitted <- sampling(model1, data = stan_data )
 ```
@@ -94,6 +97,7 @@ fitted <- sampling(model1, data = stan_data )
 Print the model results, parse the table so that only "mu" is printed:
 ```{r}
 ## Results:
+summary(fitted, pars = "mu")$summary
 ```
 
 # Question 3
@@ -110,19 +114,31 @@ and save the file into "model2.stan"
 ```{stan output.var = "model2", eval = FALSE}
 // Stan model 2 code:
 data {
-  
+  int<lower=1> N;
+  vector[N] y;
 }
 
 parameters {
-   
+  real mu;
+  real<lower=0> sigma;
 }
 
 model {
- 
+  // Prior
+  mu ~ normal(100, 10);
+  // likelihood
+  y ~ normal(mu, sigma);
 }
 
 generated quantities {
-
+  real y_rep[N];
+  real log_lik[N];
+  for( i in 1:N ){
+	y_rep[i] = normal_rng( mu, sigma );
+  }
+  for(n in 1:N) {
+    log_lik[n] = normal_lpdf(y[n] | mu, sigma);
+  }
 }
 ```
 
@@ -130,6 +146,12 @@ Sample and print output:
 ```{r}
 ## Code:
 
+stan_data2 <- list(y = y,
+                  N = length(y))
+
+fitted2 <- sampling(model2, data = stan_data2 )
+
+kableExtra::kbl(summary(fitted2)$summary)
 ```
 
 # Question 4
@@ -138,7 +160,13 @@ Now extract both posterior samples with `ppd_mod1 <- extract(fit1, "y_rep" )` wh
 ```{r}
 ## Code:
 ## Draws from the posterior predictive distribution 
+ppd_mod1 <- extract(fitted, "y_rep" )
+ppd_mod2 <- extract(fitted2, "y_rep" )
 
+color_scheme_set("brightblue")
+ppc_dens_overlay(y, ppd_mod1$y_rep)
+
+ppc_dens_overlay(y, ppd_mod2$y_rep)
 ```
 
 # Question 5
@@ -147,4 +175,21 @@ Write the same model, as in Question 3, with brms and recreate the plot for that
 
 ```{r}
 ## Code:
+
+library(brms)
+
+brm_mod <- brms::brm(y ~ 1,
+          family = gaussian(),
+          data = as.data.frame(stan_data),
+          prior = prior(normal(100, 10), class = Intercept) +
+            prior(gamma(10, 1), class = sigma))
+
+pp <- posterior_predict(brm_mod)
 ```
+```{r}
+library(tidybayes)
+as.data.frame(stan_data) |> 
+  add_predicted_draws(brm_mod)
+
+```
+
