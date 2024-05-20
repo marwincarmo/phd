@@ -1,0 +1,366 @@
+---
+title: "Addendum Week 7"
+author: "name"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r, message = FALSE, echo = FALSE}
+## Load packages
+library(ggplot2)
+```
+
+# Earthquake 
+After an earthquake has rattled our city, we have been asked to assess the damage. We are sent out to sample 1000 homes within bands of 1 km width within a 100 km radius of the epicenter.  That is, within each of the 1 Km bands, we sample randomly 1000 homes and record the number that are damaged.
+
+Given that the number of damaged property is a count variable and we sampled randomly we can assume that damage in one property is independent  of damage at another property, and that damage is  identically distributed: Hence, we choose to use a [Poisson](https://en.wikipedia.org/wiki/Poisson_distribution) model: $X_t \sim Poisson(\lambda_d),$ with $\lambda_d = 1000\exp(-\mu d)\psi$.
+
+ - $\mu$ describes the rate per kilometer at which the [intensity](https://www.usgs.gov/natural-hazards/earthquake-hazards/science/earthquake-magnitude-energy-release-and-shaking-intensity?qt-science_center_objects=0#qt-science_center_objects) of the earthquake diminishes as one moves away from the epicenter. (I made this all up - but a quick internet search revealed this is all a bit more complicated (surprise!). Geologists seem to rely on the "Intensity attenuation law" to obtain an integer scale that ranges from 1 to 10 to describe intensity as a function of distance (e.g., [Pasolini (2008)](https://core.ac.uk/download/pdf/11011494.pdf)). We pretend that we can quantify the intenisity attenuation by the  change rate $\mu$). 
+
+ - $\psi$ gives the proportion of homes that are _not_ built up to code and may take damage
+ - $d$ takes distance to epicenter and ranges from 0, 99 km
+
+Your priors for the paramters assume: $\mu \sim \Gamma(1,10)$ and $\psi \sim Beta(16,4)$
+
+```{r, echo = FALSE}
+set.seed(523)
+y <- NA
+N <- 100
+d <- seq(0, N, length.out = N )
+
+for( i in 1:N ) {
+    mu <- rgamma(1,8,100) # 
+    psi <- rbeta(1,32,6) 
+    lambda_d <-  1000*exp(-mu*d[i])*psi 
+    y[i] <- rpois(1,lambda = lambda_d )
+}
+
+#plot(0:99, y)
+quake <- data.frame(d = d, damage = y )
+#write.csv(quake, file =  'quake.csv', row.names =  FALSE) 
+```
+
+## Stan:
+Stan model:
+
+```{r, echo=FALSE}
+
+library(rstan )
+# use multiple cores
+options(mc.cores =  parallel::detectCores())
+# compile model and save it 
+rstan_options(auto_write = TRUE)
+
+## Read stan model from file
+## quake_model <- stan_model( file = "./quake.stan" )
+```
+
+Stan model:
+```{stan output.var= "quake_model"}
+data {
+  int< lower = 0 > N;     // Number of observations 
+  int< lower = 0 > x[N];  // Data
+  vector<lower = 0>[N] d; // distance from epicenter
+  real mu_shape;          // gamma shape prior
+  real mu_rate;           // gamma rate prior
+  real<lower = 0> psi_a;  // beta a shape
+  real<lower = 0> psi_b;  // beta b shape
+  int prior_only;         // if TRUE, likelihood is dropped
+}
+parameters {
+  // Unknown parameters to be estimated
+  real<lower=0> mu;
+  real<lower=0, upper = 1> psi;
+}
+transformed parameters{
+  // Not necessary to define lambda - but serves as illustration
+  vector<lower = 0>[N] lambda;
+  lambda = 1000*exp(-mu*d)*psi;
+}
+model {
+  // Priors
+  target += gamma_lpdf(mu | mu_shape, mu_rate); 
+  target += beta_lpdf( psi | psi_a, psi_b);
+  // Likelihood
+  if( prior_only == 0 ) {
+    target  += poisson_lpmf(x | lambda );
+  }
+}
+generated quantities {
+  // x_rep are generated values either from posterio or prior predictive dist.
+  int x_rep[N];
+  // log_likelihood for each observed value x and corresponding estimated lambda
+  real log_lik[N];
+  x_rep = poisson_rng( lambda );
+  for( i in 1:N ){
+    log_lik[i] = poisson_lpmf( x[i] | lambda[i] );
+  }
+}
+
+```
+
+```{r}
+## Define data as list, according to our stan file data{} block
+X <- list(x = quake$damage,
+          d = quake$d,
+          N = nrow(quake),
+          prior_only = 0,
+          mu_shape =  1, mu_rate = 10,
+          psi_a =  16, psi_b =  4)
+
+## Sample our model
+fitted <- sampling(quake_model, data = X, iter =  2000)
+
+print(fitted, pars =  c("mu", "psi") )
+
+## Compare empirical distribution of data 'y' to the distribution of posterior predictive distribution 'x_rep'
+x_rep <- extract(fitted)[['x_rep']]  ## replicated data
+dim(x_rep)   
+
+
+plot(density(quake$damage), type = 'n', xlim = c(0, 1000))
+for(i in sample(1:nrow(x_rep), 200)){
+    lines(density(x_rep[i,]), col = 'gray80')
+}
+lines(density(quake$damage), col = 'red', lwd = 3)
+
+
+plot(d, x_rep[1,], col = "#0f63bd20" )
+for(i in sample(1:nrow(x_rep), 500) ) {
+    points(d, x_rep[i,], col = "#0f63bd20") 
+}
+points(d, quake$damage, col =  'red', pch = 16)
+
+traceplot(fitted, pars =  c("mu", "psi"), inc_warmup =  TRUE )
+```
+# Model Comparison
+## LOO-CV
+
+```{r}
+## Compare models with LOO
+X <- list(x = quake$damage,
+          d = quake$d,
+          N = nrow(quake),
+          prior_only = 0,
+          mu_shape =  1, mu_rate = 10,
+          psi_a =  16, psi_b =  4)
+
+
+fit1 <- sampling( quake_model, data = X, iter =  2000)
+
+#X$psi_a <- 1 
+#X$psi_b <- 1
+X$mu_shape=1
+X$mu_rate=5
+
+curve(dgamma(x, shape=10, rate=1), from = 0, to = 20)
+x <- seq(0, 20, length.out = 100)
+lines(x, dgamma(x, shape = 5, rate = 1), col = 'red')
+
+fit2 <- sampling( quake_model, data = X, iter =  2000)
+
+## library for approximating LOO-CV with PSIS-LOO
+library(loo )
+loo_fit1 <- loo( fit1 )
+print(loo_fit1 )
+
+
+loo_fit2 <- loo(fit2 )
+
+print(loo_fit2 )
+
+loo_compare(loo_fit1, loo_fit2 )
+
+## WAIC
+## For WAIC we need to extract log_lik explicitly
+llf1 <- extract_log_lik(fit1 )
+waic_f1 <- waic(llf1 )
+print( waic_f1 )
+
+llf2 <- extract_log_lik(fit2 )
+waic_f2 <- waic(llf2 )
+print( waic_f1 )
+
+## compare models via WAIC
+loo_compare(waic_f1, waic_f2 )
+```
+### Explicit cross validation
+Sometimes approximation via PSIS-LOO fails. In this case we can cross-validate ourseleves. 
+```{r}
+## Modify our model to take train and test set:
+## cv_model <- stan_model( file = "./quake_cv.stan" )
+```
+
+```{stan output.var= "cv_model"}
+data {
+  int< lower = 0 > NTest;     // Number of observations
+  int< lower = 0 > NTrain;    // Number of observations 
+
+  int< lower = 0 > xTest[NTest];   // Data
+  int< lower = 0 > xTrain[NTrain]; // Data
+
+  vector<lower = 0>[NTest] dTest;   // distance 
+  vector<lower = 0>[NTrain] dTrain; // distance
+
+  real mu_shape;
+  real mu_rate;
+  real<lower = 0> psi_a;
+  real<lower = 0> psi_b;
+  int prior_only;
+}
+parameters {
+  real<lower=0> mu;
+  real<lower=0, upper = 1> psi;
+}
+transformed parameters{
+  // We need the distance for either the training and test set
+  // declaring lambda here does not make sense
+}
+model {
+  // Priors
+  target += gamma_lpdf( mu | mu_shape, mu_rate); 
+  target += beta_lpdf( psi | psi_a, psi_b);
+  // Likelihood
+  if( prior_only == 0 ) {
+    target +=  poisson_lpmf( xTrain | 1000*exp(-mu*dTrain)*psi );
+  }
+}
+generated quantities {
+  real log_lik[NTest];
+  for( i in 1:NTest ){
+    log_lik[i] = poisson_lpmf( xTest[i] | 1000*exp(-mu*dTest[i])*psi );
+  }
+}
+
+```
+
+```{r}
+## create training samples and test samples:
+
+## Machine learning library for creation of training and test sets
+## library( caret ) fails to install
+
+## Create a function that returns test and training set 
+Fold <- function(N, k ) {
+    folds <- k
+    ## sample N/folds out of total N
+    test <- array(0, dim =  c(N/folds, folds) )
+
+    test[,1] <-  sample(1:N, N/folds )
+    for( i in 2:folds ) {
+        test[,i] <- sample( c(1:N)[-c(test)], N/folds )
+    }
+    
+    ## complementary training sets:
+    train <- array(NA, dim = c(N-N/folds, folds))
+
+    for( i in 1:folds ) {
+        train[,i] <- c(1:N)[-test[,i]]  
+    }
+    return(list(test = test, train = train))
+}
+
+## Test:
+Fold(N = 10, k =  5)
+
+## Create a function that takes the data, creates the folds
+## and runs all k models.
+## Computes expected log predictive density (elpd),
+## concatenates all elpd's from the test data and returns them
+kFold <- function( model, data, k, psi_a =  16, psi_b =  4 ) {
+    ## extract N from data
+    N <- nrow(data )
+    sets <- Fold( N , k =  k )
+    
+    test <- sets$test
+    train <- sets$train
+
+    ## Calculate expected log pointwise predictive density
+    lPointLLTotal <- vector( )
+    dTestOrder <- vector( )
+    
+    for(i in 1:k ) {
+        X <- list(xTrain = data$damage[train[,i]],
+                  xTest = data$damage[test[,i]],
+                  NTrain = nrow(train),
+                  NTest = nrow(test),
+                  dTrain = data$d[train[,i]],
+                  dTest = data$d[test[,i]],
+                  prior_only = 0,
+                  mu_shape =  1, mu_rate = 10,
+                  psi_a =  psi_a, psi_b =  psi_b )
+        fit <- sampling( model, data = X, iter =  2000 )
+        log_likelihood <- extract_log_lik( fit ) 
+        lPointLL <- colMeans( log_likelihood )
+        lPointLLTotal <- c( lPointLLTotal, lPointLL)
+        dTestOrder <- c(dTestOrder, data$d[test[,i]] )
+    }
+    return( cbind( lPointLLTotal, dTestOrder)  )
+}
+
+
+## Model with slightly informed prior on psi
+## For k>= 10 typcally we don't need bias correction
+lelpd1 <- kFold(model = cv_model, data =  quake, k = 10, psi_a = 16, psi_b = 4 )
+## order according to d
+lelpd1 <- lelpd1[order( lelpd1[,2] ), 1]
+    
+## Flat prior on psi
+lelpd2 <- kFold(model = cv_model, quake, k = 10, psi_a = 1, psi_b = 1 )
+## order according to d
+lelpd2 <- lelpd2[order( lelpd2[,2] ), 1]
+lelpd2
+
+sum(lelpd1)
+sum(lelpd2)
+
+difference <- sum(lelpd2) - sum(lelpd1)
+difference
+sqrt(N *  var( lelpd2))
+sqrt(N *  var( lelpd1))
+              
+## See Vehtari, Gelman, Gabry (2017) "Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC" 
+## eq. 24 on computation of se(elpd_loo)
+
+lelpd2-lelpd1
+
+sd <- sqrt(N *  var( lelpd2 - lelpd1 ) )
+sd
+pval <- 1 - pnorm( difference/sd )
+pval
+
+```
+
+
+### Bayes Factors
+```{r}
+library(bridgesampling )
+m1=bridge_sampler( fit1 )
+m2=bridge_sampler( fit2 )
+bf12 <- bridgesampling::bf( m1, m2 )
+bf12
+```
+### Using brms
+```{r}
+library(brms)
+quake_fit1 <- brm( damage ~ I(-1*d), data = quake, family = poisson,
+                 prior = c(
+                   set_prior("gamma(1, 10)", class = "b", lb = 0)          # Gamma prior for the slope
+                 ))
+
+
+quake_fit2 <- brm( damage ~ I(-1*d), data = quake, family = poisson,
+                 prior = c(
+                   set_prior("gamma(1, 5)", class = "b", lb = 0)          # Gamma prior for the slope
+                 ))
+
+
+brms::bayes_factor(quake_fit1, quake_fit2)
+
+round(brms::model_weights(quake_fit1, quake_fit2), 4)
+```
+
