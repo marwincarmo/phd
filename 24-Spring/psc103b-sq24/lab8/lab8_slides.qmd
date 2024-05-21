@@ -43,15 +43,21 @@ library(lm.beta)
 nerdy <- read_csv("NPAS_Lab5.csv")
 ```
 
-## Covariance and Correlation
+## Variance
 
-- Up until now, when we have worked with more than one variable it has typically been that one of the variables is categorical, and the other is continuous.
+- Variance measures the dispersion of a set of data points around their mean.
 
-- Covariance and correlation are summary statistics that quantify the relation between two (or more!) continuous (or ordinal) variables without making any statement about the direction.
+:::fragment
+$$
+s^2_x=\frac{1}{N-1}\sum^N_{i=1}(x_i-\bar{x})^2
+$$
+:::
 
-## Covariance
-
-- Recall that to get the variance of just a single variable, you can use the `var()` function.
+:::fragment
+```{r}
+sum((nerdy$nerdy_scale - mean(nerdy$nerdy_scale))^2)/ ( length(nerdy$nerdy_scale) - 1 )
+```
+:::
 
 :::fragment
 ```{r}
@@ -59,7 +65,13 @@ var(nerdy$nerdy_scale)
 ```
 :::
 
-- The variance quantifies the spread of the variable around its mean.
+
+## Covariance and Correlation
+
+- Up until now, when we have worked with more than one variable it has typically been that one of the variables is categorical, and the other is continuous.
+
+- Covariance and correlation are summary statistics that quantify the relation between two (or more!) continuous (or ordinal) variables without making any statement about the direction.
+
 
 ## Covariance
 
