@@ -43,6 +43,11 @@ library(lm.beta)
 nerdy <- read_csv("NPAS_Lab5.csv")
 ```
 
+```{r}
+head(nerdy)
+```
+
+
 ## Variance
 
 - Variance measures the dispersion of a set of data points around their mean.
@@ -72,12 +77,25 @@ var(nerdy$nerdy_scale)
 
 - Covariance and correlation are summary statistics that quantify the relation between two (or more!) continuous (or ordinal) variables without making any statement about the direction.
 
+:::fragment
+$$
+s_{xy}=\frac{1}{N-1}\sum^N_{i=1}(x_i-\bar{x})(y_i-\bar{y})
+$$
+:::
+
 
 ## Covariance
 
 - The covariance looks at how the spread in one variable corresponds to the spread of the other variable.
 
 - Or in other words, whether or not the two variables travel together or in opposite directions.
+
+```{r echo=FALSE}
+#| fig-align: "center"
+plot(iris$Sepal.Length, iris$Petal.Length)
+```
+
+## Covariance
 
 - Let's find the covariance between how extravered (`TIPI6`) and someone is and how reserved (`TIPI1`) they are
 
@@ -91,7 +109,7 @@ cov(nerdy$TIPI1, nerdy$TIPI6)
 
 ## Covariance
 
-- We can also get all pairwise covariances of multiple variables by simply supplying the `cov()` function:
+- We can also get all pairwise covariance of multiple variables by simply supplying the `cov()` function:
 
 :::fragment
 ```{r}
@@ -102,12 +120,12 @@ cov(nerdy)
 
 :::fragment
 ```{r}
-nerdy_items <- nerdy |> 
-  select(TIPI1:TIPI3)
-
-cov(nerdy_items)
+#| error: true
+head(nerdy)
 ```
 :::
+
+
 
 :::{.notes}
 Wait, we got an error! Why is that?
@@ -116,9 +134,10 @@ and continent) are not numeric, so we cannot calculate
 a covariance with them
 :::
 
-## Covariance
+---
 
-```{r echo=FALSE}
+```{r}
+nerdy_items <-  select(nerdy, TIPI1:TIPI3)
 cov(nerdy_items)
 ```
 
@@ -132,7 +151,9 @@ cov(nerdy_items)
 
 - How can we interpret these values? For example, the covariance between temperature and sales is `r round(cov(nerdy$TIPI1, nerdy$TIPI6),2)` -- what does this tell us about their relation?
 
-- We can only tell that the relation between the two is **negative** -- that is, the higher the extraversion, the less reserved someone is. But is this relation really strong? That's not something we can get from the covariance, and is why we turn to correlation instead!
+- We can only tell that the relation between the two is **negative** -- that is, the higher the extraversion, the less reserved someone is. 
+
+- Is this relation really strong? That's not something we can get from the covariance, and is why we turn to correlation instead!
 
 ## Correlation
 
@@ -168,8 +189,8 @@ plot(nerdy$TIPI6, nerdy$nerdy_scale, xlab = "Reservedness", ylab = "Nerdiness")
 
 - Our null and alternative hypotheses are:
 
-  - $H_0$: $\rho$ = 0
-  - $H_1$: $\rho \neq$ 0
+  - $H_0$: $\rho_{xy}$ = 0
+  - $H_1$: $\rho_{xy} \neq$ 0
 
 - This is a **two-sided test** -- either there is a relation or there isn't a relation.
 
@@ -181,3 +202,193 @@ plot(nerdy$TIPI6, nerdy$nerdy_scale, xlab = "Reservedness", ylab = "Nerdiness")
 cor.test(nerdy$TIPI6, nerdy$nerdy_scale, method = "pearson")
 ```
 
+```{r eval=FALSE, echo=FALSE}
+library(BayesFactor)
+correlationBF(y = nerdy$TIPI6, x = nerdy$nerdy_scale, rscale = 0.235)
+```
+
+
+## Write-up the results
+
+> A Pearson correlation found a significant, medium, and positive correlation between reservedness and nerdiness (*r* =
+0.23, 95% CI [0.18, 0.29], *t*(998) = 7.64, *p* < .001).
+
+---
+
+:::{.callout-caution title="Exercise"}
+Choose another pair of variables that you want to test whether or not are correlated. Using the `cor.test()` function describe whether the association is statistically significant, its direction (positive or negative), and all the relevant test statistics (*r*, 95% CI, *t*, df, and *p*).
+:::
+
+:::columns
+::: {.column width="50%"}
+- `TIPI1`: extraverted/enthusiastic
+- `TIPI2`: critical, quarrelsome
+- `TIPI3`: dependable, self-disciplined
+- `TIPI4`: Anxious, easily upset
+- `TIPI5`: open to new experiences, complex
+:::
+
+::: {.column width="50%"}
+
+- `TIPI6`: reserved, quiet
+- `TIPI7`: sympathetic, warm
+- `TIPI8`: disorganized, careless
+- `TIPI9`: calm, emotionally stable
+- `TIPI10`: convetional, uncreative
+:::
+:::
+
+
+## Simple linear regression
+
+- In our discussion of covariance and correlation,
+we've only talked about whether the two variables
+are associated with each other.
+
+- None of this looks at whether one variable has an effect on the other variable.
+
+- Now we're looking at the relation between a **dependent variable** and at least one **predictor variable**.
+
+- We've moved to the context of the predictor variable having an effect on the dependent variable.
+
+## Simple linear regression
+
+What if we were interested in whether how extraverted someone is  (TIPI1) predicts how nerdy they are?
+
+```{r echo=FALSE}
+#| fig-align: "center"
+plot(nerdy$TIPI1, nerdy$nerdy_scale, xlab = "Extraversion", ylab = "Nerdiness")
+abline(a = 3.968, b =-.077,col = "red", lwd =  2) 
+```
+
+## Simple linear regression
+
+```{r echo=FALSE}
+fit <- lm(nerdy_scale ~ TIPI1, data = nerdy)
+```
+
+
+$$
+\hat{Y_i} = b_0 + b_1 X_{1i}
+$$
+
+
+- $\hat{Y_i}$ is the predicted value of our outcome for a given value of $X$.
+
+- $b_0$ represents the intercept, which is the value of the outcome when the predictor is 0.
+
+- $b_1$ represents the slope -- the expected amount of change in our outcome when our predictor increases by 1 unit.
+
+- The best regression line is the one that minimizes the sum of squared residuals ($\sum^N_{i=1}(y_i-\hat{y}_i)^2$)
+
+## Simple linear regression
+
+- To run a linear regression in `R`, we can use the `lm()` function we're already familiar with
+
+:::fragment
+```{r}
+simple_regression <- lm(nerdy_scale ~ TIPI1, data = nerdy)
+```
+:::
+
+## Simple linear regression
+
+- Let's take a look at the output using the `summary()` function:
+
+:::fragment
+```{r}
+summary(simple_regression)
+```
+:::
+
+## Hypothesis Testing for the Slope and R-Squared
+
+```{r echo=FALSE}
+summary(simple_regression)$coefficients
+```
+
+- In addition to the estimates of the intercept and slope, we also have a standard error, test statistic, and p-value.
+
+- These are for testing the null hypothesis that the parameter is equal to 0 versus the alternative that it's not equal to 0.
+  - $H_0$: $b_1$ = 0
+  - $H_1$: $b_1 \neq$ 0
+
+- The t-statistic in this test is distributed as a t-distribution with N - 2 df. What is the df for our example? 1000 - 2 = 998
+
+:::{.notes}
+Based on our `summary()` output, do we reject or fail to reject the null hypothesis? What does that tell us?
+:::
+
+## Hypothesis Testing for the Slope and R-Squared
+
+- Typically, we're more interested in the test for the slope because that tells us whether the predictor is useful in predicting the outcome.
+
+- Otherwise, the slope is no different from 0 and there is no linear relation, no useful relation between $X$ and $Y$ that we can use to predict $Y$.
+
+```{r echo=FALSE}
+#| fig-align: "center"
+plot(nerdy$TIPI1, nerdy$nerdy_scale, xlab = "Extraversion", ylab = "Nerdiness")
+abline(a = 3.968, b =-.077,col = "red", lwd =  2) 
+abline(a = 3.968, b =0, col = "blue", lwd =  2, lty = "dashed") 
+```
+
+## 95% CI for the Slope
+
+- We can also ask `R` a confidence interval arond our estimate of the slope:
+
+:::fragment
+```{r}
+confint(simple_regression)
+```
+:::
+
+## R-Squared
+
+- One other piece of useful information that you get from the `summary()` output is R-squared, also called the **coefficient of determination**.
+
+- R-squared ($R^2$) is equivalent to eta-squared ($\eta^2$) that we learned about in ANOVA.
+
+- $R^2$ is the proportion of total variability in our outcome that is explained by our predictor(s)
+
+:::fragment
+```{r}
+summary(simple_regression)$r.squared
+```
+:::
+
+## Write-up the results
+
+> We ran a simple linear regression to determine whether participant's extraversion score predicts their nerdiness score
+on the NPAS. Extraversion did significantly predict the NPAS score (*b* = -0.08, *p* < .001). Extraversion explained 6.8% of the total variability in NPAS score.
+
+## What about Bayes?
+
+```{r}
+library(BayesFactor)
+regressionBF(nerdy_scale ~ TIPI1, data = nerdy)
+```
+
+---
+
+:::{.callout-caution title="Exercise"}
+Choose another variable that you think might predict nerdiness, and calculate the regression model both using the formula, and with the `lm()` function Interpret the output (the intercept, slope, and $R^2$). Was the slope significant? What does that mean?
+:::
+
+:::columns
+::: {.column width="50%"}
+- `TIPI1`: extraverted/enthusiastic
+- `TIPI2`: critical, quarrelsome
+- `TIPI3`: dependable, self-disciplined
+- `TIPI4`: Anxious, easily upset
+- `TIPI5`: open to new experiences, complex
+:::
+
+::: {.column width="50%"}
+
+- `TIPI6`: reserved, quiet
+- `TIPI7`: sympathetic, warm
+- `TIPI8`: disorganized, careless
+- `TIPI9`: calm, emotionally stable
+- `TIPI10`: convetional, uncreative
+:::
+:::
