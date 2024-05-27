@@ -1,0 +1,119 @@
+---
+title: "Homework Week 8"
+author: "name"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r, message = FALSE, echo = FALSE}
+## Load packages
+library( ggplot2 )
+library( brms )
+library(mlmRev)
+```
+# Data
+
+Raudenbush's "Highschool and Beyond" Data. 
+
+I subset the data by selecting randomly 30 schools out of 160 to reduce computation time. 
+```{r}
+head( Hsb82 )
+
+dim(Hsb82 )
+scl <- unique(Hsb82$school )
+
+set.seed(5544)
+subs <- scl[sample(1:160, 30 )]
+Hsb82sub <- subset(Hsb82, school %in% subs  )
+
+```
+
+Math achievement `mAch` is the outcome variable
+
+Tip: A good place of reference on `brms` is Paul Bürkner's [github page](https://github.com/paul-buerkner/brms).
+
+Also, Rens van de Schoot provides a nice introductions into `brms` in form of this tutorial: [BRMS intro](https://www.rensvandeschoot.com/tutorials/brms/). 
+
+Here we will use Raudenbush's "Highschool and Beyond" -- feel free to lean on Rens's tutorial for this HW.
+
+# Question 1 
+
+Plot the relation among `mAch` and `ses`. Explore their relation visually - and create a plot that visualizes the school-specific regressions
+
+```{r, echo = FALSE}
+## code:
+
+Hsb82sub |> 
+  ggplot(aes(x = ses, y = mAch, color = school)) +
+  geom_point(alpha = .2) +
+  geom_smooth( method = "lm", se = FALSE) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+Comment on the figure:
+
+# Question 2: Intercept only model
+
+Fit the model with `mAch` as the outcome and only a random intercept. The grouping variable here is `school`
+
+ - From the fitted model, extract the between-school variance (random effects variance) and the error variance. If you know what the intraclass correlation coefficient (ICC) is, compute it (we discussed that in PSC 204B) and comment on it.
+ - Plot some draws from the posterior predictive distribution with `pp_check( model_object )`
+ - Visualize the posterior density of the intercept and add a vertical line to the plot at zero to give a sense on how far the poserior distribution is from zero. 
+ 
+```{r}
+## code:
+fit1 <- brms::brm(mAch ~ 1 + (1|school), data = Hsb82sub, cores = 16)
+```
+
+```{r}
+## icc
+
+
+```
+
+
+# Question 3:
+
+Now run the unpooled model, as discussed in the class and then plot the unpooled estimates vs. the pooled ones from Question 2. 
+- Re-create the figure on slide 30 (check out the `ABS_W8_addendum.Rmd` file in the Week 8 folder for inspiration):
+```{r}
+## code:
+
+```
+
+- Next, we want to illustrate how the choice of the prior governs shrinkage in a multilevel model.
+Re-fit the pooled, multilevel model, from Question 1 with a very tight random effect prior ( eg. $\~ N(0, 0.1)$ ) and illustrate what it's mean estimates are by adding blue points to the plot that we just genereated. 
+Note that, for `brms`, the prior class of interest here is the random effect of the intercept: `set_prior("normal(0, .1)", class = "sd", group = "school"`
+
+```{r}
+## code:
+
+```
+Comment on what is going on in the plot:
+
+
+# Question 4: 
+
+Add socio-economic status `ses` and sex `sx` as predictors and include a random slope effect for `ses`
+But, before running the model, we want to create a `ses` variable that captures the school means and another that captures the within-school deviation from the respective school mean. 
+
+ - I call those variables: `ses_sm` for the school mean, and `ses_smc` as the respective deviation from that school mean. The `ses_smc` is the variable that contains the student level values.
+ - Fit the model with the predictors and create posterior density plots of `ses_pmc`, adn `sx` (sex), and their interaction
+ - Try to find a meaningful way to visualize the random effects of intercept and slope
+
+```{r}
+## code:
+
+```
+
+# Question 5:  Compare models
+
+Compare the Intercept only model to the model with `ses` and `sx` as predictor and comment on what wodel you would choose and why:
+
+```{r}
+## code:
+```
