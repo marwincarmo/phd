@@ -82,7 +82,20 @@ Now run the unpooled model, as discussed in the class and then plot the unpooled
 - Re-create the figure on slide 30 (check out the `ABS_W8_addendum.Rmd` file in the Week 8 folder for inspiration):
 ```{r}
 ## code:
+unpooled <- brm( mAch ~ 0 + school, data = Hsb82sub )
 
+estimate <- fixef(unpooled )[,1]
+hierarchical <- fixef(fit1 )[,1] + ranef( fit1 )[[1]][,,][,1]
+
+df <- data.frame(estimate, school =  1:30)
+df$hierarchical <- hierarchical
+
+p1 <- ggplot( df, aes(x =  school, y =  estimate ) ) + 
+  geom_point( shape =  1 , size=2.5) + 
+  geom_point(aes(y =  hierarchical), color =  'red', size=2.5, alpha= 0.7) + 
+  geom_hline( aes(yintercept = fixef(fit1 )[,1]  ),  linetype =  "dashed") +
+  theme_minimal()
+p1
 ```
 
 - Next, we want to illustrate how the choice of the prior governs shrinkage in a multilevel model.
@@ -92,6 +105,14 @@ Note that, for `brms`, the prior class of interest here is the random effect of 
 ```{r}
 ## code:
 
+prior <- set_prior("normal(0, .1)", class = "sd", group = "school")
+fit2 <- brm(mAch ~ 1 + (1|school), data = Hsb82sub,
+                  prior = prior)
+
+df$hierarchical2 <- fixef(fit2 )[,1] + ranef( fit2 )[[1]][,,][,1]
+
+p1 + 
+  geom_point(aes(y =  hierarchical2), color =  'blue', size=2.5, alpha= 0.7)
 ```
 Comment on what is going on in the plot:
 
@@ -108,6 +129,16 @@ But, before running the model, we want to create a `ses` variable that captures 
 ```{r}
 ## code:
 
+Hsb82sub <- Hsb82sub |> 
+  dplyr::with_groups(school, dplyr::mutate, 
+                     ses_sm = mean(ses),
+                     ses_smc = ses - ses_sm)
+
+fit3 <- brm(mAch ~ ses_smc * sx + (1 + ses_smc|school), data = Hsb82sub, cores = 16)
+```
+
+```{r}
+brms::pp_check(fit3, ndraws = 100)
 ```
 
 # Question 5:  Compare models
