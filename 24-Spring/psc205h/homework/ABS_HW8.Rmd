@@ -1,0 +1,170 @@
+---
+title: "Homework Week 8"
+author: "name"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r, message = FALSE, echo = FALSE}
+## Load packages
+library( ggplot2 )
+library( brms )
+library(mlmRev)
+```
+# Data
+
+Raudenbush's "Highschool and Beyond" Data. 
+
+I subset the data by selecting randomly 30 schools out of 160 to reduce computation time. 
+```{r}
+head( Hsb82 )
+
+dim(Hsb82 )
+scl <- unique(Hsb82$school )
+
+set.seed(5544)
+subs <- scl[sample(1:160, 30 )]
+Hsb82sub <- subset(Hsb82, school %in% subs  )
+
+```
+
+Math achievement `mAch` is the outcome variable
+
+Tip: A good place of reference on `brms` is Paul Bürkner's [github page](https://github.com/paul-buerkner/brms).
+
+Also, Rens van de Schoot provides a nice introductions into `brms` in form of this tutorial: [BRMS intro](https://www.rensvandeschoot.com/tutorials/brms/). 
+
+Here we will use Raudenbush's "Highschool and Beyond" -- feel free to lean on Rens's tutorial for this HW.
+
+# Question 1 
+
+Plot the relation among `mAch` and `ses`. Explore their relation visually - and create a plot that visualizes the school-specific regressions
+
+```{r, echo = FALSE}
+## code:
+
+Hsb82sub |> 
+  ggplot(aes(x = ses, y = mAch)) +
+  
+  geom_point(aes( color = school), alpha = .2) +
+  geom_smooth(aes( color = school), method = "lm", se = FALSE) +
+  geom_smooth( method = "lm", se = FALSE, linetype = "dotdash", col = "red") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+Comment on the figure: The overall trend is positive relation between math achievement and ses. However, examining each school random slope and intercept, we're able to see considerable variance surrounding the general slope. Specially for schools that already start with higher scores (that is, those schools whose students with low ses levels perform better than the average school), there is little or no increase in math achievement as ses also increases.  
+
+# Question 2: Intercept only model
+
+Fit the model with `mAch` as the outcome and only a random intercept. The grouping variable here is `school`
+
+ - From the fitted model, extract the between-school variance (random effects variance) and the error variance. If you know what the intraclass correlation coefficient (ICC) is, compute it (we discussed that in PSC 204B) and comment on it.
+ - Plot some draws from the posterior predictive distribution with `pp_check( model_object )`
+ - Visualize the posterior density of the intercept and add a vertical line to the plot at zero to give a sense on how far the posterior distribution is from zero. 
+ 
+```{r}
+## code:
+fit1 <- brms::brm(mAch ~ 1 + (1|school), data = Hsb82sub, cores = 16)
+```
+
+```{r}
+## icc
+bs <- VarCorr(fit1)$school$sd[1]
+ws <- VarCorr(fit1)$residual__$sd[1]
+icc <- bs / (bs + ws)
+icc
+```
+An ICC of 0.33 indicates a moderate level of group-level variance relative to the total variance. We can assume that there is still a considerable amount of within-group variability.
+
+```{r}
+pp_check( fit1 )
+```
+
+```{r}
+posterior_samples <- as_draws_df(fit1, variable = "b_Intercept")
+
+ggplot(posterior_samples, aes(x = b_Intercept)) +
+  geom_density(fill = "skyblue", alpha = 0.7) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Posterior Density of the Intercept",
+       x = "Intercept",
+       y = "Density") +
+  theme_minimal()
+```
+
+# Question 3:
+
+Now run the unpooled model, as discussed in the class and then plot the unpooled estimates vs. the pooled ones from Question 2. 
+- Re-create the figure on slide 30 (check out the `ABS_W8_addendum.Rmd` file in the Week 8 folder for inspiration):
+```{r}
+## code:
+unpooled <- brm( mAch ~ 0 + school, data = Hsb82sub )
+
+estimate <- fixef(unpooled )[,1]
+hierarchical <- fixef(fit1 )[,1] + ranef( fit1 )[[1]][,,][,1]
+
+df <- data.frame(estimate, school =  1:30)
+df$hierarchical <- hierarchical
+
+p1 <- ggplot( df, aes(x =  school, y =  estimate ) ) + 
+  geom_point( shape =  1 , size=2.5) + 
+  geom_point(aes(y =  hierarchical), color =  'red', size=2.5, alpha= 0.7) + 
+  geom_hline( aes(yintercept = fixef(fit1 )[,1]  ),  linetype =  "dashed") +
+  theme_minimal()
+p1
+```
+
+- Next, we want to illustrate how the choice of the prior governs shrinkage in a multilevel model.
+Re-fit the pooled, multilevel model, from Question 1 with a very tight random effect prior ( eg. $\~ N(0, 0.1)$ ) and illustrate what it's mean estimates are by adding blue points to the plot that we just genereated. 
+Note that, for `brms`, the prior class of interest here is the random effect of the intercept: `set_prior("normal(0, .1)", class = "sd", group = "school"`
+
+```{r}
+## code:
+
+prior <- set_prior("normal(0, .1)", class = "sd", group = "school")
+fit2 <- brm(mAch ~ 1 + (1|school), data = Hsb82sub,
+                  prior = prior)
+
+df$hierarchical2 <- fixef(fit2 )[,1] + ranef( fit2 )[[1]][,,][,1]
+
+p1 + 
+  geom_point(aes(y =  hierarchical2), color =  'blue', size=2.5, alpha= 0.7)
+```
+Comment on what is going on in the plot:
+
+
+# Question 4: 
+
+Add socio-economic status `ses` and sex `sx` as predictors and include a random slope effect for `ses`
+But, before running the model, we want to create a `ses` variable that captures the school means and another that captures the within-school deviation from the respective school mean. 
+
+ - I call those variables: `ses_sm` for the school mean, and `ses_smc` as the respective deviation from that school mean. The `ses_smc` is the variable that contains the student level values.
+ - Fit the model with the predictors and create posterior density plots of `ses_pmc`, adn `sx` (sex), and their interaction
+ - Try to find a meaningful way to visualize the random effects of intercept and slope
+
+```{r}
+## code:
+
+Hsb82sub <- Hsb82sub |> 
+  dplyr::with_groups(school, dplyr::mutate, 
+                     ses_sm = mean(ses),
+                     ses_smc = ses - ses_sm)
+
+fit3 <- brm(mAch ~ ses_smc * sx + (1 + ses_smc|school), data = Hsb82sub, cores = 16)
+```
+
+```{r}
+brms::pp_check(fit3, ndraws = 100)
+```
+
+# Question 5:  Compare models
+
+Compare the Intercept only model to the model with `ses` and `sx` as predictor and comment on what wodel you would choose and why:
+
+```{r}
+## code:
+```
