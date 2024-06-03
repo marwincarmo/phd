@@ -1,0 +1,127 @@
+---
+title: "Addendum Week 8"
+author: "name"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r, message = FALSE, echo = FALSE}
+## Load packages
+library(ggplot2)
+library(rstan)
+# use multiple cores
+options(mc.cores =  parallel::detectCores())
+# compile model and save it 
+rstan_options(auto_write = TRUE)
+```
+
+## Data
+
+Raudenbush's "Highschool and Beyond" Data
+
+
+```{r}
+library(mlmRev)
+school_dat = mlmRev::Exam
+
+head(mlmRev::Exam)
+
+data(Exam)
+
+head(school_dat, n =  5)
+
+levels(school_dat$school )
+
+plot0 <- ggplot( data =  school_dat, aes( x = school, y =  normexam) )
+plot0 + geom_point(aes(color =  school), show.legend =  FALSE)
+ggsave(filename = "../figure/school.pdf", width = 6, height = 4)
+
+
+```
+
+Stan model:
+```{R}
+mlm <- stan_model(file = "./MLM.stan" )
+
+school_dat$vr_f  <- as.numeric(school_dat$vr) - 2 ## mid 50 is 0
+vr <- aggregate(vr_f ~ school, data = school_dat, mean)$vr_f
+vr
+
+
+schoolsdat <- list(nobs = nrow( school_dat ),
+                   J = nlevels( school_dat$school ),
+                   group = as.numeric( school_dat$school ),
+                   n_pl = 1,
+                   x =  array(1, dim = c(nrow( school_dat ), 1) ),#, cbind(1, school_dat$standLRT ),
+                   n_bpl = 1,
+                   z = array(1, dim =  c(nlevels( school_dat$school ), 1)), #cbind(1,  vr),
+                   y = school_dat$normexam )
+
+str( schoolsdat )
+
+mlm_fit <- sampling(mlm, data =  schoolsdat)
+
+print( mlm_fit )
+```
+
+```{r}
+library( brms)
+
+## Unpooled Model: One mean for each school, like running one individual model for each school assuming same error variance 
+unpooled <- brm( normexam ~ 0 + factor(school), data = school_dat )
+stancode( unpooled )
+
+print( unpooled )
+
+estimate <- fixef(unpooled )[,1]
+
+df <- data.frame(estimate, school =  1:65 )
+ggplot( df, aes(x =  school, y =  estimate ) ) + geom_point(  shape =  1 ) + geom_hline( aes( yintercept = mean(estimate)), linetype =  "dashed" )
+ggsave(filename = "../figure/school_est.pdf", width = 6, height = 3.5)
+
+
+fit1 <- brm( normexam ~ 1 + ( 1 | school), data = school_dat )
+stancode(fit1 )
+summary( fit1 )
+
+
+hierarchical <- fixef(fit1 )[,1] + ranef( fit1 )[[1]][,,][,1]
+
+df$hierarchical <- hierarchical
+
+ggplot( df, aes(x =  school, y =  estimate ) ) + geom_point( shape =  1 ) + geom_point(aes(y =  hierarchical), color =  'red') + geom_hline( aes(yintercept = fixef(fit1 )[,1]  ),  linetype =  "dashed")
+ggsave(filename = "../figure/school_hierarchical.pdf", width = 6, height = 3.5)
+
+m1 <- add_criterion(unpooled, "loo" )
+m2 <- add_criterion(fit1, "loo" )
+
+lcomp <- loo_compare(m1, m2)
+print(lcomp, simplify =  F)
+
+model_weights( m1, m2 )
+
+
+fit2 <- brm( normexam ~ 1 + standLRT + ( 1 + standLRT | school), data = school_dat )
+stancode(fit2 )
+summary( fit2 )
+
+fixef(fit2)[,1][1]
+
+int <- fixef(fit2)[,1][1] + ranef(fit2 )$school[, , "Intercept"][,1]
+slp <- fixef(fit2)[,1][2] + ranef(fit2 )$school[, , "standLRT"][,1]
+
+school_dat$standLRT 
+
+ggplot( df, aes(x =  school, y =  estimate ) ) + geom_point( shape =  1 ) + geom_point(aes(y =  hierarchical), color =  'red') + geom_hline( aes(yintercept = fixef(fit1 )[,1]  ),  linetype =  "dashed")
+ggsave(filename = "../figure/school2.pdf", width = 6, height = 3.5)
+
+
+```
+
+
+
+
