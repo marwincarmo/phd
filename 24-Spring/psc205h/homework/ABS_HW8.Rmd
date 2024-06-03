@@ -68,7 +68,7 @@ Fit the model with `mAch` as the outcome and only a random intercept. The groupi
  
 ```{r}
 ## code:
-fit1 <- brms::brm(mAch ~ 1 + (1|school), data = Hsb82sub, cores = 16)
+fit1 <- brms::brm(mAch ~ 1 + (1|school), data = Hsb82sub)
 ```
 
 ```{r}
@@ -131,10 +131,13 @@ fit2 <- brm(mAch ~ 1 + (1|school), data = Hsb82sub,
 
 df$hierarchical2 <- fixef(fit2 )[,1] + ranef( fit2 )[[1]][,,][,1]
 
-p1 + 
+ggplot( df, aes(x =  school, y =  estimate ) ) + 
+  geom_point( shape =  1 , size=2.5) + 
+  geom_point(aes(y =  hierarchical), color =  'red', size=2.5, alpha= 0.7) + 
+  geom_hline( aes(yintercept = fixef(fit1 )[,1]  ),  linetype =  "dashed") +
   geom_point(aes(y =  hierarchical2), color =  'blue', size=2.5, alpha= 0.7)
 ```
-Comment on what is going on in the plot:
+Comment on what is going on in the plot: The estimates are shrunken toward the mean.
 
 
 # Question 4: 
@@ -154,7 +157,7 @@ Hsb82sub <- Hsb82sub |>
                      ses_sm = mean(ses),
                      ses_smc = ses - ses_sm)
 
-fit3 <- brm(mAch ~ ses_smc * sx + (1 + ses_smc|school), data = Hsb82sub, cores = 16)
+fit3 <- brm(mAch ~ ses_sm + ses_smc * sx + (1 + ses_smc|school), data = Hsb82sub, cores = 16)
 ```
 
 ```{r}
@@ -167,4 +170,10 @@ Compare the Intercept only model to the model with `ses` and `sx` as predictor a
 
 ```{r}
 ## code:
+
+m1 <- add_criterion ( fit1 , "loo" )
+m2 <- add_criterion (fit3 , "loo" )
+lcomp <- loo_compare (m1 , m2)
+print ( lcomp )
 ```
+The results suggest that the intercept-only model has significantly better predictive performance compared to the model with an interaction between `ses` and `sx`, with a large difference in ELPD.

@@ -1,0 +1,208 @@
+---
+title: "Missing Data"
+author: "PR"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r, message = FALSE, echo = FALSE}
+## Load packages
+library( ggplot2 )
+library( rstan )
+# use multiple cores
+options(mc.cores =  parallel::detectCores())
+# compile model and save it 
+rstan_options(auto_write = TRUE)
+```
+# Data
+
+Data are from a recent study (March -- April 2020) on 86 patients infected with COVID-19 who were treated in the emergency department (ED) of Lausanne University Hospital, Switzerland. The first google hit on https://datasetsearch.research.google.com/
+landed me on their page (I only noted afterwards that data are from Switzerland - nothing personal): https://zenodo.org/record/3763421
+
+These data include a number of variables as well as a an outcome 7 days into entering the study. 
+Here, we will use `fu7_death` as the outcome variable -- i.e., this variable records whether that study participant was alive or deceased by day 7.
+
+The dataset is not really documented, but this is my guess of what these variables mean:
+Outcome at day 7
+
+ - `fu7_icu`: 1 = Intensive Care (lots of missings)
+ - `fu7_iot`: 1 = Intubated (lots of missings)
+ - `fu7_death`: 1 = Dead 
+
+You are free to play around with these variables. 
+
+The Other variables seem to have been recorded at the _entry_ to the study 7 days earlier and most of them are self explanatory. We will use some of them as predictors.
+
+### Read in data 
+Let's read in the data and peak into it 
+```{r}
+lus <- read.csv( file = "https://zenodo.org/record/3763421/files/Clinical_data.csv?download=1" )
+head( lus, n =  5 )
+```
+### Subset Data 
+Slect some variables of interest -- note that some have lot's of missing values. That is, I selected mostly those with few missings.
+So far, we haven't talked about ways to deal with missing values, hence, I dropped all missing values with `na.omit()`.
+
+I also recoded sex to by dummy-coded with 0 = male, and 1 = female
+
+```{r}
+lus2 <- lus[  , c("sex", "age",  "hbp", "diabetes", "heart_ischemia",
+                                                 "asthma", "cp_bp_systolic",  "cp_bp_diastolic",
+                                                 "cp_saturation", "creatine", "leukocytes",
+                                                 "status_pulm", "fu7_death")] 
+## Recode sex, to 0 = males, 1 = females
+lus2$sex <- lus2$sex - 1
+
+lus2
+
+
+## We're left with N = 61
+nrow(lus2)
+```
+
+# Question 1 
+
+We predict `fu7_death` as this variable seems to have relatively few missings.
+
+###  Formal Model
+
+We are trying to predict the outcome `fu7_death` which is 0/1 coded. 0 is alive, 1 is dead.
+A logistic regression seems to be a natural choice where some of the predictors will increase or decrease the odds of dying due to COVID related complications. 
+
+As discussed in PSC204B, logistic regressions are general linear models based on a Bernoulli distribution with a logit link $\log\left( \frac{p}{1 - p} \right)$. In terms of defining this model, we can write 
+\begin{align*}
+\text{Likelihood:} \hspace{1cm}	y &\sim Bern( \theta ) = 
+		\begin{cases}
+			\theta \text{ if } y = 1\\
+			1 - \theta  \text{ if } y = 0
+		\end{cases}
+	\text{ where } \theta \in \{0,1\} \\
+& logit( \theta ) = log\left(\frac{\theta}{1-\theta}\right) = \beta_0 + x_1\beta_1 + \ldots + x_p\beta_p =  \mathbf{X}\boldsymbol{\beta} \\
+\text{ Prior for all elements in }\boldsymbol{\beta}\text{:} \hspace{1cm} \boldsymbol{\beta} &\sim \mathcal{N}(\mathbf{0}, 3\mathbf{I})
+\end{align*}
+
+In words, our likelihood is defined as a Bernoulli function. Given the logit link that removes all bounds from our linear model, we can use relatively uninformed normal distributions for each of the $\beta$'s. Here, I chose a normal distribution with mean of zero and a standard deviation of 3 for each of the $\beta$'s
+
+The next step is to write this model up in `stan`. 
+
+# Question 2
+
+Now, take `sex`, `age`, and `heart_ischema` as predictors and `fu7_death` as the outcome.
+
+a) Create a `dat` list object that takes all the arguments you defined in the `data {}` block of your stan model
+b) Sample from the model but first _without_ the likelihood and find a way to generate a meaningful prior predictive plot
+c) After that: Sample from the posterior and 
+	1) print the output and report interesting findings in terms of odds, 
+	2) plot the posterior predictive distribution. 
+ 
+```{r}
+library( rstan )
+```
+
+
+### Hint 3: Results and _Posterior_ PD
+```{r}
+## library( brms )
+## mod0 <- brm(fu7_death | mi() ~ sex + age + heart_ischemia,
+##             data = lus2)
+## stancode(mod0 )
+
+
+X <- cbind(1, lus2$sex, lus2$age, lus2$heart_ischemia )
+
+## Predictor contains one missing: We replace this with zero (we could esimate this with mice)
+## row 40 contains missing - set to 0
+X[40, 4] <- 0
+X
+
+mis_index <- ifelse( is.na(lus2$fu7_death), 1, 0)
+mis_index
+N_mis <- sum(mis_index )
+N_mis
+
+N_obs <- length(mis_index ) - N_mis
+N_obs
+
+pos_missing <- which( mis_index == 1 )
+pos_missing
+
+## replace lus2$fu7_death NA's with 0
+lus2$fu7_death[is.na( lus2$fu7_death )] <- 0
+lus2$fu7_death
+
+dat <- list(N = nrow( X ),
+            N_mis = N_mis,
+            pos_missing =  pos_missing,
+            p = ncol( X ),
+            X =  X,
+            y =  lus2$fu7_death)
+
+model1 <- stan_model(file = "./missing.stan" )
+#model1 <- stan_model(file = "./missingness.stan" )
+
+fit1 <- sampling( model1, data = dat, iter =  3000 )
+
+## Show estimated 
+print( fit1, pars =  c("theta_mis"), probs=c(.05, .95) )
+print( fit1, pars =  c("beta"), probs=c(.05, .95) )
+
+plot(fit1, pars =  c("theta_mis") )
+
+
+posterior::as_draws(fit1)
+```
+
+
+
+```{r}
+kidiq <- haven::read_dta("http://www.stat.columbia.edu/~gelman/arm/examples/child.iq/kidiq.dta")
+
+kidiq
+
+library(mice)
+set.seed(1955)
+kidiq100_mar <- ampute(kidiq, prop = 0.5, 
+                       pattern = data.frame(kid_score = c(0, 0, 0), 
+                                            mom_hs = c(1, 1, 0), 
+                                            mom_work = c(1, 1, 1), 
+                                            mom_age = c(1, 1, 1), 
+                                            mom_iq_c = c(1, 0, 1)), 
+                       freq = c(.2, .4, .4), 
+                       mech = "MAR")
+
+kidiq100_mar
+kidiq100_mar <- kidiq100_mar$amp
+```
+
+
+```{r}
+# Recode mom_hs to factor
+
+kidiq100_mar$mom_hs
+
+kidiq100_mar$mom_hs <- factor(kidiq100_mar$mom_hs, labels = c("no", "yes"))
+
+md.pattern(kidiq100_mar, rotate.names = TRUE)
+
+
+library(brms )
+head(kidiq100_mar )
+
+listwdel <- brm(kid_score ~ mom_iq + mom_hs, data = kidiq100_mar)
+listwdel
+
+mar <- brm(kid_score | mi() ~ mom_iq + mom_hs, data = kidiq100_mar)
+stancode(mar )
+mar
+
+kidiq$mom_hs <- factor(kidiq$mom_hs, labels = c("no", "yes"))
+full <- brm(kid_score  ~ mom_iq + mom_hs, data = kidiq)
+full
+
+
+
+```
