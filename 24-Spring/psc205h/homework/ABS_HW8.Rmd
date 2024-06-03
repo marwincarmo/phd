@@ -48,13 +48,15 @@ Plot the relation among `mAch` and `ses`. Explore their relation visually - and 
 ## code:
 
 Hsb82sub |> 
-  ggplot(aes(x = ses, y = mAch, color = school)) +
-  geom_point(alpha = .2) +
-  geom_smooth( method = "lm", se = FALSE) +
+  ggplot(aes(x = ses, y = mAch)) +
+  
+  geom_point(aes( color = school), alpha = .2) +
+  geom_smooth(aes( color = school), method = "lm", se = FALSE) +
+  geom_smooth( method = "lm", se = FALSE, linetype = "dotdash", col = "red") +
   theme_minimal() +
   theme(legend.position = "none")
 ```
-Comment on the figure:
+Comment on the figure: The overall trend is positive relation between math achievement and ses. However, examining each school random slope and intercept, we're able to see considerable variance surrounding the general slope. Specially for schools that already start with higher scores (that is, those schools whose students with low ses levels perform better than the average school), there is little or no increase in math achievement as ses also increases.  
 
 # Question 2: Intercept only model
 
@@ -62,7 +64,7 @@ Fit the model with `mAch` as the outcome and only a random intercept. The groupi
 
  - From the fitted model, extract the between-school variance (random effects variance) and the error variance. If you know what the intraclass correlation coefficient (ICC) is, compute it (we discussed that in PSC 204B) and comment on it.
  - Plot some draws from the posterior predictive distribution with `pp_check( model_object )`
- - Visualize the posterior density of the intercept and add a vertical line to the plot at zero to give a sense on how far the poserior distribution is from zero. 
+ - Visualize the posterior density of the intercept and add a vertical line to the plot at zero to give a sense on how far the posterior distribution is from zero. 
  
 ```{r}
 ## code:
@@ -71,10 +73,28 @@ fit1 <- brms::brm(mAch ~ 1 + (1|school), data = Hsb82sub, cores = 16)
 
 ```{r}
 ## icc
+bs <- VarCorr(fit1)$school$sd[1]
+ws <- VarCorr(fit1)$residual__$sd[1]
+icc <- bs / (bs + ws)
+icc
+```
+An ICC of 0.33 indicates a moderate level of group-level variance relative to the total variance. We can assume that there is still a considerable amount of within-group variability.
 
-
+```{r}
+pp_check( fit1 )
 ```
 
+```{r}
+posterior_samples <- as_draws_df(fit1, variable = "b_Intercept")
+
+ggplot(posterior_samples, aes(x = b_Intercept)) +
+  geom_density(fill = "skyblue", alpha = 0.7) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Posterior Density of the Intercept",
+       x = "Intercept",
+       y = "Density") +
+  theme_minimal()
+```
 
 # Question 3:
 
