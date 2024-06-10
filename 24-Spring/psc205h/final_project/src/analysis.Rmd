@@ -1,0 +1,227 @@
+---
+title: "Final Project"
+author: "Marwin Carmo"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning = FALSE)
+```
+
+# Introduction
+
+
+# Model specification
+
+Likelihood
+
+$$
+\begin{aligned}
+\text{ISI}_{ij} &\sim \mathcal{N}(\mu_{ij}, \sigma_{ij})\\
+\mu_{ij} &= \beta_{0j} + \beta_{1j}X_i
+\end{aligned}
+$$
+
+# Building the model
+
+$$ \begin{align*} y_{ti} & = \beta_{00} + \beta_{01} (\text{treatment})_i + \beta_{10} (\text{time})_{ti} + \color{darkred}{\beta_{11}} (\text{treatment})_i (\text{time})_{ti} \\ & \;\;\; + [r_{0i} + r_{1i} (\text{time})_{ti} + e_{ti}], \end{align*} $$
+
+# Load packages and data
+
+```{r message=FALSE}
+library(ggplot2)
+library(dplyr)
+library(brms)
+```
+
+```{r}
+data <- read.csv("../data/clean_data.csv") |> 
+  # transform grouping variable to factor
+  #dplyr::mutate(randomizacao = factor(randomizacao)) |> 
+  # select only the relevant variables
+  # randomizacao = randomization group, igi_escore = sum score on insomnia severity index
+  dplyr::select(
+    record_id, redcap_event_name, randomizacao, igi_escore
+  ) |>
+  # filter out the baseline measure applied only to controls
+  dplyr::filter(redcap_event_name %in% c(
+    "elegibilidade_arm_1",
+    "desfechos_arm_1", "followup_arm_1"),
+    # also exclude controls since we're only interested in ACT vs. CBT
+    randomizacao != 3
+    ) |> 
+  # code events (baseline, post, and follow-up) as numeric
+  dplyr::mutate(
+    redcap_event_name = dplyr::case_when(
+      redcap_event_name == "elegibilidade_arm_1" ~ 0,
+      redcap_event_name == "desfechos_arm_1" ~ 1,
+      redcap_event_name == "followup_arm_1" ~ 2
+    ),
+    #  give "real" names to randomization groups
+    randomizacao = dplyr::case_when(
+      randomizacao == 1 ~ "ACT",
+      randomizacao == 2 ~ "CBT"),
+    # scale the outcome (insomnia score)
+    igi_escore = c(scale(igi_escore, center = TRUE, scale = TRUE))
+    )
+
+head(data)
+```
+
+## Check for missing data
+
+First, lets check how many responses we have at each time point in each group.
+
+```{r}
+data |> 
+  dplyr::with_groups(c(redcap_event_name, randomizacao),
+                     summarise,
+                     n = n(),
+                     pct_missing = sum(is.na(igi_escore))/n())
+```
+
+To impute data we have to make sure that all events have the same number of rows where missingness is represented by `NA`.
+
+```{r}
+all_combinations <- expand.grid(
+  #redcap_event_name = factor(0:2),
+  redcap_event_name = c(0:2),
+  randomizacao = c("ACT", "CBT")
+)
+
+# Ensure all combinations for each ID are present, filling missing values with NA
+df_complete <- data |> 
+  dplyr::group_by(record_id) |> 
+  tidyr::complete(redcap_event_name = all_combinations$redcap_event_name, 
+           ) |> 
+  dplyr::ungroup() |> 
+  # fill in the randomization value in the newly created rows
+  tidyr::fill(randomizacao, .direction = "down")
+```
+
+Now we can check the real missing percentage:
+
+```{r}
+df_complete |> 
+  dplyr::group_by(redcap_event_name, randomizacao) |> 
+  dplyr::summarise(n = n(),
+                   pct_missing = sum(is.na(igi_escore))/n())
+```
+
+# Visualizing data distribution and trajectories
+
+```{r}
+data |> 
+  ggplot(aes( x = igi_escore)) +
+  geom_density() +
+  #facet_wrap(~ randomizacao) +
+  facet_grid(randomizacao ~ redcap_event_name) +
+  theme_bw()
+```
+
+```{r}
+data |> 
+  ggplot(aes(x = redcap_event_name, y  = igi_escore)) +
+    stat_smooth(aes(color = randomizacao),
+              method = "lm", formula = 'y ~ x',
+              se = F, linewidth = 2) +
+  geom_line(aes(group = record_id),
+            linewidth = 1/6, alpha = 0.7) +
+  scale_color_viridis_d(option = "B", begin = .33, end = .67) +
+  facet_wrap(~ randomizacao) +
+  scale_x_continuous(breaks = c(0, 1, 2 )) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+# Fit the model
+
+```{r}
+fit1 <-
+  brm(data = df_complete,
+      family = gaussian,
+      igi_escore | mi() ~ 1 + redcap_event_name + randomizacao + redcap_event_name:randomizacao + (1 + redcap_event_name | record_id),
+      cores = 16,
+      seed = 133,
+      control = list(adapt_delta = .85))
+```
+
+```{r}
+
+bprior <- c(prior(normal(0, 10), class = b),
+            prior(normal(0, 10), class = Intercept),
+           prior(exponential(1), class = sd))
+
+stancode(data = df_complete,
+         family = gaussian,
+      igi_escore ~ 1 + factor(redcap_event_name) + randomizacao + factor(redcap_event_name):randomizacao + (1 + factor(redcap_event_name) | record_id),
+      prior = bprior)
+
+fit2 <-
+  brm(data = df_complete,
+      family = gaussian,
+      igi_escore | mi() ~ 1 + factor(redcap_event_name) + randomizacao + factor(redcap_event_name):randomizacao + (1 + factor(redcap_event_name) | record_id),
+      cores = 16,
+      #seed = 133,
+      prior = bprior,
+      control = list(adapt_delta = .85))
+```
+
+# Prior predictive check
+
+```{r}
+fit_prior <-
+  brm(data = df_complete,
+      family = gaussian,
+      igi_escore | mi() ~ 1 + factor(redcap_event_name) + randomizacao + factor(redcap_event_name):randomizacao + (1 + factor(redcap_event_name) | record_id),
+      cores = 16,
+      sample_prior = "only",
+      prior = bprior,
+      control = list(adapt_delta = .85))
+```
+
+```{r}
+pp_check(fit_prior)
+```
+
+
+
+# Posterior predictive check
+
+```{r}
+brms::pp_check(fit2, ndraws = 100)
+```
+
+```{r}
+model1tranformed <- ggs(fit2)
+```
+
+## posterior density interaction
+
+```{r}
+ggplot(filter(model1tranformed, Parameter == "b_factorredcap_event_name1:randomizacaoCBT", Iteration > 1000), aes(x = value))+
+  geom_density(fill = "orange", alpha = .5)+
+  geom_vline(xintercept = 0, col = "red", size = 1)+
+  #scale_x_continuous(name = "Value", limits = c(-.2, .6))+ 
+  geom_vline(xintercept = summary(fit2)$fixed[5,3], col = "blue", linetype = 2)+
+  geom_vline(xintercept = summary(fit2)$fixed[5,4], col = "blue", linetype = 2)+
+  theme_light()+
+  labs(title = "Posterior Density of Regression Post vs. Pre")
+```
+```{r}
+ggplot(filter(model1tranformed, Parameter == "b_factorredcap_event_name2:randomizacaoCBT", Iteration > 1000), aes(x = value))+
+  geom_density(fill = "orange", alpha = .5)+
+  geom_vline(xintercept = 0, col = "red", size = 1)+
+  #scale_x_continuous(name = "Value", limits = c(-.2, .6))+ 
+  geom_vline(xintercept = summary(fit2)$fixed[6,3], col = "blue", linetype = 2)+
+  geom_vline(xintercept = summary(fit2)$fixed[6,4], col = "blue", linetype = 2)+
+  theme_light()+
+  labs(title = "Posterior Density of Regression Post vs. Pre")
+```
+
+

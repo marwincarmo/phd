@@ -36,12 +36,22 @@ data <- read.csv("final_project/data/clean_data.csv") |>
     fu_v_pre = ifelse(redcap_event_name ==  3, 2/3, -1/3),
     fu_v_post = ifelse(redcap_event_name ==  3, 2/3, -1/3))
 
+data_reduced <- data |> 
+  dplyr::select(record_id, redcap_event_name, randomizacao, igi_escore) |> 
+  dplyr::filter(randomizacao != "wl",
+                redcap_event_name!= 0)
+
+data_reduced |> 
+  dplyr::with_groups(c(redcap_event_name, randomizacao),
+                     summarise,
+                     n = n())
+                     #n_missing = sum(is.na(igi_escore)))
 
 
 # 1 Visualizing interindividual differences in change ---------------------
 
 data |> 
-  dplyr::filter(redcap_event_name != 0) |> 
+  #dplyr::filter(redcap_event_name != 0) |> 
   ggplot(aes(x = redcap_event_name, y = igi_escore)) +
   stat_smooth(aes(group = record_id),
               method = "lm", se = FALSE, size = 1/6 ) +
@@ -100,5 +110,5 @@ data2 <- data |>
   dplyr::filter(randomizacao != "wl",
                 redcap_event_name!= 0)
 
-fit_mle <- lmerTest::lmer(igi_escore ~ (1|record_id) + randomizacao * redcap_event_name, data=data2) |> 
-  summary()
+fit_mle <- lmerTest::lmer(igi_escore ~ (1 |record_id) + randomizacao, data=data2)
+summary(fit_mle)
