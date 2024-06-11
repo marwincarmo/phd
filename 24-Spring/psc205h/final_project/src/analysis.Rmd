@@ -1,5 +1,5 @@
 ---
-title: "Final Project"
+title: "Acceptance and Commitment Therapy Versus Cognitive Behavioral Therapy for Insomnia: A Bayesian re-analysis"
 author: "Marwin Carmo"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
@@ -7,6 +7,8 @@ output:
     df_print: paged
     toc: yes
     toc_float: yes
+bibliography: ../references.bib
+csl: "../apa.csl"
 ---
 
 ```{r setup, include=FALSE}
@@ -15,21 +17,63 @@ knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning = FALSE)
 
 # Introduction
 
+This work presents a Bayesian re-analysis of the randomized controlled trial conducted by @rafihiinpress, which compared the efficacy of Acceptance and Commitment Therapy (ACT) and Cognitive Behavioral Therapy for Insomnia (CBT-I) in treating insomnia. The original study primarily measured changes in the Insomnia Severity Index (ISI) scores at post-treatment and follow-up stages. Data were analyzed using mixed-effects models, incorporating random intercepts for participants and fixed effects for group variables. Treatment effects were evaluated based on the fixed effects of group variables (ACT vs. CBT-I and ACT vs. waitlist) and their interaction with time points (pre-test vs. post-test and pre-test vs. six-month follow-up). The original code and data can be accessed at <https://osf.io/zs98u/>.
 
-# Model specification
+The data in @rafihiinpress was collected through a self-administered survey managed using REDCap. Participants were adults 18 to 59 years old and meeting criteria for chronic insomnia. Participants who met the inclusion criteria (as described in @rafihiinpress) were randomized to the ACT-I, CBT-I or waitlist (WL) group. To ensure that the groups were well distributed in terms of insomnia severity, randomization was stratified by insomnia severity index (ISI, mild and moderate insomnia with a score between 8-21 vs severe insomnia with a score between 22-28). Treatments were provided in the context of six weekly group therapy sessions lasting 90 to 120 minutes with groups consisting of five to seven participants that took place on Zoom.Outcomes were assessed post-treatment (one week after completion of treatment) and at the six-month follow-up.
 
-Likelihood
+## Motivation
+
+As a co-author of @rafihiinpress and having performed much of the initial analysis, I decided to re-examine the data using a Bayesian framework. This approach allows for a more comprehensive quantification of uncertainty in the model and estimates. Specifically, the p-values for the interactions in the original analysis were larger than 0.01 and close to the conventional significance threshold. By incorporating prior knowledge into the model, I aim to derive more precise estimates and draw more informed conclusions about the comparative effectiveness of the therapies.
+
+In this work, I opted to not include the control group in the model as there is enough evidence that ACT or CBT-I are both effective for treating insomnia symptoms compared to controls [@rafihi2023; @el2020acceptance]. The motivation for re-running these analyses lies in quantifying uncertainty in the estimates using prior knowledge.
+
+# Model formulation
+
+The ISI scores are realized from a normal distribution with mean $\mu_{ti}$ and fixed standard deviation $\sigma$. We can specify $\mu_{ti}$ as a linear mixed effects model, for $i$ = 1, 2,...,$n_t$ participants and $t$ = 1, 2, 3, assessments. The intercept is represented by $\alpha$, the fixed effects are captured by $\beta_{1}, \beta_{2}, \beta_{3}, \beta_{4}$, and $\beta_{5}$, and the random effects by $u_{0i}, u_{1i}$, and $u_{2i}$. The reference categories are ACT for $\text{treatment}$ and the baseline assessment for $\text{time}$.
 
 $$
 \begin{aligned}
-\text{ISI}_{ij} &\sim \mathcal{N}(\mu_{ij}, \sigma_{ij})\\
-\mu_{ij} &= \beta_{0j} + \beta_{1j}X_i
+\text{ISI}_{i} &\sim \mathcal{N}(\mu_{ti}, \sigma)\\
+\mu_{ti} &= \alpha + \beta_{1}(\text{time})_{ti}^{(1)} + \beta_{2}(\text{time})_{ti}^{(2)} + \beta_{3}(\text{treatment})_i \\
+    &+ \beta_{4} (\text{treatment})_i (\text{time})_{ti}^{(1)} + \beta_{5} (\text{treatment})_i (\text{time})_{ti}^{(2)} \\
+    &+ \left ( u_{0i} + u_{1i} \text{time}_{ti}^{(1)} + u_{2i} \text{time}_{ti}^{(2)} \right).
+\\
+\sigma &\sim St^{+}(3,0,1)
 \end{aligned}
 $$
 
-# Building the model
+Because the data will be standardized prior to the analysis, I placed diffuse priors for the fixed effects of the intercept and slopes centered on zero and a standard deviation of 5. Previous research [@rafihi2023; @el2020acceptance] inform that the effect size differences between pre and post-test scores can be substantial. Therefore, the standard deviation for the fixed effects can be allowed to vary largely around 0.
 
-$$ \begin{align*} y_{ti} & = \beta_{00} + \beta_{01} (\text{treatment})_i + \beta_{10} (\text{time})_{ti} + \color{darkred}{\beta_{11}} (\text{treatment})_i (\text{time})_{ti} \\ & \;\;\; + [r_{0i} + r_{1i} (\text{time})_{ti} + e_{ti}], \end{align*} $$
+
+\begin{aligned}
+\alpha &\sim \mathcal{N}(0, 2)\\
+\beta_1, \beta_2, ...,\beta_5 &\sim \mathcal{N}(0, 5)\\
+
+\end{aligned}
+
+
+The priors for the random effects are modeled from a multivariate normal prior with covariance matrix $\boldsymbol{\Sigma}$. The covariance  matrix $\boldsymbol{\Sigma}$ can be decomposed into $\boldsymbol\Sigma = \boldsymbol{\tau}\boldsymbol{\Omega\tau}'$, where $\boldsymbol{\tau}$ is a diagonal matrix where the diagonal elements are the random-effect standard deviations and $\boldsymbol\Omega$ is the correlation matrix that contains the correlations among all random effects. The LKJ prior correlation matrix' single parameter $\eta$ was set to one to place a uniform prior over all correlation matrices.
+
+
+\begin{aligned}
+\begin{bmatrix} u_{0i} \\ u_{1i} \\ u_{2i} \end{bmatrix} &\sim \mathcal{N}
+    \begin{Bmatrix} 
+        \boldsymbol{0}=
+        \begin{bmatrix} 0 \\ 0 \\ 0  \end{bmatrix},
+        \boldsymbol{\Sigma}=
+        \begin{bmatrix} \tau^2_{u_{0i}} \\ 
+                        \tau_{u_{0i}u_{1i}} & \tau^2_{u_{1i}} \\
+                        \tau_{u_{0i}u_{2i}} & \tau_{u_{1i}u_{2i}} & \tau^2_{u_{2i}}
+        \end{bmatrix}
+    \end{Bmatrix}\\
+
+\boldsymbol{\Sigma} &= \boldsymbol{\tau}\boldsymbol{\Omega\tau}'\\
+\boldsymbol\Omega &\sim \text{LKJ}(\eta = 1)\\
+
+\tau^2_{u_{0i}}, \tau^2_{u_{1i}}, \tau^2_{u_{2i}} &\sim \Gamma(1,0.5)
+
+\end{aligned}
+
 
 # Load packages and data
 
@@ -37,6 +81,8 @@ $$ \begin{align*} y_{ti} & = \beta_{00} + \beta_{01} (\text{treatment})_i + \bet
 library(ggplot2)
 library(dplyr)
 library(brms)
+library(ggmcmc)
+library(patchwork)
 ```
 
 ```{r}
@@ -73,6 +119,8 @@ data <- read.csv("../data/clean_data.csv") |>
 head(data)
 ```
 
+# Building the model
+
 ## Check for missing data
 
 First, lets check how many responses we have at each time point in each group.
@@ -85,7 +133,7 @@ data |>
                      pct_missing = sum(is.na(igi_escore))/n())
 ```
 
-To impute data we have to make sure that all events have the same number of rows where missingness is represented by `NA`.
+To impute data we have to make sure that all events have the same number of rows where missingness is represented by `NA`. To account for missing data, I will employ an one-step Bayesian imputation with the `mi()` function from `brms`.
 
 ```{r}
 all_combinations <- expand.grid(
@@ -101,7 +149,8 @@ df_complete <- data |>
            ) |> 
   dplyr::ungroup() |> 
   # fill in the randomization value in the newly created rows
-  tidyr::fill(randomizacao, .direction = "down")
+  tidyr::fill(randomizacao, .direction = "down") |> 
+  dplyr::mutate(redcap_event_name = factor(redcap_event_name))
 ```
 
 Now we can check the real missing percentage:
@@ -139,7 +188,64 @@ data |>
   theme(legend.position = "none")
 ```
 
-# Fit the model
+# Choosing the model
+
+```{r}
+
+priors1 <- c(prior(normal(0, 5), class = b),
+            prior(normal(0, 2), class = Intercept),
+            prior(student_t(3, 0, 1), class = sigma),
+            prior(gamma(1, .5), class = sd),
+            prior(lkj_corr_cholesky(1), class = L))
+
+stancode(data = df_complete,
+         family = gaussian,
+        igi_escore ~ 1 + redcap_event_name + randomizacao + redcap_event_name:randomizacao + (1 + redcap_event_name | record_id),
+        prior = priors1)
+
+```
+
+```{r}
+fitPrior <-
+  brm(data = df_complete,
+      family = gaussian,
+      igi_escore | mi() ~ 1 + redcap_event_name + randomizacao + redcap_event_name:randomizacao + (1 + redcap_event_name | record_id),
+      cores = 16,
+      seed = 133,
+      prior = priors1,
+      sample_prior = "only",
+      control = list(adapt_delta = .85))
+```
+
+
+## Prior predictive check
+
+Based on the results from the prior predictive checks, the choice of priors seem reasonable. Although it can be observed a large variance of $y_{rep}$, the distribution is well centered around $y$. Therefore, the chosen model will be used in the final analysis.
+
+```{r}
+pp_check(fitPrior, ndraws = 150)
+```
+
+```{r}
+
+p1 <- pp_check(fitPrior, type = 'stat', stat = 'min') +
+  xlab('ISI score (z-standardized)') +
+  ggtitle('Prior predictive distribution of minimum values')
+
+ 
+p2 <- pp_check(fitPrior, type = 'stat', stat = 'mean') +
+  xlab('ISI score (z-standardized)') +
+  ggtitle('Prior predictive distribution of means') 
+
+p3 = pp_check(fitPrior, type = 'stat', stat = 'max') +
+  xlab('ISI score (z-standardized)') +
+  ggtitle('Prior predictive distribution of maximum values')
+
+p123 = p1 + p2 + p3 + plot_layout(ncol = 1)
+p123
+```
+
+# Fitting the model
 
 ```{r}
 fit1 <-
@@ -148,80 +254,98 @@ fit1 <-
       igi_escore | mi() ~ 1 + redcap_event_name + randomizacao + redcap_event_name:randomizacao + (1 + redcap_event_name | record_id),
       cores = 16,
       seed = 133,
+      prior = priors1,
       control = list(adapt_delta = .85))
 ```
 
+## Posterior predictive check
+
+The posterior predictive checks for the final model show consistency between the observed data and new data predicted by the posterior distributions. We can assume we can trust this model based on these results.
+
+```{r}
+brms::pp_check(fit1, ndraws = 150)
+```
+
+## Model diagnostics
+
+```{r}
+plot(fit1)
+```
+
+
+## Model summary
+
+```{r}
+summary(fit1)
+```
+
+
+## Posterior density for the interactions
+
+```{r}
+# create a new df with the model estimates in the long format
+model1tranformed <- ggmcmc::ggs(fit1)
+```
+
+```{r}
+ggplot(filter(model1tranformed, Parameter == "b_redcap_event_name1:randomizacaoCBT", Iteration > 1000), aes(x = value))+
+  geom_density(fill = "orange", alpha = .5)+
+  geom_vline(xintercept = 0, col = "red", size = 1)+
+  #scale_x_continuous(name = "Value", limits = c(-.2, .6))+ 
+  geom_vline(xintercept = summary(fit1)$fixed[5,3], col = "blue", linetype = 2)+
+  geom_vline(xintercept = summary(fit1)$fixed[5,4], col = "blue", linetype = 2)+
+  theme_light()+
+  labs(title = "Posterior Density for (Post vs. Pre) x (CBT vs. ACT)")
+```
+
+
+```{r}
+ggplot(filter(model1tranformed, Parameter == "b_redcap_event_name2:randomizacaoCBT", Iteration > 1000), aes(x = value))+
+  geom_density(fill = "orange", alpha = .5)+
+  geom_vline(xintercept = 0, col = "red", size = 1)+
+  #scale_x_continuous(name = "Value", limits = c(-.2, .6))+ 
+  geom_vline(xintercept = summary(fit1)$fixed[6,3], col = "blue", linetype = 2)+
+  geom_vline(xintercept = summary(fit1)$fixed[6,4], col = "blue", linetype = 2)+
+  theme_light()+
+  labs(title = "Posterior Density for (Followup vs. Pre) x (CBT vs. ACT)")
+```
+
+## Comparing models
+
+The model tested in this work included random slopes for time, which was not included in the original model tested by -@rafihiinpress. Using LOO-CV we can test whether the inclusion of the random slope would improve the model in comparison with a model with only random intercepts.
+
 ```{r}
 
-bprior <- c(prior(normal(0, 10), class = b),
-            prior(normal(0, 10), class = Intercept),
-           prior(exponential(1), class = sd))
-
-stancode(data = df_complete,
-         family = gaussian,
-      igi_escore ~ 1 + factor(redcap_event_name) + randomizacao + factor(redcap_event_name):randomizacao + (1 + factor(redcap_event_name) | record_id),
-      prior = bprior)
+priors2 <- c(prior(normal(0, 5), class = b),
+            prior(normal(0, 2), class = Intercept),
+            prior(student_t(3, 0, 1), class = sigma),
+            prior(gamma(1, .5), class = sd))
 
 fit2 <-
   brm(data = df_complete,
       family = gaussian,
-      igi_escore | mi() ~ 1 + factor(redcap_event_name) + randomizacao + factor(redcap_event_name):randomizacao + (1 + factor(redcap_event_name) | record_id),
+      igi_escore | mi() ~ 1 + redcap_event_name + randomizacao + redcap_event_name:randomizacao + (1 | record_id),
       cores = 16,
-      #seed = 133,
-      prior = bprior,
+      seed = 133,
+      prior = priors2,
       control = list(adapt_delta = .85))
 ```
 
-# Prior predictive check
 
 ```{r}
-fit_prior <-
-  brm(data = df_complete,
-      family = gaussian,
-      igi_escore | mi() ~ 1 + factor(redcap_event_name) + randomizacao + factor(redcap_event_name):randomizacao + (1 + factor(redcap_event_name) | record_id),
-      cores = 16,
-      sample_prior = "only",
-      prior = bprior,
-      control = list(adapt_delta = .85))
+
+complete_cases <- df_complete[complete.cases(df_complete$igi_escore), ]
+complete_cases$redcap_event_name <- factor(complete_cases$redcap_event_name)
+  
+m1 <- add_criterion( fit1 , "loo", newdata= complete_cases)
+m2 <- add_criterion(fit2 , "loo" , newdata= complete_cases)
+lcomp <- loo_compare (m1 , m2)
+print ( lcomp )
 ```
+Given the high divergence in the ELPD difference, it is clear that we are better off including a random slope for time.
 
-```{r}
-pp_check(fit_prior)
-```
+# Conclusion
 
+The conclusions drawn from the Bayesian multilevel model built in this work are similar to what was found in -@rafihiinpress. Convergence diagnostics, including Rhat values around 1 and adequate effective sample sizes, indicate reliable parameter estimates. The results indicate that the ISI score differs across time, with substantial decreases in both Post-test ($\beta$ = −1.2, 95% CrI [-1.40, -1.02]) and Follow-up ($\beta$=−1.27, 95% CI [-1.46, -1.09]) assessments. The interaction term for Post-test  and randomization ($\beta$ = −0.33, 95% CrI [-0.58, -0.07]) suggests that patients who received CBT-I experienced greater reductions in self-reported insomnia symptoms compared to the ACT group. So far, the results are not new and just reiterate previous conclusions. Interestingly, however, is that in this analysis we can observe larger uncertainty around the estimate of the interaction between Follow-up and randomization. The 95% CrI suggest tha this effect might not be different from 0.
 
-
-# Posterior predictive check
-
-```{r}
-brms::pp_check(fit2, ndraws = 100)
-```
-
-```{r}
-model1tranformed <- ggs(fit2)
-```
-
-## posterior density interaction
-
-```{r}
-ggplot(filter(model1tranformed, Parameter == "b_factorredcap_event_name1:randomizacaoCBT", Iteration > 1000), aes(x = value))+
-  geom_density(fill = "orange", alpha = .5)+
-  geom_vline(xintercept = 0, col = "red", size = 1)+
-  #scale_x_continuous(name = "Value", limits = c(-.2, .6))+ 
-  geom_vline(xintercept = summary(fit2)$fixed[5,3], col = "blue", linetype = 2)+
-  geom_vline(xintercept = summary(fit2)$fixed[5,4], col = "blue", linetype = 2)+
-  theme_light()+
-  labs(title = "Posterior Density of Regression Post vs. Pre")
-```
-```{r}
-ggplot(filter(model1tranformed, Parameter == "b_factorredcap_event_name2:randomizacaoCBT", Iteration > 1000), aes(x = value))+
-  geom_density(fill = "orange", alpha = .5)+
-  geom_vline(xintercept = 0, col = "red", size = 1)+
-  #scale_x_continuous(name = "Value", limits = c(-.2, .6))+ 
-  geom_vline(xintercept = summary(fit2)$fixed[6,3], col = "blue", linetype = 2)+
-  geom_vline(xintercept = summary(fit2)$fixed[6,4], col = "blue", linetype = 2)+
-  theme_light()+
-  labs(title = "Posterior Density of Regression Post vs. Pre")
-```
-
-
+# References

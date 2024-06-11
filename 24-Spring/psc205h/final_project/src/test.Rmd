@@ -1,0 +1,60 @@
+---
+title: "Acceptance and Commitment Therapy Versus Cognitive Behavioral Therapy for Insomnia: A Bayesian re-analysis"
+author: "Marwin Carmo"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+bibliography: ../references.bib
+csl: "../apa.csl"
+---
+
+This work presents a Bayesian re-analysis of the randomized controlled trial conducted by @rafihiinpress, which compared the efficacy of Acceptance and Commitment Therapy (ACT) and Cognitive Behavioral Therapy for Insomnia (CBT-I) in treating insomnia. The original study primarily measured changes in the Insomnia Severity Index (ISI) scores at post-treatment and follow-up stages. Data were analyzed using mixed-effects models, incorporating random intercepts for participants and fixed effects for group variables. Treatment effects were evaluated based on the fixed effects of group variables (ACT vs. CBT-I and ACT vs. waitlist) and their interaction with time points (pre-test vs. post-test and pre-test vs. six-month follow-up). The original code and data can be accessed at <https://osf.io/zs98u/>.
+
+The data in -@rafihiinpress was collected through a self-administered survey managed using REDCap. Participants were adults 18 to 59 years old and meeting criteria for chronic insomnia. Participants who met the inclusion criteria (as described in -@rafihiinpress) were randomized to the ACT-I, CBT-I or waitlist (WL) group. To ensure that the groups were well distributed in terms of insomnia severity, randomization was stratified by insomnia severity index (ISI, mild and moderate insomnia with a score between 8-21 vs severe insomnia with a score between 22-28). Treatments were provided in the context of six weekly group therapy sessions lasting 90 to 120 minutes with groups consisting of five to seven participants that took place on Zoom. 
+## Motivation
+
+As a co-author of -@rafihiinpress and having performed much of the initial analysis, I decided to re-examine the data using a Bayesian framework. This approach allows for a more comprehensive quantification of uncertainty in the model and estimates. Specifically, the p-values for the interactions in the original analysis were larger than 0.01 and close to the conventional significance threshold. By incorporating prior knowledge into the model, I aim to derive more precise estimates and draw more informed conclusions about the comparative effectiveness of the therapies.
+
+In this work, I opted to not include the control group in the model as there is enough evidence that ACT or CBT-I are both effective for treating insomnia symptoms compared to controls [@rafihi2023; @el2020acceptance]. The motivation for re-running these analyses lies in quantifying uncertainty in the estimates using prior knowledge.
+
+$$
+\begin{aligned}
+\text{ISI}_{i} &\sim \mathcal{N}(\mu_{ti}, \sigma)\\
+\mu_{ti} &= \alpha + \beta_{1}(\text{time})_{ti}^{(1)} + \beta_{2}(\text{time})_{ti}^{(2)} + \beta_{3}(\text{treatment})_i \\
+    &+ \beta_{4} (\text{treatment})_i (\text{time})_{ti}^{(1)} + \beta_{5} (\text{treatment})_i (\text{time})_{ti}^{(2)} \\
+    &+ \left ( u_{0i} + u_{1i} \text{time}_{ti}^{(1)} + u_{2i} \text{time}_{ti}^{(2)} \right).
+\\
+\sigma &\sim St^{+}(3,0,1)
+\end{aligned}
+$$
+
+Because the data will be standardized prior to the analysis, I placed diffuse priors for the fixed effects of the intercept and slopes centered on zero and a standard deviation of 5. Previous research [@rafihi2023; @el2020acceptance] inform that the effect size differences between pre and post-test scores can be substantial. Therefore, the standard deviation for the fixed effects can be allowed to vary largely around 0.
+
+
+\begin{aligned}
+\alpha &\sim \mathcal{N}(0, 2)\\
+\beta_1, \beta_2, ...,\beta_5 &\sim \mathcal{N}(0, 5)\\
+
+\end{aligned}
+
+\begin{aligned}
+\begin{bmatrix} u_{0i} \\ u_{1i} \\ u_{2i} \end{bmatrix} &\sim \mathcal{N}
+    \begin{Bmatrix} 
+        \boldsymbol{0}=
+        \begin{bmatrix} 0 \\ 0 \\ 0  \end{bmatrix},
+        \boldsymbol{\Sigma}=
+        \begin{bmatrix} \tau^2_{u_{0i}} \\ 
+                        \tau_{u_{0i}u_{1i}} & \tau^2_{u_{1i}} \\
+                        \tau_{u_{0i}u_{2i}} & \tau_{u_{1i}u_{2i}} & \tau^2_{u_{2i}}
+        \end{bmatrix}
+    \end{Bmatrix}\\
+
+\boldsymbol{\Sigma} &= \boldsymbol{\tau}\boldsymbol{\Omega\tau}'\\
+\boldsymbol\Omega &\sim \text{LKJ}(\eta = 1)\\
+
+\tau^2_{u_{0i}}, \tau^2_{u_{1i}}, \tau^2_{u_{2i}} &\sim \Gamma(1,0.5)
+
+\end{aligned}
