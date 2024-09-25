@@ -1,0 +1,102 @@
+---
+title: "Week 1 - Introduction"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    #chalkboard: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    #css: custom.css
+    #theme: psc290-23
+    # highlight-style: atom-one-dark
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    # height: 900
+    footer: "PSC 012Y - Data Visualization in the Social Sciences"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+## Who am I
+
+-   2nd Year Graduate Student in Quantitative Psychology;
+
+-   MSc in Psychiatry at University of Sao Paulo, Brazil;
+
+-   Advised by Dr. Philippe Rast;
+
+-   Studying intraindividual variability.
+
+## Lab and homework dynamics
+
+- All computations will use the R language;
+
+- Assignments are released before Lab and should be completed during lab time, using the Lab computers;
+
+- You will not be able to submit the assignment from your personal computer as we implemented IP filters;
+
+- You will submit an `.rmd` file alongside a "knitted" document.
+
+- Office hours on Monday 4:20-6:20PM via Zoom (link on Canvas)
+
+- Questions via email at [mmcarmo@ucdavis.edu](mailto:mmcarmo@ucdavis.edu)
+
+# Installing R and RStudio
+
+## Download and Install R
+
+- <https://cran.r-project.org/>
+
+- **Windows**
+  - Choose base and then click on Download R 4.4.1 for Windows.
+
+- **macOS**
+  - Select the latest release for your version of macOS and download the installer.
+  - Open the `.pkg` file and follow the installation instructions.
+
+- **Linux**
+  - Follow the instructions for your distribution.
+  
+## Download and Install RStudio
+
+- <https://posit.co/download/rstudio-desktop/>
+- Choose the appropriate version for your operating system (Windows, macOS, or Linux).
+
+## Setting Up R Packages
+
+- After installing both R and RStudio, open RStudio on your computer.
+
+-  Install the necessary packages by typing the following commands in the RStudio Console:
+
+::: fragment
+```{r, eval = FALSE, echo=TRUE}
+install.packages(c("rmarkdown", "tidyverse", "knitr"))
+```
+:::
+
+- Load each package with the `library()` function.
+
+::: fragment
+```{r, eval = FALSE, echo=TRUE}
+library(rmarkdown)
+library(tidyverse)
+library(knitr)
+```
+:::
+
+## Let's test it out
+
+- Create a new temporary `.rmd` file from the drop down menu and knit it to a Word document
