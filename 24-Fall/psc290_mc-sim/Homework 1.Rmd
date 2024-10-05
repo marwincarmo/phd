@@ -69,11 +69,12 @@ hist(b)
 
 ```
 
-Looks like a normal distribution.
+Looks like a normal distribution. `a` is a vector of quantiles ranging from 0 to 1. To create `b` we map the quantiles defined in `a` in a standard normal distribution. The histogram of `b` is a this standard normal distribution. [rough draft]
 
 ## Part 3: Generating Random Data with different distributional forms
 
 ### Question 7
+
 The previous question showed us how to transform a sequence of probabilities, uniformly distributed from 0-1, into a vector of quantiles that follow a normal distribution. We can use that same method to generate a *random* variable that follows a normal distribution, by first generating random uniform data.  
 
 Generate a random variable of length 10000 (i.e., 10000 random values) from a uniform distribution with range (0, 1). Use `set.seed` to produce replicable results. Give your variable a name. 
@@ -120,18 +121,19 @@ hist(qexp(rv))
 ## Part 4: some mini-simulations to answer questions
 
 ### Question 12
+
 In class you simulated data to sum up a number of die rolls. Now you're going to do the same thing but write a function to do it. Your function should have 2 arguments: $N$ is the size of the sample (i.e., the number of dice that are rolled), and $w$ is the number of sides on the die (i.e., the number of possible outcomes the die can take). Your function should return the sum or average of the N rolls. Run your function to demonstrate that it works. 
 
 ```{r}
 
-dice <- function(N, w) {
+die_roll <- function(N = 1, w = 6) {
   
   sides <- seq(1, w, by = 1)
   res <- sample(sides, N, replace = TRUE)
   return(mean(res))
 }
 
-dice(5, 6)
+
 ```
 
 ### Question 13
@@ -139,17 +141,59 @@ How many rolls of a 6-sided die do you need to add together (or average) before 
 
 ```{r}
 
-results <- c()
-  
-for (i in 1:100) {
-  
-  results[i] <- dice(i, 6)
-  
+# Function to compute bias for Q-Q plot
+bias_qq <- function(sim_data) {
+  theoretical_quantiles <- qnorm(ppoints(length(sim_data)))
+  sample_quantiles <- quantile(sim_data, probs = ppoints(length(sim_data)))
+  return(mean(sample_quantiles - theoretical_quantiles))
 }
+
+# Function to simulate dice rolls and compute either sum or mean
+simulate_rolls <- function(n_rolls, n_simulations, operation = c("sum", "mean")) {
+  operation <- match.arg(operation)
+  rolls <- matrix(sample(1:6, n_rolls * n_simulations, replace = TRUE), ncol = n_rolls)
+  if (operation == "sum") {
+    return(rowSums(rolls))
+  } else if (operation == "mean") {
+    return(rowMeans(rolls))
+  }
+}
+
+# Simulate the process for different numbers of rolls and calculate bias
+rolls_list <- 1:100  # Testing up to 50 rolls
+n_simulations <- 10000  # Number of simulations
+
+bias_values <- sapply(rolls_list, function(n) {
+  sim_data <- simulate_rolls(n, n_simulations, operation = "mean")
+  bias_qq(sim_data)
+})
+
+# Plot Bias vs Number of Rolls to observe where it stabilizes
+plot(rolls_list, bias_values, type = "b", pch = 19, col = "green", 
+     xlab = "Number of Rolls", ylab = "Bias of Q-Q Plot",
+     main = "Bias vs Number of Rolls for Approximating Normality")
+abline(h = 3.5, col = "red", lty = 2)  # Zero bias line
 
 
 ```
 
+```{r}
+reps <-  10000
+
+rolls_list <- 1:100
+
+bias_values <- sapply(rolls_list, function(n) {
+  sim_data <- replicate(reps, die_roll(N = n))
+  sample_quantiles <- quantile(sim_data, probs = seq(1/(reps+1), 1 - 1/(reps+1), length.out = reps))
+  mean(sample_quantiles - theoretical_quantiles, na.rm = TRUE)
+})
+
+plot(rolls_list, bias_values, type = "b", pch = 19, 
+     xlab = "Number of Rolls", ylab = "Bias of Q-Q Plot",
+     main = "Bias vs Number of Rolls for Approximating Normality")
+abline(h = 3.5, col = "red", lty = 2)  # Zero bias line
+
+```
 
 
 ### Question 14
