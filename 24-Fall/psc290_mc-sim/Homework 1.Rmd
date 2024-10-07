@@ -59,7 +59,7 @@ b <- qnorm(a)
 plot(b, a)
 ```
 
-Sigmoidal curve.
+The plot is called Q-Q plot, and shows the the correspondence between the quantiles of a standard normal distribution and the quantiles of a uniform distribution.
 
 ### Question 6
 Now plot a histogram of the values in `b`. What does this distribution look like? Explain what happened.  
@@ -69,7 +69,7 @@ hist(b)
 
 ```
 
-Looks like a normal distribution. `a` is a vector of quantiles ranging from 0 to 1. To create `b` we map the quantiles defined in `a` in a standard normal distribution. The histogram of `b` is a this standard normal distribution. [rough draft]
+The plot behaves like a normal distribution centered around 0. `a` is a vector of quantiles ranging from 0 to 1. To create `b` we map the quantiles defined in `a` to a standard normal distribution. The histogram of `b` reflects the shape of this standard normal distribution.
 
 ## Part 3: Generating Random Data with different distributional forms
 
@@ -84,14 +84,13 @@ set.seed(890)
 
 rv <- runif(10000, 0, 1)
 
-
 ```
 
 ### Question 8
 Use a histogram to plot the values of the variable you just generated. You can use the `hist()` function in base R, or use `ggplot` and make it pretty. Set the width of each histogram bun to be .05 units wide. 
 
 ```{r}
-hist(rv)
+hist(rv, breaks = seq(0, 1, by = 0.05), col = "white", main = NULL)
 ```
 
 ### Question 9
@@ -99,21 +98,22 @@ Use the `qnorm` function to find the quantiles of the normal distribution corres
 
 ```{r}
 q <- qnorm(rv)
-
 ```
 
 ### Question 10
 Use a histogram to plot the quantiles that you found in the previous question. Again, you can use the `hist()` function in base R, or use `ggplot` and make it pretty. Whatever you use, give your axes interpretable labels. 
 
 ```{r}
-hist(q)
+hist(q, col = "white", main = NULL)
 ```
 
 ### Question 11
 That was cool. Take your same original random uniform variable, and give it a different distribution. Plot a histogram of your transformed values to check that your method worked. 
 
 ```{r}
-hist(qexp(rv))
+
+
+hist(qexp(rv), main = "Transformed Exponential Distribution", col = "white")
 
 ```
 
@@ -130,68 +130,39 @@ die_roll <- function(N = 1, w = 6) {
   
   sides <- seq(1, w, by = 1)
   res <- sample(sides, N, replace = TRUE)
-  return(mean(res))
+  return(mean(res)) # returning the average
 }
 
-
+die_roll(N = 100, w = 6)
 ```
 
 ### Question 13
 How many rolls of a 6-sided die do you need to add together (or average) before you get a distribution that behaves more or less like a normal distribution? You could use many different criteria to define "behaves more or less like a normal distribution". Pick one that can be quantified in some way ("I eyeballed the histogram and it looks normal to me" is not a quantifiable criterion) and justify your choice. Then run the simulation and report your result. Use the function that you write in the previous question in your simulation. 
 
-```{r}
 
-# Function to compute bias for Q-Q plot
-bias_qq <- function(sim_data) {
-  theoretical_quantiles <- qnorm(ppoints(length(sim_data)))
-  sample_quantiles <- quantile(sim_data, probs = ppoints(length(sim_data)))
-  return(mean(sample_quantiles - theoretical_quantiles))
-}
-
-# Function to simulate dice rolls and compute either sum or mean
-simulate_rolls <- function(n_rolls, n_simulations, operation = c("sum", "mean")) {
-  operation <- match.arg(operation)
-  rolls <- matrix(sample(1:6, n_rolls * n_simulations, replace = TRUE), ncol = n_rolls)
-  if (operation == "sum") {
-    return(rowSums(rolls))
-  } else if (operation == "mean") {
-    return(rowMeans(rolls))
-  }
-}
-
-# Simulate the process for different numbers of rolls and calculate bias
-rolls_list <- 1:100  # Testing up to 50 rolls
-n_simulations <- 10000  # Number of simulations
-
-bias_values <- sapply(rolls_list, function(n) {
-  sim_data <- simulate_rolls(n, n_simulations, operation = "mean")
-  bias_qq(sim_data)
-})
-
-# Plot Bias vs Number of Rolls to observe where it stabilizes
-plot(rolls_list, bias_values, type = "b", pch = 19, col = "green", 
-     xlab = "Number of Rolls", ylab = "Bias of Q-Q Plot",
-     main = "Bias vs Number of Rolls for Approximating Normality")
-abline(h = 3.5, col = "red", lty = 2)  # Zero bias line
-
-
-```
 
 ```{r}
-reps <-  10000
+reps <-  1000
+expected_value <- sum(seq(1:6) * rep(1/6, 6))
+rolls_list <- 1:50
 
-rolls_list <- 1:100
 
-bias_values <- sapply(rolls_list, function(n) {
+
+mse_qq <- sapply(rolls_list, function(n) {
   sim_data <- replicate(reps, die_roll(N = n))
+  theoretical_quantiles <- qnorm(seq(1/(reps+1), 1 - 1/(reps+1), length.out = reps))
   sample_quantiles <- quantile(sim_data, probs = seq(1/(reps+1), 1 - 1/(reps+1), length.out = reps))
-  mean(sample_quantiles - theoretical_quantiles, na.rm = TRUE)
+  return(mean((sample_quantiles - theoretical_quantiles)^2))
 })
 
-plot(rolls_list, bias_values, type = "b", pch = 19, 
+plot(rolls_list, mse_qq, type = "b", pch = 19, 
      xlab = "Number of Rolls", ylab = "Bias of Q-Q Plot",
      main = "Bias vs Number of Rolls for Approximating Normality")
-abline(h = 3.5, col = "red", lty = 2)  # Zero bias line
+abline(h = min(mse_qq) * 1.1, col = "red", lty = 2)
+
+library(moments)
+skewness(theoretical_quantiles) - skewness(sample_quantiles)
+kurtosis(theoretical_quantiles) - kurtosis(sample_quantiles)
 
 ```
 
@@ -201,6 +172,46 @@ At what sample size is it ok to use the standard normal (z) distribution rather 
 
 ```{r}
 
+## Analytical solution
+
+## critical z values
+lower_critical <- qnorm(0.05/2)
+upper_critical <- qnorm(1 - 0.05/2)
+
+# starting sample size
+n <- 2
+
+while (TRUE) {
+  
+  df <- n - 1
+  # corresponding t values
+  t_lower <- pt(lower_critical, df)
+  t_upper <- 1 - pt(upper_critical, df)
+
+  # error rate
+  t_error <- t_lower + t_upper
+  
+  if (abs(t_error - 0.05) <= 0.005) {
+      return(n)
+    }
+  n <- n + 1
+}
+
+# 
+print(n)
+
+
+## Simulation
+
+reps <- 10000
+tvals <- rt(reps, n - 1)
+
+prop_tails <- mean(abs(tvals) > upper_critical)
+prop_tails
+
+mc_error <- abs(prop_tails - 0.05)
+mc_error
 
 ```
 
+The required sample size is `r n`.
