@@ -1,6 +1,6 @@
 ---
 title: "PSC 290 MC Simulations Homework 1"
-author: "Mijke Rhemtulla"
+author: "Marwin Carmo"
 date: "2024-09-26"
 output: pdf_document
 ---
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Intro
 
-Answer all the questions below. This homework is due on Oct 16 before class. If you don't like the idea of a homework due before 9am, then it is due on Oct 15 at midnight. Upload both this Rmd file (completed) and the PDF output. If you are having troubles knitting to pdf, try knitting to html instead. Be sure your troubles aren't due toNow plot a histogram of the values missing objects in the Rmd file (e.g., all code should run without producing errors). 
+Answer all the questions below. This homework is due on Oct 16 before class. If you don't like the idea of a homework due before 9am, then it is due on Oct 15 at midnight. Upload both this Rmd file (completed) and the PDF output. If you are having troubles knitting to pdf, try knitting to html instead. Be sure your troubles aren't due to. Now plot a histogram of the values missing objects in the Rmd file (e.g., all code should run without producing errors). 
 
 You may work on this assignment with others, and you may ask for help (e.g., on Slack) while working. The work that you submit, though, must be your own. 
 
@@ -39,6 +39,7 @@ Let $p \sim N(10,6)$. How much more likely is it that you would observe a value 
 p <- dnorm(c(12, 14), mean = 10, sd = 6)
 p[1]/p[2]
 ```
+\textcolor{red}{Observing a value of 12 is `r round(p[1]/p[2],2)` times more likely than observing a value of 14.}
 
 ## Part 2: Understanding PDFs and CDFs
 
@@ -47,7 +48,7 @@ Using the `seq()` function, generate a sequence of numbers from 0 to 1, in incre
 
 ```{r}
 a <- seq(0, 1, by = .01)
-hist(a)
+hist(a, col = "white", main=NULL)
 ```
 
 ### Question 5
@@ -58,18 +59,16 @@ b <- qnorm(a)
 
 plot(b, a)
 ```
-
-The plot is called Q-Q plot, and shows the the correspondence between the quantiles of a standard normal distribution and the quantiles of a uniform distribution.
+\textcolor{red}{The plot is called Q-Q plot, and shows the the correspondence between the quantiles of a standard normal distribution and the quantiles of a uniform distribution.}
 
 ### Question 6
 Now plot a histogram of the values in `b`. What does this distribution look like? Explain what happened.  
 
 ```{r}
-hist(b)
+hist(b, col = "white", main = NULL)
 
 ```
-
-The plot behaves like a normal distribution centered around 0. `a` is a vector of quantiles ranging from 0 to 1. To create `b` we map the quantiles defined in `a` to a standard normal distribution. The histogram of `b` reflects the shape of this standard normal distribution.
+\textcolor{red}{The plot behaves like a normal distribution centered around 0. `a` is a vector of quantiles ranging from 0 to 1. To create `b` we map the quantiles defined in `a` to a standard normal distribution. The histogram of `b` reflects the shape of this standard normal distribution.}
 
 ## Part 3: Generating Random Data with different distributional forms
 
@@ -104,7 +103,7 @@ q <- qnorm(rv)
 Use a histogram to plot the quantiles that you found in the previous question. Again, you can use the `hist()` function in base R, or use `ggplot` and make it pretty. Whatever you use, give your axes interpretable labels. 
 
 ```{r}
-hist(q, col = "white", main = NULL)
+hist(q, col = "white", main = NULL, xlab = "Quantiles of a normal distribution")
 ```
 
 ### Question 11
@@ -139,35 +138,64 @@ die_roll(N = 100, w = 6)
 ### Question 13
 How many rolls of a 6-sided die do you need to add together (or average) before you get a distribution that behaves more or less like a normal distribution? You could use many different criteria to define "behaves more or less like a normal distribution". Pick one that can be quantified in some way ("I eyeballed the histogram and it looks normal to me" is not a quantifiable criterion) and justify your choice. Then run the simulation and report your result. Use the function that you write in the previous question in your simulation. 
 
-
+\textcolor{red}{To quantify when our empirical distribution of \emph{n} die rolls starts to behave like a normal distribution, we can calculate the Mean Square Error (MSE) of the sample quantiles compared to the theoretical quantiles:}
 
 ```{r}
-reps <-  1000
-expected_value <- sum(seq(1:6) * rep(1/6, 6))
-rolls_list <- 1:50
+set.seed(890)
+reps <-  10000
+die_values <- 1:6
 
+# To compute the theoretical quantiles we need to find the 
+# expected value of a 6-sided die roll and its standard deviation
+expected_value <- sum(die_values * rep(1/6, 6))
+std_dev <- sqrt(sum((1/6*((die_values-mean(die_values))^2))))
+# We can define a sequence of rolls from 2 to 100 as it is very likely
+# that we'll reach a good approximation with way less rolls than 100.
+rolls_list <- 2:100
 
-
+# In this function we first simulate 10000 times `n` die rolls,
+# then, we compute 10000 theoretical quantiles of a distribution
+# with a mean equal to the expected value of a 6-sided die roll
+# and the standard deviation as the standard error of the mean of `n`
+# die rolls.
 mse_qq <- sapply(rolls_list, function(n) {
   sim_data <- replicate(reps, die_roll(N = n))
-  theoretical_quantiles <- qnorm(seq(1/(reps+1), 1 - 1/(reps+1), length.out = reps))
+  theoretical_quantiles <- qnorm(seq(1/(reps+1), 1 - 1/(reps+1), length.out = reps), 
+                                 mean = expected_value, sd= std_dev/sqrt(n))
   sample_quantiles <- quantile(sim_data, probs = seq(1/(reps+1), 1 - 1/(reps+1), length.out = reps))
   return(mean((sample_quantiles - theoretical_quantiles)^2))
 })
 
+# Now we can print the MSE by the number of rolls to have an idea of
+# when it starts to approach zero.
+
+mse_df <- data.frame(rolls_list,mse_qq) 
+
+knitr::kable(mse_df,
+    col.names = c("Die rolls", "MSE")
+  )
+
+# Given the MSE values observed in the table above, we can define an arbitrary
+# threshold for stabilization. The difference in MSE values looks less
+# accentuated for MSE < 0.001. Therefore,
+
+threshold <- 0.001
+
+# Now we can find the first point where all subsequent MSE values are below the threshold
+
+stabilization_point <- which(cummin(mse_df$mse_qq) < threshold)[1]
+
+# Plot. Red line marks the stabilization point
 plot(rolls_list, mse_qq, type = "b", pch = 19, 
-     xlab = "Number of Rolls", ylab = "Bias of Q-Q Plot",
-     main = "Bias vs Number of Rolls for Approximating Normality")
-abline(h = min(mse_qq) * 1.1, col = "red", lty = 2)
-
-library(moments)
-skewness(theoretical_quantiles) - skewness(sample_quantiles)
-kurtosis(theoretical_quantiles) - kurtosis(sample_quantiles)
-
+     xlab = "Number of Rolls", ylab = "MSE")
+abline(v = stabilization_point, col = "red", lwd = 2)
 ```
 
+\textcolor{red}{For this somewhat arbitrary MSE value, we could say that the distribution of the means of 6-sided die  rolls
+approximates to a normal distribution when \emph{n} = `r stabilization_point`.}
 
 ### Question 14
+
 At what sample size is it ok to use the standard normal (z) distribution rather than the t-distribution for hypothesis testing? Suppose that by "ok" we mean that the type-I error rate (rate of false positives) is within half a percent of the nominal .05 rate (assuming an alpha level of .05). Answer this question in two ways: First, do it analytically, using the `qnorm` and `pt` functions to find the proportion of various t-distributions beyond the critical values of the z-distirbution. Assume that the degrees of freedom of the t-distribution are $N-1$. Second, once you have found an answer, verify it by simulating a large number of samples from the t-distribution at the sample size you identified as being "ok": what proportion of your simulated values fall in the tails past the critical z-values? Remember to set a random number seed to produce a replicable result. How much `monte carlo` error do you have (i.e., how accurate is your simulation result relative to your analytical result)? 
 
 ```{r}
@@ -202,7 +230,7 @@ print(n)
 
 
 ## Simulation
-
+set.seed(890)
 reps <- 10000
 tvals <- rt(reps, n - 1)
 
@@ -214,4 +242,5 @@ mc_error
 
 ```
 
-The required sample size is `r n`.
+
+\textcolor{red}{The required sample size is `r n` according to the analytical solution. By simulating `r reps` random t-values from a t-distribution with `r n- 1` degrees of freedom, we observe that `r prop_tails *100`\% of the values are larger than the critical z-value of `r upper_critical`. The monte carlo error was found to be `r mc_error`.}
