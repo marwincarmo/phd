@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Intro
 
-Answer all the questions below. This homework is due on Oct 16 before class. If you don't like the idea of a homework due before 9am, then it is due on Oct 15 at midnight. Upload both this Rmd file (completed) and the PDF output. If you are having troubles knitting to pdf, try knitting to html instead. Be sure your troubles aren't due to. Now plot a histogram of the values missing objects in the Rmd file (e.g., all code should run without producing errors). 
+Answer all the questions below. This homework is due on Oct 16 before class. If you don't like the idea of a homework due before 9am, then it is due on Oct 15 at midnight. Upload both this Rmd file (completed) and the PDF output. If you are having troubles knitting to pdf, try knitting to html instead. Be sure your troubles aren't due toNow plot a histogram of the values missing objects in the Rmd file (e.g., all code should run without producing errors).  
 
 You may work on this assignment with others, and you may ask for help (e.g., on Slack) while working. The work that you submit, though, must be your own. 
 
@@ -111,8 +111,8 @@ That was cool. Take your same original random uniform variable, and give it a di
 
 ```{r}
 
-
-hist(qexp(rv), main = "Transformed Exponential Distribution", col = "white")
+rv_exp <- qexp(rv) 
+hist(rv_exp, main = "Transformed Exponential Distribution", col = "white")
 
 ```
 
@@ -125,14 +125,14 @@ In class you simulated data to sum up a number of die rolls. Now you're going to
 
 ```{r}
 
-die_roll <- function(N = 1, w = 6) {
+dice_roll <- function(N = 1, w = 6) {
   
   sides <- seq(1, w, by = 1)
   res <- sample(sides, N, replace = TRUE)
   return(mean(res)) # returning the average
 }
 
-die_roll(N = 100, w = 6)
+dice_roll(N = 100, w = 6)
 ```
 
 ### Question 13
@@ -146,20 +146,20 @@ reps <-  10000
 die_values <- 1:6
 
 # To compute the theoretical quantiles we need to find the 
-# expected value of a 6-sided die roll and its standard deviation
+# expected value of a 6-sided dice roll and its standard deviation
 expected_value <- sum(die_values * rep(1/6, 6))
 std_dev <- sqrt(sum((1/6*((die_values-mean(die_values))^2))))
-# We can define a sequence of rolls from 2 to 100 as it is very likely
+# We can define a sequence of rolls from 2 to 100. It is very likely
 # that we'll reach a good approximation with way less rolls than 100.
 rolls_list <- 2:100
 
 # In this function we first simulate 10000 times `n` die rolls,
 # then, we compute 10000 theoretical quantiles of a distribution
-# with a mean equal to the expected value of a 6-sided die roll
+# with a mean equal to the expected value of a 6-sided dice roll
 # and the standard deviation as the standard error of the mean of `n`
 # die rolls.
 mse_qq <- sapply(rolls_list, function(n) {
-  sim_data <- replicate(reps, die_roll(N = n))
+  sim_data <- replicate(reps, dice_roll(N = n))
   theoretical_quantiles <- qnorm(seq(1/(reps+1), 1 - 1/(reps+1), length.out = reps), 
                                  mean = expected_value, sd= std_dev/sqrt(n))
   sample_quantiles <- quantile(sim_data, probs = seq(1/(reps+1), 1 - 1/(reps+1), length.out = reps))
@@ -220,7 +220,7 @@ while (TRUE) {
   t_error <- t_lower + t_upper
   
   if (abs(t_error - 0.05) <= 0.005) {
-      return(n)
+      break
     }
   n <- n + 1
 }
@@ -243,4 +243,4 @@ mc_error
 ```
 
 
-\textcolor{red}{The required sample size is `r n` according to the analytical solution. By simulating `r reps` random t-values from a t-distribution with `r n- 1` degrees of freedom, we observe that `r prop_tails *100`\% of the values are larger than the critical z-value of `r upper_critical`. The monte carlo error was found to be `r mc_error`.}
+\textcolor{red}{The required sample size is `r n` according to the analytical solution. By simulating `r reps` random t-values from a t-distribution with `r n- 1` degrees of freedom, we observe that `r prop_tails *100`\% of the values are larger than the critical z-value of `r round(upper_critical,3)`. The monte carlo error was found to be `r mc_error`.}
