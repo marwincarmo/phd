@@ -1,0 +1,392 @@
+---
+title: "Statistical Inference After Model Selection"
+subtitle: "Berk, Brown and Zhao (2010)"
+author: "Abraham Iñiguez and Marwin Carmo"
+format: 
+  revealjs:
+    css: styles.css
+    scrollable: true
+    incremental: false
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    # height: 900
+    footer: "Statistical Inference After Model Selection"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(patchwork)
+```
+
+## Overview of the presentation
+
+- [Background & motivations](#background)
+- [Why is model selection an issue?](#problem)
+- [Simulations of Model-Selection](#sims)
+- [Summary](#summary)
+- [Potential solutions](#solutions)
+
+## Background & motivations {#background}
+
+## Why is model selection an issue? {#problem}
+
+## Simulations of Model-Selection {#sims}
+
+-   Forward stepwise regression using AIC applied to 10,000 samples of $n$ = 200
+
+```{=tex}
+\begin{equation}
+y_i = \beta_0 + \beta_1w_i + \beta_2x_i + \beta_3z_i + \varepsilon_i
+\end{equation}
+```
+::: columns
+::: {.column width="33%"}
+### Fixed effects
+
+-   $\beta_0$ = 3.0
+-   $\beta_1$ = 0.0
+-   $\beta_2$ = 1.0
+-   $\beta_3$ = 2.0.
+:::
+
+::: {.column width="33%"}
+### Variances
+
+-   $\sigma^2_\varepsilon$ = 10.0
+-   $\sigma^2_w$ = 5.0
+-   $\sigma^2_x$ = 6.0
+-   $\sigma^2_z$ = 7.0
+:::
+
+::: {.column width="33%"}
+### Covariances
+
+-   $\sigma_{w,x}$ = 4.0
+-   $\sigma_{w,z}$ = 5.0
+-   $\sigma_{x,z}$ = 5.0
+:::
+:::
+
+## Simulations of Model-Selection {auto-animate="true"}
+
+``` r
+reps  <-  1000
+p <- 3
+Sigma <- matrix(c(5,4,5,
+                  4,6,5, 
+                  5,5,7), p, p)
+n <- 200
+betas <- c(3, 0, 1, 2)
+
+rsq <- NULL
+coefs <- cover <- matrix(NA, nrow = reps, ncol = 3)
+colnames(coefs) <- c("w", "x", "z")
+colnames(cover) <- c("w", "x", "z")
+```
+
+## Simulations of Model-Selection {auto-animate="true"}
+
+``` r 
+reps  <-  1000
+p <- 3
+Sigma <- matrix(c(5,4,5,
+                  4,6,5, 
+                  5,5,7), p, p)
+n <- 200
+betas <- c(3, 0, 1, 2)
+
+rsq <- NULL
+coefs <- cover <- matrix(NA, nrow = reps, ncol = 3)
+colnames(coefs) <- c("w", "x", "z")
+colnames(cover) <- c("w", "x", "z")
+
+for (i in seq(reps)) {
+  X <-  MASS::mvrnorm(n = n, rep(0, 3) , Sigma)
+  y <- as.numeric(cbind(1, X) %*% betas + rnorm(n, 0, 10))
+  Xy <- as.data.frame( cbind(X, y))
+  colnames(Xy) <- c(c("w", "x", "z"), "y")
+  fit <- lm(y ~., data = Xy)
+  sel <- step(fit, k = 2, trace = FALSE)
+  s <- summary(sel)
+  tvals <- s$coefficients[,3][-1]
+  coefs[i, names(tvals)] <-  tvals
+  rsq[i] <- s$r.squared
+}
+```
+
+---
+
+### Distribution of models selected in 10,000 draws
+
+```{r echo=FALSE}
+reps  <-  1000 
+p <- 3
+Sigma <- matrix(c(5,4,5,
+                  4,6,5, 
+                  5,5,7), p, p)
+n <- 200
+betas <- c(3, 0, 1, 2)
+names(betas) <- c("Int", "w", "x", "z")
+rsq <- NULL
+coefs <- cover <- tvals <- matrix(NA, nrow = reps, ncol = 3)
+colnames(coefs) <- colnames(cover) <- colnames(tvals) <- c("w", "x", "z")
+
+
+for (i in seq(reps)) {
+  X <-  MASS::mvrnorm(n = n, rep(0, 3) , Sigma)
+  y <- as.numeric(cbind(1, X) %*% betas + rnorm(n, 0, 10))
+  Xy <- as.data.frame( cbind(X, y))
+  colnames(Xy) <- c(c("w", "x", "z"), "y")
+  fit <- lm(y ~., data = Xy)
+  sel <- step(fit, k = 2, trace = FALSE)
+  s <- summary(sel)
+  tval <- s$coefficients[,3][-1]
+  tvals[i, names(tval)] <-  tval
+  coefs[i, names(tval)] <-  coef(sel)[-1]
+  rsq[i] <- s$r.squared
+  cis <- confint(fit)[-1,]
+  if (length(cis) < 3) {
+    cover[i,names(tval)] <- ifelse(cis[1] < 1 & cis[2] > 1, 1, 0)
+  } else {
+    cover[i,names(tval)] <- ifelse(cis[names(tval),1] < betas[names(tval)] & cis[names(tval),2] > betas[names(tval)], 1, 0)
+  }
+}
+# subsetting the coefficients for each chosen model
+m_none <- (coefs[is.na(coefs[,"w"]) & is.na(coefs[,"x"]) & is.na(coefs[,"z"]),])
+m_w <- (coefs[!is.na(coefs[,"w"]) & is.na(coefs[,"x"]) & is.na(coefs[,"z"]),])
+m_x <- (coefs[is.na(coefs[,"w"]) & !is.na(coefs[,"x"]) & is.na(coefs[,"z"]),])
+m_z <- (coefs[is.na(coefs[,"w"]) & is.na(coefs[,"x"]) & !is.na(coefs[,"z"]),])
+m_wx <- (coefs[!is.na(coefs[,"w"]) & !is.na(coefs[,"x"]) & is.na(coefs[,"z"]),])
+m_wz <- (coefs[!is.na(coefs[,"w"]) & is.na(coefs[,"x"]) & !is.na(coefs[,"z"]),])
+m_xz <- (coefs[is.na(coefs[,"w"]) & !is.na(coefs[,"x"]) & !is.na(coefs[,"z"]),])
+m_wxz <- (coefs[!is.na(coefs[,"w"]) & !is.na(coefs[,"x"]) & !is.na(coefs[,"z"]),])
+```
+
+```{r echo=FALSE}
+models <- list("None" = m_none, "w" = m_w, "x" = m_x, 
+               "z" = m_z,"wx"= m_wx,"wz"= m_wz,"xz"= m_xz,"wxz"= m_wxz)
+m <- purrr::map_dfr(models, function(x) (nrow(x)/reps)*100)
+
+```
+
+|            |   None |    W   |    X     |   Z      |    WX    |    WZ    |    XZ    |  WXZ   |
+|:-----------|-------:|-------:|---------:|---------:|---------:|---------:|---------:|-------:|
+|Berk et al. |     0  |      0 |   0.0001 |     17.4 |      1.0 |      4.9 |     65.7 | 10.8   |
+|Replication |`r m[1]`|`r m[2]`| `r m[3]` | `r m[4]` | `r m[5]` | `r m[6]` | `r m[7]` |`r m[8]`|
+
+---
+
+### Statistics
+
+```{r include=FALSE}
+
+res <- tibble::tibble(
+  Predictor = c("W", "X", "Z"),
+  #rsq = mean(rsq),
+  Coverage = colMeans(cover, na.rm = TRUE),
+  Estimate = colMeans(coefs, na.rm = TRUE),
+  `t-value` = colMeans(tvals, na.rm = TRUE),
+   `Inclusion (%)` = (colSums(!is.na(tvals))/reps)*100,
+  Bias = colMeans((coefs - betas), na.rm = TRUE),
+  MSE = colMeans((coefs - betas)^2, na.rm = TRUE)
+  
+)
+
+```
+
+```{r}
+knitr::kable(res, digits=3)
+```
+
+
+## t-values for $\beta_2$
+
+-   Red curve/ solid line = Conditional on preferred model being known
+
+-   Blue curve/ dashed line = Conditional on predictor being included in a model
+
+```{r include = FALSE}
+
+# values without model selection
+rsq_pref <- NULL
+coefs_pref <- cover_pref <- matrix(NA, nrow = reps, ncol = 3)
+colnames(coefs_pref) <- c("w", "x", "z")
+colnames(cover_pref) <- c("w", "x", "z")
+
+
+for (i in seq(reps)) {
+  X <-  MASS::mvrnorm(n = n, rep(0, 3) , Sigma)
+  y <- as.numeric(cbind(1, X) %*% betas + rnorm(n, 0, 10))
+  Xy <- as.data.frame( cbind(X, y))
+  colnames(Xy) <- c(c("w", "x", "z"), "y")
+  fit <- lm(y ~ x + z, data = Xy)
+  s <- summary(fit)
+  t_vals <- s$coefficients[,3][-1]
+  coefs_pref[i, names(t_vals)] <-  t_vals
+  rsq_pref[i] <- s$r.squared
+}
+
+full_model <- tibble::as_tibble(coefs_pref)
+pref_selected <- tibble::as_tibble(tvals[!is.na(tvals[,"x"]  & tvals[,"z"]),])
+x_included <- tibble::as_tibble(tvals[!is.na(tvals[,"x"]),])
+z_included <- tibble::as_tibble(tvals[!is.na(tvals[,"z"]),])
+
+res_df <- dplyr::bind_rows("full" = full_model, "pref" = pref_selected, 
+                          "x_included" = x_included, "z_included" = z_included, .id="sim")
+```
+
+```{r include=FALSE}
+
+xplot <- res_df |> 
+  dplyr::filter(sim %in% c("full", "x_included")) |> 
+  ggplot(aes(x, fill = sim, color = sim)) +
+  geom_density(adjust = 2, alpha = 0.4) +
+  theme_minimal(12) +
+  theme(legend.position = "top") +
+  scale_y_continuous(limits = c(0, 0.55)) +
+  scale_x_continuous(limits = c(-3, 8)) +
+  labs(x = "t-values for Regressor X", y = "Density") +
+  scale_color_manual(values = c("red3", "dodgerblue3")) +
+  scale_fill_manual(values = c("red3", "dodgerblue3")) +
+  guides(fill = "none", color = "none")
+```
+
+::: {layout-ncol="2"}
+```{r}
+xplot
+```
+
+![](img/tvalsX.png){width="400" height="400"}
+:::
+
+## t-values for $\beta_3$
+
+-   Red curve/ solid line = Conditional on preferred model being known
+
+-   Blue curve/ dashed line = Conditional on predictor being included in a model
+
+```{r include=FALSE}
+zplot <- res_df |> 
+  dplyr::filter(sim %in% c("full", "z_included")) |> 
+  ggplot(aes(z, fill = sim, color = sim)) +
+  geom_density(adjust = 2, alpha = 0.4) +
+  theme_minimal(12) +
+  theme(legend.position = "none") +
+  scale_y_continuous(limits = c(0, 0.55)) +
+  labs(x = "t-values for Regressor Z", y = "Density") +
+  scale_color_manual(values = c("red3", "dodgerblue3")) +
+  scale_fill_manual(values = c("red3", "dodgerblue3")) +
+  guides(fill="none", color = "none")
+```
+
+::: {layout-ncol="2"}
+```{r}
+zplot
+```
+
+![](img/tvalsZ.png){width="400" height="400"}
+:::
+
+## False power
+
+-   For the preferred model, power to reject $H_0: \beta_2=0$ with $\alpha =0.05$ is approximately 60%.
+
+-   After model selection, that probability is about 76%.
+
+-   Bias due to model selection artificially inflates power in about 27%.
+
+---
+
+-   Statistical inference might be problematic even when the statistical inference is conditional on arriving at the preferred model ($X$ and $Z$ included):
+
+```{r}
+
+
+xpref_plot <- res_df |> 
+  dplyr::filter(sim %in% c("full", "pref")) |> 
+  ggplot(aes(x, fill = sim, color = sim)) +
+  geom_density(adjust = 2, alpha = 0.4) +
+  theme_minimal(12) +
+  theme(legend.position = "top") +
+  scale_y_continuous(limits = c(0, 0.55)) +
+  labs(x = "t-values for Regressor X", y = "Density") +
+  scale_color_manual(name = "Conditional on",
+                      labels = c("preferred model being known", "preferred model being selected"),
+                      values = c("red3", "dodgerblue3")) +
+  scale_fill_manual(name = "Conditional on",
+                      labels = c("preferred model being known", "preferred model being selected"),
+                      values = c("red3", "dodgerblue3"))
+
+zpref_plot <- res_df |> 
+  dplyr::filter(sim %in% c("full", "pref")) |> 
+  ggplot(aes(z, fill = sim, color = sim)) +
+  geom_density(adjust = 2, alpha = 0.4) +
+  theme_minimal(12) +
+  theme(legend.position = "none",
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank()) +
+  scale_y_continuous(limits = c(0, 0.55)) +
+  scale_color_manual(values = c("red3", "dodgerblue3")) +
+  scale_fill_manual(values = c("red3", "dodgerblue3")) +
+  labs(x = "t-values for Regressor Z") +
+  guides(fill="none", color = "none")
+
+xpref_plot + zpref_plot + plot_layout(guides = 'collect') &
+  theme(legend.position='top')
+
+
+```
+
+## Summary {#summary}
+
+-   Post-model-selection statistical inference can lead to biased regression parameter estimates and seriously misleading statistical tests and confidence intervals.
+
+-   The particular selection procedure used does not materially matter.
+
+-   Sometimes the correct sampling distribution and the post-model-selection sampling distribution will be very similar.
+
+## Potential solutions {#solutions}
+
+-   Split sample in training and test samples (😦)
+
+-   Collect two random samples (😨)
+
+-   Derive a theoretically based appropriate model (😰)
+
+-   Differentiate between confirmatory and exploratory analysis (🤯)
+
+-   Should all else fail, forego formal statistical inference altogether (☠️)
+
+-   Model averaging (Lukacs et al., 2019)[https://link.springer.com/article/10.1007/s10463-009-0234-4]
+
+## Discussion {#discussion}
+
+-   What did the authors do particularly well?
+  - Simulation conditions were well specified
+  - Good framing of the problem and laying out potential solutions
+
+-   Is there enough detail that you could replicate their simulation given the information in the paper?
+  - As we have shown, there are!
+
+## Discussion {#discussion}
+
+- What is lacking
+  - The authors play with only one scenario. There could be variations to show cases where post-model selection is *really* bad or 
+
+- What would you have liked to see in the paper?
+
