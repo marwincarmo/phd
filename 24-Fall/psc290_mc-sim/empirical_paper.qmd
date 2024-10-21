@@ -41,9 +41,47 @@ library(patchwork)
 - [Summary](#summary)
 - [Potential solutions](#solutions)
 
-## Background & motivations {#background}
+## Background {#background}
+
+```{=tex}
+\begin{equation}
+y_i = \beta_0 + \beta_1X_i + \varepsilon_i
+\end{equation}
+```
+
+- Classic regression analysis treats predictors as fixed or non-random. 
+
+- Allows estimation of unbiased coefficients.
+
+## Motivations {#motivations}
+
+- Berk and colleagues (2009) claim Model Selection is ubiquitous in Criminology.
+
+- When the correct model is unknown…
+  - Set of Models
+  - Data is examined to choose the "best" model
+  - Parameters are estimated
+  - Statistical inference
+
+- However, what happens when the same dataset is used?
 
 ## Why is model selection an issue? {#problem}
+
+- Sampling distributions become distorted
+
+- Estimates are biased (e.g., Beta coefficients, standard errors)
+
+- Overconfidence in results (inflated Type 1 error)
+
+## Why is model selection an issue? {#problem}
+
+### Specific Mechanisms
+
+- Direct Censoring
+
+- Indirect Censoring
+
+- Alterations in dispersion of regression parameter estimates
 
 ## Simulations of Model-Selection {#sims}
 
@@ -85,7 +123,7 @@ y_i = \beta_0 + \beta_1w_i + \beta_2x_i + \beta_3z_i + \varepsilon_i
 ## Simulations of Model-Selection {auto-animate="true"}
 
 ``` r
-reps  <-  1000
+reps  <-  10000
 p <- 3
 Sigma <- matrix(c(5,4,5,
                   4,6,5, 
@@ -102,7 +140,7 @@ colnames(cover) <- c("w", "x", "z")
 ## Simulations of Model-Selection {auto-animate="true"}
 
 ``` r 
-reps  <-  1000
+reps  <-  10000
 p <- 3
 Sigma <- matrix(c(5,4,5,
                   4,6,5, 
@@ -134,7 +172,7 @@ for (i in seq(reps)) {
 ### Distribution of models selected in 10,000 draws
 
 ```{r echo=FALSE}
-reps  <-  1000 
+reps  <-  10000 
 p <- 3
 Sigma <- matrix(c(5,4,5,
                   4,6,5, 
@@ -191,7 +229,15 @@ m <- purrr::map_dfr(models, function(x) (nrow(x)/reps)*100)
 
 ---
 
-### Statistics
+- The $R^2$s varied over the simulations between about .3 and .4.
+
+- For $X$ the post-model selection distribution has a greater mean (2.6–2.2) and a smaller standard deviation (.79–1.0).
+
+- For $Z$  the mean and the standard deviation are biased substantially upward: from 4.9 to 5.5 for the mean and from 1.0 to 2.3 for the standard deviation.
+
+---
+
+### Statistics (our results)
 
 ```{r include=FALSE}
 
@@ -213,8 +259,9 @@ res <- tibble::tibble(
 knitr::kable(res, digits=3)
 ```
 
+---
 
-## t-values for $\beta_2$
+### t-values for $\beta_2$
 
 -   Red curve/ solid line = Conditional on preferred model being known
 
@@ -274,7 +321,9 @@ xplot
 ![](img/tvalsX.png){width="400" height="400"}
 :::
 
-## t-values for $\beta_3$
+---
+
+### t-values for $\beta_3$
 
 -   Red curve/ solid line = Conditional on preferred model being known
 
@@ -312,10 +361,13 @@ zplot
 
 ---
 
--   Statistical inference might be problematic even when the statistical inference is conditional on arriving at the preferred model ($X$ and $Z$ included):
+Selecting the preferred model ($X$ and $Z$ included) does not guarantee any of the desirable properties of the regression coefficient estimates.
 
 ```{r}
-
+#| fig-width: 12
+#| fig-height: 6
+#| fig-dpi: 300
+#| fig-align: "center"
 
 xpref_plot <- res_df |> 
   dplyr::filter(sim %in% c("full", "pref")) |> 
@@ -362,6 +414,7 @@ xpref_plot + zpref_plot + plot_layout(guides = 'collect') &
 
 ## Potential solutions {#solutions}
 
+::: incremental
 -   Split sample in training and test samples (😦)
 
 -   Collect two random samples (😨)
@@ -372,21 +425,62 @@ xpref_plot + zpref_plot + plot_layout(guides = 'collect') &
 
 -   Should all else fail, forego formal statistical inference altogether (☠️)
 
--   Model averaging (Lukacs et al., 2019)[https://link.springer.com/article/10.1007/s10463-009-0234-4]
+-   Model averaging ([Lukacs et al., 2019](https://link.springer.com/article/10.1007/s10463-009-0234-4))
+:::
 
 ## Discussion {#discussion}
 
--   What did the authors do particularly well?
+::: incremental
+- What did the authors do particularly well?
   - Simulation conditions were well specified
   - Good framing of the problem and laying out potential solutions
 
--   Is there enough detail that you could replicate their simulation given the information in the paper?
-  - As we have shown, there are!
+- Is there enough detail to replicate their simulation?
+  - As we have shown, there is!
+:::
 
-## Discussion {#discussion}
 
-- What is lacking
-  - The authors play with only one scenario. There could be variations to show cases where post-model selection is *really* bad or 
 
-- What would you have liked to see in the paper?
+---
+
+::: incremental
+- What is lacking?
+  - Variations to show when post-model selection inference is *really* bad.
+  - Heatmaps!
+:::
+
+::: fragment
+```{r}
+#| out-width: "45%"
+#| fig-dpi: 300
+#| fig-align: "center"
+
+simdf <- readRDS("out/simdf.rds")
+
+simdf |> 
+  dplyr::mutate(dplyr::across(c("coverage", "bias", "mse", "rsq"), scale)) |> 
+  tidyr::pivot_longer(cols = c(coverage, bias, mse, rsq), names_to = "measure", values_to = 'value') |> 
+  dplyr::mutate(measure = dplyr::recode(measure, "coverage" = "Coverage", "bias" = "Bias", "mse" = "MSE", "rsq" = "R^2")) |>
+  ggplot() +
+  aes(x = cor, y = npred, fill = value) +
+  geom_tile() +
+  scale_fill_viridis_c(direction = -1, option = "inferno", alpha = .9) +
+  scale_y_continuous(breaks = c(2, 4, 6, 8, 10)) +
+  labs(x = latex2exp::TeX("$\\rho$"), y = "Number of predictors", fill = "SD") +
+  theme_minimal(12) +
+  facet_wrap(~measure, scales = "free", 
+             labeller = label_parsed)
+```
+:::
+---
+
+::: {.center}
+Try my [ShinyApp](https://marwin.shinyapps.io/model-selection-app/)!
+::: 
+
+
+```{r}
+#| fig-align: "center"
+plot(qrcode::qr_code("https://marwin.shinyapps.io/model-selection-app/"))
+```
 
