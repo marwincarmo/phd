@@ -35,11 +35,11 @@ library(patchwork)
 
 ## Overview of the presentation
 
-- [Background & motivations](#background)
-- [Why is model selection an issue?](#problem)
-- [Simulations of Model-Selection](#sims)
-- [Summary](#summary)
-- [Potential solutions](#solutions)
+-   [Background & motivations](#background)
+-   [Why is model selection an issue?](#problem)
+-   [Simulations of Model-Selection](#sims)
+-   [Summary](#summary)
+-   [Potential solutions](#solutions)
 
 ## Background {#background}
 
@@ -48,77 +48,130 @@ library(patchwork)
 y_i = \beta_0 + \beta_1X_i + \varepsilon_i
 \end{equation}
 ```
+-   Classic regression analysis treats predictors as fixed or non-random.
 
-- Classic regression analysis treats predictors as fixed or non-random. 
-
-- Allows estimation of unbiased coefficients.
+-   Allows estimation of unbiased coefficients.
 
 ## Motivations {#motivations}
 
-- Berk and colleagues (2009) claim Model Selection is ubiquitous in Criminology.
+-   Berk and colleagues (2010) claim Model Selection is ubiquitous in Criminology.
 
-- When the correct model is unknown…
-  - Set of Models
-  - Data is examined to choose the "best" model
-  - Parameters are estimated
-  - Statistical inference
+-   When the correct model is unknown…
 
-- However, what happens when the same dataset is used?
+    -   Set of Models
+    -   Data is examined to choose the "best" model
+    -   Parameters are estimated
+    -   Statistical inference
 
-## Why is model selection an issue? {#problem}
-
-- Sampling distributions become distorted
-
-- Estimates are biased (e.g., Beta coefficients, standard errors)
-
-- Overconfidence in results (inflated Type 1 error)
+-   However, what happens when the same dataset is used?
 
 ## Why is model selection an issue? {#problem}
+
+-   Sampling distributions become distorted
+
+-   Estimates are biased (e.g., Beta coefficients, standard errors)
+
+-   Overconfidence in results (inflated Type 1 error)
+
+    ![](img/type1.png){ width="40%" fig-align="center" }
+
+## Why is model selection an issue?
 
 ### Specific Mechanisms
 
-- Direct Censoring
+-   Direct Censoring
 
-- Indirect Censoring
+-   Indirect Censoring
 
-- Alterations in dispersion of regression parameter estimates
+-   Alterations in dispersion of regression parameter estimates
 
 ## Simulations of Model-Selection {#sims}
 
--   Forward stepwise regression using AIC applied to 10,000 samples of $n$ = 200
+-   Forward stepwise regression using AIC applied to 10,000 samples of $n$ = 200.
+
+-   At each step, the term is added that leads to the model with the smallest AIC. The procedure stops when no remaining regressor improves the AIC.
 
 ```{=tex}
 \begin{equation}
 y_i = \beta_0 + \beta_1w_i + \beta_2x_i + \beta_3z_i + \varepsilon_i
 \end{equation}
 ```
-::: columns
-::: {.column width="33%"}
-### Fixed effects
 
--   $\beta_0$ = 3.0
--   $\beta_1$ = 0.0
--   $\beta_2$ = 1.0
--   $\beta_3$ = 2.0.
+------------------------------------------------------------------------
+
+-   The predictors follow a multivariate normal distribution:
+
+$$
+\begin{bmatrix}
+w \\
+x \\
+z
+\end{bmatrix}
+\sim \mathcal{N}\left(
+\begin{bmatrix}
+0 \\
+0 \\
+0
+\end{bmatrix},
+\begin{bmatrix}
+5.0 & 4.0 & 5.0 \\
+4.0 & 6.0 & 5.0 \\
+5.0 & 5.0 & 7.0
+\end{bmatrix}
+\right)
+$$
+
+-   The fixed effects coefficients are $\beta_0$ = 3.0, $\beta_1$ = 0.0, $\beta_2$ = 1.0, and $\beta_3$ = 2.0.
+
+-   The error term follows a normal distribution $\varepsilon \sim \mathcal{N}(0, 10.0)$.
+
+::: notes
+Because the coefficient for w is 0, they call "preferred" model the model where w is excluded. The full model and the preferred model will generate the same conditional expectations for the response. The smaller model is preferred because it is simpler and uses up one less degree of freedom.
 :::
 
-::: {.column width="33%"}
-### Variances
+<!-- ::: columns -->
 
--   $\sigma^2_\varepsilon$ = 10.0
--   $\sigma^2_w$ = 5.0
--   $\sigma^2_x$ = 6.0
--   $\sigma^2_z$ = 7.0
-:::
+<!-- ::: {.column width="33%"} -->
 
-::: {.column width="33%"}
-### Covariances
+<!-- - **Fixed effects** -->
 
--   $\sigma_{w,x}$ = 4.0
--   $\sigma_{w,z}$ = 5.0
--   $\sigma_{x,z}$ = 5.0
-:::
-:::
+<!-- -   $\beta_0$ = 3.0 -->
+
+<!-- -   $\beta_1$ = 0.0 -->
+
+<!-- -   $\beta_2$ = 1.0 -->
+
+<!-- -   $\beta_3$ = 2.0. -->
+
+<!-- ::: -->
+
+<!-- ::: {.column width="33%"} -->
+
+<!-- - **Variances** -->
+
+<!-- -   $\sigma^2_\varepsilon$ = 10.0 -->
+
+<!-- -   $\sigma^2_w$ = 5.0 -->
+
+<!-- -   $\sigma^2_x$ = 6.0 -->
+
+<!-- -   $\sigma^2_z$ = 7.0 -->
+
+<!-- ::: -->
+
+<!-- ::: {.column width="33%"} -->
+
+<!-- - **Covariances** -->
+
+<!-- -   $\sigma_{w,x}$ = 4.0 -->
+
+<!-- -   $\sigma_{w,z}$ = 5.0 -->
+
+<!-- -   $\sigma_{x,z}$ = 5.0 -->
+
+<!-- ::: -->
+
+<!-- ::: -->
 
 ## Simulations of Model-Selection {auto-animate="true"}
 
@@ -139,7 +192,7 @@ colnames(cover) <- c("w", "x", "z")
 
 ## Simulations of Model-Selection {auto-animate="true"}
 
-``` r 
+``` r
 reps  <-  10000
 p <- 3
 Sigma <- matrix(c(5,4,5,
@@ -167,7 +220,7 @@ for (i in seq(reps)) {
 }
 ```
 
----
+------------------------------------------------------------------------
 
 ### Distribution of models selected in 10,000 draws
 
@@ -222,20 +275,28 @@ m <- purrr::map_dfr(models, function(x) (nrow(x)/reps)*100)
 
 ```
 
-|            |   None |    W   |    X     |   Z      |    WX    |    WZ    |    XZ    |  WXZ   |
-|:-----------|-------:|-------:|---------:|---------:|---------:|---------:|---------:|-------:|
-|Berk et al. |     0  |      0 |   0.0001 |     17.4 |      1.0 |      4.9 |     65.7 | 10.8   |
-|Replication |`r m[1]`|`r m[2]`| `r m[3]` | `r m[4]` | `r m[5]` | `r m[6]` | `r m[7]` |`r m[8]`|
+|             |     None |        W |        X |        Z |       WX |       WZ |       XZ |      WXZ |
+|:-------|-------:|-------:|-------:|-------:|-------:|-------:|-------:|-------:|
+| Berk et al. |        0 |        0 |   0.0001 |     17.4 |      1.0 |      4.9 |     65.7 |     10.8 |
+| Replication | `r m[1]` | `r m[2]` | `r m[3]` | `r m[4]` | `r m[5]` | `r m[6]` | `r m[7]` | `r m[8]` |
 
----
+::: notes
+For this simulation a practitioner has a little less than a two-thirds chance of selecting the preferred model.
+:::
 
-- The $R^2$s varied over the simulations between about .3 and .4.
+## Simulation results
 
-- For $X$ the post-model selection distribution has a greater mean (2.6–2.2) and a smaller standard deviation (.79–1.0).
+-   The $R^2$s varied over the simulations between about .3 and .4.
 
-- For $Z$  the mean and the standard deviation are biased substantially upward: from 4.9 to 5.5 for the mean and from 1.0 to 2.3 for the standard deviation.
+-   For $X$ the post-model selection t-values distribution has a greater mean (2.6–2.2) and a smaller standard deviation (.79–1.0).
 
----
+-   For $Z$ the mean and the standard deviation are biased substantially upward: from 4.9 to 5.5 for the mean and from 1.0 to 2.3 for the standard deviation.
+
+::: notes
+A distribution of t-values is more informative than a distribution of regression coefficients because it takes the regression coefficients and their standard errors into account.
+:::
+
+------------------------------------------------------------------------
 
 ### Statistics (our results)
 
@@ -259,13 +320,17 @@ res <- tibble::tibble(
 knitr::kable(res, digits=3)
 ```
 
----
+$$
+\text{Bias} = \frac{1}{S}\sum^S_{s=1}{\left( \hat{\beta}_{p,s} - \beta_p\right)}, \quad \text{MSE} = \frac{1}{S}\sum^S_{s=1}{\left( \hat{\beta}_{p,s} - \beta_p\right)^2}
+$$
+
+------------------------------------------------------------------------
 
 ### t-values for $\beta_2$
 
 -   Red curve/ solid line = Conditional on preferred model being known
 
--   Blue curve/ dashed line = Conditional on predictor being included in a model
+-   Blue curve/ broken line = Conditional on predictor being included in a model
 
 ```{r include = FALSE}
 
@@ -321,13 +386,17 @@ xplot
 ![](img/tvalsX.png){width="400" height="400"}
 :::
 
----
+::: notes
+Statistical inference assuming the solid black line would be very misleading insofar as the broken line captured what was really going on. The red/broken line show post-model-selection sampling distributions over the full set models in which the regressors are included.
+:::
+
+------------------------------------------------------------------------
 
 ### t-values for $\beta_3$
 
 -   Red curve/ solid line = Conditional on preferred model being known
 
--   Blue curve/ dashed line = Conditional on predictor being included in a model
+-   Blue curve/ broken line = Conditional on predictor being included in a model
 
 ```{r include=FALSE}
 zplot <- res_df |> 
@@ -359,7 +428,7 @@ zplot
 
 -   Bias due to model selection artificially inflates power in about 27%.
 
----
+------------------------------------------------------------------------
 
 Selecting the preferred model ($X$ and $Z$ included) does not guarantee any of the desirable properties of the regression coefficient estimates.
 
@@ -406,11 +475,11 @@ xpref_plot + zpref_plot + plot_layout(guides = 'collect') &
 
 ## Summary {#summary}
 
--   Post-model-selection statistical inference can lead to biased regression parameter estimates and seriously misleading statistical tests and confidence intervals.
+-   The post-model-selection sampling distribution can take on a wide variety of shapes, even when the researcher happens to have selected the model accurately representing how the data were generated.
+
+-   Inference from these models can lead to biased regression parameter estimates and misleading statistical tests and confidence intervals.
 
 -   The particular selection procedure used does not materially matter.
-
--   Sometimes the correct sampling distribution and the post-model-selection sampling distribution will be very similar.
 
 ## Potential solutions {#solutions}
 
@@ -431,22 +500,19 @@ xpref_plot + zpref_plot + plot_layout(guides = 'collect') &
 ## Discussion {#discussion}
 
 ::: incremental
-- What did the authors do particularly well?
-  - Simulation conditions were well specified
-  - Good framing of the problem and laying out potential solutions
-
-- Is there enough detail to replicate their simulation?
-  - As we have shown, there is!
+-   What did the authors do particularly well?
+    -   Simulation conditions were well specified
+    -   Good framing of the problem and laying out potential solutions
+-   Is there enough detail to replicate their simulation?
+    -   As we have shown, there is!
 :::
 
-
-
----
+------------------------------------------------------------------------
 
 ::: incremental
-- What is lacking?
-  - Variations to show when post-model selection inference is *really* bad.
-  - Heatmaps!
+-   What is lacking?
+    -   Variations to show when post-model selection inference is *really* bad.
+    -   Heatmaps!
 :::
 
 ::: fragment
@@ -472,15 +538,14 @@ simdf |>
              labeller = label_parsed)
 ```
 :::
----
 
-::: {.center}
+------------------------------------------------------------------------
+
+::: center
 Try my [ShinyApp](https://marwin.shinyapps.io/model-selection-app/)!
-::: 
-
+:::
 
 ```{r}
 #| fig-align: "center"
 plot(qrcode::qr_code("https://marwin.shinyapps.io/model-selection-app/"))
 ```
-
