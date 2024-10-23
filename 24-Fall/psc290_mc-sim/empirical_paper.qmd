@@ -494,7 +494,6 @@ xpref_plot + zpref_plot + plot_layout(guides = 'collect') &
 
 -   Should all else fail, forego formal statistical inference altogether (☠️)
 
--   Model averaging ([Lukacs et al., 2019](https://link.springer.com/article/10.1007/s10463-009-0234-4))
 :::
 
 ## Discussion {#discussion}
@@ -520,6 +519,7 @@ xpref_plot + zpref_plot + plot_layout(guides = 'collect') &
 #| out-width: "45%"
 #| fig-dpi: 300
 #| fig-align: "center"
+#| fig-cap: "Standardized measures of Bias, Coverage, Mean Square Error (MSE) and R2, across each simulation of pairs of number of predictors and correlation values."
 
 simdf <- readRDS("out/simdf.rds")
 
