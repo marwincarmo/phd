@@ -1,0 +1,132 @@
+---
+title: "Midterm Examination - Template"
+author: "YOUR NAME HERE"
+date: "10/31/2024"
+output:
+  word_document: default
+subtitle: "PSC-012Y"
+affiliation: The University of California, Davis
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE,
+                      fig.align = 'center', 
+                      fig.width = 10.00, 
+                      fig.height = 5.00)
+```
+
+# Midterm Grading
+
+> Each point is worth 2-points for a total of 40-points
+
+# Midterm Rules
+
+- Like prior lab assignments
+- Must submit your **knitted** document as a `.doc` or `.docx` file
+  - This will ensure that your code is runnable and--if you get errors--will show you where those errors are
+- Virtual Tutorial notes and Lecture Notes are allowed
+  - Physical [print] copies only.
+  - No digital copies.
+  - No online resources of any kind (e.g., Google, OpenAI, StackExchange)
+  - No collaboration
+- Any violation of these rules will result in a 0 on the midterm examination and a report to the Office of Student Support and Judicial Affairs
+
+# Context
+
+For this examination, you'll be using the `dropout` dataset.
+The dataset contains 5-variables:
+
+- `ClassTime`: Whether classes are mainly in the day (0) or evening (1)
+- `Moved`: Whether the student moved away from home (1) or not (0)
+- `TuitionPaid`: Whether the student has not (1) or has paid (0) their tuition
+- `Scholarship`: Whether the student has a scholarship (1) or not (0)
+- `Target`: Whether the student has dropped out (Dropout), graduated (Graduate), or is currently enrolled (Enrolled)
+
+
+# 1. Read in the `dropout.csv` dataset and assign it into the object, `dropout` and display the first 6-rows of `dropout`
+
+
+# 2. Which variables are *currently* **coded** as factors?
+
+
+
+# 3. Factor all variables which need to be factored for your upcoming analyses. Decide on your labels using the information provided above.
+
+
+
+# 4. Create a visualization of the variable `dropout$Target`
+
+
+
+# 5. Describe what you see visually. Which category is the most frequent? Infrequent? Are you surprised by anything?
+
+
+
+# 6. You will be conducting a $\chi^{2}$ test to analyze these data. Specifically, you will be assessing whether enrollment status is equally distributed. Which test is most appropriate here?
+
+
+
+# 7. Write out your formal null and alternative hypotheses for this test:
+
+> $H_{0}$: 
+
+> $H_{1}$: 
+
+# 8. Conduct the appropriate test and report your result as $\chi^{2}(df = ?.??) = ?.?? p = ?.??$
+
+
+
+# 9. What do the results of your test imply? Do you reject or fail to reject the null hypothesis?
+
+
+
+# 10. Visualize the relation between `dropout$Target` and `dropout$TuitionPaid`
+
+
+
+# 11. Describe what you see visually. Does there appear to be a trend in the data? Is a certain set of categories more or less frequent than you expect?
+
+
+
+# 12. You will be conducting a $\chi^{2}$ test to analyze these data. You will assess whether there is an association between tuition payment and dropping out. Which test is most appropriate here?
+
+
+
+# 13. Write out your formal null and alternative hypotheses for this test:
+
+> $H_{0}$: 
+
+> $H_{1}$: 
+
+
+# 14. Conduct the appropriate test and report your result as $\chi^{2}(df = ?.??) = ?.?? p = ?.??$
+
+
+
+# 15. What do the results of your test imply? Do you reject or fail to reject the null hypothesis? Explain the result you see.
+
+
+
+# 16. A nominal variable differs from an ordinal variable in what way?
+
+
+
+# 17. How do ordinal and interval variables differ? How are they similar?
+
+
+
+# 18. How do interval and ratio data primarily differ?
+
+
+
+# 19. Pie charts, waffle charts, and tree maps are good visualizations when there are many or few categories? Why?
+
+
+
+# 20. What are the purposes of statistical tests? Why don't we just use visualizations?
+
+

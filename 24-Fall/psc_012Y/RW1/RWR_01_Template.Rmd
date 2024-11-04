@@ -1,0 +1,127 @@
+---
+title: "Real World Data Report No. 1"
+author: "YOUR NAME HERE"
+date: "Due: 10/27/2024"
+output:
+  word_document: default
+subtitle: "PSC-012Y"
+affiliation: The University of California, Davis
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.align = 'center', 
+                      fig.width = 5.00, 
+                      fig.height = 5.00)
+```
+
+# Introduction
+
+
+## The Research Question(s)
+
+> [Write both of the research questions you selected]
+
+## The Hypotheses
+
+### Research Question 1:
+
+Null Hypothesis
+$H_{0}$:
+
+Alternative Hypothesis:
+$H_{1}$: 
+
+### Research Question 2:
+
+Null Hypothesis
+$H_{0}$:
+
+Alternative Hypothesis:
+$H_{1}$: 
+
+## Selecting Your $\alpha$ Level
+
+> For this study, we will be willing to tolerate a $\alpha = ?.??$ which corresponds to a $?\%$ nominal rate of error.
+
+# Methods
+
+## Measures 
+
+> [Should have as many measures as variables you are using in your analyses]
+> [3 Measures templates are being provided for you but you may need more or fewer]
+
+### Measure 1.
+
+> [Describe your measure, what is it, is it Categorical? Continuous?]
+> [If categorical, is it nominal? Ordinal? How many levels?]
+> [If continuous, is it interval? Ratio? What is the range?]
+
+### Measure 2.
+
+> [Describe your measure, what is it, is it Categorical? Continuous?]
+> [If categorical, is it nominal? Ordinal? How many levels?]
+> [If continuous, is it interval? Ratio? What is the range?]
+
+### Measure 3.
+
+> [Describe your measure, what is it, is it Categorical? Continuous?]
+> [If categorical, is it nominal? Ordinal? How many levels?]
+> [If continuous, is it interval? Ratio? What is the range?]
+
+## Analytic Plan
+
+# Results
+
+```{r, echo = TRUE}
+# library() any packages you need
+dat <- read.csv("RW1/music012Y.csv")
+```
+
+## Analysis 1 - [Research Question Here]
+
+> Repeat your research question, what are you studying in this section?
+
+```{r, echo = TRUE}
+dat$Primary.streaming.service = factor(
+  dat$Primary.streaming.service,
+  ordered = FALSE
+)
+
+streaming <- table(dat$Primary.streaming.service)
+
+chisq.test(streaming)
+```
+
+> Add your interpretation here
+> Report your $\chi^{2}$ results as:
+
+$\chi^{2}(DF) = ?.???, p = ?.???$
+
+```{r, echo = TRUE}
+# Figure Code Here
+```
+
+## Analysis 2 - [Research Question Here]
+
+> Repeat your research question, what are you studying in this section?
+
+
+```{r, echo = TRUE}
+# Statistical Analysis Code Here
+```
+
+> Add your interpretation here
+> Report your $\chi^{2}$ results as:
+
+$\chi^{2}(DF) = ?.???, p = ?.???$
+
+```{r, echo = TRUE}
+# Figure Code Here
+```
+
+# Discussion
+
+> Discuss your results. What do they mean? What do they tell us about music and depression/anxiety?
