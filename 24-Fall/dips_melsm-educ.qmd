@@ -31,11 +31,10 @@ editor_options:
 
 - Traditional educational research often fixates on average academic achievement.
 
-- Average performance does not provide information on the *consistency* of academic achievement over time or within a cluster.
+- Average performance and *variability* convey distinct information.
 
-- **Consistent performance** is positively correlated with student motivation and predicts more favorable long-term educational outcomes.
-
-- **High variability** can result in disproportionate representation of certain demographics at both ends of the achievement spectrum
+  - **Consistent performance** is positively correlated with student motivation and predicts more favorable long-term educational outcomes.
+  - **High variability** can result in disproportionate representation of certain demographics at both ends of the achievement spectrum
 
 
 ## Introduction
@@ -72,13 +71,13 @@ ggplot(df, aes(x = id, y = grades1)) +
 
 ## Our goal
 
-- Propose a methodology to identify clustering units (students, classrooms, etc.) that exhibit either unusually large or unusually small within-cluster variance.
+- Propose a methodology to identify clustering units (students, classrooms, etc.) that exhibit unusual levels of residual variability—such as consistency or inconsistency—in academic achievement.
 
 - We present an adaptation of the Mixed effects location scale model (MELSM) by means of shrinking random effects to their fixed effect using the Spike and Slab regularization
 
 ## The traditional MLM
 
-- Educational data is classically analyzed by means of multilevel or mixed effects models (MLM):
+- Educational data is classically analyzed by means of multilevel models (MLM):
   - Schools are level-2 units and students' test scores are the level-1 units.
 
 - These models operate under the assumption of constant residual variance.
@@ -129,9 +128,11 @@ u_{0i} &\sim \mathcal{N} (0, \tau_{u_0}^2)\\
 - MELSM include a sub-model to addresses potential differences in the residual variance.
 
 - It allows the  within-school standard deviation to differ among schools the residual standard deviation to differ among $i$-students within each school to obtain $\sigma_{\varepsilon_{ij}}^2$.
+
+- The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$.
 :::
 
-<!-- The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$. -->
+
 
 ## Advantages of MELSM
 
@@ -140,6 +141,8 @@ u_{0i} &\sim \mathcal{N} (0, \tau_{u_0}^2)\\
 - Examining the nature of this variability can yield insights that go beyond the mean achievement levels.
 
 - Accounts for possible correlations among location and scale effects.
+
+- Allows the inclusion of specific predictors in both sub-models.
 
 ::: {.notes}
 - Residual variance holds valuable information about the clustering unit (like a school) that can be systematically modeled and analyzed.
@@ -155,6 +158,10 @@ u_{0i} &\sim \mathcal{N} (0, \tau_{u_0}^2)\\
 - The model is allowed to switch between two assumptions:
   - A high probability to a common error standard deviation ($\sigma$);
   - And another that captures school- and student-specific error variability ($\sigma_\color{red}{ij}$)
+  
+::: {.notes}
+Depending on $\delta$ value, the computations will either retain the random effect or shrink it to exactly zero.
+:::
   
 ## The Spike-and-Slab approach
 
@@ -176,7 +183,9 @@ b. A diffuse "slab" component surrounding zero.
 :::
 
 ::: {.notes}
-A Dirac measure is a measure whose (unit) mass is concentrated on a single point x of a space X.
+- A Dirac measure is a measure whose (unit) mass is concentrated on a single point x of a space X.
+
+- Small values are shrunken to zero while larger values are estimated normally in the slab.
 :::
 
 ## The mechanism
@@ -294,14 +303,15 @@ Pr(\delta_{jk} = 1 | \textbf{Y}) = \frac{Pr(\textbf{Y} | \delta_{jk} = 1)Pr(\del
 
 \begin{align}
 \label{eq:pip}
-Pr(\delta_{jk} = 1 | \textbf{Y}) = \frac{1}{S} \sum_{s = 1}^S \delta_{jks},
+Pr(\delta_{jk} = 1 | \textbf{Y}) = \frac{1}{S} \sum_{s = 1}^S \delta_{jks}
 \end{align}
 
 :::
 
 ::: {.notes}
-the posterior inclusion probability (PIP) quantifies the probability
-that a given random effect is included in the model, conditional on the observed data.
+- the posterior inclusion probability (PIP) quantifies the probability that a given random effect is included in the model, conditional on the observed data.
+
+- A high PIP indicates strong evidence that the random effect is necessary to explain the data.
 :::
 
 ---
@@ -355,9 +365,9 @@ BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \te
 - The models were compared for predictive accuracy using Pareto smoothed importance sampling Leave-one-out cross-validation (PSIS-LOO).
 
 ::: {.notes}
-- The ^R statistic measures the ratio of the average variance of samples within each chain to the variance of the pooled samples across chains; if all chains are at equilibrium, these will be the same and ^R will be one. If the chains have not converged to a common distribution, the ^R statistic will be greater than one.
+- R-hat measures convergence in MCMC sampling; an R-hat value close to 1 indicates that chains have likely converged, meaning the samples are representative of the posterior distribution.
 
-- The ESS measures estimation efficiency by quantifying how many independent samples would be needed to achieve the same precision for the posterior mean.
+- The ESS estimates the number of independent samples in correlated MCMC chains, with a higher ESS suggesting a more reliable and efficient representation of the posterior.
 :::
 
 ## Results
@@ -367,7 +377,7 @@ BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \te
 - By incorporating SES covariates, Model 2 significantly outperformed Model 1 in terms of predictive accuracy, $\Delta\widehat{\text{elpd}}_{\text{loo}}$ = -43.6 (10.5).
 
 - Model 3 was practically indistinguishable from Model 2; the inclusion of a random slope for the student-level SES did not improve
-the model’s predictive accuracy.
+the model’s predictive accuracy, $\Delta\widehat{\text{elpd}}_{\text{loo}}$ = -1.3 (0.6).
 
 ---
 
@@ -389,6 +399,10 @@ The PIPs make a V-shape in that they decrease as the magnitude of the effect app
 
 ![](../../melms_educ/WORK/-ANALYSIS/FIGURES/m3_slope_pip.png){fig-align="center"}
 
+::: {.notes}
+The posterior probabilities remained close to the prior belief of 50% probability for including the random slope
+:::
+
 ## Discussion
 
 - The SS-MELSM offers an approach for identifying schools deviating from the norm in terms of within-school variability.
@@ -399,7 +413,7 @@ The PIPs make a V-shape in that they decrease as the magnitude of the effect app
 
 ## Limitations
 
-- Currently, the SS-MELSM demands a lot of computational resources, especially with bigger datasets or more complex models.
+- Currently, the SS-MELSM demands significant computational resources, especially with bigger datasets or more complex models.
 
 - It is still not clear how model performance is affected by the choice of hyperparameters.
 
