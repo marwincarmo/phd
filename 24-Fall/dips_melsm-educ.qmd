@@ -1,0 +1,406 @@
+---
+title: "Beyond Average Scores: Identification of Consistent and Inconsistent Academic Achievement in Grouping Units"
+subtitle: "DIPS - 11/04/2024"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    # height: 900
+    footer: "Beyond Averages with MELSM and Spike-and-Slab"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+## Introduction
+
+- Traditional educational research often fixates on average academic achievement.
+
+- Average performance does not provide information on the *consistency* of academic achievement over time or within a cluster.
+
+- **Consistent performance** is positively correlated with student motivation and predicts more favorable long-term educational outcomes.
+
+- **High variability** can result in disproportionate representation of certain demographics at both ends of the achievement spectrum
+
+
+## Introduction
+
+- Consider two schools with a final average grade of 75% at the year's end:
+  - In one school, students had scores ranging from 50% to 100%.
+  - In the other, they maintained a steady 75%.
+
+<!-- Their experiences and level of mastery are almost certainly different. -->
+
+- Inconsistent performance may reflect unaccounted factors influencing learning
+
+
+```{r eval=FALSE}
+set.seed(1235)
+library(ggplot2)
+
+df <- data.frame(
+  id = 1:40,
+  grades1 = pmax(pmin(round(rnorm(40, mean = .60, sd = .10), 2), 1), 0),
+  grades2 = pmax(pmin(round(rnorm(40, mean = .75, sd = .35), 2), 1), 0)
+)
+
+#df$g1_color = ifelse(df$grades1 < 0.5, "Fail", "Pass")
+
+ggplot(df, aes(x = id, y = grades1)) +
+  geom_line( color="grey") +
+  geom_point(shape=21, color="black", fill="#69b3a2", size=4) +
+  geom_hline(yintercept = 0.5, linetype = "dashed", color="red") +
+  geom_hline(yintercept = mean(df$grades1),  color="darkblue") +
+  theme_minimal()
+```
+
+
+## Our goal
+
+- Propose a methodology to identify clustering units (students, classrooms, etc.) that exhibit either unusually large or unusually small within-cluster variance.
+
+- We present an adaptation of the Mixed effects location scale model (MELSM) by means of shrinking random effects to their fixed effect using the Spike and Slab regularization
+
+## The traditional MLM
+
+- Educational data is classically analyzed by means of multilevel or mixed effects models (MLM):
+  - Schools are level-2 units and students' test scores are the level-1 units.
+
+- These models operate under the assumption of constant residual variance.
+
+::: fragment
+
+\begin{aligned}
+y_{ij} &= \gamma_0 + u_{0i} + \varepsilon_{ij}\\
+u_{0i} &\sim \mathcal{N} (0, \tau_{u_0}^2)\\
+\varepsilon_{ij} &\sim \mathcal{N} (0, \sigma_{\varepsilon}^2)\\
+\end{aligned}
+
+:::
+
+## The MELSM framework
+
+
+- MELSM allows for the *simultaneous* estimation of a model for the means (location) and a model for the residual variance (scale).
+
+- Both sub-models are conceptualized as mixed-effect models and can accommodate specific predictors.
+
+::: fragment
+
+\begin{aligned}
+\sigma_{\varepsilon_{ij}} &= \exp(\eta_0 + t_{0j})\\
+\end{aligned}
+
+:::
+
+::: fragment
+
+\begin{equation}
+  \textbf{v}=
+  \begin{bmatrix} u_0 \\ t_0 \end{bmatrix} \sim \mathcal{N}
+    \begin{pmatrix}
+        \boldsymbol{0}=
+        \begin{bmatrix} 0 \\ 0 \end{bmatrix},
+        \boldsymbol{\Sigma}=
+        \begin{bmatrix} \tau^2_{u_0} & \tau_{u_0t_0} \\ 
+                        \tau_{u_0t_0} & \tau^2_{t_0} 
+        \end{bmatrix}
+    \end{pmatrix}
+\end{equation}
+
+:::
+
+::: {.notes}
+- MELSM include a sub-model to addresses potential differences in the residual variance.
+
+- It allows the  within-school standard deviation to differ among schools the residual standard deviation to differ among $i$-students within each school to obtain $\sigma_{\varepsilon_{ij}}^2$.
+:::
+
+<!-- The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$. -->
+
+## Advantages of MELSM
+
+- Residual variance it's not merely random noise. 
+
+- Examining the nature of this variability can yield insights that go beyond the mean achievement levels.
+
+- Accounts for possible correlations among location and scale effects.
+
+::: {.notes}
+- Residual variance holds valuable information about the clustering unit (like a school) that can be systematically modeled and analyzed.
+
+- Allows the inclusion of specific predictors. For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.
+:::
+
+## The Spike-and-Slab approach
+
+<!-- Not all random effects might be relevant or contribute significantly. Some schools might have residual variance well-explained by fixed effects. -->
+- We incorporate the Spike-and-Slab prior as a method of **variable selection** of random effects in the scale model.
+
+- The model is allowed to switch between two assumptions:
+  - A high probability to a common error standard deviation ($\sigma$);
+  - And another that captures school- and student-specific error variability ($\sigma_\color{red}{ij}$)
+  
+## The Spike-and-Slab approach
+
+::: columns
+::: {.column width="50%"}
+
+![Rouder et al. (2018)](../24-Spring/rouder2018.png){fig-align="center" width=65%}
+
+:::
+
+::: {.column width="50%"}
+
+- A two component mixture
+a. A "spike", that is a Dirac measure concentrated at zero.
+b. A diffuse "slab" component surrounding zero.
+:::
+
+
+:::
+
+::: {.notes}
+A Dirac measure is a measure whose (unit) mass is concentrated on a single point x of a space X.
+:::
+
+## The mechanism
+
+- First, $\boldsymbol{\Sigma}$ can be decomposed into $\boldsymbol\Sigma = \boldsymbol{\tau}\boldsymbol{\Omega\tau}'$ to specify independent priors for each element of $\boldsymbol{\tau}$ and $\boldsymbol{\Omega}$, where
+
+  - $\boldsymbol{\tau}$ is a diagonal matrix of the random-effects standard deviations.
+  - $\boldsymbol{\Omega}$ is the correlation matrix among all random effects.
+  
+## The mechanism
+
+-  Next, we can factorize $\boldsymbol\Omega$ via the Cholesky $\textbf{L}$ of $\boldsymbol\Omega = \textbf{L}'\textbf{L}$.
+
+::: fragment
+
+\begin{equation}
+\label{eq:cholesky_approach}
+\textbf{L} = 
+    \begin{pmatrix}
+        1 & 0 \\
+        \rho_{u_0t_0} & \sqrt{1 - \rho_{u_0t_0}^2} 
+    \end{pmatrix}
+\end{equation}
+
+:::
+
+
+::: {.notes}
+To simplify computation by removing redundant effects and ensure that the resulting estimate matrix is positive definite
+:::
+
+---
+
+- If we multiply $\textbf{L}$ by the random effect standard deviations, $\boldsymbol{\tau}$, and scale it with a standard normally distributed $\boldsymbol{z}$, we obtain $\textbf{v}$
+
+::: fragment
+
+\begin{equation}
+    \textbf{v} = \boldsymbol{\tau}\textbf{L}\boldsymbol{z}
+\end{equation}
+
+:::
+
+-  The Cholesky decomposition allows expressing the random effects in terms of the standard deviations and correlations
+
+---
+
+
+## Variable selection
+
+- Now, we include an indicator variable ($\delta_{jk}$) for each random effect to be subjected to shrinkage. 
+
+- It allows switching between the spike and slab  throughout the MCMC sampling process.
+
+<!-- An indicator variable ($\delta_j$) is included in the prior to allow switching between the spike and slab  throughout the Markov Chain Monte Carlo (MCMC) sampling process. -->
+
+::: fragment
+\begin{equation}
+\begin{aligned}
+    u_{0j} &= \tau_{u_0}z_{ju_0}\\
+    t_{0j} &= \tau_{t_0}\left( \rho_{u_0t_0}z_{ju_0} + z_{jt_0}\sqrt{1 - \rho_{u_0t_0}^2} \right)\color{red}{\delta_{jt_0}}
+\end{aligned}
+\end{equation}
+
+:::
+
+::: {.notes}
+A Monte Carlo process refers to a simulation that samples many random values from a posterior distribution of interest.
+:::
+
+
+---
+
+- The subscript to the indicator ($\boldsymbol{\delta}_j$) assigns each school a prior inclusion probability of the random effect $k$.
+
+- Each element in $\boldsymbol{\delta}_j$ takes integers $\in \{0,1\}$ and follows a $\delta_{jk} \sim \text{Bernoulli}(\pi)$ distribution.
+
+- When a 0 is sampled, the portion after the fixed effect drops out of the equation.
+
+::: {.notes}
+- For each school we obtain a probabilistic measure on whether the random effect is to be included or not.
+:::
+
+:::fragment
+\begin{equation}
+\label{eq:mm_delta}
+\sigma_{\varepsilon_{ij}} = \begin{cases}
+\exp(\eta_0), & \text{if }\delta_{jt_0} = 0 , \\
+\exp(\eta_0 + t_{0j}), & \text{if }\delta_{jt_0} = 1
+\end{cases}.
+\end{equation}
+:::
+
+::: {.notes}
+Thus, for each iteration, this specification allows each individual to have their own person-specific estimate or the fixed effect average. 
+:::
+---
+
+## Posterior Inclusion Probability (PIP)
+
+- Quantifies the probability that a given random effect is included in the model
+
+::: fragment
+
+\begin{align}
+\label{eq:pip_theorical}
+Pr(\delta_{jk} = 1 | \textbf{Y}) = \frac{Pr(\textbf{Y} | \delta_{jk} = 1)Pr(\delta_{jk} = 1)}{Pr(\textbf{Y})}
+\end{align}
+
+:::
+
+- The PIP is estimated by the proportion of MCMC samples where $\delta_{jk} = 1$:
+
+::: fragment
+
+\begin{align}
+\label{eq:pip}
+Pr(\delta_{jk} = 1 | \textbf{Y}) = \frac{1}{S} \sum_{s = 1}^S \delta_{jks},
+\end{align}
+
+:::
+
+::: {.notes}
+the posterior inclusion probability (PIP) quantifies the probability
+that a given random effect is included in the model, conditional on the observed data.
+:::
+
+---
+
+- To determine whether a given random effect is warranted we estimate the strength of evidence through Bayes factors:
+
+::: fragment
+
+\begin{equation}
+\underbrace{\frac{Pr(\delta_{jk} = 1 | \textbf{Y})}{Pr(\delta_{jk} = 0 | \textbf{Y})}}_{\text{Posterior Odds}} = \underbrace{\frac{Pr(\delta_{jk} = 1)}{Pr(\delta_{jk} = 0)}}_{\text{Prior Odds}} \times \underbrace{\frac{Pr(\textbf{Y} | \delta_{jk} = 1)}{Pr(\textbf{Y} | \delta_{jk} = 0)}}_{\text{Bayes Factor}} \nonumber.
+\end{equation}
+
+:::
+
+---
+
+- Setting the prior probability of $\pi$ to 0.5 implies equal prior odds, $Pr(\delta_{jk} = 1)/Pr(\delta_{jk} = 0) = 1$.
+
+::: fragment
+\begin{align}
+\label{eq:bf_pip}
+BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \textbf{Y}) }.
+\end{align}
+:::
+
+- A BF$_{10}$ > 3 corresponds to a PIP greater than 0.75. We use this threshold as a decision boundary for identifying schools with truly unusual variances
+
+## Case study
+
+- We use a subset of data from the 2021 Brazilian Evaluation System of Elementary Education (Saeb).
+
+- It focuses on math scores from 11th and 12th-grade students across 160 randomly selected schools, encompassing a total of 11,386 students.
+
+---
+
+- The analysis compares three SS-MELSM models with varying levels of complexity:
+
+  - **Model 1**:  Includes only fixed and random intercepts for both location and scale, without any predictors.
+  - **Model 2**: Incorporates student and school socioeconomic status (SES) as covariates, but retains the two random intercept effects.
+  - **Model 3**: Introduces a random slope for student-level SES within the scale portion of the model.
+
+
+## Software and estimation
+
+- The model was fitted using `ivd` package in `R` (Rast & Carmo, 2024). 
+
+- All models were fitted with six chains of 3,000 iterations and 12,000 warm-up samples.
+
+- We computed the estimation efficiency using $\hat{R}$ and the effective sample size (ESS).
+
+- The models were compared for predictive accuracy using Pareto smoothed importance sampling Leave-one-out cross-validation (PSIS-LOO).
+
+::: {.notes}
+- The ^R statistic measures the ratio of the average variance of samples within each chain to the variance of the pooled samples across chains; if all chains are at equilibrium, these will be the same and ^R will be one. If the chains have not converged to a common distribution, the ^R statistic will be greater than one.
+
+- The ESS measures estimation efficiency by quantifying how many independent samples would be needed to achieve the same precision for the posterior mean.
+:::
+
+## Results
+
+- Model 1 identified eight schools with PIPs exceeding 0.75, suggesting notable deviations from the average within-school variance.
+
+- By incorporating SES covariates, Model 2 significantly outperformed Model 1 in terms of predictive accuracy, $\Delta\widehat{\text{elpd}}_{\text{loo}}$ = -43.6 (10.5).
+
+- Model 3 was practically indistinguishable from Model 2; the inclusion of a random slope for the student-level SES did not improve
+the model’s predictive accuracy.
+
+---
+
+
+![](../../melms_educ/WORK/-ANALYSIS/FIGURES/funnel_int_comb.png){fig-align="center"}
+
+::: {.notes}
+The PIPs make a V-shape in that they decrease as the magnitude of the effect approaches zero and increase again as they move away from zero. Individuals with larger random effects should have more evidence to support that they differ from the average effect. This plot shows that mostly consistent schools should have a random effect on the variance.
+:::
+
+---
+
+![](../../melms_educ/WORK/-ANALYSIS/FIGURES/outcome.png){fig-align="center"}
+---
+
+
+![](../../melms_educ/WORK/-ANALYSIS/FIGURES/posterior_hist2.png){fig-align="center"}
+---
+
+![](../../melms_educ/WORK/-ANALYSIS/FIGURES/m3_slope_pip.png){fig-align="center"}
+
+## Discussion
+
+- The SS-MELSM offers an approach for identifying schools deviating from the norm in terms of within-school variability.
+
+- The spike-and-slab prior accounts for uncertainty in including random effects.
+
+- Investigating inconsistent schools might reveal variations in teaching quality, student engagement levels, or the impact of external influences on specific schools.
+
+## Limitations
+
+- Currently, the SS-MELSM demands a lot of computational resources, especially with bigger datasets or more complex models.
+
+- It is still not clear how model performance is affected by the choice of hyperparameters.
+
+- Further development could explore the method's performance in longitudinal data settings.
