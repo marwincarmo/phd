@@ -1,0 +1,60 @@
+---
+title: "PSC 290 MC Simulations Homework 2"
+author: "Mijke Rhemtulla"
+date: "2024-10-24"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Instructions
+Answer all the questions below. This homework is due on Nov 8 (Friday) by the end of the day. Upload both this Rmd file (completed) and the PDF output. If you are having troubles knitting to pdf, try knitting to html instead and then saving as a pdf (submitting a pdf makes my life easier because I can grade the assignment in canvas without having to download and open it in other software). Be sure your troubles aren't due to missing objects in the Rmd file (e.g., all code should run without producing errors). 
+
+You may work on this assignment with others, and you may ask for help (e.g., on Slack) while working. The work that you submit, though, must be your own. 
+
+## Part 1: Evaluating Bias, Efficiency and Consistency
+
+### Question 1
+Write a function to generate data from a 1-predictor linear regression model and then run the model. Your function should take the arguments $n$ and $beta$. Within your function, set the variance of the predictor to be 1, and the residual variance to be $var(e)=1-\beta^2$ so that the total variance of $y$ is 1. Let the intercept be 0. After generating the data, your function should fit the regression model using the `lm()` function, and return the estimated regression coefficient and its standard error. 
+
+```{r}
+```
+
+### Question 2
+Use the function you wrote to run a simulation investigating the performance of regression coefficients as a function of $\beta$. Choose a fixed level of $n$ and vary $\beta$. For each condition compute (a) bias, (b) relative bias, (c) mean-squared error, (d) standard error bias, and (e) confidence interval coverage. Plot your results. 
+
+```{r}
+```
+
+### Question 3
+Choose one condition from the simulation you ran in the last part (i.e., one value of $\beta$). Repeat that condition a large number of times (e.g., 1000), computing the whole set of 5 outcomes each time. Use histograms to plot the sampling variability of these Monte Carlo outcomes across repetitions.
+
+```{r}
+```
+
+### Question 4
+Examine the histograms you generated in the previous question: is the degree of Monte Carlo error different for different outcomes? Try to explain the differences you see. 
+
+
+## Part 2: Multivariate Data
+### Question 5
+Write a function that generates a sample of size $n$ from a $k$-variate standard normal distribution with common correlation $\rho$ between all pairs of variables (arguments: `n`, `k`, `rho`; returns: a data frame)
+
+```{r}
+```
+
+
+### Question 6
+Use the function you just wrote to run a simulation examining the probability of making at least one type-I error (i.e., the family-wise type-I error rate) as a function of $n$ and $p$. What do you find (describe the results in 1-2 sentences).
+
+```{r}
+```
+
+
+### Question 7 (optional question: only if you're having too much fun to quit)
+When $\rho \ne 0$, what is the probability that at least 80\% of the correlations are found to be significantly different from 0, and how does it change as a function of $p$ and $n$?
+
+```{r}
+```
