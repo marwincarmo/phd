@@ -20,12 +20,40 @@ You may work on this assignment with others, and you may ask for help (e.g., on 
 Write a function to generate data from a 1-predictor linear regression model and then run the model. Your function should take the arguments $n$ and $beta$. Within your function, set the variance of the predictor to be 1, and the residual variance to be $var(e)=1-\beta^2$ so that the total variance of $y$ is 1. Let the intercept be 0. After generating the data, your function should fit the regression model using the `lm()` function, and return the estimated regression coefficient and its standard error. 
 
 ```{r}
+
+q1fun <- function(n, beta) {
+  
+  p = 1
+  Sigma = matrix(0, p, p)
+  diag(Sigma) = 1
+  var_e = abs(1 - (beta^2))
+
+  X = MASS::mvrnorm(n = n, rep(0, p) , Sigma)
+  y = as.numeric(cbind(1, X) %*% c(0, beta) + rnorm(n, 0, sqrt(var_e)))
+  Xy = as.data.frame( cbind(X, y))
+  fit <- lm(y ~., data = Xy)
+  s <- summary(fit)
+  s$coefficients[2,1:2]
+  
+}
+
+q1fun(n=100, beta=5)
 ```
 
 ### Question 2
 Use the function you wrote to run a simulation investigating the performance of regression coefficients as a function of $\beta$. Choose a fixed level of $n$ and vary $\beta$. For each condition compute (a) bias, (b) relative bias, (c) mean-squared error, (d) standard error bias, and (e) confidence interval coverage. Plot your results. 
 
 ```{r}
+
+reps <- 1000
+res <- matrix(NA, reps, 6)
+
+colnames(res) <- c("bias", "relative_bias", "mse", "sd_bias", "CI_low", "CI_high")
+
+betas <- seq(0, 5, by = .5)
+
+
+
 ```
 
 ### Question 3
