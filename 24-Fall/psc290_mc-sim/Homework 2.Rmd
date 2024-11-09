@@ -34,36 +34,115 @@ q1fun <- function(n, beta) {
   fit <- lm(y ~., data = Xy)
   s <- summary(fit)
   s$coefficients[2,1:2]
+  #cis <- confint(fit)[-1,]
   
 }
 
-q1fun(n=100, beta=5)
+x <- q1fun(n=100, beta=1.7)
 ```
 
 ### Question 2
 Use the function you wrote to run a simulation investigating the performance of regression coefficients as a function of $\beta$. Choose a fixed level of $n$ and vary $\beta$. For each condition compute (a) bias, (b) relative bias, (c) mean-squared error, (d) standard error bias, and (e) confidence interval coverage. Plot your results. 
 
-```{r}
+```{r warning=FALSE}
+library(ggplot2)
 
 reps <- 1000
-res <- matrix(NA, reps, 6)
+n <- 100
+betas <- matrix(seq(0.1, 1, by = 0.1), nrow = reps, ncol = 10, byrow = TRUE)
 
-colnames(res) <- c("bias", "relative_bias", "mse", "sd_bias", "CI_low", "CI_high")
+# initiate matrices to save the estimated coefficients, standard errors and coverage
+coefs <- serrs <- cover <- matrix(NA, nrow = reps, ncol = ncol(betas))
 
-betas <- seq(0, 5, by = .5)
+# for each beta, we will obtain the measures mentioned above
+
+for (b in betas[1,]) {
+  
+  for (i in 1:reps) {
+    
+    col <- which(betas[1,] == b)
+    coefs[i, col] <- q1fun(n, b)[1]
+    serrs[i, col] <- q1fun(n, b)[2]
+    CIhigh = coefs[i, col] + 1.96 * serrs[i, col]
+    CIlow = coefs[i, col] - 1.96 * serrs[i, col]
+    cover[i, col] <-  ifelse(CIlow < coefs[i, col] & CIhigh > coefs[i, col], 1, 0)
+  }
+}
 
 
+results <- data.frame(
+  beta = betas[1,],
+  bias = colMeans(coefs - betas),
+  rel_bias = colMeans((coefs - betas)/betas),
+  mse = colMeans((coefs - betas)^2),
+  se_bias = colMeans(serrs - 1),
+  coverage = colMeans(cover)
+)
+
+results |> 
+  tidyr::pivot_longer(cols = c(bias:coverage), names_to = "outcome", values_to = "value") |> 
+  ggplot(aes(x = beta, y = value)) + 
+  geom_line() + 
+  scale_x_continuous(breaks = betas[1,] ) +
+  facet_wrap(~outcome, scales= "free") + 
+  theme_minimal()
 
 ```
 
 ### Question 3
 Choose one condition from the simulation you ran in the last part (i.e., one value of $\beta$). Repeat that condition a large number of times (e.g., 1000), computing the whole set of 5 outcomes each time. Use histograms to plot the sampling variability of these Monte Carlo outcomes across repetitions.
 
+
 ```{r}
+beta <- 0.9
+n <- 100
+
+metrics <- data.frame(
+  bias = rep(NA, reps),
+  rel_bias = rep(NA, reps),
+  mse = rep(NA, reps),
+  se_bias = rep(NA, reps),
+  coverage = rep(NA, reps)
+)
+
+
+for (j in 1:reps) {
+  
+  coefs <- serrs <- cover <- c()
+  
+  for (i in 1:100) {
+    
+    coefs[i] <- q1fun(n, beta)[1]
+    serrs[i] <- q1fun(n, beta)[2]
+    CIhigh = coefs[i] + 1.96 * serrs[i]
+    CIlow = coefs[i] - 1.96 * serrs[i]
+    cover[i] <-  ifelse(CIlow < coefs[i] & CIhigh > coefs[i], 1, 0)
+    
+  }
+  
+    metrics$bias[j] <- mean(coefs - beta)
+    metrics$rel_bias[j] <- mean((coefs - beta) / beta)
+    metrics$mse[j] <- mean((coefs - betas)^2)
+    metrics$se_bias[j] <- mean(serrs - 1)
+    metrics$coverage[j] <- mean(cover)
+  
+}
+
+
+metrics |> 
+  tidyr::pivot_longer(cols = everything(), names_to = "metric", values_to = "value") |> 
+  ggplot(aes(x = value)) +
+  #geom_histogram() +
+  geom_density() +
+  facet_wrap(~ metric, scales = "free", ncol = 2) +
+  theme_minimal()
+
 ```
 
 ### Question 4
 Examine the histograms you generated in the previous question: is the degree of Monte Carlo error different for different outcomes? Try to explain the differences you see. 
+
+> The distribution of Bias, Relative Bias, Standard Error Bias, and MSE are remarkably similar, indicating that these metrics have consistent sampling variability and relatively large degree of Monte Carlo error . As expected given the results of Question 3, CI coverage achieved 100% across all 1000 replications. Consequently, the coverage values are all concentrated at a single point, resulting in a degenerate distribution that is not shown graphically.
 
 
 ## Part 2: Multivariate Data
@@ -71,6 +150,19 @@ Examine the histograms you generated in the previous question: is the degree of 
 Write a function that generates a sample of size $n$ from a $k$-variate standard normal distribution with common correlation $\rho$ between all pairs of variables (arguments: `n`, `k`, `rho`; returns: a data frame)
 
 ```{r}
+
+q5fun <- function(n, k, rho) {
+  
+  Sigma = matrix(rho, k, k)
+  diag(Sigma) = 1
+
+  X = MASS::mvrnorm(n = n, rep(0, k) , Sigma)
+  colnames(X) <- paste0("k", 1:k)
+  as.data.frame(X)
+  
+}
+
+head(q5fun(100, 5, .5))
 ```
 
 
@@ -78,11 +170,89 @@ Write a function that generates a sample of size $n$ from a $k$-variate standard
 Use the function you just wrote to run a simulation examining the probability of making at least one type-I error (i.e., the family-wise type-I error rate) as a function of $n$ and $p$. What do you find (describe the results in 1-2 sentences).
 
 ```{r}
+reps <- 1000
+n <- seq(10, 100, by = 20)
+p <- 2:6
+
+
+type1error <- function(n, p) {
+  
+  data <- q5fun(n, p, 0)
+  p_values <- c()
+
+
+  for (i in 1:(p-1)) {
+    for (j in (i+1):p) {
+     
+      x <- data[, i]
+      y <- data[, j]
+      
+      pval <- cor.test(x, y)$p.value
+      
+      p_values <- c(p_values, pval)
+    }
+  }
+  # return 1 if there was any type 1 error
+  ifelse(sum(p_values < 0.05) > 0, 1, 0 )
+}
+
+results_df <- expand.grid(n = n, p = p)
+results_df$error_rate <- NA
+
+for (i in n) {
+  for (j in p) {
+      results_df[results_df$n==i & results_df$p==j, "error_rate"] <- mean(replicate(reps, type1error(i, j)))
+  }
+}
+
+results_df
 ```
 
+
+> The probability of making at least one Type I error increases as the number of variables tested increases. This holds true regardless of sample size, but the effect is more pronounced when the number of predictors is large.
 
 ### Question 7 (optional question: only if you're having too much fun to quit)
 When $\rho \ne 0$, what is the probability that at least 80\% of the correlations are found to be significantly different from 0, and how does it change as a function of $p$ and $n$?
 
 ```{r}
+
+reps <- 1000
+n <- seq(10, 100, by = 20)
+p <- 3:10
+
+
+type1error <- function(n, p) {
+  
+  data <- q5fun(n, p, 0.3) # now let's set rho = 0.3
+  p_values <- c()
+
+
+  for (i in 1:(p-1)) {
+    for (j in (i+1):p) {
+     
+      x <- data[, i]
+      y <- data[, j]
+      
+      pval <- cor.test(x, y)$p.value
+      
+      p_values <- c(p_values, pval)
+    }
+  }
+  # return 1 if there was any type 1 error
+  ifelse(sum(p_values < 0.05) > 0.8, 1, 0 )
+}
+
+results_df <- expand.grid(n = n, p = p)
+results_df$sig <- NA
+
+for (i in n) {
+  for (j in p) {
+      results_df[results_df$n==i & results_df$p==j, "sig"] <- mean(replicate(reps, type1error(i, j)))
+  }
+}
+
+results_df
+
 ```
+
+> The probability of achieving 80% of significant correlations increases both as sample size and the number of predictors variables. Even with small samples, it is very likely that at least 80% of the correlations will be found significant when the number of variables is large (>5).
