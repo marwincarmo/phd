@@ -1,0 +1,177 @@
+---
+title: "Lab 06 - Distributions and Group Comparisons"
+author: "YOUR NAME HERE"
+date: "11/14/2024"
+output:
+  word_document: default
+subtitle: "PSC-012Y"
+affiliation: The University of California, Davis
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                       fig.align = 'center')
+packet.list = c("ggplot2", "ggridges", "DescTools", 
+                "plotly", "ggExtra", "dplyr")
+# Install Packages
+invisible(sapply(packet.list, function(package) {
+  if (!require(package, character.only = TRUE)) {
+    install.packages(package, dependencies = TRUE)
+  }
+  library(package, character.only = TRUE)
+}))
+```
+
+
+# Part 1. Coding and Visualization
+
+```{r echo = FALSE, fig.width = 5, fig.height = 8, fig.align = "center"}
+set.seed(3718)
+data.1 = rnorm(100, mean = 100, sd = 15)
+data.2 = rnorm(100, mean = 100, sd = 15)
+data.3 = rnorm(100, mean = 100, sd = 15)
+
+par(mfrow = c(3, 1))
+  hist(data.1, col = "skyblue1", main = "Histogram of IQ")
+  hist(data.2, col = "skyblue2", main = "Histogram of IQ")
+  hist(data.3, col = "skyblue3", main = "Histogram of IQ")
+```
+
+## 1. The code above provides 3 different distributions of IQ scores. Provide the mean, median, mode, and standard deviation of **all three distributions** in a **separate** `R` chunk. Describe the following:
+
+- Do the means, medians, and modes substantially differ from one another? What are their values?
+
+> 
+
+
+- On the topic of the modes, what do you notice about them? Why are you getting the value you observe? Does this have to do with the type of data we have?
+
+> 
+
+
+- Do the standard deviations substantially differ from one another?
+
+> 
+
+
+```{r}
+
+
+```
+
+
+```{r echo = FALSE, fig.width = 5, fig.height = 8, fig.align = "center"}
+mu = 5
+sd = 1
+replications = 1000
+n = c(10, 50, 300)
+sample.means = matrix(NA, replications, length(n))
+for (i in 1:replications) {
+  for (j in 1:length(n)) {
+    sample = rnorm(n[j], mean = mu, sd = sd)
+    sample.means[i, j] = mean(sample)
+  }
+}
+par(mfrow = c(3, 1))
+hist(sample.means[, 1], xlim = c(3.5, 6.5), xlab = "Sample Means", main = "Histogram of Sample Means with N = 10")
+hist(sample.means[, 2], xlim = c(3.5, 6.5), xlab = "Sample Means", main = "Histogram of Sample Means with N = 50")
+hist(sample.means[, 3], xlim = c(3.5, 6.5), xlab = "Sample Means", main = "Histogram of Sample Means with N = 300")
+```
+
+
+## 2. The code above provides you with 3 histograms displaying the sampling distributions of sample means with varying sample sizes: $N = 10, 50, 300$. Given what we covered in the lecture, answer the following: 
+
+- What do you notice about the "spread" of the distribution as sample size ($N$) increases?
+
+>
+
+
+- The change in the spread as $N$ increases is related to our confidence in our estimate of the mean. As $N$ increases, what happens to our confidence in the estimated value of our mean?
+
+> 
+
+
+- The standard deviation of this sampling distribution of sample means is also known as what? [Don't use an abbreviation]
+
+> 
+
+
+## 3. Read in the `Stress.csv` file and assign it to the variable, `Stress`. Factor the variable, "`Stress$Class.Standing`" using the following levels/labels:
+
+- Freshmen
+- Sophomore
+- Junior
+- Senior
+
+```{r}
+
+
+```
+
+## 4. Calculate the SEM of the `Stress` variable using the skeleton code provided and the equation: 
+
+***NOTE***: When submitting, remove from your `R` chunk the line, "`eval = FALSE`"
+
+$$SEM = \frac{s}{\sqrt{n}}$$
+
+```{r, eval = FALSE}
+sd.stress = 
+n.stress = 
+
+sem.stress = 
+print(sem.stress)
+```
+
+
+## 5. Use the `R` package: `ggplot2` and the `ggplot()` and the `stat_summary()` functions to create a barplot comparing average stress levels across UC Davis students at various stages. Be sure to include error bars for full credit!
+
+- What do you notice? Which groups have similar stress? 
+
+> 
+
+
+- Which have different stress levels? How do you know?
+
+> 
+
+
+- Provide a comment on why you think the stress levels appear as they do. Why might certain groups have more or less stress than others?
+
+> 
+
+
+```{r}
+
+
+
+```
+
+# Part 2. Course Knowledge
+
+## 1. True or False: the $95\%$ Confidence Interval tells us that there is a $95\%$ chance of the true value being within our confidence interval. 
+
+> 
+
+## 2. Provide examples of the following and justify your suggestion. I.e., if you say age is postively/negatively skewed say why or how. 
+
+- A Positively Skewed Variable
+
+> 
+
+- A Negatively Skewed Variable
+
+> 
+
+
+## 3. True or False: Kurtosis is a measure of how peaked and central data are. That is, leptokurtic data are all central whereas platykurtic data are more spread out.
+
+> 
+
+
+
+
+
+
+
