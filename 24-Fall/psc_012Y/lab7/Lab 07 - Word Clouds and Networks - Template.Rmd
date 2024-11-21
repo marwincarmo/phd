@@ -1,0 +1,124 @@
+---
+title: "Lab 07 - Word Clouds and Networks"
+author: "YOUR NAME HERE"
+date: "11/21/2024"
+output:
+  html_document:
+    df_print: paged
+subtitle: "PSC-012Y"
+affiliation: The University of California, Davis
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+packet.list = c("tidyverse", "tidytext", "wordcloud", "qgraph",
+                "RColorBrewer", "plyr", "devtools", "igraph",
+                "GGally", "igraphdata")
+# Install Packages
+invisible(sapply(packet.list, function(package) {
+  if (!require(package, character.only = TRUE)) {
+    install.packages(package, dependencies = TRUE)
+  }
+  library(package, character.only = TRUE)
+}))
+devtools::install_github("bradleyboehmke/harrypotter")
+devtools::install_github("lchiffon/wordcloud2")
+library(harrypotter)
+library(wordcloud2)
+```
+
+
+# Part 1. Coding and Visualization
+
+## 1. Create a `list()` called `book` and assign it **all** of the Harry Potter books as in this week's Virtual Tutorial [1pts]
+
+```{r}
+
+
+```
+
+## 2. Following the Virtual Tutorial script, organize your Corpus and show the last **10** words using the `tail()` function. Be sure to change the arguments in `tail()` to display 10-words! [1pts]
+
+```{r}
+
+
+```
+
+## 3. Filter out stop words from the `book` corpus include names such as `"Harry"`, `"Ron"`. and `"Hermione"` [1pts]
+
+```{r}
+
+
+```
+
+## 4. Select the book you'd like to visualize as a word cloud and `subset()` the corpus to include that book. Create the wordcloud using the function: `wordcloud2()` [1pts]
+
+**Note**: You may not select the 6th book for this visualization!
+
+```{r, fig.align = "center", fig.width = 10, fig.height = 6}
+
+
+```
+
+
+
+
+## 5. The code below loads in a social network called "Zachary's karate club" and saves it into an variable called `karate`. Use the `plot()` function to visualize the karate club members. You do not need to apply any layout or additional functions for this [1pts]
+
+
+```{r}
+data("karate")
+```
+
+Plot goes below
+
+```{r}
+
+```
+
+## 6. Calculate global metrics of the network and explain what each of them means [3pts]
+
+- Density
+- Average Path Length
+- Diameter
+
+```{r}
+# Density
+
+# Average Path Length
+
+# Diameter
+
+```
+
+## 7. Calculate local metrics of the network (e.g., centrality measures) and explain [1pts]
+
+- Degree
+- Closeness
+- Betweenness
+
+```{r}
+# Degree
+
+# Closeness
+
+# Betweenness
+
+```
+
+## 8. Who has the highest degree? Closeness? Betweenness?
+
+
+
+# Part 2. Course Knowledge
+
+## 1. Compare and contrast the 3 centrality measures for networks. How are they similar? How are they different? What do each tell us about a node in a network? Give an example in a work-environment of a person who has the highest `degree` and someone who has the highest `closeness`. Justify your answer [3pts]
+
+
+
+## 2. In a high school setting, the president of the associated students organization may have the highest `degree` due to their connections with other students. Does this automatically mean they are also the `closest` or highest in `betweenness`? Why or why not? [2pts]
+
+
+
+
