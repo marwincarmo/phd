@@ -40,8 +40,8 @@ library(ivd)
 # 2 Simulation design -----------------------------------------------------
 
 # Define the number of students and schools
-n_students <- 15000
-n_schools <- 150
+n_students <- 12000
+n_schools <- 160
 
 # Create the student data dataframe
 student_data <- data.frame(
@@ -49,8 +49,12 @@ student_data <- data.frame(
   school_id = sample(1:n_schools, n_students, replace = TRUE)
 )
 
-Sigma <- matrix(c(6.635, 0.294,
-                  0.294, .024), 2, 2)
+u_sd <- 0.33
+t_sd <- 0.09
+
+Sigma <- matrix(c((u_sd^2), -0.003861,
+                  -0.003861, (t_sd^2)), 2, 2)
+
 
 cov2cor(Sigma)
 v <- MASS::mvrnorm(n = n_schools,
@@ -79,9 +83,9 @@ hist(data$t)
 fit <- ivd(location_formula = y ~ 1 + (1|school_id),
            scale_formula = ~ 1 + (1|school_id),
            data = data,
-           niter = 2000, nburnin = 4000, workers = 4)
+           niter = 2000, nburnin = 8000, workers = 4)
 
-summary(fit)
+summary(fit, pip = "model")
 plot(fit, "funnel")
 
 
@@ -110,34 +114,59 @@ plot(fit, "funnel")
 # and document where model performance starts to decline.
 
 
-# Classification ----------------------------------------------------------
+# Function ----------------------------------------------------------
 
-# Define the number of students and schools
-n_students <- 15000
-n_schools <- 150
+sim_schools <- function(n_students, n_schools, sd_t) {
+  
+  # n_students is the  total number of students in the sample
+  # n_schools is the total number of schools in the sample
+  # sd_t is the scale random effect standard deviation
+  
+  # Create the student data dataframe
+  # The average number of students per school is n_students/n_schools
+  student_data <- data.frame(
+    student_id = 1:n_students,
+    school_id = sample(1:n_schools, n_students, replace = TRUE)
+  )
+  
+  # Create variance-covariance matrix
+  Sigma <- matrix(c((0.33^2), -0.0224,
+                    -0.0224, (sd_t^2)), 2, 2)
+  
+  # Create a matrix of random effects
+  v <- MASS::mvrnorm(n = n_schools,
+                     mu = c(0,0), Sigma)
+  
+  # Create the school data dataframe
+  school_data <- data.frame(
+    school_id = 1:n_schools,
+    u = v[,1], # location random effects
+    t = v[,2], # scale random effects
+    y = NA # initialize a column for the outcome
+  )
+  
+  # Merge student and school dataframes
+  data <- merge(student_data, school_data, by = "school_id")
+  
+  # Create the mean achievement for each j school
+  data$mu <- 0 + data$u
+  # Create the standard deviation for each j school
+  data$sigma <- exp(0 + data$t)
+  # Sample the achievement for each student following a normal
+  # distribution with mean mu_j and standard deviation sigma_j
+  data$y <- rnorm(n = nrow(data), mean = data$mu, sd = data$sigma)
+  
+  return(data)
+}
 
-# Create the student data dataframe
-student_data <- data.frame(
-  student_id = 1:n_students,
-  school_id = sample(1:n_schools, n_students, replace = TRUE)
-)
+data <- sim_schools(12000, 160, .09)
 
-school_data <- data.frame(
-  school_id = 1:n_schools,
-  u = rnorm(n_schools, 0, 1),
-  t = sample(c(-1,0,1), size = n_schools, replace = TRUE, prob = c(.13, .74, .13)),
-  y = NA
-)
-
-data <- merge(student_data, school_data, by = "school_id")
-data$mu <- 0 + data$u
-data$sigma <- exp(0 + data$t) 
-data$y <- rnorm(n = nrow(data), mean = data$mu, sd = data$sigma)
+## Run ivd
 
 fit <- ivd(location_formula = y ~ 1 + (1|school_id),
            scale_formula = ~ 1 + (1|school_id),
            data = data,
            niter = 2000, nburnin = 8000, workers = 4)
 
-summary(fit)
+s <- summary(fit)
 plot(fit, "funnel")
