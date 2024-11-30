@@ -68,32 +68,62 @@ scenarios <- data.frame(
   n_students = c(1000, 2500)
 )
 
-reps <- 5
+scenarios <- data.frame(
+  scenario = 2,
+  n_schools = 50,
+  n_students = 2500
+)
+
+reps <- 100
 
 
-for (j in scenarios$n_students) {
-  for (k in scenarios$n_schools) {
-    for (i in 1:reps) {
-      scenario <- scenarios[scenarios$n_schools == k & scenarios$n_students == j, "scenario"]
-      data <- sim_schools(n_students = j, n_schools = k)
-      
-      # Try to fit the model
-      fit <- try(ivd(location_formula = y ~ 1 + (1|school_id),
-                     scale_formula = ~ 1 + (1|school_id),
-                     data = data,
-                     niter = 2000, nburnin = 8000, workers = 4), silent = TRUE)
-      
-      # Check if the fit was successful
-      if (inherits(fit, "try-error")) {
-        message(paste("Error in scenario", scenario, "replication", i, "skipped."))
-        next  # Skip to the next iteration
-      }
-      
-      # Compute the summary only if the fit succeeded
-      s <- summary.ivd(fit)
-      saveRDS(s, paste0("final_project/out/S", scenario, "R", i, ".rds"))
-      
-      gc()
+for (j in scenarios$scenario) {
+  for (i in 1:reps) {
+    
+    # Print progress message
+    message(paste("Scenario", j,
+                  "Replication:", i))
+    
+    data <- sim_schools(n_students = scenarios[scenarios$scenario == j, "n_students"], 
+                        n_schools = scenarios[scenarios$scenario == j, "n_schools"])
+
+    # Try to fit the model
+    fit <- try(ivd(location_formula = y ~ 1 + (1|school_id),
+                   scale_formula = ~ 1 + (1|school_id),
+                   data = data,
+                   niter = 2000, nburnin = 8000, workers = 4), silent = TRUE)
+
+    # Check if the fit was successful
+    if (inherits(fit, "try-error")) {
+      message(paste("Error in scenario", scenario, "replication", i, "skipped."))
+      next  # Skip to the next iteration
     }
+
+    # Compute the summary only if the fit succeeded
+    s <- summary.ivd(fit)
+    saveRDS(s, paste0("final_project/out/S", scenario, "R", i, ".rds"))
+    
+    gc()
   }
 }
+
+
+# 3 Results ---------------------------------------------------------------
+
+library(purrr)
+
+# List all files in the directory
+files <- list.files("final_project/out")
+
+# Filter files that start with "S1"
+s1_files <- files[grepl("^S1", files)]
+
+# Combine the files into a single dataframe with a new column for file index
+s1 <- purrr::map_dfr(seq_along(s1_files), function(i) {
+  file_path <- paste0("final_project/out/", s1_files[i])
+  data <- readRDS(file_path)
+  data$file_index <- i  # Add a column for the file index
+  return(data)
+})
+
+

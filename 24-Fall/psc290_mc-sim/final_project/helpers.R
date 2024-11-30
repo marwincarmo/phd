@@ -113,5 +113,9 @@ summary.ivd <- function(object, digits = 2, ...) {
   
   ## TODO: Link SS to actual clustering units
   
-  as.data.frame(table)
+  df <- as.data.frame(table)
+  df <- cbind(Parameter = rownames(table), df)
+  rownames(df) <- NULL
+  return(df)
 }
+
