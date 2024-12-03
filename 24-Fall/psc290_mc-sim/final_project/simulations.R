@@ -56,22 +56,16 @@ sim_schools <- function(n_students, n_schools, sd_t = 0.09) {
 
 # Define the number of students and schools
 
-scenarios <- data.frame(
-  scenario = 1:8,
-  n_schools = rep(c(50, 100, 200, 500), each = 2),
-  n_students = c(1000, 2500, 3000, 10000, 6000, 20000, 25000, 50000)
-)
+# scenarios <- data.frame(
+#   scenario = 1:8,
+#   n_schools = rep(c(50, 100, 200, 500), each = 2),
+#   n_students = c(1000, 2500, 3000, 10000, 6000, 20000, 25000, 50000)
+# )
 
 scenarios <- data.frame(
-  scenario = 1:2,
-  n_schools = rep(c(50), each = 2),
-  n_students = c(1000, 2500)
-)
-
-scenarios <- data.frame(
-  scenario = 2,
-  n_schools = 50,
-  n_students = 2500
+  scenario = 8,
+  n_schools = 500,
+  n_students = 50000
 )
 
 reps <- 100
@@ -86,22 +80,22 @@ for (j in scenarios$scenario) {
     
     data <- sim_schools(n_students = scenarios[scenarios$scenario == j, "n_students"], 
                         n_schools = scenarios[scenarios$scenario == j, "n_schools"])
-
+    
     # Try to fit the model
     fit <- try(ivd(location_formula = y ~ 1 + (1|school_id),
                    scale_formula = ~ 1 + (1|school_id),
                    data = data,
                    niter = 2000, nburnin = 8000, workers = 4), silent = TRUE)
-
+    
     # Check if the fit was successful
     if (inherits(fit, "try-error")) {
-      message(paste("Error in scenario", scenario, "replication", i, "skipped."))
+      message(paste("Error in scenario", j, "replication", i, "skipped."))
       next  # Skip to the next iteration
     }
-
+    
     # Compute the summary only if the fit succeeded
     s <- summary.ivd(fit)
-    saveRDS(s, paste0("final_project/out/S", scenario, "R", i, ".rds"))
+    saveRDS(s, paste0("final_project/out/S", j, "R", i, ".rds"))
     
     gc()
   }
@@ -119,11 +113,36 @@ files <- list.files("final_project/out")
 s1_files <- files[grepl("^S1", files)]
 
 # Combine the files into a single dataframe with a new column for file index
-s1 <- purrr::map_dfr(seq_along(s1_files), function(i) {
-  file_path <- paste0("final_project/out/", s1_files[i])
+tab <- purrr::map_dfr(seq_along(files), function(i) {
+  file_path <- paste0("final_project/out/", files[i])
   data <- readRDS(file_path)
-  data$file_index <- i  # Add a column for the file index
+  data$scenario <- sub("^[^0-9]*([0-9]+).*", "\\1", files[i])
+  data$rep <- sub(".*[^0-9]([0-9]+)[^0-9]*$", "\\1", files[i])
+  #data$file_index <- i  # Add a column for the file index
   return(data)
 })
 
 
+# Tests -------------------------------------------------------------------
+
+
+dat <- tab[tab$Parameter == "sd_scl_Intc", ]
+
+## Convergence rates
+
+convergence <- dat |> 
+  dplyr::with_groups(scenario,
+                     dplyr::summarise,
+                     rate = dplyr::n()/100)
+# ifelse(cis[names(tval),1] < betas[names(tval)] & cis[names(tval),2] > betas[names(tval)], 1, 0)
+res <- dat |> 
+  dplyr::mutate(bias = Mean - 0.09,
+                mse = (Mean - 0.09)^2,
+                coverage = ifelse(`2.5%` < 0.09 & `97.5%` > 0.09, 1, 0)) |> 
+ dplyr::with_groups(scenario,
+                     dplyr::summarise,
+                     bias = mean(bias),
+                     mse = mean(mse),
+                     coverage = mean(coverage),
+                     Rhat = mean(`R-hat`),
+                    n_eff = mean(n_eff))
