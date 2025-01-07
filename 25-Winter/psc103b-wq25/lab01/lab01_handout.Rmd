@@ -1,13 +1,21 @@
 ---
 title: "Lab 01 - Review of Statistical Concepts"
 author: "Marwin Carmo"
-date: "`r Sys.Date()`"
+date: "2025-01-09"
 output: pdf_document
 subtitle: "PSC-103B"
 affiliation: The University of California, Davis
 editor_options:
   chunk_output_type: console
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.width = 10,
+                      fig.height = 5,
+                      fig.align = 'center')
+
+```
 
 # Central tendency: Mean, Median, and Mode
 
@@ -294,6 +302,145 @@ something about the strength of this relation.
 This value is close to 0, so based on some rules of thumb
 we can say there is a weak negative relation between watching Netflix and exercise.
 Of course, what is considered strong vs. weak can depend on the area of research you're in.
-Next week, we will learn how to conduct a formal statistical test
-to see whether this correlation is significantly different from 0
-or not!
+
+# Significance Testing for a Correlation
+
+Now, we're going to use a fake dataset looking at the relation between temperature (in Fahrenheit), ice cream sales, and pool accidents.
+
+```{r}
+icecream <- read.csv("https://raw.githubusercontent.com/marwincarmo/phd/main/24-Winter/psc103b-wq24/lab/data/IceCreamSales.csv")
+icecream
+```
+
+Previously, we talked about how to calculate the covariance and correlation between two variables -- recall that you can do this using the `cov()` and `cor()` functions in R.
+
+However, we're often working with more than 2 variables, and are interested in getting a quick summary of their pairwise relationships at once, rather than calculating each covariance or correlation individually.
+
+Luckily, we can do this using the exact same functions we used last week! The only difference is that instead of inputting our data as `cov(x = , y = )` or `cor(x = , y = )`, we have just one data argument, which is our entire data frame. According to `cor()` documentation, `x` can be a numeric vector, matrix or data frame. By specifying only `x`, R understands that we want the covariance between all columns in the data frame.
+
+Let's do this for the covariance first:
+
+```{r}
+cov(x = icecream, use = "complete.obs")
+```
+
+The output of this is called a [variance-covariance matrix](https://www.cuemath.com/algebra/covariance-matrix/) and it describes (as the name suggests) the variances and covariances of the variables in your dataset.
+
+The diagonal elements of the variance-covariance matrix are the variances of the variables. Why? Because the way that a variable relates to itself is just its spread; you can use the covariance equation to see how it becomes the variance formula when the variable is the same.
+
+The off-diagonal elements are the covariances between each pair of variables. Notice that this matrix is symmetric. The covariance between, say, temperature and ice cream sales is the same as the covariance of ice cream sales and temperature.
+
+How can we interpret these values? For example, the covariance between temperature and sales is `r round(cov(icecream$Temperature, icecream$Sales),2)` -- what does this tell us about their relation?
+
+We can only tell that the relation between the two is **positive** -- that is, the higher the temperature, the more ice cream is sold. But is this relation really strong? That's not something we can get from the covariance, and is why we turn to correlation instead!
+
+To get the correlation matrix, we just use the `cor()` function.
+
+```{r}
+cor(icecream, use = "complete.obs")
+```
+
+Now let's look at these values -- what are they telling us about the relations between our variables? Which relations appear to be strong? Which ones appear to be weak?
+
+So even though we were able to calculate our
+correlations, we aren't really able to tell whether
+any of these values are representing significant
+relations -- significant meaning that the correlation
+coefficient is different from 0. 
+
+Since a correlation coefficient of 0 means that there is no significant linear relation between the variables, let's test if there is a significant correlation between ice cream sales and temperature.
+
+First, let's plot our data -- we want to make sure that using the correlation to quantify the relationship between the variables is suitable. We wouldn't want to use correlation to measure what looks like a non-linear relation, because correlation and covariance can only capture linear relations. We also don't want to necessarily use correlation if there are strong outliers in our data, as those outliers can change the value of our correlation coefficient.
+
+```{r , fig.height=4, fig.width=6}
+#| label: fig-temp-sales
+#| fig-cap: "Scatterplot of Ice cream sales and temperature."
+
+plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", ylab = "Ice cream Sales")
+```
+
+Does this relation look linear?
+
+Yeah it does! So we are justified in using
+the correlation and testing its significance.
+
+Let's proceed with the test.
+
+Our null and alternative hypotheses are:
+
+- $H_0$: $\rho$ = 0
+- $H_1$: $\rho \neq$ 0
+
+Notice that this is a **two-sided test** -- either there
+is a relation or there isn't a relation, but we're
+not specifying which direction we expect that relation
+to be in.
+
+In order to calculate our test statistic, we just need
+two things: the sample estimate of the correlation
+and the sample size. Recall that the formula to obtain the test statistic for the correlation estimate is given as
+
+$$
+t_{N-2} = \frac{r_{xy}}{\sqrt{(1-r_{xy}^2)/(N-2)}}
+$$
+
+Now, let's get those things!
+
+```{r}
+cor_estimate <- cor(icecream$Temperature, icecream$Sales)
+
+sample_size <- nrow(icecream)
+```
+
+The denominator of our test statistic is an estimate
+of the standard error of the correlation
+
+Let's calculate that separately since it's a bit long
+
+```{r}
+cor_se <- sqrt((1 - cor_estimate^2) / (sample_size - 2))
+```
+
+Now our test statistic
+
+```{r}
+t_stat <- cor_estimate / cor_se
+```
+
+So we now have our test statistic
+This statistic is distributed as a t-distribution
+with df = N - 2
+
+What is the df for our test? 10 (12 - 2)
+
+If we wanted to see whether we reject or fail to
+reject our null hypothesis, we could calculate the critical
+value of our distribution and see if our value is larger
+or calculate the *p*-value.
+
+I'll calculate the *p*-value.
+
+```{r}
+2 * pt(t_stat, df = sample_size - 2, lower.tail = FALSE)
+```
+
+Notice that I'm multiplying my *p*-value by 2
+because we're doing a two-sided test.
+
+What do we conclude?
+
+And here is how we could do it in one line of R code:
+
+```{r}
+cor.test(icecream$Temperature, icecream$Sales, method = "pearson")
+```
+
+Since there are a few different ways to calculate
+correlation coefficients, we had to specify `method = "pearson"`
+because that is the method we've learned in class.
+
+Here is an example of how we could write up our results:
+
+> We examined the relation between temperature and 
+ice cream sales in a sample of 12 days using a Pearson's
+correlation coefficient test. There was a positive, statistically significant, and large between temperature and ice cream sales, *r* = 0.96, *t*(10) = 10.50, *p* < .001.
