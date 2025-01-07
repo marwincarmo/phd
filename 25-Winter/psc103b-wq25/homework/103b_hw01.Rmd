@@ -23,7 +23,7 @@ Please use R/RStudio to complete the following questions. You will submit your f
 
 You may consult with your classmates while working on the assignment, but **you must do all the work yourself – everything you turn in must be your own code and words**. Academic dishonesty will not be tolerated. 
 
-Please submit **a pdf version** of this document with your answers on Canvas by **2:00pm on Friday, January 16th (before lab)**.
+Please submit **a pdf version** of this document with your answers on Canvas by **2:00pm on Thursday, January 16th (before lab)**.
 
 ## 1. Enter the dataset into R, so that you have a dataframe object with the variables `VideoGames`, `Aggression`, and `Cognition`. (1 pt)
 

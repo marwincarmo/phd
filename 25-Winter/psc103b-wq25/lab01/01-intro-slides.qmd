@@ -428,7 +428,7 @@ Our null and alternative hypotheses are:
 - $H_0$: $\rho$ = 0
 - $H_1$: $\rho \neq$ 0
 
-- This is a **two-sided test** -- either there is a relation or there isn't a relation
+- This is a **two-sided test** -- either there is a relation or there isn't a relation, regardless of direction (either positive or negative).
 
 ---
 
@@ -466,13 +466,13 @@ t_stat <- cor_estimate / cor_se
 ```
 :::
 
-- The degrees of freedom of the test: 12 - 2 = 10
+- The degrees of freedom of the test: $N - 2 = 15 - 2 = 13$ 
 
 - And calculate the *p*-value:
 
 ::: fragment
 ```{r, echo = T}
-2 * pt(t_stat, df = sample_size - 2, lower.tail = FALSE)
+2 * pt(-abs(t_stat), df = sample_size - 2, lower.tail = TRUE)
 ```
 :::
 

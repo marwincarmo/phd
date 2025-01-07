@@ -1,5 +1,5 @@
 ---
-title: "Lab 01 - Review of Statistical Concepts"
+title: "Lab 01 - Review of Statistical Concepts and Bivariate Relations"
 author: "Marwin Carmo"
 date: "2025-01-09"
 output: pdf_document
@@ -308,7 +308,7 @@ Of course, what is considered strong vs. weak can depend on the area of research
 Now, we're going to use a fake dataset looking at the relation between temperature (in Fahrenheit), ice cream sales, and pool accidents.
 
 ```{r}
-icecream <- read.csv("https://raw.githubusercontent.com/marwincarmo/phd/main/24-Winter/psc103b-wq24/lab/data/IceCreamSales.csv")
+icecream <- read.csv("https://shorturl.at/qdZlt")
 icecream
 ```
 
@@ -421,7 +421,7 @@ or calculate the *p*-value.
 I'll calculate the *p*-value.
 
 ```{r}
-2 * pt(t_stat, df = sample_size - 2, lower.tail = FALSE)
+2 * pt(abs(t_stat), df = sample_size - 2, lower.tail = FALSE)
 ```
 
 Notice that I'm multiplying my *p*-value by 2
