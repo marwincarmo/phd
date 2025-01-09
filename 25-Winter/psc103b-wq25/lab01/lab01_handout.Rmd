@@ -17,6 +17,17 @@ knitr::opts_chunk$set(echo = TRUE,
 
 ```
 
+# Before we start
+
+To create PDF documents from R Markdown, you will need to have a LaTeX distribution installed. There are several options but I recommend you install TinyTeX:
+
+```{r, eval=FALSE}
+install.packages('tinytex')
+tinytex::install_tinytex()
+
+```
+
+
 # Central tendency: Mean, Median, and Mode
 
 There are many measures of central tendency, but these 3 are the most

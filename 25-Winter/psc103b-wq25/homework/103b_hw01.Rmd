@@ -11,6 +11,8 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
                       fig.width = 10,
                       fig.height = 5,
                       fig.align = 'center')
