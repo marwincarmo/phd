@@ -50,7 +50,7 @@ editor_options:
 
 - Use the homework template to write your answers and submit a **pdf** version on Canvas. Paste your code when required
 
-- Office hours on Thursday 3-5PM at Young Hall 266
+- Office hours on Thursday 3:30-5:30PM at Young Hall 266
 
 - Questions via email at [mmcarmo@ucdavis.edu](mailto:mmcarmo@ucdavis.edu)
 
@@ -472,7 +472,7 @@ t_stat <- cor_estimate / cor_se
 
 ::: fragment
 ```{r, echo = T}
-2 * pt(-abs(t_stat), df = sample_size - 2, lower.tail = TRUE)
+2 * pt(t_stat, df = sample_size - 2, lower.tail = TRUE)
 ```
 :::
 

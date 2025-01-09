@@ -432,7 +432,7 @@ or calculate the *p*-value.
 I'll calculate the *p*-value.
 
 ```{r}
-2 * pt(abs(t_stat), df = sample_size - 2, lower.tail = FALSE)
+2 * pt(t_stat, df = sample_size - 2, lower.tail = FALSE)
 ```
 
 Notice that I'm multiplying my *p*-value by 2
