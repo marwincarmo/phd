@@ -1,6 +1,6 @@
 ---
 title: "Beyond Average Scores: Identification of Consistent and Inconsistent Academic Achievement in Grouping Units"
-subtitle: "DIPS - 11/04/2024"
+subtitle: "Quantitative Seminar - 01/16/2025"
 author: "Marwin Carmo"
 format: 
   revealjs:
@@ -92,9 +92,9 @@ Their experiences and level of mastery are almost certainly different.
 Inconsistent performance may reflect unaccounted factors influencing learning.
 :::
 
-## Our goal
+--- 
 
-- How can we identify schools with unusually high or low variability in academic achievement?
+### How can we identify schools with unusually high or low variability in academic achievement?
 
 - We adapt **Mixed-Effects Location Scale Model** (MELSM) incorporating a **spike and slab** prior into the scale
 component to select or shrink random effects.
@@ -112,7 +112,14 @@ component to select or shrink random effects.
 
 <!-- - These models operate under the assumption of constant residual variance. -->
 
-- **Limitation**: Assumes a fixed within-school standard variance, potentially masking important differences in variability that reflect underlying factors such as teaching quality, socioeconomic influences, or student engagement.
+- **Limitations**. Assumes a fixed within-school standard variance, potentially masking important differences in variability:
+  - Teaching quality
+  - Socioeconomic influnences
+  - Student engagement
+
+::: {.notes}
+These differences in variability can reflect underlying factors such as teaching quality, socioeconomic influences, or student engagement.
+:::
 
 ## The traditional MLM
 
@@ -125,6 +132,8 @@ u_{0i} &\sim \mathcal{N} (0, \tau_{u_0}^2)\\
 \end{aligned}
 
 :::
+
+- Constant error variance!
 
 ## The MELSM framework
 
@@ -163,14 +172,14 @@ y_{ij} &= \gamma_0 + u_{0i} + \varepsilon_{ij}\\
 
 
 \begin{equation}
-  \textbf{v}=
-  \begin{bmatrix} u_0 \\ t_0 \end{bmatrix} \sim \mathcal{N}
+  \textbf{v}_j=
+  \begin{bmatrix} u_{0j} \\ t_{0j} \end{bmatrix} \sim \mathcal{N}
     \begin{pmatrix}
         \boldsymbol{0}=
         \begin{bmatrix} 0 \\ 0 \end{bmatrix},
         \boldsymbol{\Sigma}=
-        \begin{bmatrix} \tau^2_{u_0} & \tau_{u_0t_0} \\ 
-                        \tau_{u_0t_0} & \tau^2_{t_0} 
+        \begin{bmatrix} \tau^2_{u_{0j}} & \tau_{u_{0j}t_{0j}} \\ 
+                        \tau_{u_{0j}t_{0j}} & \tau^2_{t_{0j}} 
         \end{bmatrix}
     \end{pmatrix}
 \end{equation}
@@ -195,7 +204,7 @@ y_{ij} &= \gamma_0 + u_{0i} + \varepsilon_{ij}\\
 - Accounts for possible correlations among location and scale effects.
 
 - Allows the inclusion of specific predictors in both sub-models.
-  - For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.
+  - For example, low parental SES leads to more variability of student performance. 
 
 ::: {.notes}
 - Residual variance holds valuable information about the clustering unit (like a school) that can be systematically modeled and analyzed.
@@ -203,14 +212,14 @@ y_{ij} &= \gamma_0 + u_{0i} + \varepsilon_{ij}\\
 - Allows the inclusion of specific predictors. For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.
 :::
 
-## Spike and Slab MELSM
+## Spike-and-Slab MELSM
 
 <!-- Not all random effects might be relevant or contribute significantly. Some schools might have residual variance well-explained by fixed effects. -->
-- We incorporate the Spike-and-Slab prior as a method of **variable selection** of random effects in the scale model.
+- We incorporate the spike-and-slab prior as a method of **variable selection** of random effects in the scale model.
 
 - The model is allowed to switch between two assumptions:
-  - A high probability to a common error standard deviation ($\sigma$);
-  - And another that captures school- and student-specific error variability ($\sigma_\color{red}{ij}$)
+  - a high probability to a common error standard deviation ($\sigma$);
+  - and another that captures school- and student-specific error variability ($\sigma_\color{red}{ij}$)
 
 <!-- "But how do we achieve that?" -->
   
@@ -326,7 +335,7 @@ A Monte Carlo process refers to a simulation that samples many random values fro
 Thus, for each iteration, this specification allows each individual to have their own person-specific estimate or the fixed effect average. 
 :::
 
-## The Spike-and-Slab approach
+## The Spike-and-Slab prior
 
 ::: columns
 ::: {.column width="50%"}
@@ -366,7 +375,9 @@ Pr(\delta_{jk} = 1 | \textbf{Y}) = \frac{Pr(\textbf{Y} | \delta_{jk} = 1)Pr(\del
 
 :::
 
-- The PIP is estimated by the proportion of MCMC samples where $\delta_{jk} = 1$:
+---
+
+The PIP is estimated by the proportion of MCMC samples where $\delta_{jk} = 1$:
 
 ::: fragment
 
@@ -374,6 +385,8 @@ Pr(\delta_{jk} = 1 | \textbf{Y}) = \frac{Pr(\textbf{Y} | \delta_{jk} = 1)Pr(\del
 \label{eq:pip}
 Pr(\delta_{jk} = 1 | \textbf{Y}) = \frac{1}{S} \sum_{s = 1}^S \delta_{jks}
 \end{align}
+
+where $S$ is the total number of posterior samples.
 
 :::
 
@@ -391,7 +404,7 @@ $$\varepsilon_{ij}\sim\mathcal{N}(0, \sigma_\varepsilon)$$
 
 If not, the MELSM assumption of variance heterogeneity is retained: 
 
-$$\varepsilon_{ij}\sim\mathcal{N}(0, \sigma_\varepsilon_{ij})$$
+$$\varepsilon_{ij}\sim\mathcal{N}(0, \sigma_{\varepsilon_{ij}})$$
 
 ---
 
@@ -453,7 +466,7 @@ BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \te
 
 - We computed the estimation efficiency using $\hat{R}$ and the effective sample size (ESS).
 
-- The models were compared for predictive accuracy using Pareto smoothed importance sampling Leave-one-out cross-validation (PSIS-LOO).
+- The models were compared for predictive accuracy using PSIS-LOO cross-validation.
 
 ::: {.notes}
 - R-hat measures convergence in MCMC sampling; an R-hat value close to 1 indicates that chains have likely converged, meaning the samples are representative of the posterior distribution.
