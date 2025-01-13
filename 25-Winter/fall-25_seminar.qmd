@@ -203,7 +203,7 @@ y_{ij} &= \gamma_0 + u_{0i} + \varepsilon_{ij}\\
 - Allows the inclusion of specific predictors. For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.
 :::
 
-## The Spike-and-Slab approach
+## Spike and Slab MELSM
 
 <!-- Not all random effects might be relevant or contribute significantly. Some schools might have residual variance well-explained by fixed effects. -->
 - We incorporate the Spike-and-Slab prior as a method of **variable selection** of random effects in the scale model.
@@ -217,42 +217,32 @@ y_{ij} &= \gamma_0 + u_{0i} + \varepsilon_{ij}\\
 ::: {.notes}
 Depending on $\delta$ value, the computations will either retain the random effect or shrink it to exactly zero.
 :::
-  
-## The Spike-and-Slab approach
-
-::: columns
-::: {.column width="50%"}
-
-![Rouder et al. (2018)](../24-Spring/rouder2018.png){fig-align="center" width=65%}
-
-:::
-
-::: {.column width="50%"}
-
-- A two component mixture
-a. A "spike", that is a Dirac measure concentrated at zero.
-b. A diffuse "slab" component surrounding zero.
-:::
-
-
-:::
-
-::: {.notes}
-- A Dirac measure is a measure whose (unit) mass is concentrated on a single point x of a space X.
-
-- Small values are shrunken to zero while larger values are estimated normally in the slab.
-:::
 
 ## The mechanism
 
-- First, $\boldsymbol{\Sigma}$ can be decomposed into $\boldsymbol\Sigma = \boldsymbol{\tau}\boldsymbol{\Omega\tau}'$ to specify independent priors for each element of $\boldsymbol{\tau}$ and $\boldsymbol{\Omega}$, where
+\begin{equation}
+  \color{lightgray}{
+  \textbf{v}=
+  \begin{bmatrix} u_0 \\ t_0 \end{bmatrix} \sim \mathcal{N}}
+    \begin{pmatrix}
+      \color{lightgray}{
+        \boldsymbol{0}=
+        \begin{bmatrix} 0 \\ 0 \end{bmatrix},}
+        \boldsymbol{\Sigma}=
+        \begin{bmatrix} \tau^2_{u_0} & \tau_{u_0t_0} \\ 
+                        \tau_{u_0t_0} & \tau^2_{t_0} 
+        \end{bmatrix}
+    \end{pmatrix}
+\end{equation}
 
+- To facilitate computation and the definition of priors, we decompose $\boldsymbol{\Sigma}$ into $\boldsymbol\Sigma = \boldsymbol{\tau}\boldsymbol{\Omega\tau}'$ 
+<!-- to specify independent priors for each element of $\boldsymbol{\tau}$ and $\boldsymbol{\Omega}$ -->, where
   - $\boldsymbol{\tau}$ is a diagonal matrix of the random-effects standard deviations.
   - $\boldsymbol{\Omega}$ is the correlation matrix among all random effects.
   
 ## The mechanism
 
--  Next, we can factorize $\boldsymbol\Omega$ via the Cholesky $\textbf{L}$ of $\boldsymbol\Omega = \textbf{L}'\textbf{L}$.
+-  Next, we factorize $\boldsymbol\Omega$ via the Cholesky $\textbf{L}$ of $\boldsymbol\Omega = \textbf{L}'\textbf{L}$.
 
 ::: fragment
 
@@ -291,7 +281,7 @@ To simplify computation by removing redundant effects and ensure that the result
 
 ## Variable selection
 
-- Now, we include an indicator variable ($\delta_{jk}$) for each random effect to be subjected to shrinkage. 
+- We include an indicator variable ($\delta_{jk}$) for each random effect to be subjected to shrinkage. 
 
 - It allows switching between the spike and slab  throughout the MCMC sampling process.
 
@@ -314,34 +304,58 @@ A Monte Carlo process refers to a simulation that samples many random values fro
 
 ---
 
-- The subscript to the indicator ($\boldsymbol{\delta}_j$) assigns each school a prior inclusion probability of the random effect $k$.
-
 - Each element in $\boldsymbol{\delta}_j$ takes integers $\in \{0,1\}$ and follows a $\delta_{jk} \sim \text{Bernoulli}(\pi)$ distribution.
 
 - When a 0 is sampled, the portion after the fixed effect drops out of the equation.
-
-::: {.notes}
-- For each school we obtain a probabilistic measure on whether the random effect is to be included or not.
-:::
 
 :::fragment
 \begin{equation}
 \label{eq:mm_delta}
 \sigma_{\varepsilon_{ij}} = \begin{cases}
-\exp(\eta_0), & \text{if }\delta_{jt_0} = 0 , \\
+\exp(\eta_0 + 0), & \text{if }\delta_{jt_0} = 0 , \\
 \exp(\eta_0 + t_{0j}), & \text{if }\delta_{jt_0} = 1
 \end{cases}.
 \end{equation}
 :::
 
 ::: {.notes}
+- The subscript to the indicator ($\boldsymbol{\delta}_j$) assigns each school a prior inclusion probability of the random effect $k$.
+
+- For each school we obtain a probabilistic measure on whether the random effect is to be included or not.
+
 Thus, for each iteration, this specification allows each individual to have their own person-specific estimate or the fixed effect average. 
 :::
----
+
+## The Spike-and-Slab approach
+
+::: columns
+::: {.column width="50%"}
+
+![Rouder et al. (2018)](../24-Spring/rouder2018.png){fig-align="center" width=65%}
+
+:::
+
+::: {.column width="50%"}
+
+If $\delta= 0$, the density "spikes" at the zero point mass;
+
+If $\delta= 1$, the standard normal prior, $z_{jk}$, is retained and scaled by $\tau_k$, introducing the "slab".
+:::
+
+
+:::
+
+::: {.notes}
+- A Dirac measure is a measure whose (unit) mass is concentrated on a single point x of a space X.
+
+- Small values are shrunken to zero while larger values are estimated normally in the slab.
+:::
+
+
 
 ## Posterior Inclusion Probability (PIP)
 
-- Quantifies the probability that a given random effect is included in the model
+- Quantifies the probability that a given random effect is included in the model, conditional on the observed data:
 
 ::: fragment
 
@@ -371,28 +385,50 @@ Pr(\delta_{jk} = 1 | \textbf{Y}) = \frac{1}{S} \sum_{s = 1}^S \delta_{jks}
 
 ---
 
-- To determine whether a given random effect is warranted we estimate the strength of evidence through Bayes factors:
+If there is evidence for zero variance in the scale random effects, the model reduces to the MLM assumption: 
 
-::: fragment
+$$\varepsilon_{ij}\sim\mathcal{N}(0, \sigma_\varepsilon)$$
 
-\begin{equation}
-\underbrace{\frac{Pr(\delta_{jk} = 1 | \textbf{Y})}{Pr(\delta_{jk} = 0 | \textbf{Y})}}_{\text{Posterior Odds}} = \underbrace{\frac{Pr(\delta_{jk} = 1)}{Pr(\delta_{jk} = 0)}}_{\text{Prior Odds}} \times \underbrace{\frac{Pr(\textbf{Y} | \delta_{jk} = 1)}{Pr(\textbf{Y} | \delta_{jk} = 0)}}_{\text{Bayes Factor}} \nonumber.
-\end{equation}
+If not, the MELSM assumption of variance heterogeneity is retained: 
 
-:::
+$$\varepsilon_{ij}\sim\mathcal{N}(0, \sigma_\varepsilon_{ij})$$
 
 ---
 
-- Setting the prior probability of $\pi$ to 0.5 implies equal prior odds, $Pr(\delta_{jk} = 1)/Pr(\delta_{jk} = 0) = 1$.
+- The PIP gives us a probabilistic measure and does not perform automatic variable selection.
+
+<!-- To determine whether a given random effect is warranted  -->
+- We estimate the strength of evidence through Bayes factors:
 
 ::: fragment
 \begin{align}
 \label{eq:bf_pip}
-BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \textbf{Y}) }.
+BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \textbf{Y}) }
 \end{align}
 :::
 
-- A BF$_{10}$ > 3 corresponds to a PIP greater than 0.75. We use this threshold as a decision boundary for identifying schools with truly unusual variances
+- A BF$_{10}$ > 3 corresponds to a PIP > 0.75. We are three times more likely to include this random effect.
+
+<!-- ::: fragment -->
+
+<!-- \begin{equation} -->
+<!-- \underbrace{\frac{Pr(\delta_{jk} = 1 | \textbf{Y})}{Pr(\delta_{jk} = 0 | \textbf{Y})}}_{\text{Posterior Odds}} = \underbrace{\frac{Pr(\delta_{jk} = 1)}{Pr(\delta_{jk} = 0)}}_{\text{Prior Odds}} \times \underbrace{\frac{Pr(\textbf{Y} | \delta_{jk} = 1)}{Pr(\textbf{Y} | \delta_{jk} = 0)}}_{\text{Bayes Factor}} \nonumber. -->
+<!-- \end{equation} -->
+
+<!-- ::: -->
+
+<!-- --- -->
+
+<!-- - Setting the prior probability of $\pi$ to 0.5 implies equal prior odds, $Pr(\delta_{jk} = 1)/Pr(\delta_{jk} = 0) = 1$. -->
+
+<!-- ::: fragment -->
+<!-- \begin{align} -->
+<!-- \label{eq:bf_pip} -->
+<!-- BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \textbf{Y}) }. -->
+<!-- \end{align} -->
+<!-- ::: -->
+
+<!-- - A BF$_{10}$ > 3 corresponds to a PIP greater than 0.75. We use this threshold as a decision boundary for identifying schools with truly unusual variances -->
 
 ## Case study
 
@@ -429,10 +465,10 @@ BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \te
 
 - Model 1 identified eight schools with PIPs exceeding 0.75, suggesting notable deviations from the average within-school variance.
 
-- By incorporating SES covariates, Model 2 significantly outperformed Model 1 in terms of predictive accuracy, $\Delta\widehat{\text{elpd}}_{\text{loo}}$ = -43.6 (10.5).
+- By incorporating SES covariates, Model 2 significantly outperformed Model 1 in terms of predictive accuracy, $\Delta\widehat{\text{elpd}}_{\text{loo}}= -43.6 (10.5)$ .
 
 - Model 3 was practically indistinguishable from Model 2; the inclusion of a random slope for the student-level SES did not improve
-the model’s predictive accuracy, $\Delta\widehat{\text{elpd}}_{\text{loo}}$ = -1.3 (0.6).
+the model’s predictive accuracy, $\Delta\widehat{\text{elpd}}_{\text{loo}}= -1.3 (0.6)$.
 
 ---
 
@@ -460,11 +496,13 @@ The posterior probabilities remained close to the prior belief of 50% probabilit
 
 ## Discussion
 
-- The SS-MELSM offers an approach for identifying schools deviating from the norm in terms of within-school variability.
+- The SS-MELSM helps identifying schools deviating from the norm in terms of within-school variability.
 
 - The spike-and-slab prior accounts for uncertainty in including random effects.
 
-- Investigating inconsistent schools might reveal variations in teaching quality, student engagement levels, or the impact of external influences on specific schools.
+- Identifying variability can guide resource allocation or teaching interventions.
+
+<!-- - Investigating inconsistent schools might reveal variations in teaching quality, student engagement levels, or the impact of external influences on specific schools. -->
 
 ## Limitations
 
