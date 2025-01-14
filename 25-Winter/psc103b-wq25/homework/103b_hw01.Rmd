@@ -1,0 +1,84 @@
+---
+title: "Lab 01"
+author: "YOUR NAME HERE"
+date: "`r Sys.Date()`"
+output: pdf_document
+subtitle: "PSC-103B"
+affiliation: The University of California, Davis
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.width = 10,
+                      fig.height = 5,
+                      fig.align = 'center')
+
+```
+
+# Instructions
+
+Please use R/RStudio to complete the following questions. You will submit your filled-out version of this document **as a PDF** on Canvas. Make sure your PDF looks as expected before submitting. Please **include the code you used to generate your answer for each question (when relevant) as well as the final answer and/or relevant output**.
+
+You may consult with your classmates while working on the assignment, but **you must do all the work yourself – everything you turn in must be your own code and words**. Academic dishonesty will not be tolerated. 
+
+Please submit **a pdf version** of this document with your answers on Canvas by **2:00pm on Thursday, January 16th (before lab)**.
+
+## 1. Enter the dataset into R, so that you have a dataframe object with the variables `VideoGames`, `Aggression`, and `Cognition`. (1 pt)
+
+| Video Game (hours) | Aggression Score | Visuospatial Cognition |
+|:------------------:|:----------------:|:----------------------:|
+|         4          |        58        |           79           |
+|         3          |        52        |           20           |
+|         7          |        63        |           82           |
+|         6          |        54        |           81           |
+|         3          |        59        |           79           |
+|         6          |        55        |           79           |
+|         6          |        61        |           81           |
+|         7          |        58        |           83           |
+|         6          |        60        |           80           |
+|         5          |        67        |           83           |
+
+
+```{r}
+
+```
+
+## 2. Find the mean and standard deviation of each variable. (2 pts)
+
+```{r}
+
+```
+
+## 3. What do you think is the most appropriate measure of central tendency for the variable "Cognition"? Why? (1 pt)
+
+> 
+
+## 4. How are variance and standard deviation related? Why might we prefer to use the standard deviation? (1 pt)
+
+> 
+
+## 5. Plot `VideoGames` and `Aggression` as a scatterplot where the hours of each participant spending on `VideoGames` display on x-axis and their `Aggression` scores displays on y-axis. Make sure your axes are appropriately labeled and include a title (put whatever you think make sense). (1 pt)
+
+```{r}
+
+```
+
+## 6. Calculate the covariance between `VideoGames` and `Aggression`. What does this tell you about the direction of the relation? Can this tell you anything about the strength of the relation? (2 pt)
+
+```{r}
+
+```
+
+> 
+
+## 7. Calculate the correlation between VideoGames and Aggression. What does this correlation tell you about their relation (i.e., direction and strength)? (2 pt)
+
+```{r}
+
+```
+
+> 

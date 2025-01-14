@@ -124,12 +124,14 @@ u_{0i} &\sim \mathcal{N} (0, \tau_{u_0}^2)\\
 
 :::
 
+<!-- Explicar o modelo e o que sao os efeitos fixos e aleatorios. Enfatizar a variancia constante do MLM -->
+
 ::: {.notes}
-- MELSM include a sub-model to addresses potential differences in the residual variance.
+- MELSM include a sub-model to address potential differences in the residual variance.
 
 - It allows the  within-school standard deviation to differ among schools the residual standard deviation to differ among $i$-students within each school to obtain $\sigma_{\varepsilon_{ij}}^2$.
 
-- The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$.
+- The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$, allowing random effects of both location and scale to correlate.
 :::
 
 

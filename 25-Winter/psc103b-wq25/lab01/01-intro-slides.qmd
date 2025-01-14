@@ -1,0 +1,485 @@
+---
+title: "Week 1 - Review of Statistical Concepts"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    #chalkboard: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    #css: custom.css
+    #theme: psc290-23
+    # highlight-style: atom-one-dark
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    # height: 900
+    footer: "PSC 103B - Statistical Analysis of Psychological Data"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+## Who am I
+
+-   2nd Year Graduate Student in Quantitative Psychology
+
+-   MSc in Psychiatry at University of Sao Paulo, Brazil
+
+-   Advised by Dr. Philippe Rast
+
+-   Studying intraindividual variability and Bayesian modeling
+
+## Lab and homework dynamics
+
+- All analyses will use the R computing language
+
+- Assignments are released before Lab and are due before next lab session
+
+- The instructor/TA will post an answer key to the course website on the due date. For this reason, **late homework will not be accepted**
+
+- Use the homework template to write your answers and submit a **pdf** version on Canvas. Paste your code when required
+
+- Office hours on Thursday 3:30-5:30PM at Young Hall 266
+
+- Questions via email at [mmcarmo@ucdavis.edu](mailto:mmcarmo@ucdavis.edu)
+
+
+
+# Review of Statistical Concepts
+
+## Central tendency: Mean, Median, and Mode
+
+- They are used to **describe a distribution of observations** (e.g., all the grades on an exam) in one number that best represents that distribution
+
+- Suppose we asked a bunch of UC Davis students how many hours per week they spent watching Netflix, and how many hours they spent exercising during Winter break:
+
+::: fragment
+```{r, echo = T}
+netflix <- c(2, 6, 1, 7, 2, 4, 11, 40, 7, 0, 3, 4, 5, 2, 15)
+exercise <- c(2, 2, 6, 2, 12, 45, 8, 3, 2, 6, 4, 0, 1, 3, 0)
+```
+:::
+
+## Central tendency: Mean, Median, and Mode
+
+- How many observations are in each variable?
+
+::: fragment
+```{r, echo = T}
+length(netflix)
+length(exercise)
+```
+:::
+
+- Let's take a look at the average time each student spent on these activities:
+
+::: fragment
+```{r, echo = T}
+mean(netflix, na.rm = TRUE) # use the argument na.rm = TRUE to ignore missing values 
+mean(exercise, na.rm = TRUE)
+```
+:::
+
+## Central tendency: Mean, Median, and Mode
+
+- But is the mean a good representation of these data?
+
+- Take a look again at the values and see if you find something odd
+
+::: fragment
+```{r, echo = T}
+netflix
+exercise
+```
+:::
+
+- One person is watching Netflix 40h a week
+
+- Another exercised 45h per week
+
+## Central tendency: Mean, Median, and Mode
+
+- When we have **outliers**, sometimes the **median** is a better representation of  the data
+
+- The median is the **middle value** of your data, after you have ordered it 
+
+::: fragment
+```{r, echo = T}
+median(exercise, na.rm = TRUE)
+median(netflix, na.rm = TRUE)
+```
+:::
+
+## Central tendency: Mean, Median, and Mode
+
+- Sometimes, we can't do arithmetic on the data we have
+
+- If we had asked our 15 participants what their favorite flavor of ice cream was, we would not be able to describe that distribution using a mean or a median. We would have to use the **mode**
+
+- The mode is just the most frequent value
+
+## Central tendency: Mean, Median, and Mode
+
+- R doesn't have a function for it, so we use the `table()` function
+
+- `table()` gives you the number of times each element shows up in an object
+
+::: fragment
+```{r, echo = T}
+table(netflix)
+```
+:::
+
+- You can use the `sort()` function on the result of the table function to order it
+
+::: fragment
+```{r, echo = T}
+sort(table(exercise))
+```
+:::
+
+## Spread: Variance and Standard Deviation
+
+- How are the observations spread out around the mean or median?
+
+- We're gonna look at two different kinds that are related: **Variance** and **standard deviation**
+
+::: columns
+::: {.column width="50%"}
+::: fragment
+$$
+s^2 = \frac{1}{N-1}\sum^N_{i=1}{(x_i-\bar{x})^2}
+$$
+:::
+:::
+
+::: {.column width="50%"}
+::: fragment
+$$
+s = \sqrt{\frac{1}{N-1}\sum^N_{i=1}{(x_i-\bar{x})^2}}
+$$
+:::
+:::
+:::
+
+## Spread: Variance
+
+1. Calculate the mean
+
+::: fragment
+```{r, echo = T}
+mean(exercise, na.rm = TRUE)
+```
+:::
+
+2. Find the distance from each observation to the mean
+
+::: fragment
+```{r, echo = T}
+exercise - mean(exercise, na.rm = TRUE)
+```
+:::
+
+::: fragment
+```{r, echo = T}
+diffs <- exercise - mean(exercise, na.rm = TRUE)
+```
+:::
+
+## Spread: Variance
+
+3. Square the differences
+
+::: fragment
+```{r, echo = T}
+diffs_sq <- diffs^2
+```
+:::
+
+4. Sum everything and divide by $N-1$ 
+
+::: fragment
+```{r, echo = T}
+sum(diffs_sq)/(length(exercise) - 1)
+```
+:::
+
+- We can check our answers using `var()`
+
+::: fragment
+```{r, echo = T}
+var(exercise, na.rm = TRUE)
+```
+:::
+
+## Spread: Standard deviation
+
+- To get the **standard deviation**, we just get the square root of the variance:
+
+::: fragment
+```{r, echo = T}
+ex_var <- var(exercise, na.rm = TRUE)
+sqrt(ex_var)
+```
+:::
+
+- Or, R has a `sd()` function:
+
+::: fragment
+```{r, echo = T}
+sd(exercise, na.rm = TRUE)
+```
+:::
+
+## Correlation and covariance
+
+- In our imaginary example, each person gave us two bits of information, exercise and netflix hours.
+
+- Let's organize our data into a dataframe to better keep track of it:
+
+::: fragment
+```{r, echo = T}
+df <- data.frame(Netflix = netflix, 
+                 Exercise = exercise, 
+                 stringsAsFactors = FALSE) 
+df
+```
+:::
+
+---
+
+If you are in RStudio, you can look at df by clicking on it, using `View()`, typing it in the console or using functions like `head()` and `tail()`. Can you tell what those do?
+
+::: columns
+::: {.column width="50%"}
+::: fragment
+```{r, echo = T}
+head(df)
+```
+:::
+:::
+
+::: {.column width="50%"}
+::: fragment
+```{r, echo = T}
+tail(df)
+```
+:::
+:::
+:::
+
+---
+
+It's also a good idea to plot your data. To make a scatterplot, we can use `plot()`
+
+```{r, echo = T}
+#| fig-width: 12
+#| fig-height: 6
+#| fig-dpi: 300
+#| fig-align: "center"
+
+plot(df$Netflix, df$Exercise, xlab = "Hours Spent Watching Netflix", #changes the x-axis label
+     ylab = "Hours Spent Exercising", # changes the y-axis label
+     main = "Plot of Time Spent Watching Netflix vs. Exercising over Break") # gives your plot a title
+```
+
+
+## Covariance
+
+- What if we wanted to quantify this relation? We can use the covariance and correlation!
+
+- The **covariance** between two variables is a measure of how the two variables change together.
+
+::: fragment
+$$
+s_{XY} = \frac{1}{N-1}\sum^N_{i=1}{(X_i-\bar{X})(Y_i-\bar{Y})}
+$$
+:::
+
+<!-- It resembles the variance, but instead of squared differences from the mean, we multiply these differences from the mean by each other -->
+
+## Covariance
+
+1. Get the differences from the mean for each variable:
+
+::: fragment
+```{r, echo = T}
+diff_nfx <- df$Netflix - mean(df$Netflix, na.rm = TRUE)
+diff_ex <- df$Exercise - mean(df$Exercise, na.rm = TRUE)
+# you can check this is right -- the differences will sum to 0 (or very close to it)
+sum(diff_ex)
+```
+:::
+
+2. Multiply them by each other
+
+::: fragment
+```{r, echo = T}
+mult_diffs <- diff_nfx * diff_ex
+```
+:::
+
+## Covariance
+
+3. Sum all these multiplied differences
+
+::: fragment
+```{r, echo = T}
+sum_diffs <- sum(mult_diffs, na.rm = TRUE)
+```
+:::
+
+4. Divide by N - 1
+
+::: fragment
+```{r, echo = T}
+cov_NetEx <- sum_diffs/14
+cov_NetEx
+```
+:::
+
+- We see that the covariance is **negative**, indicating that the Netflix and Exercise variables are **inversely related** to each other
+
+## Covariance
+
+- You can verify this yourself by using the `cov()` function
+
+::: fragment
+```{r, echo = T}
+cov_NetEx_2 <- cov(df$Netflix, df$Exercise, use = "complete.obs")
+cov_NetEx_2
+```
+:::
+
+-  For `cov()`, the `use = "complete.obs"` argument acts similarly to `na.rm = TRUE`: it will only use data from people who gave an answer to both `Netflix` and `Exercise`.
+
+## Correlation
+
+- We don't know how strong is this association because covariances have **arbitrary** scales based on the scales of the original variables.
+
+-  We don't know how big they could get so we don't know if this value is large or small.
+
+- **Correlations** can only range between **-1** and **1**, so they're easier to interpret.
+
+## Correlation
+
+- We'll standardize the covariance to get a correlation.
+
+- Standardizing in this case means dividing by the variables' standard deviations:
+
+::: fragment
+$$
+r_{XY} = \frac{s_{XY}}{s_Xs_Y}
+$$
+:::
+
+---
+
+We divide the covariance by the product of the variances to get a correlation:
+
+::: fragment
+```{r, echo = T}
+sd_N <- sd(df$Netflix, na.rm = TRUE)
+sd_E <- sd(df$Exercise, na.rm = TRUE)
+```
+:::
+
+::: fragment
+```{r, echo = T}
+cov_NetEx/(sd_N*sd_E)
+```
+:::
+
+- And we can check this using the `cor()` function:
+
+::: fragment
+```{r, echo = T}
+cor(df$Netflix, df$Exercise, use = "complete.obs")
+```
+:::
+
+---
+
+```{r, echo = T}
+cor(df$Netflix, df$Exercise, use = "complete.obs")
+```
+
+Since the correlation ranges between -1 and 1, we can say something about the strength of this relation.
+
+- Based on some rules of thumb we can say there is a weak negative relation between watching Netflix and exercising.
+
+- What is considered strong vs. weak can **depend on the area of research** you're in.
+
+## Significance Testing for a Correlation
+
+Our null and alternative hypotheses are:
+
+- $H_0$: $\rho$ = 0
+- $H_1$: $\rho \neq$ 0
+
+- This is a **two-sided test** -- either there is a relation or there isn't a relation, regardless of direction (either positive or negative).
+
+---
+
+To calculate our test statistic, we just the sample estimate of the correlation and the sample size.
+
+::: fragment
+$$
+t_{N-2} = \frac{r_{xy}}{\sqrt{(1-r_{xy}^2)/(N-2)}}
+$$
+:::
+
+::: fragment
+```{r, echo = T}
+cor_estimate <- cor(df$Netflix, df$Exercise, use = "complete.obs")
+sample_size <- nrow(df)
+```
+:::
+
+---
+
+The denominator of our test statistic is an estimate
+of the standard error of the correlation
+
+::: fragment
+```{r, echo = T}
+cor_se <- sqrt((1 - cor_estimate^2) / (sample_size - 2))
+```
+:::
+
+- Now our test statistic
+
+::: fragment
+```{r, echo = T}
+t_stat <- cor_estimate / cor_se
+```
+:::
+
+- The degrees of freedom of the test: $N - 2 = 15 - 2 = 13$ 
+
+- And calculate the *p*-value:
+
+::: fragment
+```{r, echo = T}
+2 * pt(t_stat, df = sample_size - 2, lower.tail = TRUE)
+```
+:::
+
+---
+
+And here is how we could do it in one line of R code:
+
+```{r, echo = T}
+cor.test(df$Netflix, df$Exercise, method = "pearson")
+```
