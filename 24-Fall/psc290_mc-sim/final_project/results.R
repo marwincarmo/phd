@@ -49,7 +49,7 @@ res <- dat |>
 
 ## Computing PIPs
 
-tab |> 
+pips <- tab |> 
   dplyr::filter(str_detect(Parameter, "^ss") ) |> 
   dplyr::mutate(delta = ifelse(Mean >= 0.75, 1, 0)) |> 
   dplyr::with_groups(c(scenario, rep),
@@ -57,7 +57,19 @@ tab |>
                      mean_delta_rep = mean(delta)) |> 
   dplyr::with_groups(c(scenario),
                      dplyr::summarise,
-                     mean_delta = mean(mean_delta_rep)*100)
+                     mean_delta = mean(mean_delta_rep),
+                     CIlow = quantile(mean_delta_rep, 0.025),
+                     CIhigh = quantile(mean_delta_rep, 0.975)) |> 
+  dplyr::mutate(schools = c(50, 50, 100, 100, 200, 200, 500),
+                students = c(20, 50, 30, 100, 30, 100, 50))
+
+model <- lm(mean_delta ~ schools * students, data = pips)
+summary(model)
+
+## Mean estimates
+
+dat |> 
+  dplyr::with_groups(scenario, dplyr::summarise, Mean = mean(Mean))
 
 # Plots -------------------------------------------------------------------
 
@@ -145,6 +157,8 @@ mean_dist <- dat |>
   ggplot(aes(x  = Mean, fill = as.factor(scenario))) +
   geom_density(alpha = 0.7) +  # Adjust alpha for transparency
   scale_fill_manual(values = c("grey", "#df91a3", "#edbb8a", "#39b185", "#ca562c", "#009392", "#d46780" )) +
+  geom_vline(xintercept = .09, linetype="dotted", 
+             color = "red", linewidth=1) +
   facet_wrap(~scenario)  +
   theme(legend.position = "none",
         strip.text = element_text(size = 12, family = "Roboto"))

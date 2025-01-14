@@ -2,6 +2,11 @@
 # 0 Load packages ---------------------------------------------------------
 
 library(ivd)
+library(purrr)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+
 source("final_project/helpers.R")
 
 # 1 Define a function to simulate school data -----------------------------
@@ -62,19 +67,13 @@ scenarios <- data.frame(
   n_students = c(1000, 2500, 3000, 10000, 6000, 20000, 25000, 50000)
 )
 
-scenarios <- data.frame(
-  scenario = 8,
-  n_schools = 500,
-  n_students = 50000
-)
-
 reps <- 100
 
 
 for (j in scenarios$scenario) {
   for (i in 1:reps) {
     
-    # Print progress message
+    # Progress message
     message(paste("Scenario", j,
                   "Replication:", i))
     
@@ -93,7 +92,6 @@ for (j in scenarios$scenario) {
       next  # Skip to the next iteration
     }
     
-    # Compute the summary only if the fit succeeded
     s <- summary.ivd(fit)
     saveRDS(s, paste0("final_project/out/S", j, "R", i, ".rds"))
     
@@ -104,18 +102,8 @@ for (j in scenarios$scenario) {
 
 # 3 Results ---------------------------------------------------------------
 
-library(purrr)
-library(dplyr)
-library(stringr)
-library(ggplot2)
-
-# List all files in the directory
 files <- list.files("final_project/out")
 
-# Filter files that start with "S1"
-s1_files <- files[grepl("^S1", files)]
-
-# Combine the files into a single dataframe with a new column for file index
 tab <- purrr::map_dfr(seq_along(files), function(i) {
   file_path <- paste0("final_project/out/", files[i])
   data <- readRDS(file_path)
@@ -125,36 +113,33 @@ tab <- purrr::map_dfr(seq_along(files), function(i) {
   return(data)
 })
 
-
-# Tests -------------------------------------------------------------------
-
-
+# Subset only scale random effects SD rows
 dat <- tab[tab$Parameter == "sd_scl_Intc", ]
 
-## Convergence rates
-
+# Convergence rates
 convergence <- dat |> 
   dplyr::with_groups(scenario,
                      dplyr::summarise,
                      rate = dplyr::n()/100)
-# ifelse(cis[names(tval),1] < betas[names(tval)] & cis[names(tval),2] > betas[names(tval)], 1, 0)
+
+# Results of Bias, MSE, Coverage and efficiency metrics
 res <- dat |> 
   dplyr::mutate(bias = Mean - 0.09,
                 mse = (Mean - 0.09)^2,
                 coverage = ifelse(`2.5%` < 0.09 & `97.5%` > 0.09, 1, 0)) |> 
- dplyr::with_groups(scenario,
-                    dplyr::summarise,
-                    mean_bias = mean(bias),
-                    mcse_bias = sd(bias),
-                    mean_mse = mean(mse),
-                    mcse_mse = sd(mse),
-                    coverage = mean(coverage),
-                    Rhat = mean(`R-hat`),
-                    n_eff = mean(n_eff))
+  dplyr::with_groups(scenario,
+                     dplyr::summarise,
+                     mean_bias = mean(bias),
+                     mcse_bias = sd(bias),
+                     mean_mse = mean(mse),
+                     mcse_mse = sd(mse),
+                     coverage = mean(coverage),
+                     Rhat = mean(`R-hat`),
+                     n_eff = mean(n_eff))
 
 ## Computing PIPs
 
-tab |> 
+pips <- tab |> 
   dplyr::filter(str_detect(Parameter, "^ss") ) |> 
   dplyr::mutate(delta = ifelse(Mean >= 0.75, 1, 0)) |> 
   dplyr::with_groups(c(scenario, rep),
@@ -162,7 +147,16 @@ tab |>
                      mean_delta_rep = mean(delta)) |> 
   dplyr::with_groups(c(scenario),
                      dplyr::summarise,
-                     mean_delta = mean(mean_delta_rep))
+                     mean_delta = mean(mean_delta_rep),
+                     CIlow = quantile(mean_delta_rep, 0.025),
+                     CIhigh = quantile(mean_delta_rep, 0.975)) |> 
+  dplyr::mutate(schools = c(50, 50, 100, 100, 200, 200, 500),
+                students = c(20, 50, 30, 100, 30, 100, 50))
+
+
+model <- lm(mean_delta ~ schools * students, data = pips)
+summary(model)
+
 
 
 # Plots -------------------------------------------------------------------
@@ -231,6 +225,7 @@ dat_long <- dat |>
                 coverage = ifelse(`2.5%` < 0.09 & `97.5%` > 0.09, 1, 0)) |> 
   tidyr::pivot_longer(cols = bias:coverage, names_to = "metric", values_to = "value") 
 
+# Bias and MSE boxplots
 dat_long |> 
   dplyr::filter(metric != "coverage") |> 
   dplyr::mutate(
