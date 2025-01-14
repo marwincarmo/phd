@@ -1,0 +1,150 @@
+---
+title: "Week 1 - R and Stats recap"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    #chalkboard: true
+    incremental: false
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 6
+    fig-width: 12
+    fig-align: center
+    #css: custom.css
+    #theme: psc290-23
+    # highlight-style: atom-one-dark
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    # height: 900
+    footer: "PSC 103B - Statistical Analysis of Psychological Data"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+execute: 
+  echo: true
+editor_options: 
+  chunk_output_type: console
+---
+
+## Simple Linear Regression
+
+- We're using the same dataset from last week
+
+```{r}
+icecream <- read.csv("https://shorturl.at/qdZlt")
+head(icecream)
+```
+
+## Simple Linear Regression
+
+What is the equation for the regression line?
+
+$$
+\hat{Y_i} = b_0 + b_1 X_{1i}
+$$
+
+---
+
+We can calculate estimates of these values using
+their formulas:
+
+$$
+\begin{aligned}
+b_1 &= \frac{\mathrm{Cov}(X, Y)}{\mathrm{Var}(X)}\\
+b_0 &= \bar{Y} - b_1 \bar{X}
+\end{aligned}
+$$
+
+```{r}
+b1_estimate <- cov(icecream$Temperature, icecream$Sales)/var(icecream$Temperature)
+b0_estimate <- mean(icecream$Sales) - b1_estimate * mean(icecream$Temperature)
+```
+
+---
+
+```{r}
+b1_estimate
+b0_estimate
+```
+
+
+With these values, we can write out our regression line:
+
+$$
+Sales_i = -694.37 + 16.72 \times Temperature_i
+$$
+
+---
+
+```{r}
+
+plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", 
+     ylab = "Ice cream Sales")
+abline(a = b0_estimate, b = b1_estimate, col = "red") 
+# abline() is a function to add a straight line to a plot
+```
+
+---
+
+In `R` we can use the `lm()` function (lm stands for "linear model").
+
+The function arguments are: `lm(dependent_variable ~ independent_variable, data = data_name)`.
+
+
+```{r}
+simple_regression <- lm(Sales ~ Temperature, data = icecream)
+```
+
+---
+
+Let's take a look at the output using the `summary()` function:
+
+```{r}
+summary(simple_regression)
+```
+
+---
+
+Do those match what we calculated before? How do we interpret these values?
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-dpi: 300
+#| fig-align: "center"
+#| out-width: "80%"
+
+plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", 
+     ylab = "Ice cream Sales", xlim = c(0, 80), ylim = c(-700, 700))
+abline(a = b0_estimate, b = b1_estimate, col = "red") 
+```
+
+## Hypothesis Testing for the Slope and R-Squared
+
+In addition to the estimates of the
+intercept and slope, we have a standard error, test statistic,
+and p-value.
+
+These are for testing the null hypothesis that
+the parameter is equal to 0 versus the alternative
+that it's not equal to 0.
+
+The test for the intercept is typically not very interesting to us.
+Instead, we're more interested in the test for the slope.
+Because that tells us whether the predictor is useful
+in predicting the outcome.
+
+---
+
+The hypotheses for this test are:
+
+- $H_0$: $b_1$ = 0
+- $H_1$: $b_1 \neq$ 0
+
+Based on our `summary()` output, do we reject or fail to reject the null hypothesis? What does that tell us?
