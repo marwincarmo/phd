@@ -34,7 +34,7 @@ editor_options:
 - Average performance and *variability* convey distinct information.
 
   - **Consistent performance** is positively correlated with student motivation and predicts more favorable long-term educational outcomes.
-  - **High variability** can result in disproportionate representation of certain demographics at both ends of the achievement spectrum
+  - Boys tend to exhibit **greater variability** despite similar mean levels of academic achievement, leading to overrepresentation in both ends of achievement levels
 
 
 ## Introduction
@@ -99,7 +99,9 @@ Inconsistent performance may reflect unaccounted factors influencing learning.
 - We adapt **Mixed-Effects Location Scale Model** (MELSM) incorporating a **spike and slab** prior into the scale
 component to select or shrink random effects.
 
-- Based on Bayes factors, we can decide on whether a school is **consistent** or **inconsistent** in its academic achievement.
+- Based on Bayes factors, we can decide on whether a school is **(in-)consistent** in its academic achievement.
+
+- Evidence for retaining the random effect is evidence of unusual variability.
 
 <!-- - Propose a methodology to identify clustering units (students, classrooms, etc.) that exhibit unusual levels of residual variability—such as consistency or inconsistency—in academic achievement. -->
 
@@ -129,7 +131,7 @@ u_{0j} &\sim \mathcal{N} (0, \tau_{u_0}^2)
 Assumes a **fixed within-school variance**, potentially masking important differences in variability:
 
 - Teaching quality
-- Socioeconomic influnences
+- Socioeconomic influences
 - Student engagement
 
 ::: {.notes}
@@ -252,7 +254,11 @@ Depending on $\delta$ value, the computations will either retain the random effe
 <!-- to specify independent priors for each element of $\boldsymbol{\tau}$ and $\boldsymbol{\Omega}$ -->, where
   - $\boldsymbol{\tau}$ is a diagonal matrix of the random-effects standard deviations.
   - $\boldsymbol{\Omega}$ is the correlation matrix among all random effects.
-  
+
+::: {.notes}
+we decompose the variance-covariance matrix $\Sigma$ into a product of a diagonal matrix of standard deviations $\tau$ and a correlation matrix $\Omega$
+:::
+
 ## The mechanism
 
 -  Next, we factorize $\boldsymbol\Omega$ via the Cholesky $\textbf{L}$ of $\boldsymbol\Omega = \textbf{L}'\textbf{L}$.
@@ -323,14 +329,14 @@ Each element in $\boldsymbol{\delta}_j$ takes integers $\in \{0,1\}$ and follows
 \sigma_{\varepsilon_{ij}} = \begin{cases}
 \exp(\eta_0 + 0), & \text{if }\delta_{jt_0} = 0 , \\
 \exp(\eta_0 + t_{0j}), & \text{if }\delta_{jt_0} = 1
-\end{cases}.
+\end{cases}\\
+t_{0j} = \tau_{t_0}\left( \rho_{u_0t_0}z_{ju_0} + z_{jt_0}\sqrt{1 - \rho_{u_0t_0}^2}
+\right)\color{red}{\delta_{jt_0}}
 \end{equation}
 :::
 
 ::: {.notes}
 - The subscript to the indicator ($\boldsymbol{\delta}_j$) assigns each school a prior inclusion probability of the random effect $k$.
-
-- For each school we obtain a probabilistic measure on whether the random effect is to be included or not.
 
 Thus, for each iteration, this specification allows each individual to have their own person-specific estimate or the fixed effect average. 
 :::
@@ -377,6 +383,10 @@ Pr(\delta_{jk} = 1 | \textbf{Y}) = \frac{Pr(\textbf{Y} | \delta_{jk} = 1)Pr(\del
 
 :::
 
+::: {.notes}
+- For each school we obtain a probabilistic measure on whether the random effect is to be included or not.
+:::
+
 ---
 
 The PIP is estimated by the proportion of MCMC samples where $\delta_{jk} = 1$:
@@ -410,10 +420,10 @@ $$\varepsilon_{ij}\sim\mathcal{N}(0, \sigma_{\varepsilon_{ij}})$$
 
 ---
 
-- The PIP gives us a probabilistic measure and does not perform automatic variable selection.
+The PIP gives us a probabilistic measure and does not perform automatic variable selection.
 
 <!-- To determine whether a given random effect is warranted  -->
-- We estimate the strength of evidence through Bayes factors:
+We estimate the strength of evidence through Bayes factors:
 
 ::: fragment
 \begin{align}
@@ -453,11 +463,11 @@ BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \te
 
 ---
 
-- The analysis compares three SS-MELSM models with varying levels of complexity:
+The analysis compares three SS-MELSM models with varying levels of complexity:
 
-  - **Model 1**:  Includes only fixed and random intercepts for both location and scale, without any predictors.
-  - **Model 2**: Incorporates student and school socioeconomic status (SES) as covariates, but retains the two random intercept effects.
-  - **Model 3**: Introduces a random slope for student-level SES within the scale portion of the model.
+- **Model 1**:  Includes only fixed and random intercepts for both location and scale, without any predictors.
+- **Model 2**: Incorporates student and school socioeconomic status (SES) as covariates, but retains the two random intercept effects.
+- **Model 3**: Introduces a random slope for student-level SES within the scale portion of the model.
 
 
 ## Software and estimation
@@ -497,6 +507,11 @@ The PIPs make a V-shape in that they decrease as the magnitude of the effect app
 ---
 
 ![](../../melms_educ/WORK/-ANALYSIS/FIGURES/outcome.png){fig-align="center"}
+
+::: {.notes}
+Similar to the example used in the Introduction, the average math achievement of these schools is comparable, while the within-school variability was substantially different.
+:::
+
 ---
 
 
@@ -506,7 +521,9 @@ The PIPs make a V-shape in that they decrease as the magnitude of the effect app
 ![](../../melms_educ/WORK/-ANALYSIS/FIGURES/m3_slope_pip.png){fig-align="center"}
 
 ::: {.notes}
-The posterior probabilities remained close to the prior belief of 50% probability for including the random slope
+The posterior probabilities remained close to the prior belief of 50% probability for including the random slope.
+
+The data did not provide strong evidence in favor of, nor against, the inclusion of this random slope in the scale sub-mode
 :::
 
 ## Discussion
@@ -526,3 +543,14 @@ The posterior probabilities remained close to the prior belief of 50% probabilit
 - It is still not clear how model performance is affected by the choice of hyperparameters.
 
 - Further development could explore the method's performance in longitudinal data settings.
+
+## Thank you!
+
+Download the preprint
+
+```{r}
+# library(qrcode)
+# code <- qr_code("https://osf.io/preprints/psyarxiv/sh6ne")
+# plot(code)
+```
+
