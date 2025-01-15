@@ -110,30 +110,31 @@ component to select or shrink random effects.
 - Educational data is classically analyzed by means of multilevel models (MLM):
   - Schools are level-2 units and students' test scores are the level-1 units.
 
+::: fragment
+\begin{aligned}
+\text{Level 1:} \quad y_{ij} &= \beta_{0j} + \varepsilon_{ij}\\
+\text{Level 2:} \quad \beta_{0j} &= \gamma_0 + u_{0j}\\
+u_{0j} &\sim \mathcal{N} (0, \tau_{u_0}^2)
+\end{aligned}
+:::
+
 <!-- - These models operate under the assumption of constant residual variance. -->
 
-- **Limitations**. Assumes a fixed within-school standard variance, potentially masking important differences in variability:
-  - Teaching quality
-  - Socioeconomic influnences
-  - Student engagement
+## The traditional MLM
+
+\begin{aligned}
+\varepsilon_{ij} \sim \mathcal{N} (0, \color{red}{\sigma_{\varepsilon}^2})\\
+\end{aligned}
+
+Assumes a **fixed within-school variance**, potentially masking important differences in variability:
+
+- Teaching quality
+- Socioeconomic influnences
+- Student engagement
 
 ::: {.notes}
 These differences in variability can reflect underlying factors such as teaching quality, socioeconomic influences, or student engagement.
 :::
-
-## The traditional MLM
-
-::: fragment
-
-\begin{aligned}
-y_{ij} &= \gamma_0 + u_{0i} + \varepsilon_{ij}\\
-u_{0i} &\sim \mathcal{N} (0, \tau_{u_0}^2)\\
-\varepsilon_{ij} &\sim \mathcal{N} (0, \color{red}{\sigma_{\varepsilon}^2})\\
-\end{aligned}
-
-:::
-
-- Constant error variance!
 
 ## The MELSM framework
 
@@ -190,7 +191,7 @@ y_{ij} &= \gamma_0 + u_{0i} + \varepsilon_{ij}\\
 ::: {.notes}
 - MELSM include a sub-model to address potential differences in the residual variance.
 
-- It allows the  within-school standard deviation to differ among schools the residual standard deviation to differ among $i$-students within each school to obtain $\sigma_{\varepsilon_{ij}}^2$.
+- It allows the  within-school standard deviation to differ among schools 
 
 - The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$, allowing random effects of both location and scale to correlate.
 :::
@@ -199,7 +200,10 @@ y_{ij} &= \gamma_0 + u_{0i} + \varepsilon_{ij}\\
 
 ## Advantages of MELSM
 
-- Residual variance it's not merely random noise. 
+- Assumes that the nature of the residual variance contains a signal
+  - The signal is in the function that governs heteroskedasticity
+  
+<!-- - Residual variance it's not merely random noise.  -->
 <!-- - Examining the nature of this variability can yield insights that go beyond the mean achievement levels. -->
 - Accounts for possible correlations among location and scale effects.
 
@@ -273,17 +277,13 @@ To simplify computation by removing redundant effects and ensure that the result
 
 ---
 
-- If we multiply $\textbf{L}$ by the random effect standard deviations, $\boldsymbol{\tau}$, and scale it with a standard normally distributed $\boldsymbol{z}$, we obtain $\textbf{v}$
-
-::: fragment
+If we multiply $\textbf{L}$ by the random effect standard deviations, $\boldsymbol{\tau}$, and scale it with a standard normally distributed $\boldsymbol{z}$, we obtain $\textbf{v}$:
 
 \begin{equation}
     \textbf{v} = \boldsymbol{\tau}\textbf{L}\boldsymbol{z}
 \end{equation}
 
-:::
-
--  The Cholesky decomposition allows expressing the random effects in terms of the standard deviations and correlations
+The Cholesky decomposition allows expressing the random effects in terms of the standard deviations and correlations.
 
 ---
 
@@ -292,7 +292,7 @@ To simplify computation by removing redundant effects and ensure that the result
 
 - We include an indicator variable ($\delta_{jk}$) for each random effect to be subjected to shrinkage. 
 
-- It allows switching between the spike and slab  throughout the MCMC sampling process.
+<!-- - It allows switching between the spike and slab  throughout the MCMC sampling process. -->
 
 <!-- An indicator variable ($\delta_j$) is included in the prior to allow switching between the spike and slab  throughout the Markov Chain Monte Carlo (MCMC) sampling process. -->
 
@@ -313,7 +313,7 @@ A Monte Carlo process refers to a simulation that samples many random values fro
 
 ---
 
-- Each element in $\boldsymbol{\delta}_j$ takes integers $\in \{0,1\}$ and follows a $\delta_{jk} \sim \text{Bernoulli}(\pi)$ distribution.
+Each element in $\boldsymbol{\delta}_j$ takes integers $\in \{0,1\}$ and follows a $\delta_{jk} \sim \text{Bernoulli}(\pi)$ distribution.
 
 - When a 0 is sampled, the portion after the fixed effect drops out of the equation.
 
@@ -345,6 +345,8 @@ Thus, for each iteration, this specification allows each individual to have thei
 :::
 
 ::: {.column width="50%"}
+
+Throughout the MCMC sampling process $\delta$ switches between the spike and  slab.
 
 If $\delta= 0$, the density "spikes" at the zero point mass;
 
