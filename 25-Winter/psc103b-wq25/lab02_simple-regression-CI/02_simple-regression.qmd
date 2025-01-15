@@ -83,7 +83,11 @@ $$
 ---
 
 ```{r}
-
+#| fig-width: 8
+#| fig-height: 4
+#| fig-dpi: 300
+#| fig-align: "center"
+#| out-width: "80%"
 plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", 
      ylab = "Ice cream Sales")
 abline(a = b0_estimate, b = b1_estimate, col = "red") 
@@ -148,3 +152,122 @@ The hypotheses for this test are:
 - $H_1$: $b_1 \neq$ 0
 
 Based on our `summary()` output, do we reject or fail to reject the null hypothesis? What does that tell us?
+
+## Confidence intervals
+
+We could also create a confidence interval around our estimate of the slope
+
+$$
+\mathrm{CI}_{95\%} = \hat{b_1} \pm t_{crit} \times \mathrm{SE}
+$$
+
+$$
+\mathrm{SE}_{b_1} = \frac{s_\varepsilon}{\sqrt{SS_X}}
+$$
+
+---
+
+$$
+s_\varepsilon = \sqrt{\frac{1}{N-2}\sum_{i=1}^N (Y_i-\hat{Y_i})^2}
+$$
+
+```{r}
+sd_error <- sqrt( (1/(nrow(icecream) - 2)) * sum((icecream$Sales - predict(simple_regression))^2) )
+sd_error
+```
+
+`predict`  is a generic function for predictions from the results of various model fitting functions.
+---
+
+$$
+SS_X = \sum_{i=1}^N (X_i - \bar{X})^2
+$$
+
+```{r}
+ss_x <- sum((icecream$Temperature - mean(icecream$Temperature))^2)
+ss_x
+```
+
+---
+
+```{r}
+se_b1 <- sd_error/sqrt(ss_x)
+se_b1
+```
+
+The standard error for the slope is given in the output when we call the `summary()` function on our model. Take a look at it again and try to find it!
+
+::: fragment
+```{r}
+summary(simple_regression)$coefficients
+```
+:::
+
+---
+
+To get the 95%CI we have to estimate $\pm \ t_{crit} \times \mathrm{SE}$ where $t_{crit}$ is the critical value that cuts off the upper 2.5% of a t-distribution with $N - 2$ df:
+
+```{r}
+t_crit <- qt(.025, nrow(icecream) - 2, lower.tail = FALSE)
+
+lower_limit <- b1_estimate - t_crit * 1.592
+upper_limit <- b1_estimate + t_crit * 1.592
+
+lower_limit
+upper_limit
+```
+
+---
+
+We can also obtain the 95% CI using the `confint()` function:
+
+```{r}
+confint(object = simple_regression, level = 0.95)
+```
+
+```{r, echo=FALSE}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-dpi: 300
+#| fig-align: "center"
+#| 
+library(ggplot2)
+
+ggplot(icecream, aes(y = Sales, x = Temperature)) +
+  geom_point() + # Scatterplot of the data
+  geom_smooth(method = "lm", se = TRUE, color = "blue", fill = "lightblue") +
+  theme_minimal()
+```
+
+
+## R-Squared
+
+R-squared is the proportion of total variability in our
+outcome that is explained by our predictor(s).
+
+It is also given in the output of the `summary()` function:
+
+```{r}
+summary(simple_regression)$r.squared
+```
+
+What does that mean?
+
+--- 
+
+You'll notice that there is also an adjusted $R^2$
+
+This is more important in the context of multiple regression
+because as you add more predictors to the model, your
+$R^2$ will typically increase even if the added predictors
+are just explaining noise.
+
+Therefore, adjusted $R^2$ corrects
+for the number of predictors in the model.
+
+## Reporting the results
+
+> We ran a simple linear regression to determine whether temperature predicts ice cream sales.
+The effect of Temperature is statistically significant and positive (*b* = 16.72, 95% CI
+[13.17, 20.26], *t*(10) = 10.50, *p* < .001). Temperature
+explained 91.68% of the total variability in ice cream sales.
