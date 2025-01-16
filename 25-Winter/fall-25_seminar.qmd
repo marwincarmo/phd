@@ -361,9 +361,7 @@ If $\delta= 1$, the standard normal prior, $z_{jk}$, is retained and scaled by $
 :::
 
 ::: {.notes}
-- A Dirac measure is a measure whose (unit) mass is concentrated on a single point x of a space X.
-
-- Small values are shrunken to zero while larger values are estimated normally in the slab.
+Small values are shrunken to zero while larger values are estimated normally in the slab.
 :::
 
 
@@ -429,7 +427,7 @@ BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \te
 
 - A BF$_{10}$ > 3 corresponds to a PIP > 0.75 when the prior probability of $\pi$ is 0.5. 
 
-- We are three times more likely to include this random effect.
+- We are at least three times more likely to include this random effect.
 
 <!-- ::: fragment -->
 
@@ -525,30 +523,34 @@ The data did not provide strong evidence in favor of, nor against, the inclusion
 
 ## Discussion
 
-- The SS-MELSM helps identifying schools deviating from the norm in terms of within-school variability.
+- The SS-MELSM helps identifying schools deviating from the average in terms of within-school variability.
 
-- The spike-and-slab prior accounts for uncertainty in including random effects.
+- PIPs and Bayes factors provide a probabilistic measure for random effects inclusion.
 
 - Identifying variability can guide resource allocation or teaching interventions.
 
-<!-- - Investigating inconsistent schools might reveal variations in teaching quality, student engagement levels, or the impact of external influences on specific schools. -->
+<!-- - Investigating inconsistent schools might reveal variations in teaching quality, student engagement levels, or the impact of external influences. -->
 
 ## Limitations
 
-- Currently, the SS-MELSM demands significant computational resources, especially with bigger datasets or more complex models.
+- Estimating the SS-MELSM can be computationally intensive for large-scale applications.
 
 - It is still not clear how model performance is affected by the choice of hyperparameters.
 
-- Further development could explore the method's performance in longitudinal data settings.
+- Ceiling and floor effects might compress within-school variability, affecting residual standard deviation estimation and interpretation.
+
+- The necessary sample sizes and observations per cluster remains uncertain.
 
 ## Thank you!
+
+Thank you to my co-authors, Prof. Philippe Rast and Dr. Donald Williams.
 
 Read the preprint at
 
 ```{r}
 #| fig-align: "center"
 #| dpi: 300
-#| out-width: "45%"
+#| out-width: "40%"
 library(qrcode)
 code <- qr_code("https://osf.io/preprints/psyarxiv/sh6ne")
 plot(code)
