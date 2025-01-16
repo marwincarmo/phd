@@ -49,6 +49,9 @@ assignment are:
 ## 1. Please read the NPAS dataset (NPAS.csv) into R using `read.csv()`. Create a dataset that only contains the variables listed above (recall: how do you subset columns from a dataframe?) (.5 pt). Show the first 6 rows (.5 pt) and last 6 rows (.5 pt) of the new dataset. Show your code.
 
 ```{r}
+# you can load in the data directly using this link
+npas <- read.csv("https://shorturl.at/FsHBd")
+
 
 ```
 

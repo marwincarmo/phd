@@ -1,5 +1,5 @@
 ---
-title: "Week 1 - R and Stats recap"
+title: "Lab 02 - Simple Linear Regression and Confidence Intervals"
 author: "Marwin Carmo"
 format: 
   revealjs:
@@ -117,17 +117,16 @@ summary(simple_regression)
 
 Do those match what we calculated before? How do we interpret these values?
 
-```{r}
-#| fig-width: 8
-#| fig-height: 4
-#| fig-dpi: 300
-#| fig-align: "center"
-#| out-width: "80%"
+::: {.incremental}
+- The intercept is the expected value of the dependent variable
+when the independent variable is 0. This means that when the temperature is 0 degrees Fahrenheit
+we expect to make -694 dollars in ice cream sales.
 
-plot(icecream$Temperature, icecream$Sales, xlab = "Temperature (F)", 
-     ylab = "Ice cream Sales", xlim = c(0, 80), ylim = c(-700, 700))
-abline(a = b0_estimate, b = b1_estimate, col = "red") 
-```
+- The slope is the expected change in the dependent variable
+for a 1-unit change in the independent variable.
+So as the temperature increases by 1 degree Fahrenheit, we
+expect ice cream sales to increase by $16.72.
+:::
 
 ## Hypothesis Testing for the Slope and R-Squared
 
@@ -152,6 +151,10 @@ The hypotheses for this test are:
 - $H_1$: $b_1 \neq$ 0
 
 Based on our `summary()` output, do we reject or fail to reject the null hypothesis? What does that tell us?
+
+```{r}
+summary(simple_regression)$coefficients
+```
 
 ## Confidence intervals
 
