@@ -45,11 +45,11 @@ editor_options:
 
 ::: fragment
 ```{r}
-#| fig-width: 8
+#| fig-width: 10
 #| fig-height: 4
 #| fig-dpi: 300
 #| fig-align: "center"
-#| out-width: "40%"
+#| out-width: "55%"
 
 library(ggplot2)
 set.seed(78)
@@ -134,10 +134,6 @@ Assumes a **fixed within-school variance**, potentially masking important differ
 - Socioeconomic influences
 - Student engagement
 
-::: {.notes}
-These differences in variability can reflect underlying factors such as teaching quality, socioeconomic influences, or student engagement.
-:::
-
 ## The MELSM framework
 
 
@@ -191,11 +187,11 @@ y_{ij} &= \gamma_0 + u_{0i} + \varepsilon_{ij}\\
 <!-- Explicar o modelo e o que sao os efeitos fixos e aleatorios. Enfatizar a variancia constante do MLM -->
 
 ::: {.notes}
-- MELSM include a sub-model to address potential differences in the residual variance.
+<!-- - MELSM include a sub-model to address potential differences in the residual variance. -->
 
 - It allows the  within-school standard deviation to differ among schools 
 
-- The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$, allowing random effects of both location and scale to correlate.
+<!-- - The model specifies a classic multilevel model for the observed values, $y_{ij}$ for school $j$ and student $i$, and a multilevel model for the within-cluster residual variances $\sigma^2_{\epsilon_{ij}}$, allowing random effects of both location and scale to correlate. -->
 :::
 
 
@@ -212,11 +208,11 @@ y_{ij} &= \gamma_0 + u_{0i} + \varepsilon_{ij}\\
 - Allows the inclusion of specific predictors in both sub-models.
   - For example, low parental SES leads to more variability of student performance. 
 
-::: {.notes}
-- Residual variance holds valuable information about the clustering unit (like a school) that can be systematically modeled and analyzed.
+<!-- ::: {.notes} -->
+<!-- - Residual variance holds valuable information about the clustering unit (like a school) that can be systematically modeled and analyzed. -->
 
-- Allows the inclusion of specific predictors. For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status.
-:::
+<!-- - Allows the inclusion of specific predictors. For example, the variability of student performance within a school can be modeled as a function of parental socioeconomic status. -->
+<!-- ::: -->
 
 ## Spike-and-Slab MELSM
 
@@ -312,14 +308,19 @@ The Cholesky decomposition allows expressing the random effects in terms of the 
 
 :::
 
-::: {.notes}
-A Monte Carlo process refers to a simulation that samples many random values from a posterior distribution of interest.
-:::
+<!-- ::: {.notes} -->
+<!-- A Monte Carlo process refers to a simulation that samples many random values from a posterior distribution of interest. -->
+<!-- ::: -->
 
 
 ---
 
-Each element in $\boldsymbol{\delta}_j$ takes integers $\in \{0,1\}$ and follows a $\delta_{jk} \sim \text{Bernoulli}(\pi)$ distribution.
+\begin{equation}
+t_{0j} = \tau_{t_0}\left( \rho_{u_0t_0}z_{ju_0} + z_{jt_0}\sqrt{1 - \rho_{u_0t_0}^2}
+\right)\color{red}{\delta_{jt_0}}
+\end{equation}
+
+- Each element in $\boldsymbol{\delta}_j$ takes integers $\in \{0,1\}$ and follows a $\delta_{jk} \sim \text{Bernoulli}(\pi)$ distribution.
 
 - When a 0 is sampled, the portion after the fixed effect drops out of the equation.
 
@@ -329,16 +330,13 @@ Each element in $\boldsymbol{\delta}_j$ takes integers $\in \{0,1\}$ and follows
 \sigma_{\varepsilon_{ij}} = \begin{cases}
 \exp(\eta_0 + 0), & \text{if }\delta_{jt_0} = 0 , \\
 \exp(\eta_0 + t_{0j}), & \text{if }\delta_{jt_0} = 1
-\end{cases}\\
-t_{0j} = \tau_{t_0}\left( \rho_{u_0t_0}z_{ju_0} + z_{jt_0}\sqrt{1 - \rho_{u_0t_0}^2}
-\right)\color{red}{\delta_{jt_0}}
+\end{cases}
 \end{equation}
 :::
 
 ::: {.notes}
-- The subscript to the indicator ($\boldsymbol{\delta}_j$) assigns each school a prior inclusion probability of the random effect $k$.
 
-Thus, for each iteration, this specification allows each individual to have their own person-specific estimate or the fixed effect average. 
+Thus, for each iteration, this specification allows each school to have their own school-specific estimate or the fixed effect average. 
 :::
 
 ## The Spike-and-Slab prior
@@ -403,8 +401,6 @@ where $S$ is the total number of posterior samples.
 :::
 
 ::: {.notes}
-- the posterior inclusion probability (PIP) quantifies the probability that a given random effect is included in the model, conditional on the observed data.
-
 - A high PIP indicates strong evidence that the random effect is necessary to explain the data.
 :::
 
@@ -420,10 +416,9 @@ $$\varepsilon_{ij}\sim\mathcal{N}(0, \sigma_{\varepsilon_{ij}})$$
 
 ---
 
-The PIP gives us a probabilistic measure and does not perform automatic variable selection.
+The PIP gives us a probabilistic measure and does not perform automatic variable selection. We estimate the strength of evidence through Bayes factors:
 
 <!-- To determine whether a given random effect is warranted  -->
-We estimate the strength of evidence through Bayes factors:
 
 ::: fragment
 \begin{align}
@@ -432,7 +427,9 @@ BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \te
 \end{align}
 :::
 
-- A BF$_{10}$ > 3 corresponds to a PIP > 0.75. We are three times more likely to include this random effect.
+- A BF$_{10}$ > 3 corresponds to a PIP > 0.75 when the prior probability of $\pi$ is 0.5. 
+
+- We are three times more likely to include this random effect.
 
 <!-- ::: fragment -->
 
@@ -457,7 +454,7 @@ BF_{10j} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \te
 
 ## Case study
 
-- We use a subset of data from the 2021 Brazilian Evaluation System of Elementary Education (Saeb).
+- We use a subset of data from the 2021 Brazilian Evaluation System of Elementary Education (Saeb) test.
 
 - It focuses on math scores from 11th and 12th-grade students across 160 randomly selected schools, encompassing a total of 11,386 students.
 
@@ -498,7 +495,7 @@ the model’s predictive accuracy, $\Delta\widehat{\text{elpd}}_{\text{loo}}= -1
 ---
 
 
-![](../../melms_educ/WORK/-ANALYSIS/FIGURES/funnel_int_comb.png){fig-align="center"}
+![](img/p2m2.png){fig-align="center"}
 
 ::: {.notes}
 The PIPs make a V-shape in that they decrease as the magnitude of the effect approaches zero and increase again as they move away from zero. Individuals with larger random effects should have more evidence to support that they differ from the average effect. This plot shows that mostly consistent schools should have a random effect on the variance.
@@ -506,7 +503,7 @@ The PIPs make a V-shape in that they decrease as the magnitude of the effect app
 
 ---
 
-![](../../melms_educ/WORK/-ANALYSIS/FIGURES/outcome.png){fig-align="center"}
+![](img/p3m2.png){fig-align="center"}
 
 ::: {.notes}
 Similar to the example used in the Introduction, the average math achievement of these schools is comparable, while the within-school variability was substantially different.
@@ -546,11 +543,14 @@ The data did not provide strong evidence in favor of, nor against, the inclusion
 
 ## Thank you!
 
-Download the preprint
+Read the preprint at
 
 ```{r}
-# library(qrcode)
-# code <- qr_code("https://osf.io/preprints/psyarxiv/sh6ne")
-# plot(code)
+#| fig-align: "center"
+#| dpi: 300
+#| out-width: "45%"
+library(qrcode)
+code <- qr_code("https://osf.io/preprints/psyarxiv/sh6ne")
+plot(code)
 ```
 

@@ -20,13 +20,13 @@ knitr::opts_chunk$set(echo = TRUE,
 
 ```
 
-# Instructions
+<!-- # Instructions -->
 
-Please use R/RStudio to complete the following questions. You will submit your filled-out version of this document **as a PDF** on Canvas. Make sure your PDF looks as expected before submitting. Please **include the code you used to generate your answer for each question (when relevant) as well as the final answer and/or relevant output**.
+<!-- Please use R/RStudio to complete the following questions. You will submit your filled-out version of this document **as a PDF** on Canvas. Make sure your PDF looks as expected before submitting. Please **include the code you used to generate your answer for each question (when relevant) as well as the final answer and/or relevant output**. -->
 
-You may consult with your classmates while working on the assignment, but **you must do all the work yourself – everything you turn in must be your own code and words**. Academic dishonesty will not be tolerated. 
+<!-- You may consult with your classmates while working on the assignment, but **you must do all the work yourself – everything you turn in must be your own code and words**. Academic dishonesty will not be tolerated.  -->
 
-Please submit **a pdf version** of this document with your answers on Canvas by **2:00pm on Thursday, January 23rd (before lab)**.
+<!-- Please submit **a pdf version** of this document with your answers on Canvas by **2:00pm on Thursday, January 23rd (before lab)**. -->
 
 ## Data
 
