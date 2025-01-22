@@ -289,7 +289,7 @@ p5 +
     title = "Height and weight mean and distribution by species",
     x = "Species",
     y = "Mean Value",
-    fill = "Species" # Update legend title
+    fill = "Species" 
   ) + 
   theme_bw() +
   theme(
