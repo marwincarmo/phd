@@ -24,6 +24,8 @@ format:
     footer: "PSC 103B - Statistical Analysis of Psychological Data"
     logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
 editor: source
+execute: 
+  echo: true
 editor_options: 
   chunk_output_type: console
 ---
@@ -66,14 +68,14 @@ my_theme <- theme_minimal(base_family = "Roboto Condensed", base_size = 14) +
 ## Today's dataset
 
 ```{r, echo=TRUE}
-reading <- read.csv("lab/data/Lab3Data.csv", header = TRUE)
+reading <- read.csv("https://shorturl.at/M82EM")
 ```
 
 `ParentChildAct`: A composite measure of how often parents spend time with reading-related activities to their children, measured in minutes.
 
 `ChildAge`: The child's age in months.
 
-::: {.fragment .semi-fade-out}
+::: {.semi-fade-out}
 Five measures of literacy and language skills: `PrintKnowledge`, `ReadingInterest`, `EmergentWriting`, `ExpressLang`, and `ReceptiveLang`.
 :::
 
@@ -81,51 +83,18 @@ Five measures of literacy and language skills: `PrintKnowledge`, `ReadingInteres
 
 ## Simple linear regression
 
-```{r, echo=FALSE}
-
-literacy_age <- lm(OverallLiteracy ~ ChildAge, data = reading)
-```
-
-::: columns
-::: {.column width="50%"}
 - Regression examines the relation between an outcome variable and a set of *q* predictor variables.
 
 - In simple linear regression there is only one predictor:
 
 - $y_i = b_0 + b_1x_{1_i} + \epsilon_i$
   - $b_0$ = intercept;
-  - $b_1$ = slope;
+  - $b_1$ = slope of $x_1$;
   - $\epsilon_i$ = residuals.
-:::
-
-::: {.column width="50%"}
-::: fragment
-```{r, message=FALSE}
-ggplot(data = reading, aes(y = OverallLiteracy, x = ChildAge)) + 
-  geom_point(alpha = .5) +
-  theme_classic() +
-  ylab('Literacy') +
-  xlab('Child age (month)') +
-  geom_smooth(method = 'lm', se = F, fullrange = TRUE) +
-  geom_vline(xintercept = 0, linetype = "dashed") + 
-  geom_segment(aes(xend = ChildAge, yend = literacy_age$fitted.values), color = "red",linetype = "dashed", alpha=.3 ) +
-  coord_cartesian(xlim = c(0, 66))
-```
-:::
-:::
-:::
 
 ## Simple linear regression
 
 - In R we use the `lm()` to estimate a regression model
-
-- `lm(dependent_variable ~ independent_variable, data = data_name)`
-
-::: fragment
-:::{.callout-caution title="Exercise"}
-Fit a linear model with the `lm()` function predicting `OverallLiteracy` from `ChildAge` and save to an object called `literacy_age`. 
-:::
-:::
 
 ::: fragment
 ```{r, echo=TRUE}
@@ -135,7 +104,7 @@ literacy_age <- lm(OverallLiteracy ~ ChildAge, data = reading)
 
 - What function can we use to see the results of the regression analysis?
 
-## The `lm()` output
+---
 
 ```{r, echo=TRUE}
 summary(literacy_age)
@@ -145,194 +114,55 @@ summary(literacy_age)
 What are the value of the intercept, slope and R-squared? Are the coefficients statistically significant?
 :::
 
----
-```{r}
-literacy_parent <-  lm(OverallLiteracy ~ ParentChildAct, data = reading)
-```
-
-:::{.callout-caution title="Exercise"}
-Now fit a linear model predicting `OverallLiteracy` from `ParentChildAct`. 
-:::
-
-::: {.panel-tabset}
-
-### Q1
-
-What is the estimate of the y-intercept for the model, rounded to two decimal places? What does this number mean?
-
-::: {.fragment .fade-in}
-> 13.27. This means that when the parent and child activity is 0 we expect the child's literacy score to be 13.27.
-:::
-
-### Q2
-
-If the GLM for this model is $OverallLiteracy_i = b_0 + b_1 \times ParentChildAct_i + \epsilon_i$, then $b_1$ is? What does it mean?
-
-::: {.fragment .fade-in}
-> $b_1$ = 0.21. For each minute increase in parent and child activity, the child literacy is expected to increase by 0.21 units.
-:::
-
-### Q3
-
-Is the overall model significant? If so, what proportion of the variance does the model explain?
-
-::: {.fragment .fade-in}
-> The model is statistically significant and and explains 11% of the total variance ($R^2$ = 0.11, *F*(1, 148) = 18.00, *p* < .001).
-
-:::
-:::
-
 ## Confidence intervals for the estimates
 
 We can obtain the 95% CI using the `confint()` function:
 
 ::: fragment
 ```{r, echo=TRUE}
-confint(object = literacy_parent, level = 0.95)
+confint(object = literacy_age, level = 0.95)
 ```
 :::
 
-- If we were to collect another sample size of 150, measure Parent-child activity and a Literacy score, and estimate $b_1$ over and over again, 95% of the intervals would cover the true value – and 5% would miss it.
-
-## Write-up the results
-
-> We ran a simple linear regression to determine whether Parent-Child activity predicts child reading literacy.
-The effect of Parent and Child activity is statistically significant and positive (*b* = 0.21, 95% CI
-[0.11, 0.31], *t*(148) = 4.24, *p* < .001). Parent-Child activity explained 11% of the total variability in child reading literacy.
+- If we were to collect another sample size of 150, measure Child Age and a Literacy score, and estimate $b_1$ over and over again, 95% of the intervals would cover the true value – and 5% would miss it.
 
 ## Confidence Limits on Y
 
-::: columns
-::: {.column width="50%"}
-This is analogous to calculating a confidence interval for each of the predicted values $\hat{Y}_i$.
+- This is analogous to calculating a confidence interval for each of the predicted values $\hat{Y}_i$.
 
-Given our model, where would we expect to see future observations fall?
-:::
-
-::: {.column width="50%"}
-```{r}
-#| fig-align: "center"
-
-ggplot(data = reading, aes(y = OverallLiteracy, x = ParentChildAct)) + 
-  geom_point() +
-  theme_minimal() +
-  xlab('Parent-Child Activities') +
-  ylab('Overall Literacy') +
-  geom_smooth(method = 'lm', se = TRUE)
-```
-:::
-:::
+- Given our model, where would we expect to see future observations fall?
 
 ## Confidence Limits on Y
 
 Let’s say that we want to calculate the prediction interval for $\widehat{Literacy}_i$ for a child whose parents spend 20 minutes each day reading with them.
 
-::: fragment
-$$
-\hat{Y}_i = 13.27 + 0.21X_i
-$$
-:::
-
-::: fragment
-### Step 1: calculate $\hat{Y}^*$
+```{r, echo=TRUE}
+literacy_parent <- lm(OverallLiteracy ~ ParentChildAct, data = reading)
+summary(literacy_parent)$coefficients
+```
 
 ```{r, echo=TRUE}
 pred_literacy <- 13.27 + 0.21*20
 pred_literacy
 ```
 
-:::
+---
 
-## Confidence Limits on Y
-
-::: fragment
-
-### Step 2: calculate $s_{\hat{Y}^*}$
-
-- $s_{\hat{Y}^*} = s_\epsilon\sqrt{1+\frac{1}{N}+\frac{(X^*-\bar{X})^2}{SS_X}}$
-
-- $s_\epsilon$:
-:::
-
-::: fragment
-```{r, echo=TRUE}
-sqrt( (1/(nrow(reading) - 2)) * sum((reading$OverallLiteracy - predict(literacy_parent))^2) )
-# OR
-s_epsilon <- summary(literacy_parent)$sigma
-```
-
-:::
-
-- $SS_X$:
-
-::: fragment
-```{r, echo=TRUE}
-ss_x <- sum((reading$ParentChildAct - mean(reading$ParentChildAct))^2)
-```
-:::
-
-## Confidence Limits on Y
-
-
-### Step 2: calculate $s_{\hat{Y}^*}$
-
-$s_{\hat{Y}*} = s_\epsilon\sqrt{1+\frac{1}{N}+\frac{(X^*-\bar{X})^2}{SS_X}}$
-
-```{r, echo=TRUE}
-s_y <- s_epsilon * sqrt( 1+(1/nrow(reading)) + (( (20 - mean(reading$OverallLiteracy))^2 ) / ss_x))
-s_y
-```
-
-## Confidence Limits on Y
-
-### Step 3: Calculate the 95% P.I. for $\hat{Y}^*$
-
-
-```{r, echo=TRUE}
-t_crit <- qt(.025, nrow(reading) - 2, lower.tail = FALSE)
-
-```
-
-Lower confidence limit:
-
-$\hat{Y}^* - t_{crit}(s_{\hat{Y}^*})$
-
-```{r, echo=TRUE}
-pred_literacy - (t_crit*s_y)
-```
-
-Upper confidence limit:
-
-$\hat{Y}^* + t_{crit}(s_{\hat{Y}^*})$
-
-```{r, echo=TRUE}
-pred_literacy + (t_crit*s_y)
-```
-
-## Now you try
-
-:::{.callout-caution title="Exercise"}
-Go back to the estimates given by the model `literacy_age`. Find the 95% Prediction Interval for `OverallLiteracy` for a child of 36 months of age.
-:::
+Let's skip the lengthy calculations and use `R`'s `predict()` function:
 
 ```{r}
-pred_literacy_age <- 10.33 + 0.20 * 36
-s_epsilon <- summary(literacy_age)$sigma
-ss_x <- sum((reading$ChildAge - mean(reading$ChildAge))^2)
-s_y <- s_epsilon * sqrt( 1+(1/nrow(reading)) + (( (20 - mean(reading$OverallLiteracy))^2 ) / ss_x))
-t_crit <- qt(.025, nrow(reading) - 2, lower.tail = FALSE)
-
-upper_limit <- pred_literacy_age + (t_crit*s_y)
-lower_limit <- pred_literacy_age - (t_crit*s_y)
+predict(object = literacy_parent, newdata = data.frame( ParentChildAct=20), 
+        level = 0.95, interval = "predict")
 ```
 
-- If we sample several children from the population, and all of them age 36 months, we expect 95% to have a Overall Literacy test score between `r round(lower_limit, 2)` and `r round(upper_limit, 2)`.
+- `object` is our regression model used for making prediction.
 
-::: fragment
-```{r, echo=TRUE}
-predict(object = literacy_age, newdata = data.frame( ChildAge=36), level = 0.95, interval = "predict")
-```
-:::
+- `newdata` is a data frame specifying the values of the predictor variable(s) used in the model.
+
+- `level` is the confidence level for the prediction interval.
+
+- `interval = "predict"` specifies that a prediction interval (for future observations) should be returned.
+
 
 # Multiple Regression
 
@@ -357,8 +187,7 @@ literacy_multiple <- lm(OverallLiteracy ~ ChildAge + ParentChildAct, data = read
 ```
 
 ```{r}
-broom::tidy(literacy_multiple) |>
-  kableExtra::kbl()
+summary(literacy_multiple)$coefficients
 ```
 :::
 
@@ -371,15 +200,15 @@ broom::tidy(literacy_multiple) |>
 
 - When a child is 0 months old, and a parent spends 0 minutes per day doing reading-related activities with them the expected literacy score is 3.37.
 
-## Multiple Regression - coefficients
+<!-- ## Multiple Regression - coefficients -->
 
-- The slope is now the expected change in $Y$ for a 1-unit increase in $X$, **holding the other variable constant**.
+<!-- - The slope is now the expected change in $Y$ for a 1-unit increase in $X$, **holding the other variable constant**. -->
 
-- It ensures we **isolate** the effect of the specific independent variable we're interested in, without conflating it with the influences of other variables in the model.
+<!-- - It ensures we **isolate** the effect of the specific independent variable we're interested in, without conflating it with the influences of other variables in the model. -->
 
-:::fragment
-![](img/partial_diagram.png){fig-align="center" width=55%}
-:::
+<!-- :::fragment -->
+<!-- ![](img/partial_diagram.png){fig-align="center" width=55%} -->
+<!-- ::: -->
 
 ## Multiple Regression - coefficients
 
@@ -387,15 +216,16 @@ broom::tidy(literacy_multiple) |>
 
 - Similarly, the slope for parent-child activities means that if we hold the child's age constant,  then increasing the time on reading activities by 1 minute is expected to increase the child's score by 0.21 points.
 
-- Are these slopes significant?
 
 ## Multiple Regression - coefficients
-
-- Multiple regression lets us examine the unique effect of each variable in our model, given all the other variables; therefore, if the slope is still significant, it means that there is something unique about our predictor that is predicting the outcome.
 
 - The slope for `ChildAge` and `ParentChildAct` is the same as in the simple linear regression models. But don't always expect that! That only happens because `ChildAge` and `ParentChildAct` have a correlation of only `r round(cor(reading$ChildAge, reading$ParentChildAct), 3)`.
 
 - There is no overlapping variance between the two, so both have maintained their unique contribution to predict the outcome.
+
+::: {.notes}
+Multiple regression lets us examine the unique effect of each variable in our model, given all the other variables; therefore, if the slope is still significant, it means that there is something unique about our predictor that is predicting the outcome.
+:::
 
 ## Multiple Regression - $R^2$
 
@@ -423,22 +253,22 @@ summary(literacy_parent)$r.squared
 
 - Are we ever expected to have a child who is 0 months old? No! That child isn't even born yet!
 
-::: fragment
-```{r, message=FALSE}
-#| fig-align: "center"
-#| out-width: 40%
+<!-- ::: fragment -->
+<!-- ```{r, message=FALSE} -->
+<!-- #| fig-align: "center" -->
+<!-- #| out-width: 40% -->
 
-ggplot(data = reading, aes(y = OverallLiteracy, x = ChildAge)) + 
-  geom_point(alpha = .5) +
-  theme_minimal() +
-  ylab('Literacy') +
-  xlab('Child age (month)') +
-  geom_smooth(method = 'lm', se = F, fullrange = TRUE) +
-  geom_vline(xintercept = 0, linetype = "dashed") + 
-  geom_segment(aes(xend = ChildAge, yend = literacy_age$fitted.values), color = "red",linetype = "dashed", alpha=.3 ) +
-  coord_cartesian(xlim = c(0, 66))
-```
-:::
+<!-- ggplot(data = reading, aes(y = OverallLiteracy, x = ChildAge)) +  -->
+<!--   geom_point(alpha = .5) + -->
+<!--   theme_minimal() + -->
+<!--   ylab('Literacy') + -->
+<!--   xlab('Child age (month)') + -->
+<!--   geom_smooth(method = 'lm', se = F, fullrange = TRUE) + -->
+<!--   geom_vline(xintercept = 0, linetype = "dashed") +  -->
+<!--   geom_segment(aes(xend = ChildAge, yend = literacy_age$fitted.values), color = "red",linetype = "dashed", alpha=.3 ) + -->
+<!--   coord_cartesian(xlim = c(0, 66)) -->
+<!-- ``` -->
+<!-- ::: -->
 
 ## Centering predictors
 
@@ -469,6 +299,7 @@ head(reading$ChildAge_c)
 
 ```{r}
 #| fig-align: "center"
+#| echo: false
 
 g1 <- ggplot(data = reading, aes(y = OverallLiteracy, x = ChildAge)) + 
   geom_point(alpha = .5) +
@@ -495,6 +326,7 @@ ggarrange(g1, g2, nrow = 2)
 ```{r, eval=FALSE}
 #| fig-align: "center"
 #| out-width: 70%
+#| echo: false
 
 p_age1 <- ggplot(reading, aes(x = ChildAge)) + 
   geom_histogram(#bins = 30, 
@@ -524,13 +356,12 @@ reading$ParentChildAct_c <- reading$ParentChildAct - mean(reading$ParentChildAct
 Let's re-run our regression to see what changes
 
 ```{r, echo=TRUE}
-literacy_multiple_centered = lm(OverallLiteracy ~ ChildAge_c + ParentChildAct_c,
-                           data = reading)
+literacy_multiple_centered = lm(OverallLiteracy ~ ChildAge_c + ParentChildAct_c, data = reading)
 ```
 
 ::: fragment
 ```{r}
-broom::tidy(literacy_multiple_centered) |> kableExtra::kbl()
+summary(literacy_multiple_centered)$coefficients
 ```
 :::
 
@@ -557,21 +388,13 @@ This makes the intercept more useful: it is the expected literacy when we have a
 
 - Moderation between 2 predictor variables is like  saying "depends on" - the effect of one predictor variable "depends on" what value the other predictor takes.
 
-:::fragment
-![](img/moderation.png){fig-align="center" width=55%}
-:::
-
 ## Interactions
 
 - Perhaps the effect of parent-child activities depends on the child's age.
 
-- Maybe it matters that parents spend time doing these activities with their children when their children are a little bit older, versus when they're younger and parent-child activities has no effect.
-
 - We might want to test if there is an interaction between child's age and parent-child activities.
 
-## Interactions
-
-- To test an interaction in R, you just need to multiply your 2 predictors together instead of adding:
+<!-- - To test an interaction in R, you just need to multiply your 2 predictors together instead of adding: -->
 
 :::fragment
 ```{r, echo=TRUE}
@@ -579,38 +402,14 @@ interaction_model <- lm(OverallLiteracy ~ ChildAge_c * ParentChildAct_c, data = 
 ```
 
 ```{r}
-broom::tidy(interaction_model)
+summary(interaction_model)$coefficients
 ```
-
 :::
 
 ## Interactions
 
 - Is our interaction term significant? 
 
-- No. So that means the effect of parent-child activities does not depend on how old the child is -- it's equally important at all ages.
+- No. So that means the effect of parent-child activities **does not depend** on how old the child is -- it's equally important at all ages.
 
-- But what would we do if we had a significant interaction?
-
-## Interactions
-
-- In that case, we want to better understand what this  effect is, and it's usually better to graph the  regression line between the  outcome and one predictor at different values of the other predictor.
-
-- If your "other predictor" is numeric, this is usually done at 3 values: 1 SD below the mean, 1 SD above the mean, and the mean.
-
-## Interactions
-
-```{r, echo=TRUE}
-int_plot <- sjPlot::plot_model(interaction_model, type = "int", jitter = TRUE,
-           mdrt.values = "meansd", show.data = TRUE)
-```
-
-```{r}
-#| fig-align: "center"
-#| out-width: 45%
-int_plot +
-  xlab("Child Age centered") +
-  my_theme
-```
-
-
+- *If* it was a significant effect, we could conclude that the effect of parent-child activities on child literacy depends on how old a child is.

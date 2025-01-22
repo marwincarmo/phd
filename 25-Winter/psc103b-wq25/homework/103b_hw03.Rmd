@@ -1,0 +1,88 @@
+---
+title: "Homework 3"
+author: "YOUR NAME HERE"
+date: "2025-01-23"
+output:
+  pdf_document: default
+subtitle: "PSC-103B"
+affiliation: The University of California, Davis
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.width = 10,
+                      fig.height = 5,
+                      fig.align = 'center')
+
+```
+
+<!-- # Instructions -->
+
+<!-- Please use R/RStudio to complete the following questions. You will submit your filled-out version of this document **as a PDF** on Canvas. Make sure your PDF looks as expected before submitting. Please **include the code you used to generate your answer for each question (when relevant) as well as the final answer and/or relevant output**. -->
+
+<!-- You may consult with your classmates while working on the assignment, but **you must do all the work yourself – everything you turn in must be your own code and words**. Academic dishonesty will not be tolerated.  -->
+
+<!-- Please submit **a pdf version** of this document with your answers on Canvas by **2:00pm on Thursday, January 23rd (before lab)**. -->
+
+# Important reminders:
+
+- Do not insert your answer as comments inside a code chunk. They will be cut out when rendered as pdf.
+- Instead, enter your answer as plain text after the '>'
+
+## Data
+
+We will be using the same `npas.csv` dataset (available on the Lab page of Canvas) to answer the following questions. Here are the variables you’ll be working with:
+
+- `nerdy_scale`: Participant’s average "nerdiness" score from the NPAS (measured on a 1-5 scale)
+
+- `TIPI1`: How extraverted or enthusiastic the participant rates themselves (measured on a 1-7 scale)
+
+- `TIPI5`: How open to new experiences or complex the participant rates themselves (measured on a 1-7 scale)
+
+```{r}
+# load in data here
+```
+
+
+## 1. Fit a multiple regression model in R, with `nerdy_scale` as the outcome variable and `TIPI1` and `TIPI5` as the predictors. Show your code, and include a screenshot of the model summary. (1 point)
+
+```{r}
+# your code goes here
+```
+
+
+## 2. Write out the regression model, using the intercept and slope values you estimated above.
+
+> 
+
+## 3. Interpret each of the intercept and slope values in terms what they mean for the relation between nerdiness, extraversion, and openness to new experiences (3 points).
+
+> Intercept:
+
+> Slope of Extraversion:
+
+> Slope of Openness:
+
+## 4. Report the appropriate $R^2$ value from the model output up to 3 decimal places (1 point). Interpret this value (1 point).
+
+>
+
+## 5. Mean-center the predictors and re-run the model of Question 1, but now with the new centered predictors. What values have changed from the output of Question 1 (1 point)? How has the interpretation of the intercept and slope values changed? Show your code and output (3 points). 
+
+```{r}
+# your code goes here
+```
+
+> 
+
+## 6. Run a model with an interaction between the centered `TIPI1` predictor and centered TIPI5 predictor. Is this interaction significant (1 point)? Explain (in general terms, no need to visualize this interaction) what this interaction means about the effect of openness to new experiences on nerdiness (1 point). Show your code and model output.
+
+```{r}
+# your code goes here
+```
+
+>
