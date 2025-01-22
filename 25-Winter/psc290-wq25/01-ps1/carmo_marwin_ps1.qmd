@@ -1,7 +1,7 @@
 ---
 title: "Problem Set #1"
-author: "INSERT YOUR NAME HERE"
-date: "insert date here"
+author: "Marwin Carmo"
+date: "2025-01-21"
 format: 
   pdf: 
     toc: true
@@ -30,31 +30,50 @@ head(starwars)
 1.  Plot the relationship between mass and height using `geom_point()`.
 
 ```{r q1.1}
-# your code here
+starwars |> 
+  ggplot(aes(x = height, y = mass )) +
+  geom_point()
 ```
 
 2.  What an outlier! Use the arrange() function to sort the data by mass (descending) to figure out what it is
 
 ```{r q1.2}
-# your code here
+starwars |> 
+  dplyr::arrange(
+    dplyr::desc(mass)
+  )
 ```
 
 3.  Now, plot the relationship between mass and height again, removing that outlier (hint: use filter).
 
 ```{r q1.3}
-# your code here
+starwars |> 
+  dplyr::filter(name != "Jabba Desilijic Tiure") |> 
+  ggplot(aes(x = height, y = mass )) +
+  geom_point()
 ```
 
 4.  It's possible that different species in the starwars universe have different weight-height patterns. Let's test that by setting `color = species`.:
 
 ```{r q1.4}
-# your code here
+starwars |> 
+  dplyr::filter(name != "Jabba Desilijic Tiure") |> 
+  ggplot(aes(x = height, y = mass )) +
+  geom_point(aes(color = species ))
 ```
 
 5.  Oops -- that's a lot of species, let's reduce that to humans, Droids, and Wookiees and collapse the others to "Other" (hint create a new variable with mutate; consider using `ifelse()`, `if_else()` or `case_when()`). Then replot. Once you're done, assign that plot to object `p1`. Remember that `ggplot` is a layered grammar of graphics, so assigning this plot to an object will let us layer additional things on top of this base plot.
 
 ```{r q1.5}
-# your code here
+p1 <- starwars |> 
+  dplyr::filter(name != "Jabba Desilijic Tiure") |> 
+  dplyr::mutate(species = dplyr::case_when(
+    species %in% c("Human", "Droid", "Wookiee") ~ species,
+    .default = "Other"
+  )) |> 
+  ggplot(aes(x = height, y = mass )) +
+  geom_point(aes(color = species ))
+p1
 ```
 
 # Question 2: `geom_smooth()`
@@ -64,25 +83,30 @@ Now that we've got our scatterplot, let's layer a line of best fit on top. We're
 1.  First, let's test a linear fit between height and weight using `geom_smooth()`. To do this, you'll set `method = "lm"`:
 
 ```{r q2.1, warning=F}
-# your code here
+p1 +
+  geom_smooth(method = "lm")
 ```
 
 2.  Hmmm, that maybe isn't super linear. Let's test out a non-linear fit. To get a better sense of the general pattern, let's start with a loess line (hint: set `method = "loess"`):
 
 ```{r q2.2, warning=F}
-# your code here
+p1 +
+  geom_smooth(method = "loess")
 ```
 
 3.  That's not totally clear -- what about quadratic? We can change the formula that links x and y via the formula argument (`formula = y ~ x + I(x^2)`)
 
 ```{r q2.3, warning=F}
-# your code here
+p1 +
+  geom_smooth(formula = y ~ x + I(x^2))
 ```
 
 4.  Let's try one more. Set the method to "gam":
 
 ```{r q2.4, warning=F}
-# your code here
+p2 <- p1 +
+  geom_smooth(method = "gam")
+p2
 ```
 
 5.  Choose one of these and save it as object `p2`.
@@ -94,13 +118,21 @@ Now, let's practice adding vertical and horizontal lines. Let's add a line at th
 1.  Add a vertical line at the mean of height. Make it dashed and increase the thickness. Assign this to p3.
 
 ```{r q3.1, warning=F}
-# your code here
+m_hgt <-  mean(starwars[ starwars$name != "Jabba Desilijic Tiure", ]$height, na.rm = TRUE)
+
+p3 <- p2 + 
+  geom_vline(xintercept = m_hgt, linetype = "dashed", size = 1)
+p3
 ```
 
 2.  Add a horizontal line at the mean of weight Make it dashed and increase the thickness. Assign this to p4.
 
 ```{r q3.2}
-# your code here
+m_wgt <- mean(starwars[ starwars$name != "Jabba Desilijic Tiure", ]$mass, na.rm = TRUE)
+
+p4 <- p3  +
+  geom_hline(yintercept = m_wgt, linetype = "dashed", size = 1)
+p4
 ```
 
 # Question 4: `geom_bar()`
@@ -128,13 +160,20 @@ starwars_desc
 1.  Plot the mean of both height and mass using `geom_col()` or `geom_bar()`, splitting the two measures (height & weight using `facet_grid()`), filling by species and setting `color = "black`" to add an outline:
 
 ```{r q4.1}
-# your code here
+starwars_desc |> 
+  ggplot(aes(x = species_cat, y = mean, fill = species_cat)) +
+  geom_col(color="black") +
+  facet_wrap(~ measure)
 ```
 
 2.  Now add the SD using `geom_errorbar()`. Your key new arguments are `ymin = mean - sd` and `ymax = mean + sd` (hint: set the width to a smaller value to improve the aesthetic):
 
 ```{r q4.2}
-# your code here
+starwars_desc |> 
+  ggplot(aes(x = species_cat, y = mean, fill = species_cat)) +
+  geom_col(color="black") +
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.2) +
+  facet_wrap(~ measure)
 ```
 
 3.  Now let's re-add the raw data back in using geom_jitter() (jittering in the x direction only). Note the following hints:
@@ -144,13 +183,31 @@ starwars_desc
 -   Don't forget to change the color by setting `color = species_cat`
 
 ```{r q4.3}
-# your code here
+starwars_desc |> 
+  ggplot(aes(x = species_cat, y = mean, fill = species_cat)) +
+  geom_col(color="black") +
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.2) +
+  geom_jitter(data = starwars2, 
+              aes(x = species_cat, y = value, color = species_cat), 
+              height = 0) +
+  facet_wrap(~ measure)
+  
 ```
 
 4.  Hmm, we can't really see the points. We'll do three things here. We'll change the `shape`, change fill for color, set `color = "black"`, and adjust the alpha (transparency):
 
 ```{r q4.4}
-# your code here
+starwars_desc |> 
+  ggplot(aes(x = species_cat, y = mean, fill = species_cat)) +
+  geom_col(color="black") +
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.2) +
+  geom_jitter(data = starwars2, 
+              aes(x = species_cat, y = value, fill = species_cat),
+              shape = 21, 
+              color = "black", 
+              alpha = 0.7, 
+              height = 0) +
+  facet_wrap(~ measure)
 ```
 
 # Question 5: `geom_boxplot()` and `geom_density()`
@@ -165,7 +222,11 @@ Lastly, let's do some quick practice with distributions of data using `geom_dens
 -   remove the unnecessary legend using `theme(legend.position = "none")`
 
 ```{r q5.1}
-# your code here
+starwars2 |> 
+  ggplot(aes(x = value, y = species_cat) ) +
+  geom_boxplot(aes(fill = species_cat)) +
+  theme(legend.position = "none") +
+  facet_wrap(~ measure)
 ```
 
 1.  Make a histogram of mass and height using `geom_histogram()` and the `starwars2` dataset
@@ -177,7 +238,12 @@ Lastly, let's do some quick practice with distributions of data using `geom_dens
 -   remove the unnecessary legend using `theme(legend.position = "none")`
 
 ```{r q5.2}
-# your code here
+starwars2 |> 
+  ggplot(aes(x = value, fill = species_cat) ) +
+  geom_histogram(color = "black") +
+  facet_grid(measure ~ species_cat) +
+  theme(legend.position = "none")
+  
 ```
 
 # Question 6: Aesthetics
@@ -199,7 +265,42 @@ Choose any plot above that has some sort of color or fill mapping to improve it'
     -   Change their appearance using theme. Try `theme(strip.background = element_rect(fill = "black"))` to set the background color. Then change the font color and appearance using `strip.text = element_text(color = "white", face = "bold")`
 
 ```{r q6.1}
-# your code here
+facet_labels <- c(
+  "mass" = "Mass (kg)",
+  "height" = "Height (cm)"
+)
+
+
+p5 <- starwars_desc |> 
+  ggplot(aes(x = species_cat, y = mean, fill = species_cat)) +
+  geom_col(color="black") +
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.2) +
+  geom_jitter(data = starwars2, 
+              aes(x = species_cat, y = value, fill = species_cat),
+              shape = 21, 
+              color = "black", 
+              alpha = 0.7, 
+              height = 0) +
+  facet_wrap(~ measure, scales = "free",
+             labeller = labeller(measure = facet_labels))
+
+p5 + 
+  labs(
+    title = "Height and weight mean and distribution by species",
+    x = "Species",
+    y = "Mean Value",
+    fill = "Species" # Update legend title
+  ) + 
+  theme_bw() +
+  theme(
+    axis.text = element_text(face = "bold"),
+    axis.title = element_text(face = "bold", size = rel(1.4)),
+    plot.title = element_text(face = "bold", hjust = 0.5, size = rel(1.4)), 
+    legend.position = "none",
+    strip.background = element_rect(fill = "black"),
+    strip.text = element_text(color = "white", face = "bold"),
+    legend.title = element_text(face = "bold")
+  ) 
 ```
 
 # Render to html and submit problem set
