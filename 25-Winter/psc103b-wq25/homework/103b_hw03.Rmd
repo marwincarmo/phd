@@ -31,7 +31,8 @@ knitr::opts_chunk$set(echo = TRUE,
 # Important reminders:
 
 - Do not insert your answer as comments inside a code chunk. They will be cut out when rendered as pdf.
-- Instead, enter your answer as plain text after the '>'
+- Instead, enter your answer as plain text after the '>'.
+- Check your compiled document before submission to ensure your answers are displayed correctly. 
 
 ## Data
 
