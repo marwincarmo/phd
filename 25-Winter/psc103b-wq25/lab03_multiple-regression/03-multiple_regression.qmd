@@ -174,7 +174,7 @@ predict(object = literacy_parent, newdata = data.frame( ParentChildAct=20),
 - $y_i = b_0 + b_1x_{1_i} + b_2x_{2_i} + \ldots + b_qx_{q_i} + \epsilon_i$
 
 - Say that we want to use `ParentChildAct` and `ChildAge` simultaneously in the model, we would have:
-  - $OverallLiteracy_i = b_0 + b_1 \times ChildAge_i + b_2 \times ParentChildAct_i + \epsilon_i$
+  - $OverallLiteracy_i = b_0 + b_1 \times ChildAge_i + \\ b_2 \times ParentChildAct_i + \epsilon_i$
 
 ## Multiple Regression - running the model
 
@@ -196,7 +196,7 @@ summary(literacy_multiple)$coefficients
 
 - Now we have more terms: we have the intercept, the effect of age, and the slope associated with the  time parents spend doing reading-related activities.
 
-- Like before, the intercept is the expected value of our outcome when *all* predictors are 0.
+- Like before, the **intercept **is the expected value of our outcome when *all* predictors are 0.
 
 - When a child is 0 months old, and a parent spends 0 minutes per day doing reading-related activities with them the expected literacy score is 3.37.
 
@@ -212,9 +212,9 @@ summary(literacy_multiple)$coefficients
 
 ## Multiple Regression - coefficients
 
-- The slope for age means that if we keep the amount of time on parent-child activities constant, then increasing child's age by 1 month will increase the literacy score by 0.20.
+- The **slope for age** means that if we keep the amount of time on parent-child activities constant, then increasing child's age by 1 month will increase the literacy score by 0.20.
 
-- Similarly, the slope for parent-child activities means that if we hold the child's age constant,  then increasing the time on reading activities by 1 minute is expected to increase the child's score by 0.21 points.
+- Similarly, the **slope for parent-child activities** means that if we hold the child's age constant,  then increasing the time on reading activities by 1 minute is expected to increase the child's score by 0.21 points.
 
 
 ## Multiple Regression - coefficients
@@ -253,6 +253,8 @@ summary(literacy_parent)$r.squared
 
 - Are we ever expected to have a child who is 0 months old? No! That child isn't even born yet!
 
+- Centering around the mean shifts all the values of your variable so that the overall distribution stays the same but the mean of that distribution is now 0.
+
 <!-- ::: fragment -->
 <!-- ```{r, message=FALSE} -->
 <!-- #| fig-align: "center" -->
@@ -272,11 +274,6 @@ summary(literacy_parent)$r.squared
 
 ## Centering predictors
 
-```{r}
-reading$ChildAge_c <- scale(reading$ChildAge, scale = FALSE)
-```
-
-Centering around the mean shifts all the values of your variable so that the overall distribution stays the same but the mean of that distribution is now 0.
 
 ::: fragment
 ```{r, echo=TRUE}
