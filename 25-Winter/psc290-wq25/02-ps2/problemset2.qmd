@@ -1,0 +1,188 @@
+---
+title: "Problem Set #2"
+author: "INSERT YOUR NAME HERE"
+date: "insert date here"
+format: 
+  html:
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    theme: united
+    highlight-style: tango
+    df-print: paged
+    code-fold: show
+    toc: true
+    toc-float: true
+    self-contained: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r packages}
+library(broom)
+library(broom.mixed)
+library(tidyverse)
+```
+
+# Overview:
+
+In this problem set, you will be using the **ggplot2** package (part of tidyverse) to practice (1) visualizing proportions and (2) visualizing associations. This is the first of the problem sets where you're encouraged to use your own data, so instructions here will be slightly more vague. 
+
+In Part 1, you'll visualize proportions at least two ways (from the approximately 6 we discussed in class). In Part 2, you'll run and visualize some sort of association or series of associations.
+
+If you don't have your own data, we'll use the data we used in class. 
+
+```{r data}
+load(url("https://github.com/emoriebeck/psc290-data-viz-2022/blob/main/04-week4-associations/04-data/week4-data.RData?raw=true"))
+pred_data
+```
+
+# Part 1: Visualizing Proportions 
+
+In class, we discussed the following plots: 
+
+-   Pie Charts (one discrete variable)
+-   Stacked Bar Charts (multiple discrete variables)
+-   Side-by-Side Bar Charts (multiple discrete variables)
+-   Bar Charts Across Continuous Variables (1+ discrete and 1+ continuous)
+-   Density Across Continuous Variables (1+ discrete and 1+ continuous [or ordinal])
+-   Mosaic Plots (nested discrete or multiple discrete)
+-   Tree Maps (nested discrete)
+
+## Question 1: One discrete variable 
+
+First, we'll visualize proportions of a single discrete variable. If you're using the provided data
+
+1.    Plot the proportion of people/trials/observations/etc. across a single discrete variable as a pie chart. 
+2.    Make sure to: 
+      + Directly label the groups 
+      + Directly label the actual proportions 
+      + Use colorblind friendly palettes that helps you tell a story 
+      + Adjust axis and plot labels and titles 
+      
+If you're using the provided data, plot parental education (1 = "no college degree"; 2 = "college degree"; 3 = "graduate or professional degree"). 
+
+```{r q1.1}
+# d_q1 <- pred_data %>%
+#   filter(study == "Study1") %>%
+#   mutate(parEdu = factor(parEdu, 1:3, c("No college Degree", "College Degree", "Graduate Degree"))) 
+
+## Your code here ##
+```
+
+## Question 2: Multiple Discrete Variables
+
+Now, let's consider the case where we have multiple discrete or ordinal variables or a combination of discrete and continuous variables. 
+
+Plot the proportions using any of the following: 
+
+-   Stacked Bar Charts (multiple discrete variables)
+-   Side-by-Side Bar Charts (multiple discrete variables)
+-   Bar Charts Across Continuous Variables (1+ discrete and 1+ continuous)
+-   Density Across Continuous Variables (1+ discrete and 1+ continuous [or ordinal])
+
+Make sure to make aesthetic adjustments similar to those we made in class!
+
+If you're using provided data, look at the frequency of smoking across samples.  
+
+```{r q1.2, warning=F}
+# pred_data %>%
+#   filter(!is.na(smokes)) %>%
+#   mutate(smokes = factor(smokes, c(0,1), c("Nonsmoker", "Smoker"))
+  
+## Your code here ##
+```
+
+# Part 2: Associations and Models 
+Next, you'll practice Week 4 skills, specifically how to visualize from model objects. In class, we discussed multiple ways to visualize associations including: 
+
+-   heat maps (multivariate)
+-   correlelograms (multivariate) 
+-   scatterplots (bi- or multivariate) 
+-   forest plots (multiple effect sizes from models)
+-   prediction plots (association between variables)
+
+## Question 1: Multivariate associations 
+
+First, look at the between-person associations between variables in your data set. Some hints: 
+
+- Initially, this is easiest if your data are in wide form (e.g., if you have a "condition" with multiple conditions, you'll eventually want to move that into columns like "Condition 1", "Condition 2", etc.) 
+- If you have longitudinal or repeated measures data, you need to get the person means (if your data are in wide form, consider using `mutate_at()`) 
+- Copy the code from class for creating the correlation matrix itself but feel free to take liberties in the construction of the heat map itself 
+
+If you're using the provided data, look at the correlations between the following variables in Study 2 (or in all studies if you're feeling adventurous!): 
+
+- `p_value`
+- `age`
+- `grsWages` 
+- `SRhealth`
+- `exercise`
+- `BMI` 
+- `parOccPrstg`
+
+```{r q2.1}
+r_reshape_fun <- function(r){
+  coln <- colnames(r)
+  # remove lower tri and diagonal
+  r[lower.tri(r, diag = T)] <- NA
+  r %>% data.frame() %>%
+    rownames_to_column("V1") %>%
+    pivot_longer(
+      cols = -V1
+      , values_to = "r"
+      , names_to = "V2"
+    ) %>%
+    mutate(V1 = factor(V1, coln)
+           , V2 = factor(V2, rev(coln)))
+}
+
+## Your code here ##
+
+```
+
+
+## Question 2: Plotting model objects 
+
+Choose an association between an outcome variable and one or more predictor variables in your dataset. Almost any type of model is supported by broom, but if you use bayesian models or multilevel models, you'll need to install and load `broom.mixed` and if you use SEM, you can't use broom. 
+
+Note that if you have a saved model from a different project, you can just directly load it into this assignment. 
+
+If you're using class data, we'll look at the association between personality (`p_value`), gender (`gender`), and education (`education`) and physical health events (`physhlthevnt`). You can do it for all studies or one study. 
+
+1. First, get the model(s) set up and run. Run broom/broom.mixed::tidy on the model (don't forget to get confidence intervals [unless you're using MLM, then don't bother]). 
+
+```{r q2.2.1}
+## Your code here ##
+```
+
+2. Plot the effect sizes as a forest plot. 
+
+```{r q2.2.2}
+## Your code here ##
+```
+
+
+3. Last, plot the predicted values (i.e. the fitted association). Some hints: 
+
+- You need to choose two focal variables and to ignore the others. 
+- Make sure the kind of plot is appropriate for the kind of data you're plotting (i.e. not a scatterplot for binary variables) 
+- Remember the note in class that you can't use augment unless you don't have covariates. If you have more than one predictor, use `predict()` or `fitted()` instead. 
+
+```{r q2.2.3 pred}
+## Your code here ##
+```
+
+```{r q2.2.3 plot}
+## Your code here ##
+```
+
+
+# Render to html and submit problem set
+
+**Render to html** by clicking the "Render" button near the top of your RStudio window (icon with blue arrow)
+
+-   Go to the Canvas --\> Assignments --\> Problem Set 2
+-   Submit both .qmd and .html files\
+-   Use this naming convention "lastname_firstname_ps#" for your .qmd and html files (e.g. beck_emorie_ps2.qmd & beck_emorie_ps2.html)
+
