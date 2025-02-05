@@ -1,0 +1,100 @@
+---
+title: "Homework 3"
+author: "YOUR NAME HERE"
+date: "2025-01-23"
+output:
+  pdf_document: default
+subtitle: "PSC-103B"
+affiliation: The University of California, Davis
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.width = 10,
+                      fig.height = 5,
+                      fig.align = 'center')
+
+```
+
+<!-- # Instructions -->
+
+<!-- Please use R/RStudio to complete the following questions. You will submit your filled-out version of this document **as a PDF** on Canvas. Make sure your PDF looks as expected before submitting. Please **include the code you used to generate your answer for each question (when relevant) as well as the final answer and/or relevant output**. -->
+
+<!-- You may consult with your classmates while working on the assignment, but **you must do all the work yourself – everything you turn in must be your own code and words**. Academic dishonesty will not be tolerated.  -->
+
+<!-- Please submit **a pdf version** of this document with your answers on Canvas by **2:00pm on Thursday, January 23rd (before lab)**. -->
+
+# Important reminders:
+
+- Do not insert your answer as comments inside a code chunk. They will be cut out when rendered as pdf.
+- Instead, enter your answer as plain text after the '>'.
+- Check your compiled document before submission to ensure your answers are displayed correctly. 
+
+We will be continuing to use the NPAS Dataset from the past 2 weeks (sorry if you’re sick of this dataset by now!). Here is a refresher of the relevant variables for this homework assignment:
+
+- `continent`: The continent that the participant is from, out of 5 possible options: Africa, Americas, Asia, Europe, and Oceania
+- `TIPI1`: Participant’s self-rated extraversion (on a scale of 1 to 7)
+- `nerdy_selfreport`: Participant’s self-rated nerdiness level (on a scale of 1 to 7)
+
+```{r}
+# load in data here
+```
+
+Suppose you met someone from Europe who had just finished a tour of the Americas, who remarked that all the people they had met seemed so much more extraverted than the people they knew back in Europe. Luckily, you have this dataset where you can check and see whether your new friend’s impression is right or not!
+
+## 1. State the null and alternative hypothesis for this test (1 point).
+
+```{r}
+# your code goes here
+```
+
+
+## 2. Report the mean extraversion score for participants from the Americas and the mean extraversion score for participants from Europe. Show your code. (1 point)
+
+```{r}
+# your code goes here
+```
+
+## 3. Conduct a t-test to for the hypotheses above. Show your code and output. (2 points)
+
+Note that the `continent` column has more than two levels. You'll need to subset it in order to have only `Americas` and `Europe`. Using the **OR** operator (`|`) might help.
+
+```{r}
+# your code goes here
+```
+
+## 4. What is your conclusion? Is your friend’s impression of people from the Americas correct? (1 point)
+
+>
+
+This got you thinking – are there perhaps continental differences in how people perceive themselves? Perhaps people from different continents think they are more or less nerdy than people from other continents. You decide to conduct a one-way ANOVA to see whether this is true, and there is a difference in self-reported nerdiness across continents.
+
+## 5. Write the null and alternative hypotheses for this test. (1 point)
+
+> $H_0$:
+
+> $H_1$:
+
+## 6. Calculate and report the mean self-reported nerdiness score for each continent. Show your code. (2 points)
+
+```{r}
+# your code goes here
+```
+
+## 7. Conduct the one-way ANOVA. Show your code and output. (2 points)
+
+```{r}
+# your code goes here
+```
+
+## 8. What can you conclude about the average self-reported nerdiness across continents? Is there a difference? (1 point)
+
+>
+
+## 9. Can the results of the one-way ANOVA tell you which continents have significantly different self-reported nerdiness scores from each other? Why or why not? (1 point)
+
+>
