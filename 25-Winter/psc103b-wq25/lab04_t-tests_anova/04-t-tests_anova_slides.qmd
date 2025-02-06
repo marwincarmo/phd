@@ -129,7 +129,7 @@ levels(penguins_subset$sex)
 -   Using the following syntax, replace the placeholders with the names of the variables we’re interested in:
 
 :::: fragment
-```{r eval=FALSE}
+```{r Exercise-1, eval=FALSE}
 t.test(dependent_variable ~ group_variable, data = dataset,
        alternative = "???")
 ```
@@ -387,7 +387,7 @@ SSW
 ::: fragment
 $df_{between} = k - 1$
 
-$df_{within} = N -k - 1$
+$df_{within} = N -k$
 :::
 
 -   where $k$ is the number of groups and $N$ is the total sample size.

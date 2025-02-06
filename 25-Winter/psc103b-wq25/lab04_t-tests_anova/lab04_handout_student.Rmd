@@ -110,8 +110,10 @@ that you can apply a function to a particular variable separately for
 each group. Here, the variable we want to apply a function (mean) to is
 bill length, and the group is the sex.
 
-```{r Exercise-1}
-tapply(X = , INDEX = , FUN = , ...)
+```{r }
+tapply(X = penguins_subset$bill_length_mm, 
+       INDEX = penguins_subset$sex, 
+       FUN = mean, na.rm=TRUE)
 ```
 
 So there is a numerical difference that suggests male penguins have, on
@@ -139,7 +141,7 @@ alternative with Group 1 compared to Group 2.
 The argument `alternative` specifies the alternative hypothesis and can take any of these three values: `"two.sided"`, `"less"`, or `"greater"`. 
 Think about our hypothesis to choose one of the alternatives.
 
-```{r Exercise-2}
+```{r Exercise-1}
 t.test(formula = , data = , alternative = )
 ```
 
@@ -288,7 +290,7 @@ penguin_means
 Now we can find the difference between each group mean and the grand
 mean.
 
-```{r Exercise-3}
+```{r Exercise-2}
 penguin_means$mean_deviations <- 
 
 ```
@@ -348,7 +350,7 @@ twice: one to calculate the value of the mean, but also to use the
 `sum()` function since not all penguins have a bill length, so using
 `mean()` or `sum()` on something with a `NA` value leads to a `NA`.
 
-```{r Exercise-4}
+```{r Exercise-3}
 penguins_adelie_dev <- 
 
 penguins_chinstrap_dev <- 
