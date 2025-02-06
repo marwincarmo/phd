@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE,
 
 <!-- You may consult with your classmates while working on the assignment, but **you must do all the work yourself – everything you turn in must be your own code and words**. Academic dishonesty will not be tolerated.  -->
 
-<!-- Please submit **a pdf version** of this document with your answers on Canvas by **2:00pm on Thursday, January 23rd (before lab)**. -->
+<!-- Please submit **a pdf version** of this document with your answers on Canvas by **2:00pm on Thursday, February 13th (before lab)**. -->
 
 # Important reminders:
 
@@ -48,9 +48,9 @@ Suppose you met someone from Europe who had just finished a tour of the Americas
 
 ## 1. State the null and alternative hypothesis for this test (1 point).
 
-```{r}
-# your code goes here
-```
+> $H_0$:
+
+> $H_1$:
 
 
 ## 2. Report the mean extraversion score for participants from the Americas and the mean extraversion score for participants from Europe. Show your code. (1 point)
