@@ -8,16 +8,45 @@ format:
 
 ## Background
 
-Variability is important and conveys information not provided by average achievement alone. Carmo et al (2024) propose the Spike-and-Slab Mixed-Effects Location Scale model (SS-MELSM) methodology to identify clustering units (students, classrooms, etc.) that exhibit unusual levels of residual variability—such as consistency or inconsistency—in academic achievement. This method is implemented in the R package `ivd`. The main information provided by this package are the Posterior Inclusion Probabilities (PIP) which quantifies the probability that a given random effect is included in the residual variance (scale) model, conditional on the observed data. A high PIP (i.e., > .75) indicates strong evidence that the random effect is necessary to explain the data. Evidence for retaining the random effect is evidence of unusual variability. After identifying the (in-)consistent schools researchers might want to investigate this clustering units to understand what distinct these clusters from the others. For example, how does their variation compare to the rest? How are the students within the schools performing on average? Visualization can help quickly answer some of these questions and provide initial basis for further investigations (i.e., which schools are they interested in conducting further investigation or intervention).
+Variability is important and conveys information not provided by average achievement alone. The Spike-and-Slab Mixed-Effects Location Scale model (SS-MELSM) methodology identify clustering units (students, classrooms, etc.) that exhibit unusual levels of residual variability—such as consistency or inconsistency—in academic achievement. This method is implemented in the R package [`ivd`](https://github.com/consistentlyBetter/ivd). The main information provided by this package is the Posterior Inclusion Probability (PIP) which quantifies the probability that a given random effect is included in the residual variance (scale) model, conditional on the observed data. A high PIP (i.e., > .75) indicates strong evidence that the random effect is necessary to explain the data. Evidence for retaining the random effect is evidence of unusual variability. After identifying the (in-)consistent schools, researchers might want to investigate this clustering units to understand what distinct these clusters from the others. For example, how does their variation compare to the rest? How are the students within the schools performing on average? Visualization can help quickly answer some of these questions and provide initial basis for further investigations (i.e., which schools are they interested in conducting further investigation or intervention).
 
 ## Research question
 
-The broad research question motivating the SS-MELSM is how to identify and isolate clusters (such as students, classrooms, schools, etc.) that display unusual amounts of residual variability. Given the purpose of this class, I will define the research question as how to visualize these clusters such that it is clear from the visualization what makes these units unique in relation to the others. The final goal is to enhance the type of visualization currently provided by `ivd`.
+The broad research question motivating the SS-MELSM is how to identify and isolate clusters (such as students, classrooms, schools, etc.) that display unusual amounts of residual variability. Given the purpose of this class, I will define the research question as how to visualize these clusters such that it is clear what makes these units unique in relation to the others. The final goal is to enhance the type of visualization currently provided by `ivd`.
 
 ## Method
 
-In this project I will work with the example data included in `ivd`. It consists of standardized math scores from 11,386 11th and 12th-grade students across 160 schools. The data are the posterior estimates of the scale model, which models the scale as function of fixed effects of student and school-level SES and a random intercept. Specifically, I will use the PIPs, the estimated random effects standard deviations and the estimated math scores.
+In this project I will work with the example data included in `ivd`. It consists of standardized math scores from 11th and 12th-grade students across 160 schools. To build the plots I will work with the posterior estimates of the scale model, which models the scale as function of fixed effects of student and school-level SES and a random intercept. Specifically, I will use the PIPs, the estimated random effects standard deviations and the estimated math scores.
 
 ## Visualization plan
+
+The package offers the user three types of visualization, all including  the PIPs for a given random effect on the vertical axis: (1) `pip`, which shows the sorted school index on the horizontal axis; (2) `funnel`, that provides the PIPs over the estimated within-cluster SD; and (3) `outcome`, with the observed outcome value on the horizontal axis and points size governed by the estimated within-cluster SD.
+
+Even though the output plots are simple to allow user customization, there is a lot of room for improvement. 
+
+```{r}
+#| include: false
+
+library(ivd)
+library(ggplot2)
+library(patchwork)
+m1 <- readRDS("../../../../melms_educ/WORK/-ANALYSIS/MODELS/saeb/out/outm1.rds")
+
+pip <- plot(m1, "pip")
+funnel <- plot(m1, "funnel")
+outcome <- plot(m1, "outcome")
+```
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 4
+pip + theme(legend.position = "none") +
+  funnel + theme(legend.position = "none") +
+  outcome +
+    plot_annotation(tag_levels = '1') +
+    plot_layout(guides = 'collect') 
+```
+
 
 ## Challenges and barriers
