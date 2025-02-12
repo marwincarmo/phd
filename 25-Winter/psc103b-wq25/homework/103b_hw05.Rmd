@@ -1,0 +1,109 @@
+---
+title: "Homework 5"
+author: "YOUR NAME HERE"
+date: "2025-02-13"
+output:
+  pdf_document: default
+subtitle: "PSC-103B"
+affiliation: The University of California, Davis
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.width = 10,
+                      fig.height = 5,
+                      fig.align = 'center')
+
+```
+
+<!-- # Instructions -->
+
+<!-- Please use R/RStudio to complete the following questions. You will submit your filled-out version of this document **as a PDF** on Canvas. Make sure your PDF looks as expected before submitting. Please **include the code you used to generate your answer for each question (when relevant) as well as the final answer and/or relevant output**. -->
+
+<!-- You may consult with your classmates while working on the assignment, but **you must do all the work yourself – everything you turn in must be your own code and words**. Academic dishonesty will not be tolerated.  -->
+
+<!-- Please submit **a pdf version** of this document with your answers on Canvas by **4:00pm on Thursday, February 27th (before lab)**. -->
+
+# Important reminders:
+
+- Do not insert your answer as comments inside a code chunk. They will be cut out when rendered as pdf.
+- Instead, enter your answer as plain text after the '>'.
+- Check your compiled document before submission to ensure your answers are displayed correctly. 
+
+---
+
+This week, we will be moving away from the NPAS dataset and using the version of the penguins dataset that we have been using in lab. Download this dataset from the Homework 5 assignment page on Canvas.
+
+The variables we will be using today are:
+
+- `species`: The species of the penguin (Adelie, Chinstrap, or Gentoo)
+- `sex`: The sex of the penguin (male or female)
+- `bill_length_mm`: The bill length of the penguin, measured in mm 
+
+
+```{r}
+# load in data here
+```
+
+
+## 1. Suppose we were interested in conducting a factorial ANOVA with species and sex as our grouping variables, and bill length as the outcome. Write out the 3 sets of null and alternative hypotheses for the factorial ANOVA – one for each main effect and one for the interaction. (3 points)
+
+**Hypotheses for Main Effect of Species**
+
+> $H_0$:
+
+> $H_1$:
+
+**Hypotheses for Main Effect of Sex**
+
+> $H_0$:
+
+> $H_1$:
+
+**Hypotheses for the Interaction**
+
+> $H_0$:
+
+> $H_1$:
+
+
+## 2. Conduct the factorial ANOVA. Show your code and output. (1 point)
+
+```{r}
+# your code goes here
+```
+
+## 3. *If the main effect of dose is significant*: Conduct the Tukey Honest Significant Difference post-hoc test. Show your code. *If the main effect of dose is not significant*: State "The main effect of species was not significant". (1 point)
+
+```{r}
+# your code goes here
+```
+
+## 4. If you conducted the Tukey HSD test in the previous question: Which groups were significantly different from each other? What was the difference (e.g., which group had the larger/smaller bill length)? (1 point)
+
+>
+
+## 5. *If the main effect of sex is significant*: Calculate the means for each group. Show your code and output. *If the main effect of sex is not significant*: State "The main effect of sex was not significant". (1 point)
+
+```{r}
+# your code goes here
+```
+
+## 6. *If you calculated the means in the previous question*: Which group (males or females) had the longer bill length? (1 point)
+
+> 
+
+
+## 7. Was the interaction significant? What does this tell us (e.g., does the main effect of species depend on sex)? (1 point)
+
+> 
+
+## 8. Even if the interaction was not significant, create an interaction plot. Put species on the x-axis and sex as the line type. Show your code and include the plot. Use the function we learned in lab. (1 point)
+
+```{r}
+# your code goes here
+```
