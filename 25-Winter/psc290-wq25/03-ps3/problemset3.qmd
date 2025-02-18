@@ -1,0 +1,264 @@
+---
+title: "Problem Set #3"
+author: "INSERT YOUR NAME HERE"
+date: "insert date here"
+format: 
+  html:
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    theme: united
+    highlight-style: tango
+    df-print: paged
+    code-fold: show
+    toc: true
+    toc-float: true
+    self-contained: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r packages}
+library(broom)
+library(broom.mixed)
+library(distributional)
+library(lme4)
+library(modelr)
+library(ggdist)
+library(gganimate)
+library(tidyverse)
+```
+
+```{r, echo = F}
+my_theme <- function(){
+  theme_bw() + 
+  theme(
+    legend.position = "bottom"
+    , legend.title = element_text(face = "bold", size = rel(1))
+    , legend.text = element_text(face = "italic", size = rel(1))
+    , axis.text = element_text(face = "bold", size = rel(1.1), color = "black")
+    , axis.title = element_text(face = "bold", size = rel(1.2))
+    , plot.title = element_text(face = "bold", size = rel(1.2), hjust = .5)
+    , plot.subtitle = element_text(face = "italic", size = rel(1.2), hjust = .5)
+    , strip.text = element_text(face = "bold", size = rel(1.1), color = "white")
+    , strip.background = element_rect(fill = "black")
+    )
+}
+```
+
+# Overview:
+
+In this problem set, you will be using the **ggplot2** package (part of tidyverse) to practice (1) time series and (2) visualizing uncertainty. As with PS2, you're encouraged to use your own data, so instructions here will be somewhat vague. To make it a little easier on yourself, I suggest using the same model object you used for Part 2 in PS2 for Part 2 in PS3 (visualizing uncertainty).
+
+In Part 1, you'll visualize time series at least two ways. In Part 2, you'll run and visualize some sort of association or series of associations using best practices in visualizing uncertainty.
+
+If you don't have your own data, we'll use the data we used in class. 
+
+```{r data}
+load(url("https://github.com/emoriebeck/psc290-data-viz-2022/blob/main/05-week5-time-series/01-data/gsoep.RData?raw=true"))
+gsoep <- gsoep %>% mutate(gender = haven::zap_labels(gender)) %>% filter(gender >= 0)
+gsoep
+ps3_df <- gsoep %>%
+  select(SID, age, gender, satHealth) %>%
+  group_by(SID) %>%
+  mutate(marital = names(sort(table(gender), decreasing = T)[1])) %>%
+  ungroup() %>%
+  mutate(
+    gender = factor(marital, 1:2, c("Male", "Female"))
+    , age = age/10
+    ) %>%
+  drop_na()
+
+ps3_df <- ps3_df %>%
+  group_by(SID) %>%
+  filter(n() > 5) %>%
+  ungroup()
+ps3_df
+```
+
+# Part 1: Visualizing Proportions 
+
+In class, we discussed the following plots: 
+
+- Univariate time series
+  + Basic Descriptives 
+  + Area plots 
+- Multivariate time series 
+  + Small multiples 
+  + Multiple variables
+  + Multiple people
+- Smoothed Time Series 
+  + `geom_smooth()`
+  + Model predictions 
+- Slopegraphs 
+
+## Question 1: Univariate Time Series 
+
+First, we'll visualize a single time series. For this, it doesn't matter if you have long-term longitudinal data or intensive longitudinal data -- all of these data sources are relevant. 
+
+1.    Plot a summary (i.e. mean or other central tendency) of your time series across the full sample. You'll still have time on the x-axis and your central tendency measure as the y-axis. 
+2.    Shade the area under the plot using `geom_area()`.
+2.    Make sure to: 
+      + label your x- and y-axes
+      + Add a title 
+      + Use your custom theme 
+      
+If you're using the provided data, plot age (in decades) x satHealth (POMP scored 0-10). 
+
+```{r q1.1}
+## Your code here ##
+```
+
+## Question 2: Small Multiples 
+
+Now, let's consider the case of a multivariate time series where you have time series of multiple people and want to get a esnse of general patterns, missingness, etc. 
+
+1. Plot a small multiples plot of 20 people (hint: use the `sample()` function). 
+2. Make sure to: 
+  + Use `facet_wrap()` 
+  + Use `geom_area()` to show relative differences in levels 
+  + Use whatever combination of points and lines makes sense for your density of data 
+  + Add labels and titles as appropriate 
+
+If you're using provided data, use the skeleton code below to get the observations for 20 people with at least 15 observations.  
+
+```{r q2.1, warning=F}
+set.seed(5)
+ps3_df %>%
+  group_by(SID) %>%
+  filter(n() > 15) %>%
+  ungroup() %>%
+  filter(SID %in% sample(unique(.$SID), 20)) 
+## Your code here ##
+```
+
+# Part 2: Visualizing Uncertainty 
+Next, you'll practice Week 6 skills, specifically how to visualize uncertainty. To give you a chance to also practice smoothing and model predictions from time series, Q2 will also have you make predictions across a time series. 
+
+## Question 1: Visualizing point estimates 
+
+For this question, I recommend using the same model that you used in ps2. For those using provided data, that means you'll use this data: 
+
+```{r p2 data}
+load(url("https://github.com/emoriebeck/psc290-data-viz-2022/blob/main/04-week4-associations/04-data/week4-data.RData?raw=true"))
+pred_data
+```
+
+And this model: 
+
+```{r p2 model}
+m_fun <- function(x){
+  x <- x %>% mutate(education = factor(as.numeric(as.character(education))))
+  glm(physhlthevnt ~ gender + education, data = x, family = binomial(link = "logit"))
+}
+nested_mods <- pred_data %>%
+  select(study, SID, p_value, gender, smokes, education, physhlthevnt) %>%
+  filter(physhlthevnt %in% c(1,0)) %>%
+  mutate(gender = as.numeric(as.character(gender))) %>%
+  group_by(study) %>%
+  nest() %>%
+  ungroup() %>%
+  mutate(m = map(data, m_fun), 
+         tidy = map(m, ~tidy(., conf.int = T)),
+         df = map_dbl(m, df.residual))
+```
+
+1. Plot the point estimates for all estimates using one of the functions we discussed in class (e.g., `stat_halfeye()`) 
+
+```{r q2.1.1}
+## Your code here ##
+```
+
+2. Plot the marginal means for a categorical variable (use the provided data set if your model doesn't have one). 
+
+```{r q2.1.2}
+q2_1_pred_fun <- function(m){
+  m$data %>%
+    data_grid(education) %>%
+    mutate(gender = mean(m$data$gender)) %>%
+    augment(m, newdata = ., se_fit = T) 
+}
+
+nested_mods <- nested_mods %>%
+  mutate(pred = map(m, q2_1_pred_fun),
+         df = map_dbl(m, df.residual))
+## Your code here ##
+```
+
+
+
+## Question 2: Plotting smoothed trajectories
+
+In class, we talked about multiple geoms / methods for plotting the uncertainty around trajectories: 
+
+- `geom_line()` (across bootstrapped samples) 
+- `geom_lineribbon()` (across bootstrapped samples)
+
+Below, I give you code using the provided data from Part 1 to get bootstrapped samples. If you want to use your own data, you just need to modify the model and the `pred_fx_fun()`. `predIntlme4()` should be a general function that should work with any lme4 model. 
+
+```{r p2.2 model, warning = F}
+m2 <- lmer(satHealth ~ 1 + age + age:gender + (1 + age | SID), data = ps3_df)
+tidy(m2)
+```
+
+```{r p2.2 pred function, warning = F}
+predIntlme4 <- function(m, mod_frame, ref){
+  ## get bootstrapped estimates
+  b <- bootMer(
+    m
+    , FUN = function(x) lme4:::predict.merMod(
+      x
+      , newdata = mod_frame
+      , re.form = ref
+      )
+    , nsim = 100 # do not use 100 in practice, please
+    , parallel = "multicore"
+    , ncpus = 16
+    )
+  
+  ## get long form bootstrapped draws
+  b_df <- bind_cols(
+    mod_frame
+    , t(b$t) %>%
+    data.frame()
+  ) %>%
+    pivot_longer(
+       cols = -one_of(colnames(m@frame))
+      , names_to = "boot"
+      , values_to = "pred"
+    )
+  return(list(boot = b, b_df = b_df))
+}
+```
+
+```{r q2.2 bootstrapped predictions, warning = F}
+pred_fx_fun <- function(m){
+  mod_frame <- m@frame %>% 
+    group_by(gender) %>%
+    data_grid(age = seq_range(age, n = 101))
+  boot <- predIntlme4(m = m, mod_frame = mod_frame, ref = NA)
+}
+
+boot2 <- pred_fx_fun(m2)
+b_df2 <- boot2$b_df
+b2 <- boot2$boot
+```
+
+Choose two of the methods we discussed in class and plot the trajectories (or trajectory if you don't have a moderator) and plot the bands around the trajectory. 
+```{r q2.2.1}
+## Your code here ##
+```
+
+```{r q2.2.2}
+## Your code here ##
+```
+
+# Render to html and submit problem set
+
+**Render to html** by clicking the "Render" button near the top of your RStudio window (icon with blue arrow)
+
+-   Go to the Canvas --\> Assignments --\> Problem Set 3
+-   Submit both .qmd and .html files\
+-   Use this naming convention "lastname_firstname_ps#" for your .qmd and html files (e.g. beck_emorie_ps3.qmd & beck_emorie_ps3.html)
+
