@@ -1,0 +1,53 @@
+---
+title: "Homework 5"
+author: "YOUR NAME HERE"
+date: "2025-02-13"
+output:
+  pdf_document: default
+subtitle: "PSC-103B"
+affiliation: The University of California, Davis
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.width = 10,
+                      fig.height = 5,
+                      fig.align = 'center')
+
+```
+
+<!-- # Instructions -->
+
+<!-- Please use R/RStudio to complete the following questions. You will submit your filled-out version of this document **as a PDF** on Canvas. Make sure your PDF looks as expected before submitting. Please **include the code you used to generate your answer for each question (when relevant) as well as the final answer and/or relevant output**. -->
+
+<!-- You may consult with your classmates while working on the assignment, but **you must do all the work yourself – everything you turn in must be your own code and words**. Academic dishonesty will not be tolerated.  -->
+
+<!-- Please submit **a pdf version** of this document with your answers on Canvas by **4:00pm on Thursday, February 27th (before lab)**. -->
+
+## 1. We’ll be using the observed frequencies that we used in lab of Fall 2022 enrollment across the different colleges of UC Davis. I have repeated this information below:
+
+|College| Observed Frequency|
+|:-----|:-----------------:|
+|College of Letters & Sciences| 417|
+|College of Agricultural and Environmental Sciences|223|
+|College of Biological Sciences| 216|
+|College of Engineering| 144|
+|Total| 1000|
+
+Suppose we were interested in conducting a goodness-of-fit test to determine whether enrollment in these colleges matches the proportions observed in 1993. Here are the frequencies that were observed in 1993. 
+
+|College| Observed Frequency|
+|:-----|:-----------------:|
+|College of Letters & Sciences| 465|
+|College of Agricultural and Environmental Sciences|223|
+|College of Biological Sciences| 191|
+|College of Engineering| 121|
+|Total| 1000|
+
+What proportion of students were enrolled in each college in 1993? (1 point)
+
+
