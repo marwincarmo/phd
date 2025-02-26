@@ -56,25 +56,33 @@ In Part 1, you'll visualize time series at least two ways. In Part 2, you'll run
 If you don't have your own data, we'll use the data we used in class. 
 
 ```{r data}
-load(url("https://github.com/emoriebeck/psc290-data-viz-2022/blob/main/05-week5-time-series/01-data/gsoep.RData?raw=true"))
-gsoep <- gsoep %>% mutate(gender = haven::zap_labels(gender)) %>% filter(gender >= 0)
-gsoep
-ps3_df <- gsoep %>%
-  select(SID, age, gender, satHealth) %>%
-  group_by(SID) %>%
-  mutate(marital = names(sort(table(gender), decreasing = T)[1])) %>%
-  ungroup() %>%
-  mutate(
-    gender = factor(marital, 1:2, c("Male", "Female"))
-    , age = age/10
-    ) %>%
-  drop_na()
+# load(url("https://github.com/emoriebeck/psc290-data-viz-2022/blob/main/05-week5-time-series/01-data/gsoep.RData?raw=true"))
+# gsoep <- gsoep %>% mutate(gender = haven::zap_labels(gender)) %>% filter(gender >= 0)
+# gsoep
+# ps3_df <- gsoep %>%
+#   select(SID, age, gender, satHealth) %>%
+#   group_by(SID) %>%
+#   mutate(marital = names(sort(table(gender), decreasing = T)[1])) %>%
+#   ungroup() %>%
+#   mutate(
+#     gender = factor(marital, 1:2, c("Male", "Female"))
+#     , age = age/10
+#     ) %>%
+#   drop_na()
+# 
+# ps3_df <- ps3_df %>%
+#   group_by(SID) %>%
+#   filter(n() > 5) %>%
+#   ungroup()
+# ps3_df
 
-ps3_df <- ps3_df %>%
-  group_by(SID) %>%
-  filter(n() > 5) %>%
-  ungroup()
-ps3_df
+data_dictionary <- readxl::read_excel("02-ps2/Data Dictionary.xlsx")
+pcs <- haven::read_sav("02-ps2/PCSNetworkModelAnalysis.sav") |> 
+  janitor::clean_names()
+
+symptoms <- names(pcs)[19:40]
+symptoms_names <- data_dictionary[data_dictionary$`Variable Name` %in% symptoms,]$`Variable Label`
+symptoms_dict <- setNames(symptoms_names, symptoms)
 ```
 
 # Part 1: Visualizing Proportions 
@@ -108,6 +116,19 @@ If you're using the provided data, plot age (in decades) x satHealth (POMP score
 
 ```{r q1.1}
 ## Your code here ##
+pcs2 <- pcs |> 
+  # because the symptoms are measured in frequency there are variables with many zeros
+  # I'll then use a variable couting the frequency of any symptom
+  dplyr::mutate(symptom_count = rowSums(across(head:vis))) |> 
+  dplyr::with_groups(age, summarise, m_sympt = mean(symptom_count, na.rm = TRUE))
+  
+pcs2 |> 
+  ggplot(aes( x = age, y = m_sympt)) +
+  geom_point() +
+  geom_line() +
+  geom_area() +
+  scale_x_continuous(breaks = 18:35) +
+  my_theme()
 ```
 
 ## Question 2: Small Multiples 
@@ -125,12 +146,23 @@ If you're using provided data, use the skeleton code below to get the observatio
 
 ```{r q2.1, warning=F}
 set.seed(5)
-ps3_df %>%
-  group_by(SID) %>%
-  filter(n() > 15) %>%
-  ungroup() %>%
-  filter(SID %in% sample(unique(.$SID), 20)) 
+# ps3_df %>%
+#   group_by(SID) %>%
+#   filter(n() > 15) %>%
+#   ungroup() %>%
+#   filter(SID %in% sample(unique(.$SID), 20)) 
 ## Your code here ##
+
+pcs %>%
+  dplyr::with_groups(subject_id,
+                     dplyr::filter,
+                     n() > 30) %>%
+  dplyr::filter(subject_id %in% sample(unique(.$subject_id), 20)) |> 
+  ggplot(aes(x = survey_day, y = head)) +
+  geom_line() + 
+  geom_point(size = .5) + 
+  facet_wrap(~subject_id, nrow = 4) + 
+  my_theme()
 ```
 
 # Part 2: Visualizing Uncertainty 
@@ -141,33 +173,58 @@ Next, you'll practice Week 6 skills, specifically how to visualize uncertainty. 
 For this question, I recommend using the same model that you used in ps2. For those using provided data, that means you'll use this data: 
 
 ```{r p2 data}
-load(url("https://github.com/emoriebeck/psc290-data-viz-2022/blob/main/04-week4-associations/04-data/week4-data.RData?raw=true"))
-pred_data
+# load(url("https://github.com/emoriebeck/psc290-data-viz-2022/blob/main/04-week4-associations/04-data/week4-data.RData?raw=true"))
+# pred_data
 ```
 
 And this model: 
 
 ```{r p2 model}
-m_fun <- function(x){
-  x <- x %>% mutate(education = factor(as.numeric(as.character(education))))
-  glm(physhlthevnt ~ gender + education, data = x, family = binomial(link = "logit"))
-}
-nested_mods <- pred_data %>%
-  select(study, SID, p_value, gender, smokes, education, physhlthevnt) %>%
-  filter(physhlthevnt %in% c(1,0)) %>%
-  mutate(gender = as.numeric(as.character(gender))) %>%
-  group_by(study) %>%
-  nest() %>%
-  ungroup() %>%
-  mutate(m = map(data, m_fun), 
-         tidy = map(m, ~tidy(., conf.int = T)),
-         df = map_dbl(m, df.residual))
+# m_fun <- function(x){
+#   x <- x %>% mutate(education = factor(as.numeric(as.character(education))))
+#   glm(physhlthevnt ~ gender + education, data = x, family = binomial(link = "logit"))
+# }
+# nested_mods <- pred_data %>%
+#   select(study, SID, p_value, gender, smokes, education, physhlthevnt) %>%
+#   filter(physhlthevnt %in% c(1,0)) %>%
+#   mutate(gender = as.numeric(as.character(gender))) %>%
+#   group_by(study) %>%
+#   nest() %>%
+#   ungroup() %>%
+#   mutate(m = map(data, m_fun),
+#          tidy = map(m, ~tidy(., conf.int = T)),
+#          df = map_dbl(m, df.residual))
+
+pcs_mod <- readRDS("02-ps2/fit_nb.rds")
+tidy_mod <- broom.mixed::tidy(pcs_mod, exponentiate=TRUE)
 ```
+
+```r
+fit_nb <- brm(head ~ concussion * survey_day + (1 | subject_id),
+              data = data, family = zero_inflated_negbinomial(),
+              iter = 2000, chains = 4, cores = 4)
+```
+
 
 1. Plot the point estimates for all estimates using one of the functions we discussed in class (e.g., `stat_halfeye()`) 
 
 ```{r q2.1.1}
 ## Your code here ##
+posterior_samples <- pcs_mod |> 
+  spread_draws(b_Intercept, b_concussion, b_survey_day, `b_concussion:survey_day`
+               )  |> 
+  pivot_longer(cols = starts_with("b_"), names_to = "parameter", values_to = "estimate") |> 
+  mutate(estimate = exp(estimate))
+
+# Plot
+ggplot(posterior_samples, aes(x = estimate, y = parameter)) + 
+  stat_pointintervalh(.width = c(0.95, 0.5)) + # 95% and 50% credible intervals
+  stat_halfeye(.width = c(0.95, 0.5), color = "black") +  # Density + credible intervals
+  # geom_vline(xintercept = 0, linetype = "dashed", color = "red") + # Reference line at zero
+  # scale_fill_manual(values = c("TRUE" = "lightcoral", "FALSE" = "lightblue"), guide = "none") +
+  my_theme() +
+  labs(title = "Posterior Estimates with Density and Credible Intervals",
+       x = "Estimate", y = "Parameter")
 ```
 
 2. Plot the marginal means for a categorical variable (use the provided data set if your model doesn't have one). 
