@@ -1,0 +1,301 @@
+---
+title: "Lab 6: Chi-Square Tests"
+subtitle: "PSC 103B"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    callout-icon: false
+    # height: 900
+    footer: "PSC 103B - Statistical Analysis of Psychological Data"
+    logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+execute:
+  echo: true
+editor_options: 
+  chunk_output_type: console
+---
+
+## Today's dataset
+
+- This data was adapted from AggieData, which provides statistics on the university, including the student population.
+
+- Here is the website in case you're interested: <https://aggiedata.ucdavis.edu/#student>.
+
+:::fragment
+|   |CLAS | CA&ES | CBS | COE | *Total*|
+|:---|:---:|:-----:|:---:|:---:|:----:|
+|Freshmen |  276 |  147  | 173 | 111 | 707|
+|Transfer | 141 |  76   | 43  | 33  | 293|
+|*Total*    | 417  | 223   | 216 | 144 |1000 |
+:::
+
+## Goodness of Fit Test
+
+|   |CLAS | CA&ES | CBS | COE | *Total*|
+|:---|:---:|:-----:|:---:|:---:|:----:|
+|Freshmen |  276 |  147  | 173 | 111 | 707|
+|Transfer | 141 |  76   | 43  | 33  | 293|
+|*Total*    | 417  | 223   | 216 | 144 |1000 |
+
+- Say that we were interested in whether the 4 colleges were equally represented in our entry-level population.
+
+- What would it look like if all colleges were represented equally?
+
+- There would be 250 in each college
+
+## Goodness of Fit Test
+
+- Are these differences extreme enough to say that the colleges are *not* represented equally?
+
+- The chi-square goodness-of-fit test compares what we expected to what we observed and tries to see whether the differences are extreme enough to say our expectations were wrong.
+
+- $H_0$: The 4 colleges are equally represented.
+
+## GoF test $H_0$
+
+- The chi-square GoF test normally writes the null hypothesis in terms of expected proportions.
+
+- $H_0: P = (P1, P2, P3, P4)$ , where $P$ is a vector or set of probabilities.
+
+- If the colleges are equally represented, what proportions do we expect?
+
+- $H_0: P = (.25, .25, .25, .25)$
+
+:::fragment
+```{r null-prob}
+null_prob <- c(.25, .25, .25, .25)
+```
+:::
+
+## GoF test $H_A$
+
+- And what's our alternative hypothesis? 
+
+- Similar to an ANOVA, our alternative would be that *at least* one of these probabilities is not .25
+
+- $H_A: P \neq (.25, .25, .25, .25)$
+
+- Let's also make a vector for the observed frequencies
+
+:::fragment
+```{r}
+obs_freq <- c(417, 223, 216, 144)
+```
+:::
+
+## Goodness of Fit Test
+
+- We want to make a vector of frequencies that we would have expected if the null hypothesis was true in this case.
+
+- First, we need to write our total sample size:
+
+:::fragment
+```{r}
+N <- 1000
+```
+:::
+
+- And we can multiply this by our expected probabilities to get the expected frequencies:
+
+:::fragment
+```{r}
+expected_freq <- N * null_prob
+expected_freq
+```
+:::
+
+## Goodness of Fit Test
+
+- We need to compute the difference between what we expected and what we observed.
+
+- Then, we compare this to a distribution to see how big that difference is, and if it's big enough to reject the null.
+
+- The formula for this is $\frac{(O - E)^2}{E}$
+
+---
+
+:::{.callout-caution title="Exercise"}
+Compute the formula below using `obs_freq` and `expected_freq`, and save the results to an object named `diffs`. 
+:::
+
+We want to find $(O - E)^2 / E$.
+
+```{r}
+obs_freq <- c(417, 223, 216, 144)
+N <- 1000
+expected_freq <- N * null_prob
+# diffs <- ?
+```
+
+
+
+## Goodness of Fit Test
+
+::: fragment
+```{r}
+diffs <- (obs_freq - expected_freq)^2 / expected_freq
+diffs
+```
+:::
+
+- Bigger values of these "error" scores represent bigger discrepancies.
+
+- To get our test statistic, we need to add them up.
+
+::: fragment
+```{r}
+test_stat <- sum(diffs)
+test_stat
+```
+:::
+
+- Does a larger test statistic make us more or less likely to reject the null?
+
+- More likely! Because a bigger test stat means the discrepancies were bigger.
+
+## Goodness of Fit Test
+
+- But to see if this test statistic is large enough we need to compare it to the chi-square distribution to make a proper judgement.
+
+- The chi-square distribution needs a df, where df = number of categories - 1.
+
+- So now we can compute a *p*-value by seeing the probability of our test statistic or something larger.
+
+::: fragment
+```{r}
+pchisq(test_stat, df = 3, lower.tail = FALSE)
+```
+:::
+
+- Reject the null! The 4 colleges are not being equally represented in the 2022 class.
+
+## Goodness of Fit Test
+
+- But do we know which college is not as expected?
+
+- No - like the ANOVA, the chi-square test is an omnibus test.
+
+- We know that one of the proportions is not as expected, but we don't know which one.
+
+- There are post-hoc tests you can do to formally test it (not covered in this class).
+
+## An easier way to test it
+
+- We can do this very easily in R using the `chisq.test()` function. The arguments are: `chisq.test(observed frequencies, p = expected probabilities)`.
+
+::: fragment
+:::{.callout-caution title="Exercise"}
+Try to run the  `chisq.test()` function yourself first.
+:::
+:::
+
+::: fragment
+```{r}
+chisq.test(obs_freq, p = c(.25, .25, .25, .25))
+```
+:::
+
+---
+
+- Notice that we assumed equal probabilities for  this test, but we didn't have to; we could have expected whatever probabilities we wanted and then we would just need to specify them in `p`. 
+
+- We also need to make sure that the order of observed frequencies and p are the same.
+
+- For example:
+
+::: fragment
+```{r eval=FALSE}
+chisq.test(obs_freq, p = c(.40, .35, .15, .10))
+```
+:::
+
+## Chi-Square Test of Independence
+
+- Another type of $\chi^2$ test is the one when we have two categorical variables, and we're interested in testing whether or not they're related or dependent on each other.
+
+- Say we were interested in testing whether which college a new student was a part of was related to whether they entered as a freshman or transfer student.
+
+- **Dependence** means that knowing the value of one variable gives you an idea of what the value on the second variable is going to be.
+
+- **Independence** means knowing the value of one variable doesn't tell you anything about the value of the other variable.
+
+## Chi-Square Test of Independence
+
+- $H_0$: Entry status and college are independent of each other.
+
+- $H_A$: Entry status and college are not independent.
+
+- Just like in the GoF test, the chi-square test of independence computes the difference between what we would expect if the variables were independent, and what we observed.
+
+## Chi-Square Test of Independence
+
+- To do the test in `R`, we now need to give `R` either 2 vectors of data for each category or a table / matrix of the observed frequencies.
+
+:::fragment
+:::{.callout-caution title="Exercise"}
+With the data from the table below create a matrix in `R` with 2 rows and 4 columns and name it `obs_matrix`:
+:::
+
+|   |CLAS | CA&ES | CBS | COE |
+|:---|:---:|:-----:|:---:|:---:|
+|Freshmen |  276 |  147  | 173 | 111 |
+|Transfer | 141 |  76   | 43  | 33  |
+
+:::
+
+## Chi-Square Test of Independence
+
+```{r obs-matrix}
+obs_matrix <- matrix(c(276, 147, 173, 111, 
+                       141, 76, 43, 33),
+                    nrow = 2, ncol = 4,
+                    byrow = TRUE)
+obs_matrix
+```
+
+:::fragment
+```{r}
+chisq.test(x = obs_matrix)
+```
+:::
+
+- What is our *p*-value? And what do we conclude?
+
+<!-- - Entry status and college are dependent on each other. -->
+
+<!-- ## Now you try -->
+
+<!-- - You will use a data set built-in in `R` named `UCBAdmissions` .  -->
+
+<!-- - It refers to aggregate data on applicants to graduate school at Berkeley for the six largest departments in 1973 classified by admission and sex. -->
+
+<!-- - It is a 3-dimensional array resulting from cross-tabulating 4526 observations on 3 variables. Look at it by calling `UCBAdmissions` on your console. -->
+
+<!-- ## Now you try -->
+
+<!-- Aggregate data over departments running the following code: -->
+
+<!-- ```{r} -->
+<!-- agg_UCBAdmissions <- apply(UCBAdmissions, c(1, 2), sum) -->
+<!-- ``` -->
+
+<!-- Reflect on the table you generated for a moment and think about what you expect to find.  -->
+
+<!-- What would be your null and alternative hypothesis? -->
+
+<!-- With this new data set, run a chi-squared test to check if the data show evidence of sex bias in admission practices. -->
