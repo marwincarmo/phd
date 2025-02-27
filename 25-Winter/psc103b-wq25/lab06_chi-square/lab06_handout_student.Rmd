@@ -84,12 +84,12 @@ expected_freq
 ```
 To conduct the GoF test, we need to compute some sort of error score to measure the difference between what we expected and what we observed, and then compare this to a distribution to see how big that difference is, and if it's big enough to reject the null.
 
-The formula for this is $(O - E)^2 / E$
+The formula for this is $(O - E)^2 / E$. Compute the formula using `obs_freq` and `expected_freq`, and save the results to an object named `diffs`. 
 
-```{r}
-diffs <- (obs_freq - expected_freq)^2 / expected_freq
-diffs
+```{r Exercise-1}
+
 ```
+
 So we have these "error" scores now, where bigger values represent bigger discrepancies.
 
 To get our test statistic, we need to add up these error  scores.
@@ -148,13 +148,8 @@ we're going to make a matrix of the observed frequencies.
 
 Do you recall how to make a matrix? Use the matrix function, and give it your data, number of rows, and the number of columns.
 
-```{r}
-obs_matrix <- matrix(c(276, 147, 173, 111, 
-                       141, 76, 43, 33),
-                    nrow = 2, ncol = 4,
-                    byrow = TRUE)
+```{r Exercise-2}
 
-obs_matrix
 ```
 
 I entered my data in one row at a time, so I specified `byrow = TRUE`; if you entered it as the columns, you can say `byrow = FALSE`.

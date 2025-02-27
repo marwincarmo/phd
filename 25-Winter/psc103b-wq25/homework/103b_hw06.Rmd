@@ -26,7 +26,15 @@ knitr::opts_chunk$set(echo = TRUE,
 
 <!-- You may consult with your classmates while working on the assignment, but **you must do all the work yourself – everything you turn in must be your own code and words**. Academic dishonesty will not be tolerated.  -->
 
-<!-- Please submit **a pdf version** of this document with your answers on Canvas by **4:00pm on Thursday, February 27th (before lab)**. -->
+<!-- Please submit **a pdf version** of this document with your answers on Canvas by **4:00pm on Thursday, March 6th (before lab)**. -->
+
+# Important reminders:
+
+- Do not insert your answer as comments inside a code chunk. They will be cut out when rendered as pdf.
+- Instead, enter your answer as plain text after the '>'.
+- Check your compiled document before submission to ensure your answers are displayed correctly. 
+
+---
 
 ## 1. We’ll be using the observed frequencies that we used in lab of Fall 2022 enrollment across the different colleges of UC Davis. I have repeated this information below:
 
@@ -48,6 +56,63 @@ Suppose we were interested in conducting a goodness-of-fit test to determine whe
 |College of Engineering| 121|
 |Total| 1000|
 
-What proportion of students were enrolled in each college in 1993? (1 point)
+### What proportion of students were enrolled in each college in 1993? (1 point)
+
+- $P_{CLAS}$ =
+- $P_{CAES}$ =
+- $P_{CBS}$ = 
+- $P_{CoE}$ =
+
+## 2. Use the probabilities of Question 1 to write the null and alternative hypotheses for the Goodness-of-Fit test (2 points). 
+
+> $H_0:$
+
+> $H_1:$
+
+## 3. What are the expected frequencies? (1 point)
+
+- $E_{CLAS}$ = 
+- $E_{CAES}$ = 
+- $E_{CBS}$ = 
+- $E_{CoE}$ = 
+
+## 4. Conduct the chi-square goodness-of-fit test in R. Show your code and output (1 points).
+
+```{r}
+
+```
+
+## 5. Do you reject or fail to reject the null hypothesis? Does 2022 enrollment in the different colleges match the proportions of 1993? (1 points)
+
+> 
+
+## 6. Now suppose we were interested in whether students’ choice of college was related to how long it took them to graduate. The frequencies from the 2015 cohort are provided in a table below.
+
+
+|Graduated at   | CLAS  |  CA&ES  |  CBS  |  COE  |  Total  |
+|:--------------|:-----:|:-------:|:-----:|:-----:|:-------:|
+|3 years or less|72     |30       | 28    |5      |135      |
+|4 years        |1238   |677      |803    |444    |3162     |
+|5 years        |378    |216      |329    |243    |1166     |
+|6 years        |51     |43       |38     |482    |614      |
+|Total          |1739   |966      |1198   |1174   |5077     |
+
+### What are the null and alternative hypotheses for the test of independence? (2 points)
+
+> $H_0:$
+
+> $H_1:$
+
+## 7. Conduct the chi-square test of independence. Show your code and output (1 points).
+
+```{r}
+
+```
+
+## 8. Do you reject or fail to reject the null hypothesis? What does this lead you to conclude about time to graduation and college? (1 points)
+
+```{r}
+
+```
 
 

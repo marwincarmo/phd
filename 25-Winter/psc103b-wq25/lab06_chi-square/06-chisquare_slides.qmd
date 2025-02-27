@@ -64,8 +64,6 @@ editor_options:
 
 - The chi-square goodness-of-fit test compares what we expected to what we observed and tries to see whether the differences are extreme enough to say our expectations were wrong.
 
-- $H_0$: The 4 colleges are equally represented.
-
 ## GoF test $H_0$
 
 - The chi-square GoF test normally writes the null hypothesis in terms of expected proportions.
