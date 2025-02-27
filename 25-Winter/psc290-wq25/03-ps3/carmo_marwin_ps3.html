@@ -4670,27 +4670,28 @@ Attaching package: &#39;tidybayes&#39;</code></pre>
 <span id="cb20-2"><a href="#cb20-2"></a>  <span class="fu">spread_draws</span>(</span>
 <span id="cb20-3"><a href="#cb20-3"></a>    b_Intercept, b_concussion, b_survey_day, <span class="st">`</span><span class="at">b_concussion:survey_day</span><span class="st">`</span></span>
 <span id="cb20-4"><a href="#cb20-4"></a>               )  <span class="sc">|&gt;</span> </span>
-<span id="cb20-5"><a href="#cb20-5"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">&quot;b_&quot;</span>), <span class="at">names_to =</span> <span class="st">&quot;parameter&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;estimate&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb20-6"><a href="#cb20-6"></a>  <span class="fu">mutate</span>(<span class="at">estimate =</span> <span class="fu">exp</span>(estimate)) <span class="sc">|&gt;</span> </span>
-<span id="cb20-7"><a href="#cb20-7"></a>  <span class="fu">mutate</span>(<span class="at">parameter =</span> <span class="fu">case_when</span>(</span>
-<span id="cb20-8"><a href="#cb20-8"></a>    parameter <span class="sc">==</span> <span class="st">&quot;b_Intercept&quot;</span> <span class="sc">~</span> <span class="st">&quot;Intercept&quot;</span>,</span>
-<span id="cb20-9"><a href="#cb20-9"></a>    parameter <span class="sc">==</span> <span class="st">&quot;b_concussion&quot;</span> <span class="sc">~</span> <span class="st">&quot;Concussion&quot;</span>,</span>
-<span id="cb20-10"><a href="#cb20-10"></a>    parameter <span class="sc">==</span> <span class="st">&quot;b_survey_day&quot;</span> <span class="sc">~</span> <span class="st">&quot;Survey Day&quot;</span>,</span>
-<span id="cb20-11"><a href="#cb20-11"></a>    parameter <span class="sc">==</span> <span class="st">&quot;b_concussion:survey_day&quot;</span> <span class="sc">~</span> <span class="st">&quot;Concussion * Survey Day&quot;</span>,</span>
-<span id="cb20-12"><a href="#cb20-12"></a>  ))</span>
-<span id="cb20-13"><a href="#cb20-13"></a></span>
-<span id="cb20-14"><a href="#cb20-14"></a><span class="co"># Plot</span></span>
-<span id="cb20-15"><a href="#cb20-15"></a>posterior_samples <span class="sc">|&gt;</span> </span>
-<span id="cb20-16"><a href="#cb20-16"></a><span class="fu">ggplot</span>( <span class="fu">aes</span>(<span class="at">x =</span> estimate)) <span class="sc">+</span> </span>
-<span id="cb20-17"><a href="#cb20-17"></a>  <span class="fu">stat_pointinterval</span>() <span class="sc">+</span></span>
-<span id="cb20-18"><a href="#cb20-18"></a>  <span class="fu">stat_halfeye</span>(<span class="at">fill =</span> <span class="st">&quot;red4&quot;</span>, <span class="at">alpha =</span> .<span class="dv">7</span>) <span class="sc">+</span></span>
-<span id="cb20-19"><a href="#cb20-19"></a>  <span class="co"># using facets because plotting all in the same canvas makes it hard</span></span>
-<span id="cb20-20"><a href="#cb20-20"></a>  <span class="co"># to properly visualize the distributions</span></span>
-<span id="cb20-21"><a href="#cb20-21"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>parameter, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
-<span id="cb20-22"><a href="#cb20-22"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb20-23"><a href="#cb20-23"></a>  <span class="fu">my_theme</span>() <span class="sc">+</span></span>
-<span id="cb20-24"><a href="#cb20-24"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Posterior distribution of parameters estimates&quot;</span>,</span>
-<span id="cb20-25"><a href="#cb20-25"></a>       <span class="at">x =</span> <span class="st">&quot;Estimate&quot;</span>, <span class="at">y =</span> <span class="st">&quot;&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-5"><a href="#cb20-5"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">&quot;b_&quot;</span>), </span>
+<span id="cb20-6"><a href="#cb20-6"></a>               <span class="at">names_to =</span> <span class="st">&quot;parameter&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;estimate&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb20-7"><a href="#cb20-7"></a>  <span class="fu">mutate</span>(<span class="at">estimate =</span> <span class="fu">exp</span>(estimate)) <span class="sc">|&gt;</span> </span>
+<span id="cb20-8"><a href="#cb20-8"></a>  <span class="fu">mutate</span>(<span class="at">parameter =</span> <span class="fu">case_when</span>(</span>
+<span id="cb20-9"><a href="#cb20-9"></a>    parameter <span class="sc">==</span> <span class="st">&quot;b_Intercept&quot;</span> <span class="sc">~</span> <span class="st">&quot;Intercept&quot;</span>,</span>
+<span id="cb20-10"><a href="#cb20-10"></a>    parameter <span class="sc">==</span> <span class="st">&quot;b_concussion&quot;</span> <span class="sc">~</span> <span class="st">&quot;Concussion&quot;</span>,</span>
+<span id="cb20-11"><a href="#cb20-11"></a>    parameter <span class="sc">==</span> <span class="st">&quot;b_survey_day&quot;</span> <span class="sc">~</span> <span class="st">&quot;Survey Day&quot;</span>,</span>
+<span id="cb20-12"><a href="#cb20-12"></a>    parameter <span class="sc">==</span> <span class="st">&quot;b_concussion:survey_day&quot;</span> <span class="sc">~</span> <span class="st">&quot;Concussion * Survey Day&quot;</span>,</span>
+<span id="cb20-13"><a href="#cb20-13"></a>  ))</span>
+<span id="cb20-14"><a href="#cb20-14"></a></span>
+<span id="cb20-15"><a href="#cb20-15"></a><span class="co"># Plot</span></span>
+<span id="cb20-16"><a href="#cb20-16"></a>posterior_samples <span class="sc">|&gt;</span> </span>
+<span id="cb20-17"><a href="#cb20-17"></a>  <span class="fu">ggplot</span>( <span class="fu">aes</span>(<span class="at">x =</span> estimate)) <span class="sc">+</span> </span>
+<span id="cb20-18"><a href="#cb20-18"></a>  <span class="fu">stat_pointinterval</span>() <span class="sc">+</span></span>
+<span id="cb20-19"><a href="#cb20-19"></a>  <span class="fu">stat_halfeye</span>(<span class="at">fill =</span> <span class="st">&quot;red4&quot;</span>, <span class="at">alpha =</span> .<span class="dv">7</span>) <span class="sc">+</span></span>
+<span id="cb20-20"><a href="#cb20-20"></a>  <span class="co"># using facets because plotting all in the same canvas makes it hard</span></span>
+<span id="cb20-21"><a href="#cb20-21"></a>  <span class="co"># to properly visualize the distributions</span></span>
+<span id="cb20-22"><a href="#cb20-22"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>parameter, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb20-23"><a href="#cb20-23"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb20-24"><a href="#cb20-24"></a>  <span class="fu">my_theme</span>() <span class="sc">+</span></span>
+<span id="cb20-25"><a href="#cb20-25"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Posterior distribution of parameters estimates&quot;</span>,</span>
+<span id="cb20-26"><a href="#cb20-26"></a>       <span class="at">x =</span> <span class="st">&quot;Estimate&quot;</span>, <span class="at">y =</span> <span class="st">&quot;&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -4725,7 +4726,7 @@ Attaching package: &#39;tidybayes&#39;</code></pre>
 <span id="cb22-12"><a href="#cb22-12"></a></span>
 <span id="cb22-13"><a href="#cb22-13"></a>pcs <span class="sc">|&gt;</span> </span>
 <span id="cb22-14"><a href="#cb22-14"></a>  <span class="fu">data_grid</span>(concussion, <span class="at">survey_day =</span> <span class="fu">median</span>(survey_day, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb22-15"><a href="#cb22-15"></a>  <span class="fu">add_predicted_draws</span>(pcs_mod, <span class="at">re.form =</span> <span class="cn">NA</span>) <span class="sc">|&gt;</span>  <span class="co"># Ignore random effects</span></span>
+<span id="cb22-15"><a href="#cb22-15"></a>  <span class="fu">add_predicted_draws</span>(pcs_mod, <span class="at">re.form =</span> <span class="cn">NA</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb22-16"><a href="#cb22-16"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">concussion =</span> haven<span class="sc">::</span><span class="fu">as_factor</span>(concussion)) <span class="sc">|&gt;</span> </span>
 <span id="cb22-17"><a href="#cb22-17"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> concussion, <span class="at">x =</span> .prediction)) <span class="sc">+</span></span>
 <span id="cb22-18"><a href="#cb22-18"></a>  <span class="fu">stat_pointinterval</span>(<span class="at">.width =</span> <span class="fu">c</span>(.<span class="dv">66</span>, .<span class="dv">95</span>)) <span class="sc">+</span></span>
@@ -5578,156 +5579,157 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb30-225"><a href="#cb30-225"></a><span class="in">  spread_draws(</span></span>
 <span id="cb30-226"><a href="#cb30-226"></a><span class="in">    b_Intercept, b_concussion, b_survey_day, `b_concussion:survey_day`</span></span>
 <span id="cb30-227"><a href="#cb30-227"></a><span class="in">               )  |&gt; </span></span>
-<span id="cb30-228"><a href="#cb30-228"></a><span class="in">  pivot_longer(cols = starts_with(&quot;b_&quot;), names_to = &quot;parameter&quot;, values_to = &quot;estimate&quot;) |&gt; </span></span>
-<span id="cb30-229"><a href="#cb30-229"></a><span class="in">  mutate(estimate = exp(estimate)) |&gt; </span></span>
-<span id="cb30-230"><a href="#cb30-230"></a><span class="in">  mutate(parameter = case_when(</span></span>
-<span id="cb30-231"><a href="#cb30-231"></a><span class="in">    parameter == &quot;b_Intercept&quot; ~ &quot;Intercept&quot;,</span></span>
-<span id="cb30-232"><a href="#cb30-232"></a><span class="in">    parameter == &quot;b_concussion&quot; ~ &quot;Concussion&quot;,</span></span>
-<span id="cb30-233"><a href="#cb30-233"></a><span class="in">    parameter == &quot;b_survey_day&quot; ~ &quot;Survey Day&quot;,</span></span>
-<span id="cb30-234"><a href="#cb30-234"></a><span class="in">    parameter == &quot;b_concussion:survey_day&quot; ~ &quot;Concussion * Survey Day&quot;,</span></span>
-<span id="cb30-235"><a href="#cb30-235"></a><span class="in">  ))</span></span>
-<span id="cb30-236"><a href="#cb30-236"></a></span>
-<span id="cb30-237"><a href="#cb30-237"></a><span class="in"># Plot</span></span>
-<span id="cb30-238"><a href="#cb30-238"></a><span class="in">posterior_samples |&gt; </span></span>
-<span id="cb30-239"><a href="#cb30-239"></a><span class="in">ggplot( aes(x = estimate)) + </span></span>
-<span id="cb30-240"><a href="#cb30-240"></a><span class="in">  stat_pointinterval() +</span></span>
-<span id="cb30-241"><a href="#cb30-241"></a><span class="in">  stat_halfeye(fill = &quot;red4&quot;, alpha = .7) +</span></span>
-<span id="cb30-242"><a href="#cb30-242"></a><span class="in">  # using facets because plotting all in the same canvas makes it hard</span></span>
-<span id="cb30-243"><a href="#cb30-243"></a><span class="in">  # to properly visualize the distributions</span></span>
-<span id="cb30-244"><a href="#cb30-244"></a><span class="in">  facet_wrap(~parameter, scales = &quot;free&quot;) +</span></span>
-<span id="cb30-245"><a href="#cb30-245"></a><span class="in">  scale_y_continuous(limits = 0:1) +</span></span>
-<span id="cb30-246"><a href="#cb30-246"></a><span class="in">  my_theme() +</span></span>
-<span id="cb30-247"><a href="#cb30-247"></a><span class="in">  labs(title = &quot;Posterior distribution of parameters estimates&quot;,</span></span>
-<span id="cb30-248"><a href="#cb30-248"></a><span class="in">       x = &quot;Estimate&quot;, y = &quot;&quot;)</span></span>
-<span id="cb30-249"><a href="#cb30-249"></a><span class="in"># Idk why the Concussion density curve is not showing. </span></span>
-<span id="cb30-250"><a href="#cb30-250"></a><span class="in"># When I plot it individually it shows up normally</span></span>
-<span id="cb30-251"><a href="#cb30-251"></a><span class="in">```</span></span>
-<span id="cb30-252"><a href="#cb30-252"></a></span>
-<span id="cb30-253"><a href="#cb30-253"></a><span class="ss">2. </span>Plot the marginal means for a categorical variable (use the provided data set if your model doesn&#39;t have one). </span>
-<span id="cb30-254"><a href="#cb30-254"></a></span>
-<span id="cb30-255"><a href="#cb30-255"></a><span class="in">```{r q2.1.2}</span></span>
-<span id="cb30-256"><a href="#cb30-256"></a><span class="in"># q2_1_pred_fun &lt;- function(m){</span></span>
-<span id="cb30-257"><a href="#cb30-257"></a><span class="in">#   m$data %&gt;%</span></span>
-<span id="cb30-258"><a href="#cb30-258"></a><span class="in">#     data_grid(education) %&gt;%</span></span>
-<span id="cb30-259"><a href="#cb30-259"></a><span class="in">#     mutate(gender = mean(m$data$gender)) %&gt;%</span></span>
-<span id="cb30-260"><a href="#cb30-260"></a><span class="in">#     augment(m, newdata = ., se_fit = T) </span></span>
-<span id="cb30-261"><a href="#cb30-261"></a><span class="in"># }</span></span>
-<span id="cb30-262"><a href="#cb30-262"></a><span class="in"># </span></span>
-<span id="cb30-263"><a href="#cb30-263"></a><span class="in"># nested_mods &lt;- nested_mods %&gt;%</span></span>
-<span id="cb30-264"><a href="#cb30-264"></a><span class="in">#   mutate(pred = map(m, q2_1_pred_fun),</span></span>
-<span id="cb30-265"><a href="#cb30-265"></a><span class="in">#          df = map_dbl(m, df.residual))</span></span>
-<span id="cb30-266"><a href="#cb30-266"></a><span class="in">## Your code here ##</span></span>
-<span id="cb30-267"><a href="#cb30-267"></a></span>
-<span id="cb30-268"><a href="#cb30-268"></a><span class="in">pcs |&gt; </span></span>
-<span id="cb30-269"><a href="#cb30-269"></a><span class="in">  data_grid(concussion, survey_day = median(survey_day, na.rm = TRUE)) |&gt; </span></span>
-<span id="cb30-270"><a href="#cb30-270"></a><span class="in">  add_predicted_draws(pcs_mod, re.form = NA) |&gt;  # Ignore random effects</span></span>
-<span id="cb30-271"><a href="#cb30-271"></a><span class="in">  dplyr::mutate(concussion = haven::as_factor(concussion)) |&gt; </span></span>
-<span id="cb30-272"><a href="#cb30-272"></a><span class="in">  ggplot(aes(y = concussion, x = .prediction)) +</span></span>
-<span id="cb30-273"><a href="#cb30-273"></a><span class="in">  stat_pointinterval(.width = c(.66, .95)) +</span></span>
-<span id="cb30-274"><a href="#cb30-274"></a><span class="in">  stat_slab(fill = &quot;red4&quot;, alpha = .7) +</span></span>
-<span id="cb30-275"><a href="#cb30-275"></a><span class="in">  my_theme() +</span></span>
-<span id="cb30-276"><a href="#cb30-276"></a><span class="in">  labs(title = &quot;Posterior predictions for Concussion history&quot;,</span></span>
-<span id="cb30-277"><a href="#cb30-277"></a><span class="in">       x = &quot;Estimated number of headaches&quot;, y = &quot;Concussion History&quot;)</span></span>
-<span id="cb30-278"><a href="#cb30-278"></a><span class="in">```</span></span>
-<span id="cb30-279"><a href="#cb30-279"></a></span>
+<span id="cb30-228"><a href="#cb30-228"></a><span class="in">  pivot_longer(cols = starts_with(&quot;b_&quot;), </span></span>
+<span id="cb30-229"><a href="#cb30-229"></a><span class="in">               names_to = &quot;parameter&quot;, values_to = &quot;estimate&quot;) |&gt; </span></span>
+<span id="cb30-230"><a href="#cb30-230"></a><span class="in">  mutate(estimate = exp(estimate)) |&gt; </span></span>
+<span id="cb30-231"><a href="#cb30-231"></a><span class="in">  mutate(parameter = case_when(</span></span>
+<span id="cb30-232"><a href="#cb30-232"></a><span class="in">    parameter == &quot;b_Intercept&quot; ~ &quot;Intercept&quot;,</span></span>
+<span id="cb30-233"><a href="#cb30-233"></a><span class="in">    parameter == &quot;b_concussion&quot; ~ &quot;Concussion&quot;,</span></span>
+<span id="cb30-234"><a href="#cb30-234"></a><span class="in">    parameter == &quot;b_survey_day&quot; ~ &quot;Survey Day&quot;,</span></span>
+<span id="cb30-235"><a href="#cb30-235"></a><span class="in">    parameter == &quot;b_concussion:survey_day&quot; ~ &quot;Concussion * Survey Day&quot;,</span></span>
+<span id="cb30-236"><a href="#cb30-236"></a><span class="in">  ))</span></span>
+<span id="cb30-237"><a href="#cb30-237"></a></span>
+<span id="cb30-238"><a href="#cb30-238"></a><span class="in"># Plot</span></span>
+<span id="cb30-239"><a href="#cb30-239"></a><span class="in">posterior_samples |&gt; </span></span>
+<span id="cb30-240"><a href="#cb30-240"></a><span class="in">  ggplot( aes(x = estimate)) + </span></span>
+<span id="cb30-241"><a href="#cb30-241"></a><span class="in">  stat_pointinterval() +</span></span>
+<span id="cb30-242"><a href="#cb30-242"></a><span class="in">  stat_halfeye(fill = &quot;red4&quot;, alpha = .7) +</span></span>
+<span id="cb30-243"><a href="#cb30-243"></a><span class="in">  # using facets because plotting all in the same canvas makes it hard</span></span>
+<span id="cb30-244"><a href="#cb30-244"></a><span class="in">  # to properly visualize the distributions</span></span>
+<span id="cb30-245"><a href="#cb30-245"></a><span class="in">  facet_wrap(~parameter, scales = &quot;free&quot;) +</span></span>
+<span id="cb30-246"><a href="#cb30-246"></a><span class="in">  scale_y_continuous(limits = 0:1) +</span></span>
+<span id="cb30-247"><a href="#cb30-247"></a><span class="in">  my_theme() +</span></span>
+<span id="cb30-248"><a href="#cb30-248"></a><span class="in">  labs(title = &quot;Posterior distribution of parameters estimates&quot;,</span></span>
+<span id="cb30-249"><a href="#cb30-249"></a><span class="in">       x = &quot;Estimate&quot;, y = &quot;&quot;)</span></span>
+<span id="cb30-250"><a href="#cb30-250"></a><span class="in"># Idk why the Concussion density curve is not showing. </span></span>
+<span id="cb30-251"><a href="#cb30-251"></a><span class="in"># When I plot it individually it shows up normally</span></span>
+<span id="cb30-252"><a href="#cb30-252"></a><span class="in">```</span></span>
+<span id="cb30-253"><a href="#cb30-253"></a></span>
+<span id="cb30-254"><a href="#cb30-254"></a><span class="ss">2. </span>Plot the marginal means for a categorical variable (use the provided data set if your model doesn&#39;t have one). </span>
+<span id="cb30-255"><a href="#cb30-255"></a></span>
+<span id="cb30-256"><a href="#cb30-256"></a><span class="in">```{r q2.1.2}</span></span>
+<span id="cb30-257"><a href="#cb30-257"></a><span class="in"># q2_1_pred_fun &lt;- function(m){</span></span>
+<span id="cb30-258"><a href="#cb30-258"></a><span class="in">#   m$data %&gt;%</span></span>
+<span id="cb30-259"><a href="#cb30-259"></a><span class="in">#     data_grid(education) %&gt;%</span></span>
+<span id="cb30-260"><a href="#cb30-260"></a><span class="in">#     mutate(gender = mean(m$data$gender)) %&gt;%</span></span>
+<span id="cb30-261"><a href="#cb30-261"></a><span class="in">#     augment(m, newdata = ., se_fit = T) </span></span>
+<span id="cb30-262"><a href="#cb30-262"></a><span class="in"># }</span></span>
+<span id="cb30-263"><a href="#cb30-263"></a><span class="in"># </span></span>
+<span id="cb30-264"><a href="#cb30-264"></a><span class="in"># nested_mods &lt;- nested_mods %&gt;%</span></span>
+<span id="cb30-265"><a href="#cb30-265"></a><span class="in">#   mutate(pred = map(m, q2_1_pred_fun),</span></span>
+<span id="cb30-266"><a href="#cb30-266"></a><span class="in">#          df = map_dbl(m, df.residual))</span></span>
+<span id="cb30-267"><a href="#cb30-267"></a><span class="in">## Your code here ##</span></span>
+<span id="cb30-268"><a href="#cb30-268"></a></span>
+<span id="cb30-269"><a href="#cb30-269"></a><span class="in">pcs |&gt; </span></span>
+<span id="cb30-270"><a href="#cb30-270"></a><span class="in">  data_grid(concussion, survey_day = median(survey_day, na.rm = TRUE)) |&gt; </span></span>
+<span id="cb30-271"><a href="#cb30-271"></a><span class="in">  add_predicted_draws(pcs_mod, re.form = NA) |&gt; </span></span>
+<span id="cb30-272"><a href="#cb30-272"></a><span class="in">  dplyr::mutate(concussion = haven::as_factor(concussion)) |&gt; </span></span>
+<span id="cb30-273"><a href="#cb30-273"></a><span class="in">  ggplot(aes(y = concussion, x = .prediction)) +</span></span>
+<span id="cb30-274"><a href="#cb30-274"></a><span class="in">  stat_pointinterval(.width = c(.66, .95)) +</span></span>
+<span id="cb30-275"><a href="#cb30-275"></a><span class="in">  stat_slab(fill = &quot;red4&quot;, alpha = .7) +</span></span>
+<span id="cb30-276"><a href="#cb30-276"></a><span class="in">  my_theme() +</span></span>
+<span id="cb30-277"><a href="#cb30-277"></a><span class="in">  labs(title = &quot;Posterior predictions for Concussion history&quot;,</span></span>
+<span id="cb30-278"><a href="#cb30-278"></a><span class="in">       x = &quot;Estimated number of headaches&quot;, y = &quot;Concussion History&quot;)</span></span>
+<span id="cb30-279"><a href="#cb30-279"></a><span class="in">```</span></span>
 <span id="cb30-280"><a href="#cb30-280"></a></span>
 <span id="cb30-281"><a href="#cb30-281"></a></span>
-<span id="cb30-282"><a href="#cb30-282"></a><span class="fu">## Question 2: Plotting smoothed trajectories</span></span>
-<span id="cb30-283"><a href="#cb30-283"></a></span>
-<span id="cb30-284"><a href="#cb30-284"></a>In class, we talked about multiple geoms / methods for plotting the uncertainty around trajectories: </span>
-<span id="cb30-285"><a href="#cb30-285"></a></span>
-<span id="cb30-286"><a href="#cb30-286"></a><span class="ss">- </span><span class="in">`geom_line()`</span> (across bootstrapped samples) </span>
-<span id="cb30-287"><a href="#cb30-287"></a><span class="ss">- </span><span class="in">`geom_lineribbon()`</span> (across bootstrapped samples)</span>
-<span id="cb30-288"><a href="#cb30-288"></a></span>
-<span id="cb30-289"><a href="#cb30-289"></a>Below, I give you code using the provided data from Part 1 to get bootstrapped samples. If you want to use your own data, you just need to modify the model and the <span class="in">`pred_fx_fun()`</span>. <span class="in">`predIntlme4()`</span> should be a general function that should work with any lme4 model. </span>
-<span id="cb30-290"><a href="#cb30-290"></a></span>
-<span id="cb30-291"><a href="#cb30-291"></a><span class="in">```{r p2.2 model, warning = F, eval=FALSE}</span></span>
-<span id="cb30-292"><a href="#cb30-292"></a><span class="in">m2 &lt;- lmer(satHealth ~ 1 + age + age:gender + (1 + age | SID), data = ps3_df)</span></span>
-<span id="cb30-293"><a href="#cb30-293"></a><span class="in">tidy(m2)</span></span>
-<span id="cb30-294"><a href="#cb30-294"></a><span class="in">```</span></span>
-<span id="cb30-295"><a href="#cb30-295"></a></span>
-<span id="cb30-296"><a href="#cb30-296"></a><span class="in">```{r p2.2 pred function, warning = F, eval=FALSE}</span></span>
-<span id="cb30-297"><a href="#cb30-297"></a><span class="in">predIntlme4 &lt;- function(m, mod_frame, ref){</span></span>
-<span id="cb30-298"><a href="#cb30-298"></a><span class="in">  ## get bootstrapped estimates</span></span>
-<span id="cb30-299"><a href="#cb30-299"></a><span class="in">  b &lt;- bootMer(</span></span>
-<span id="cb30-300"><a href="#cb30-300"></a><span class="in">    m</span></span>
-<span id="cb30-301"><a href="#cb30-301"></a><span class="in">    , FUN = function(x) lme4:::predict.merMod(</span></span>
-<span id="cb30-302"><a href="#cb30-302"></a><span class="in">      x</span></span>
-<span id="cb30-303"><a href="#cb30-303"></a><span class="in">      , newdata = mod_frame</span></span>
-<span id="cb30-304"><a href="#cb30-304"></a><span class="in">      , re.form = ref</span></span>
-<span id="cb30-305"><a href="#cb30-305"></a><span class="in">      )</span></span>
-<span id="cb30-306"><a href="#cb30-306"></a><span class="in">    , nsim = 100 # do not use 100 in practice, please</span></span>
-<span id="cb30-307"><a href="#cb30-307"></a><span class="in">    , parallel = &quot;multicore&quot;</span></span>
-<span id="cb30-308"><a href="#cb30-308"></a><span class="in">    , ncpus = 16</span></span>
-<span id="cb30-309"><a href="#cb30-309"></a><span class="in">    )</span></span>
-<span id="cb30-310"><a href="#cb30-310"></a><span class="in">  </span></span>
-<span id="cb30-311"><a href="#cb30-311"></a><span class="in">  ## get long form bootstrapped draws</span></span>
-<span id="cb30-312"><a href="#cb30-312"></a><span class="in">  b_df &lt;- bind_cols(</span></span>
-<span id="cb30-313"><a href="#cb30-313"></a><span class="in">    mod_frame</span></span>
-<span id="cb30-314"><a href="#cb30-314"></a><span class="in">    , t(b$t) %&gt;%</span></span>
-<span id="cb30-315"><a href="#cb30-315"></a><span class="in">    data.frame()</span></span>
-<span id="cb30-316"><a href="#cb30-316"></a><span class="in">  ) %&gt;%</span></span>
-<span id="cb30-317"><a href="#cb30-317"></a><span class="in">    pivot_longer(</span></span>
-<span id="cb30-318"><a href="#cb30-318"></a><span class="in">       cols = -one_of(colnames(m@frame))</span></span>
-<span id="cb30-319"><a href="#cb30-319"></a><span class="in">      , names_to = &quot;boot&quot;</span></span>
-<span id="cb30-320"><a href="#cb30-320"></a><span class="in">      , values_to = &quot;pred&quot;</span></span>
-<span id="cb30-321"><a href="#cb30-321"></a><span class="in">    )</span></span>
-<span id="cb30-322"><a href="#cb30-322"></a><span class="in">  return(list(boot = b, b_df = b_df))</span></span>
-<span id="cb30-323"><a href="#cb30-323"></a><span class="in">}</span></span>
-<span id="cb30-324"><a href="#cb30-324"></a><span class="in">```</span></span>
-<span id="cb30-325"><a href="#cb30-325"></a></span>
-<span id="cb30-326"><a href="#cb30-326"></a><span class="in">```{r q2.2 bootstrapped predictions, warning = F, eval=FALSE}</span></span>
-<span id="cb30-327"><a href="#cb30-327"></a><span class="in">pred_fx_fun &lt;- function(m){</span></span>
-<span id="cb30-328"><a href="#cb30-328"></a><span class="in">  mod_frame &lt;- m@frame %&gt;% </span></span>
-<span id="cb30-329"><a href="#cb30-329"></a><span class="in">    group_by(gender) %&gt;%</span></span>
-<span id="cb30-330"><a href="#cb30-330"></a><span class="in">    data_grid(age = seq_range(age, n = 101))</span></span>
-<span id="cb30-331"><a href="#cb30-331"></a><span class="in">  boot &lt;- predIntlme4(m = m, mod_frame = mod_frame, ref = NA)</span></span>
-<span id="cb30-332"><a href="#cb30-332"></a><span class="in">}</span></span>
-<span id="cb30-333"><a href="#cb30-333"></a></span>
-<span id="cb30-334"><a href="#cb30-334"></a><span class="in">boot2 &lt;- pred_fx_fun(m2)</span></span>
-<span id="cb30-335"><a href="#cb30-335"></a><span class="in">b_df2 &lt;- boot2$b_df</span></span>
-<span id="cb30-336"><a href="#cb30-336"></a><span class="in">b2 &lt;- boot2$boot</span></span>
-<span id="cb30-337"><a href="#cb30-337"></a><span class="in">```</span></span>
-<span id="cb30-338"><a href="#cb30-338"></a></span>
-<span id="cb30-339"><a href="#cb30-339"></a>Choose two of the methods we discussed in class and plot the trajectories (or trajectory if you don&#39;t have a moderator) and plot the bands around the trajectory. </span>
-<span id="cb30-340"><a href="#cb30-340"></a><span class="in">```{r q2.2.1}</span></span>
-<span id="cb30-341"><a href="#cb30-341"></a><span class="in">## Your code here ##</span></span>
-<span id="cb30-342"><a href="#cb30-342"></a></span>
-<span id="cb30-343"><a href="#cb30-343"></a><span class="in">pred_pcs &lt;- pcs |&gt; </span></span>
-<span id="cb30-344"><a href="#cb30-344"></a><span class="in">  group_by(concussion) |&gt; </span></span>
-<span id="cb30-345"><a href="#cb30-345"></a><span class="in">  data_grid(survey_day) |&gt; </span></span>
-<span id="cb30-346"><a href="#cb30-346"></a><span class="in">  add_epred_draws(pcs_mod, re.form = NA) |&gt; </span></span>
-<span id="cb30-347"><a href="#cb30-347"></a><span class="in">  dplyr::mutate(concussion = haven::as_factor(concussion))</span></span>
-<span id="cb30-348"><a href="#cb30-348"></a></span>
-<span id="cb30-349"><a href="#cb30-349"></a><span class="in">pred_pcs |&gt; </span></span>
-<span id="cb30-350"><a href="#cb30-350"></a><span class="in">  ggplot(aes( x = survey_day, y = .epred, color = concussion)) +</span></span>
-<span id="cb30-351"><a href="#cb30-351"></a><span class="in">   stat_lineribbon(aes(y = .epred), .width = c(.95, .80, .50), alpha = 1/4) +</span></span>
-<span id="cb30-352"><a href="#cb30-352"></a><span class="in">  scale_fill_brewer(palette = &quot;Set2&quot;) +</span></span>
-<span id="cb30-353"><a href="#cb30-353"></a><span class="in">  scale_color_brewer(palette = &quot;Dark2&quot;) +</span></span>
-<span id="cb30-354"><a href="#cb30-354"></a><span class="in">  my_theme() +</span></span>
-<span id="cb30-355"><a href="#cb30-355"></a><span class="in">  labs(x = &quot;Survey Day&quot;, y = &quot;Estimated headache count&quot;,</span></span>
-<span id="cb30-356"><a href="#cb30-356"></a><span class="in">       title = &quot;Posterior distributions of conditional means&quot;)</span></span>
-<span id="cb30-357"><a href="#cb30-357"></a><span class="in">```</span></span>
-<span id="cb30-358"><a href="#cb30-358"></a></span>
-<span id="cb30-359"><a href="#cb30-359"></a><span class="in">```{r q2.2.2}</span></span>
-<span id="cb30-360"><a href="#cb30-360"></a><span class="in">## Your code here ##</span></span>
-<span id="cb30-361"><a href="#cb30-361"></a><span class="in">pred_pcs |&gt; </span></span>
-<span id="cb30-362"><a href="#cb30-362"></a><span class="in">  ggplot(aes ( x = survey_day, y = .epred, color = concussion)) +</span></span>
-<span id="cb30-363"><a href="#cb30-363"></a><span class="in">  geom_line(aes(y = .epred, group = paste(concussion, .draw)), alpha = .1) +</span></span>
-<span id="cb30-364"><a href="#cb30-364"></a><span class="in">  scale_color_brewer(palette = &quot;Dark2&quot;) +</span></span>
-<span id="cb30-365"><a href="#cb30-365"></a><span class="in">  my_theme() +</span></span>
-<span id="cb30-366"><a href="#cb30-366"></a><span class="in">  labs(x = &quot;Survey Day&quot;, y = &quot;Estimated headache count&quot;,</span></span>
-<span id="cb30-367"><a href="#cb30-367"></a><span class="in">       title = &quot;Posterior distributions of conditional means&quot;)</span></span>
-<span id="cb30-368"><a href="#cb30-368"></a></span>
-<span id="cb30-369"><a href="#cb30-369"></a><span class="in">```</span></span>
-<span id="cb30-370"><a href="#cb30-370"></a></span>
-<span id="cb30-371"><a href="#cb30-371"></a><span class="fu"># Render to html and submit problem set</span></span>
-<span id="cb30-372"><a href="#cb30-372"></a></span>
-<span id="cb30-373"><a href="#cb30-373"></a>**Render to html** by clicking the &quot;Render&quot; button near the top of your RStudio window (icon with blue arrow)</span>
-<span id="cb30-374"><a href="#cb30-374"></a></span>
-<span id="cb30-375"><a href="#cb30-375"></a><span class="ss">-   </span>Go to the Canvas --<span class="sc">\&gt;</span> Assignments --<span class="sc">\&gt;</span> Problem Set 3</span>
-<span id="cb30-376"><a href="#cb30-376"></a><span class="ss">-   </span>Submit both .qmd and .html files\</span>
-<span id="cb30-377"><a href="#cb30-377"></a><span class="ss">-   </span>Use this naming convention &quot;lastname_firstname_ps#&quot; for your .qmd and html files (e.g. beck_emorie_ps3.qmd &amp; beck_emorie_ps3.html)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-282"><a href="#cb30-282"></a></span>
+<span id="cb30-283"><a href="#cb30-283"></a><span class="fu">## Question 2: Plotting smoothed trajectories</span></span>
+<span id="cb30-284"><a href="#cb30-284"></a></span>
+<span id="cb30-285"><a href="#cb30-285"></a>In class, we talked about multiple geoms / methods for plotting the uncertainty around trajectories: </span>
+<span id="cb30-286"><a href="#cb30-286"></a></span>
+<span id="cb30-287"><a href="#cb30-287"></a><span class="ss">- </span><span class="in">`geom_line()`</span> (across bootstrapped samples) </span>
+<span id="cb30-288"><a href="#cb30-288"></a><span class="ss">- </span><span class="in">`geom_lineribbon()`</span> (across bootstrapped samples)</span>
+<span id="cb30-289"><a href="#cb30-289"></a></span>
+<span id="cb30-290"><a href="#cb30-290"></a>Below, I give you code using the provided data from Part 1 to get bootstrapped samples. If you want to use your own data, you just need to modify the model and the <span class="in">`pred_fx_fun()`</span>. <span class="in">`predIntlme4()`</span> should be a general function that should work with any lme4 model. </span>
+<span id="cb30-291"><a href="#cb30-291"></a></span>
+<span id="cb30-292"><a href="#cb30-292"></a><span class="in">```{r p2.2 model, warning = F, eval=FALSE}</span></span>
+<span id="cb30-293"><a href="#cb30-293"></a><span class="in">m2 &lt;- lmer(satHealth ~ 1 + age + age:gender + (1 + age | SID), data = ps3_df)</span></span>
+<span id="cb30-294"><a href="#cb30-294"></a><span class="in">tidy(m2)</span></span>
+<span id="cb30-295"><a href="#cb30-295"></a><span class="in">```</span></span>
+<span id="cb30-296"><a href="#cb30-296"></a></span>
+<span id="cb30-297"><a href="#cb30-297"></a><span class="in">```{r p2.2 pred function, warning = F, eval=FALSE}</span></span>
+<span id="cb30-298"><a href="#cb30-298"></a><span class="in">predIntlme4 &lt;- function(m, mod_frame, ref){</span></span>
+<span id="cb30-299"><a href="#cb30-299"></a><span class="in">  ## get bootstrapped estimates</span></span>
+<span id="cb30-300"><a href="#cb30-300"></a><span class="in">  b &lt;- bootMer(</span></span>
+<span id="cb30-301"><a href="#cb30-301"></a><span class="in">    m</span></span>
+<span id="cb30-302"><a href="#cb30-302"></a><span class="in">    , FUN = function(x) lme4:::predict.merMod(</span></span>
+<span id="cb30-303"><a href="#cb30-303"></a><span class="in">      x</span></span>
+<span id="cb30-304"><a href="#cb30-304"></a><span class="in">      , newdata = mod_frame</span></span>
+<span id="cb30-305"><a href="#cb30-305"></a><span class="in">      , re.form = ref</span></span>
+<span id="cb30-306"><a href="#cb30-306"></a><span class="in">      )</span></span>
+<span id="cb30-307"><a href="#cb30-307"></a><span class="in">    , nsim = 100 # do not use 100 in practice, please</span></span>
+<span id="cb30-308"><a href="#cb30-308"></a><span class="in">    , parallel = &quot;multicore&quot;</span></span>
+<span id="cb30-309"><a href="#cb30-309"></a><span class="in">    , ncpus = 16</span></span>
+<span id="cb30-310"><a href="#cb30-310"></a><span class="in">    )</span></span>
+<span id="cb30-311"><a href="#cb30-311"></a><span class="in">  </span></span>
+<span id="cb30-312"><a href="#cb30-312"></a><span class="in">  ## get long form bootstrapped draws</span></span>
+<span id="cb30-313"><a href="#cb30-313"></a><span class="in">  b_df &lt;- bind_cols(</span></span>
+<span id="cb30-314"><a href="#cb30-314"></a><span class="in">    mod_frame</span></span>
+<span id="cb30-315"><a href="#cb30-315"></a><span class="in">    , t(b$t) %&gt;%</span></span>
+<span id="cb30-316"><a href="#cb30-316"></a><span class="in">    data.frame()</span></span>
+<span id="cb30-317"><a href="#cb30-317"></a><span class="in">  ) %&gt;%</span></span>
+<span id="cb30-318"><a href="#cb30-318"></a><span class="in">    pivot_longer(</span></span>
+<span id="cb30-319"><a href="#cb30-319"></a><span class="in">       cols = -one_of(colnames(m@frame))</span></span>
+<span id="cb30-320"><a href="#cb30-320"></a><span class="in">      , names_to = &quot;boot&quot;</span></span>
+<span id="cb30-321"><a href="#cb30-321"></a><span class="in">      , values_to = &quot;pred&quot;</span></span>
+<span id="cb30-322"><a href="#cb30-322"></a><span class="in">    )</span></span>
+<span id="cb30-323"><a href="#cb30-323"></a><span class="in">  return(list(boot = b, b_df = b_df))</span></span>
+<span id="cb30-324"><a href="#cb30-324"></a><span class="in">}</span></span>
+<span id="cb30-325"><a href="#cb30-325"></a><span class="in">```</span></span>
+<span id="cb30-326"><a href="#cb30-326"></a></span>
+<span id="cb30-327"><a href="#cb30-327"></a><span class="in">```{r q2.2 bootstrapped predictions, warning = F, eval=FALSE}</span></span>
+<span id="cb30-328"><a href="#cb30-328"></a><span class="in">pred_fx_fun &lt;- function(m){</span></span>
+<span id="cb30-329"><a href="#cb30-329"></a><span class="in">  mod_frame &lt;- m@frame %&gt;% </span></span>
+<span id="cb30-330"><a href="#cb30-330"></a><span class="in">    group_by(gender) %&gt;%</span></span>
+<span id="cb30-331"><a href="#cb30-331"></a><span class="in">    data_grid(age = seq_range(age, n = 101))</span></span>
+<span id="cb30-332"><a href="#cb30-332"></a><span class="in">  boot &lt;- predIntlme4(m = m, mod_frame = mod_frame, ref = NA)</span></span>
+<span id="cb30-333"><a href="#cb30-333"></a><span class="in">}</span></span>
+<span id="cb30-334"><a href="#cb30-334"></a></span>
+<span id="cb30-335"><a href="#cb30-335"></a><span class="in">boot2 &lt;- pred_fx_fun(m2)</span></span>
+<span id="cb30-336"><a href="#cb30-336"></a><span class="in">b_df2 &lt;- boot2$b_df</span></span>
+<span id="cb30-337"><a href="#cb30-337"></a><span class="in">b2 &lt;- boot2$boot</span></span>
+<span id="cb30-338"><a href="#cb30-338"></a><span class="in">```</span></span>
+<span id="cb30-339"><a href="#cb30-339"></a></span>
+<span id="cb30-340"><a href="#cb30-340"></a>Choose two of the methods we discussed in class and plot the trajectories (or trajectory if you don&#39;t have a moderator) and plot the bands around the trajectory. </span>
+<span id="cb30-341"><a href="#cb30-341"></a><span class="in">```{r q2.2.1}</span></span>
+<span id="cb30-342"><a href="#cb30-342"></a><span class="in">## Your code here ##</span></span>
+<span id="cb30-343"><a href="#cb30-343"></a></span>
+<span id="cb30-344"><a href="#cb30-344"></a><span class="in">pred_pcs &lt;- pcs |&gt; </span></span>
+<span id="cb30-345"><a href="#cb30-345"></a><span class="in">  group_by(concussion) |&gt; </span></span>
+<span id="cb30-346"><a href="#cb30-346"></a><span class="in">  data_grid(survey_day) |&gt; </span></span>
+<span id="cb30-347"><a href="#cb30-347"></a><span class="in">  add_epred_draws(pcs_mod, re.form = NA) |&gt; </span></span>
+<span id="cb30-348"><a href="#cb30-348"></a><span class="in">  dplyr::mutate(concussion = haven::as_factor(concussion))</span></span>
+<span id="cb30-349"><a href="#cb30-349"></a></span>
+<span id="cb30-350"><a href="#cb30-350"></a><span class="in">pred_pcs |&gt; </span></span>
+<span id="cb30-351"><a href="#cb30-351"></a><span class="in">  ggplot(aes( x = survey_day, y = .epred, color = concussion)) +</span></span>
+<span id="cb30-352"><a href="#cb30-352"></a><span class="in">   stat_lineribbon(aes(y = .epred), .width = c(.95, .80, .50), alpha = 1/4) +</span></span>
+<span id="cb30-353"><a href="#cb30-353"></a><span class="in">  scale_fill_brewer(palette = &quot;Set2&quot;) +</span></span>
+<span id="cb30-354"><a href="#cb30-354"></a><span class="in">  scale_color_brewer(palette = &quot;Dark2&quot;) +</span></span>
+<span id="cb30-355"><a href="#cb30-355"></a><span class="in">  my_theme() +</span></span>
+<span id="cb30-356"><a href="#cb30-356"></a><span class="in">  labs(x = &quot;Survey Day&quot;, y = &quot;Estimated headache count&quot;,</span></span>
+<span id="cb30-357"><a href="#cb30-357"></a><span class="in">       title = &quot;Posterior distributions of conditional means&quot;)</span></span>
+<span id="cb30-358"><a href="#cb30-358"></a><span class="in">```</span></span>
+<span id="cb30-359"><a href="#cb30-359"></a></span>
+<span id="cb30-360"><a href="#cb30-360"></a><span class="in">```{r q2.2.2}</span></span>
+<span id="cb30-361"><a href="#cb30-361"></a><span class="in">## Your code here ##</span></span>
+<span id="cb30-362"><a href="#cb30-362"></a><span class="in">pred_pcs |&gt; </span></span>
+<span id="cb30-363"><a href="#cb30-363"></a><span class="in">  ggplot(aes ( x = survey_day, y = .epred, color = concussion)) +</span></span>
+<span id="cb30-364"><a href="#cb30-364"></a><span class="in">  geom_line(aes(y = .epred, group = paste(concussion, .draw)), alpha = .1) +</span></span>
+<span id="cb30-365"><a href="#cb30-365"></a><span class="in">  scale_color_brewer(palette = &quot;Dark2&quot;) +</span></span>
+<span id="cb30-366"><a href="#cb30-366"></a><span class="in">  my_theme() +</span></span>
+<span id="cb30-367"><a href="#cb30-367"></a><span class="in">  labs(x = &quot;Survey Day&quot;, y = &quot;Estimated headache count&quot;,</span></span>
+<span id="cb30-368"><a href="#cb30-368"></a><span class="in">       title = &quot;Posterior distributions of conditional means&quot;)</span></span>
+<span id="cb30-369"><a href="#cb30-369"></a></span>
+<span id="cb30-370"><a href="#cb30-370"></a><span class="in">```</span></span>
+<span id="cb30-371"><a href="#cb30-371"></a></span>
+<span id="cb30-372"><a href="#cb30-372"></a><span class="fu"># Render to html and submit problem set</span></span>
+<span id="cb30-373"><a href="#cb30-373"></a></span>
+<span id="cb30-374"><a href="#cb30-374"></a>**Render to html** by clicking the &quot;Render&quot; button near the top of your RStudio window (icon with blue arrow)</span>
+<span id="cb30-375"><a href="#cb30-375"></a></span>
+<span id="cb30-376"><a href="#cb30-376"></a><span class="ss">-   </span>Go to the Canvas --<span class="sc">\&gt;</span> Assignments --<span class="sc">\&gt;</span> Problem Set 3</span>
+<span id="cb30-377"><a href="#cb30-377"></a><span class="ss">-   </span>Submit both .qmd and .html files\</span>
+<span id="cb30-378"><a href="#cb30-378"></a><span class="ss">-   </span>Use this naming convention &quot;lastname_firstname_ps#&quot; for your .qmd and html files (e.g. beck_emorie_ps3.qmd &amp; beck_emorie_ps3.html)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

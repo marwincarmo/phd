@@ -26,7 +26,7 @@ library(distributional)
 library(lme4)
 library(modelr)
 library(ggdist)
-library(gganimate)
+#library(gganimate)
 library(tidyverse)
 ```
 
@@ -76,13 +76,10 @@ If you don't have your own data, we'll use the data we used in class.
 #   ungroup()
 # ps3_df
 
-data_dictionary <- readxl::read_excel("02-ps2/Data Dictionary.xlsx")
-pcs <- haven::read_sav("02-ps2/PCSNetworkModelAnalysis.sav") |> 
+data_dictionary <- readxl::read_excel("../02-ps2/Data Dictionary.xlsx")
+pcs <- haven::read_sav("../02-ps2/PCSNetworkModelAnalysis.sav") |> 
   janitor::clean_names()
 
-symptoms <- names(pcs)[19:40]
-symptoms_names <- data_dictionary[data_dictionary$`Variable Name` %in% symptoms,]$`Variable Label`
-symptoms_dict <- setNames(symptoms_names, symptoms)
 ```
 
 # Part 1: Visualizing Proportions 
@@ -118,17 +115,22 @@ If you're using the provided data, plot age (in decades) x satHealth (POMP score
 ## Your code here ##
 pcs2 <- pcs |> 
   # because the symptoms are measured in frequency there are variables with many zeros
-  # I'll then use a variable couting the frequency of any symptom
+  # I'll create a variable aggregating the frequency of any symptom
   dplyr::mutate(symptom_count = rowSums(across(head:vis))) |> 
-  dplyr::with_groups(age, summarise, m_sympt = mean(symptom_count, na.rm = TRUE))
+  dplyr::with_groups(age, 
+                     summarise, 
+                     m_sympt = mean(symptom_count, na.rm = TRUE))
   
 pcs2 |> 
   ggplot(aes( x = age, y = m_sympt)) +
-  geom_point() +
-  geom_line() +
-  geom_area() +
+  #geom_point() +
+  geom_line(color = "red4", size = .9) +
+  geom_area(fill = "red4", alpha = .2) +
   scale_x_continuous(breaks = 18:35) +
-  my_theme()
+  my_theme() +
+  labs(x = "Age (years)",
+       y = "Average frequency",
+       title = "Average symptom count by age over 31 days")
 ```
 
 ## Question 2: Small Multiples 
@@ -145,7 +147,7 @@ Now, let's consider the case of a multivariate time series where you have time s
 If you're using provided data, use the skeleton code below to get the observations for 20 people with at least 15 observations.  
 
 ```{r q2.1, warning=F}
-set.seed(5)
+set.seed(555)
 # ps3_df %>%
 #   group_by(SID) %>%
 #   filter(n() > 15) %>%
@@ -154,15 +156,22 @@ set.seed(5)
 ## Your code here ##
 
 pcs %>%
+  dplyr::with_groups(c(subject_id, survey_day),
+                     summarise,
+                     head_d = sum(head)) |>  # number of headaches per day
   dplyr::with_groups(subject_id,
                      dplyr::filter,
                      n() > 30) %>%
   dplyr::filter(subject_id %in% sample(unique(.$subject_id), 20)) |> 
-  ggplot(aes(x = survey_day, y = head)) +
-  geom_line() + 
+  ggplot(aes(x = survey_day, y = head_d)) +
   geom_point(size = .5) + 
+  geom_line(color = "red4", size = .9) +
+  geom_area(fill = "red4", alpha = .2) +
   facet_wrap(~subject_id, nrow = 4) + 
-  my_theme()
+  my_theme() +
+  labs(x = "Survey Day",
+       y = "Number of headaches",
+       title = "Headaches count across 31 days for 20 participants")
 ```
 
 # Part 2: Visualizing Uncertainty 
@@ -195,7 +204,7 @@ And this model:
 #          tidy = map(m, ~tidy(., conf.int = T)),
 #          df = map_dbl(m, df.residual))
 
-pcs_mod <- readRDS("02-ps2/fit_nb.rds")
+pcs_mod <- readRDS("../02-ps2/fit_nb.rds")
 tidy_mod <- broom.mixed::tidy(pcs_mod, exponentiate=TRUE)
 ```
 
@@ -210,37 +219,63 @@ fit_nb <- brm(head ~ concussion * survey_day + (1 | subject_id),
 
 ```{r q2.1.1}
 ## Your code here ##
+library(tidybayes)
+
 posterior_samples <- pcs_mod |> 
-  spread_draws(b_Intercept, b_concussion, b_survey_day, `b_concussion:survey_day`
+  spread_draws(
+    b_Intercept, b_concussion, b_survey_day, `b_concussion:survey_day`
                )  |> 
-  pivot_longer(cols = starts_with("b_"), names_to = "parameter", values_to = "estimate") |> 
-  mutate(estimate = exp(estimate))
+  pivot_longer(cols = starts_with("b_"), 
+               names_to = "parameter", values_to = "estimate") |> 
+  mutate(estimate = exp(estimate)) |> 
+  mutate(parameter = case_when(
+    parameter == "b_Intercept" ~ "Intercept",
+    parameter == "b_concussion" ~ "Concussion",
+    parameter == "b_survey_day" ~ "Survey Day",
+    parameter == "b_concussion:survey_day" ~ "Concussion * Survey Day",
+  ))
 
 # Plot
-ggplot(posterior_samples, aes(x = estimate, y = parameter)) + 
-  stat_pointintervalh(.width = c(0.95, 0.5)) + # 95% and 50% credible intervals
-  stat_halfeye(.width = c(0.95, 0.5), color = "black") +  # Density + credible intervals
-  # geom_vline(xintercept = 0, linetype = "dashed", color = "red") + # Reference line at zero
-  # scale_fill_manual(values = c("TRUE" = "lightcoral", "FALSE" = "lightblue"), guide = "none") +
+posterior_samples |> 
+  ggplot( aes(x = estimate)) + 
+  stat_pointinterval() +
+  stat_halfeye(fill = "red4", alpha = .7) +
+  # using facets because plotting all in the same canvas makes it hard
+  # to properly visualize the distributions
+  facet_wrap(~parameter, scales = "free") +
+  scale_y_continuous(limits = 0:1) +
   my_theme() +
-  labs(title = "Posterior Estimates with Density and Credible Intervals",
-       x = "Estimate", y = "Parameter")
+  labs(title = "Posterior distribution of parameters estimates",
+       x = "Estimate", y = "")
+# Idk why the Concussion density curve is not showing. 
+# When I plot it individually it shows up normally
 ```
 
 2. Plot the marginal means for a categorical variable (use the provided data set if your model doesn't have one). 
 
 ```{r q2.1.2}
-q2_1_pred_fun <- function(m){
-  m$data %>%
-    data_grid(education) %>%
-    mutate(gender = mean(m$data$gender)) %>%
-    augment(m, newdata = ., se_fit = T) 
-}
-
-nested_mods <- nested_mods %>%
-  mutate(pred = map(m, q2_1_pred_fun),
-         df = map_dbl(m, df.residual))
+# q2_1_pred_fun <- function(m){
+#   m$data %>%
+#     data_grid(education) %>%
+#     mutate(gender = mean(m$data$gender)) %>%
+#     augment(m, newdata = ., se_fit = T) 
+# }
+# 
+# nested_mods <- nested_mods %>%
+#   mutate(pred = map(m, q2_1_pred_fun),
+#          df = map_dbl(m, df.residual))
 ## Your code here ##
+
+pcs |> 
+  data_grid(concussion, survey_day = median(survey_day, na.rm = TRUE)) |> 
+  add_predicted_draws(pcs_mod, re.form = NA) |> 
+  dplyr::mutate(concussion = haven::as_factor(concussion)) |> 
+  ggplot(aes(y = concussion, x = .prediction)) +
+  stat_pointinterval(.width = c(.66, .95)) +
+  stat_slab(fill = "red4", alpha = .7) +
+  my_theme() +
+  labs(title = "Posterior predictions for Concussion history",
+       x = "Estimated number of headaches", y = "Concussion History")
 ```
 
 
@@ -254,12 +289,12 @@ In class, we talked about multiple geoms / methods for plotting the uncertainty 
 
 Below, I give you code using the provided data from Part 1 to get bootstrapped samples. If you want to use your own data, you just need to modify the model and the `pred_fx_fun()`. `predIntlme4()` should be a general function that should work with any lme4 model. 
 
-```{r p2.2 model, warning = F}
+```{r p2.2 model, warning = F, eval=FALSE}
 m2 <- lmer(satHealth ~ 1 + age + age:gender + (1 + age | SID), data = ps3_df)
 tidy(m2)
 ```
 
-```{r p2.2 pred function, warning = F}
+```{r p2.2 pred function, warning = F, eval=FALSE}
 predIntlme4 <- function(m, mod_frame, ref){
   ## get bootstrapped estimates
   b <- bootMer(
@@ -289,7 +324,7 @@ predIntlme4 <- function(m, mod_frame, ref){
 }
 ```
 
-```{r q2.2 bootstrapped predictions, warning = F}
+```{r q2.2 bootstrapped predictions, warning = F, eval=FALSE}
 pred_fx_fun <- function(m){
   mod_frame <- m@frame %>% 
     group_by(gender) %>%
@@ -305,10 +340,33 @@ b2 <- boot2$boot
 Choose two of the methods we discussed in class and plot the trajectories (or trajectory if you don't have a moderator) and plot the bands around the trajectory. 
 ```{r q2.2.1}
 ## Your code here ##
+
+pred_pcs <- pcs |> 
+  group_by(concussion) |> 
+  data_grid(survey_day) |> 
+  add_epred_draws(pcs_mod, re.form = NA) |> 
+  dplyr::mutate(concussion = haven::as_factor(concussion))
+
+pred_pcs |> 
+  ggplot(aes( x = survey_day, y = .epred, color = concussion)) +
+   stat_lineribbon(aes(y = .epred), .width = c(.95, .80, .50), alpha = 1/4) +
+  scale_fill_brewer(palette = "Set2") +
+  scale_color_brewer(palette = "Dark2") +
+  my_theme() +
+  labs(x = "Survey Day", y = "Estimated headache count",
+       title = "Posterior distributions of conditional means")
 ```
 
 ```{r q2.2.2}
 ## Your code here ##
+pred_pcs |> 
+  ggplot(aes ( x = survey_day, y = .epred, color = concussion)) +
+  geom_line(aes(y = .epred, group = paste(concussion, .draw)), alpha = .1) +
+  scale_color_brewer(palette = "Dark2") +
+  my_theme() +
+  labs(x = "Survey Day", y = "Estimated headache count",
+       title = "Posterior distributions of conditional means")
+
 ```
 
 # Render to html and submit problem set
