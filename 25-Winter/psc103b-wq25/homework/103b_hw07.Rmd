@@ -1,0 +1,130 @@
+---
+title: "Homework 7"
+author: "YOUR NAME HERE"
+date: "2025-03-06"
+output:
+  pdf_document: default
+subtitle: "PSC-103B"
+affiliation: The University of California, Davis
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.width = 10,
+                      fig.height = 5,
+                      fig.align = 'center')
+
+```
+
+<!-- # Instructions -->
+
+<!-- Please use R/RStudio to complete the following questions. You will submit your filled-out version of this document **as a PDF** on Canvas. Make sure your PDF looks as expected before submitting. Please **include the code you used to generate your answer for each question (when relevant) as well as the final answer and/or relevant output**. -->
+
+<!-- You may consult with your classmates while working on the assignment, but **you must do all the work yourself – everything you turn in must be your own code and words**. Academic dishonesty will not be tolerated.  -->
+
+<!-- Please submit **a pdf version** of this document with your answers on Canvas by **4:00pm on Thursday, March 13**. -->
+
+# Important reminders:
+
+- Do not insert your answer as comments inside a code chunk. They will be cut out when rendered as pdf.
+- Instead, enter your answer as plain text after the '>'.
+- Check your compiled document before submission to ensure your answers are displayed correctly. 
+
+---
+
+# Logistic Regression
+
+For these logistic regression equations, we will be using the `wine` dataset that we used in lab, and that is available on the Canvas page for this homework assignment. We will be exploring how different predictors relate to whether a red wine is rated as good or bad. 
+
+## 1. Write a logistic regression model predicting the wine quality from the predictor of residual sugar. Be sure to create a binary version of the quality variable like I did in lab! Show your code and summary output. (1 point)
+
+```{r}
+
+```
+
+## 2. Write out the regression model predicting the log-odds of whether a wine was rated as good or not. Interpret the intercept and slope in terms of the log-odds. (3 points)
+
+> 
+
+> Intercept:
+
+> Slope: 
+
+## 3. Write out the regression model predicting the odds of whether or not a wine was rated as good or not. Interpret the intercept and slope in terms of the odds. (3 points)
+
+> 
+
+> Intercept:
+
+> Slope:
+
+## 4. Now center your predictor variable of residual sugar, and re-run the logistic regression model. Show your code and summary output (1 point)
+
+```{r}
+
+```
+
+## 5. What is the new interpretation of the intercept (in terms of both the log-odds and the odds). (2 points)
+
+> 
+
+> 
+
+## 6. Assume we had a wine that had a residual sugar content of 13. Calculate and interpret: the log-odds, the odds, and the probability of a wine with this residual sugar content being rated as good. (3 points). 
+
+> $\log(O)$ =
+
+> $O$ =
+
+> $p$ =
+
+> 
+
+## 7. Fit a logistic regression model with both residual sugar and citric acid (neither of them centered) as predictors. Show your code and summary output (1 point). 
+
+```{r}
+
+```
+
+## 8. Interpret the intercept and both slopes in terms of the log-odds (3 points). 
+
+> Intercept:
+
+> Slope for residual sugar:
+
+> Slope for citric acid:
+
+## 9. Interpret the intercept and slopes in terms of the odds. (3 points)
+
+> Intercept:
+
+> Slope for residual sugar:
+
+> Slope for citric acid:
+
+# Dummy Coding
+
+Use the `penguins` dataset from the `palmerpenguins` package in R for this question.
+
+```{r}
+library(palmerpenguins)
+```
+
+
+## 10. Fit a dummy-coded linear regression model using bill length as the outcome and Island as the predictor. Show your code and model output (1 point).
+
+```{r}
+
+```
+
+## 11. Interpret the intercept and slopes of the regression output. Which groups are significantly different from the reference group? (3 points).
+
+> 
+
+> 
+
+>
