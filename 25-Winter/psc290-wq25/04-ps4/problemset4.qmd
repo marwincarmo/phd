@@ -1,0 +1,223 @@
+---
+title: "Problem Set #4"
+author: "Marwin Carmo"
+date: "insert date here"
+format: 
+  html:
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    theme: united
+    highlight-style: tango
+    df-print: paged
+    code-fold: show
+    toc: true
+    toc-float: true
+    self-contained: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r packages}
+library(patchwork)
+library(tidyverse)
+library(tidytext)
+```
+
+```{r theme, echo = F}
+my_theme <- function(){
+  theme_bw() + 
+  theme(
+    legend.position = "bottom"
+    , legend.title = element_text(face = "bold", size = rel(1))
+    , legend.text = element_text(face = "italic", size = rel(1))
+    , axis.text = element_text(face = "bold", size = rel(1.1), color = "black")
+    , axis.title = element_text(face = "bold", size = rel(1.2))
+    , plot.title = element_text(face = "bold", size = rel(1.2), hjust = .5)
+    , plot.subtitle = element_text(face = "italic", size = rel(1.2), hjust = .5)
+    , strip.text = element_text(face = "bold", size = rel(1.1), color = "white")
+    , strip.background = element_rect(fill = "black")
+    )
+}
+```
+
+# Overview:
+
+In this problem set, you will be using the **ggplot2** package (part of tidyverse) to practice (1) piecing together and (2) polishing visualizations. As with other problems sets, you're encouraged to use your own data, so instructions here will be somewhat vague. 
+
+In Part 1, you'll build two visualizations, using annotations and hacks to improve their appearance. In Part 2, you'll piece these together using patchwork or cowplot. 
+
+We're going to use a little non-traditional data this week, so it's possible you may not have your own. If you don't, we'll use data from the `janeaustenr` package. Specifically, we're going to examine the sentiments from Emma. 
+
+```{r data}
+library(janeaustenr)
+emma_df <- tibble(text = emma) %>%
+  mutate(
+    linenumber = row_number()
+    , chapter = cumsum(
+      str_detect(text, regex("^chapter [\\divxlc]", ignore_case = TRUE)))
+    )
+emma_df
+```
+
+# Part 1: Text Analysis and Polishing Visualizations 
+
+## Background & Setup 
+
+This problem set is also a chance for me to show you a little more about text analysis. In class, we did sentiment analysis, but here we'll look at n-grams, which allow us to examine the relationship between words (e.g., how often do certain sequences appear). Specifically, we're going to look at bigrams (aka. n-grams where n=2). 
+
+To do so, we'll use the same `unnest_tokens()` function that we used in class. But this time, our token will be `ngrams` instead of words. 
+
+First, we'll separate the text into bigrams. 
+
+```{r setup1}
+emma_bigrams <- emma_df %>%
+  unnest_tokens(
+    output = bigram
+    , input = text
+    , token = "ngrams"
+    , n = 2
+    ) %>%
+  filter(!is.na(bigram))
+emma_bigrams
+```
+
+Now, we need to get rid of stop words in either piece of the stopwords. To do so, we'll `separate()` the bigrams, `filter()` out rows with stopwords, and then `unite()` the bigrams back together. 
+
+```{r setup2}
+emma_bigrams <- emma_bigrams %>%
+  separate(bigram, c("word1", "word2"), sep = " ") %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word) %>%
+  filter(chapter != 0) %>%
+  unite(bigram, word1, word2, sep = " ")
+emma_bigrams
+```
+
+## Question 1: Changes in bigram frequency  
+
+1.    Plot the frequency of the top 30 bigrams in Emma. Put the counts on the x-axis and the frequencies on the y-axis
+3.    Make sure to: 
+      + label your x- and y-axes
+      + Add a title 
+      + Use your custom theme 
+      + Choose a fill of choice
+5.    Save the plot as p1.1 
+
+```{r q1.1}
+## Your code here ##
+p1.1 <- emma_bigrams |> 
+  count(bigram, sort = TRUE) |> 
+  top_n(20) |>
+  mutate(bigram = reorder(bigram, n)) |> 
+  ggplot(aes(n, bigram)) +
+  geom_col(fill = "darkred") +
+  labs(y = "Bigram", x = "Frequency",
+       title = "Top 20 bigrams in Emma") + 
+  my_theme()
+p1.1
+```
+
+
+## Question 2: Sentiment
+
+Now let's create a second plot that has the sentiment across chapters. 
+
+There are some notable events throughout the novel: 
+- Frank Churchill finally appears in person in chapter 23 
+- Emma is jealous of Miss Fairfax's proficiency in chapter 26
+- Mr. Churchill's secret engagement to Miss Fairfax is revealed in chapter 46
+- Emma and Knightley fight over her treatment of Miss Bates in chapter 43
+- Emma and Knightley reconcile and get engaged in chapter 49 
+
+```{r setup3}
+emma_tidy <- emma_df %>%
+  unnest_tokens(word, text) %>%
+  filter(!is.na(word) & chapter != 0) %>%
+  anti_join(stop_words) %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(sentiment, index = chapter, sort = T) %>%
+  rename(chapter = index)
+emma_tidy
+```
+
+1.    Plot a time series of the frequency of the sentiments across chapters 
+2.    Shade the area under the plot using `geom_area()`. (Make sure to set the alpha value low)
+3.    Use `geom_smooth()` to plot the trajectories across time
+4.    Make sure to: 
+      + label your x- and y-axes
+      + Add a title 
+      + Use your custom theme 
+5.    Split the plots across five facets using `facet_wrap()`
+6.    Save the plot as p1.2 
+
+```{r q1.2.1}
+## Your code here ##
+p1.2 <- emma_tidy |> 
+  ggplot(aes(x = chapter, y = n, color = sentiment, fill = sentiment)) +
+  geom_area(alpha = .3) +
+  geom_smooth(alpha = 0.2) +
+  scale_x_continuous(breaks = seq(1,55, by = 2)) +
+  labs(x = "Chapter", y = NULL, 
+       title = "Frequency of sentiments across chapters") +
+  my_theme() +
+  theme( legend.position = c(0.1,.85),
+         legend.background = element_rect(fill='transparent'))
+  
+p1.2
+```
+
+Now, let's use annotate to highlight Emma's fight with Miss Bate's and Mr. Knightley: 
+
+1. Use `annotate()` to add a rectangle between chapter 41 and 48, when a series of negative events pick up. 
+2. Use `annotate()` to add text "Emma fights with Miss Bates and Knightley." (Hint use `\n` to include line breaks as needed).
+
+```{r q1.2.2}
+p1.3 <- p1.2 +
+  annotate(
+      "rect", xmin = 41, xmax = 48, ymin = 50
+      , ymax = 350, fill = "grey30", alpha = .3
+      ) +
+  annotate("text", 
+           label = "Emma fights with \nMiss Bates and Knightley.", 
+           x = 40, y = 370
+           , hjust = 0)
+p1.3
+```
+
+# Part 2: Piecing Plots Together 
+Next, you'll practice Week 6 skills, specifically how to visualize uncertainty. To give you a chance to also practice smoothing and model predictions from time series, Q2 will also have you make predictions across a time series. 
+
+## Question 1: Piecing Plots Together  
+
+Now that we have our plots, let's put them back together 
+
+1. Piece the plots together using your package of choice. Make sure to remove the titles! 
+2. Use `plot_annotation()` to 
+  + Add a shared title and subtitle 
+  + Label the panels as A and B
+
+If you're using provided data, use the skeleton code below to get the observations for 20 people with at least 15 observations.  
+
+```{r q2.1, warning=F, fig.width = 12, fig.height = 9}
+p1 <- p1.1 + labs(title = NULL, x = NULL)
+p2 <- p1.3 + labs(title = NULL)
+
+p1 / p2 + 
+  plot_annotation(title = "Analysis of bigrams in Emma",
+                  subtitle = "Subtitle",
+                  tag_levels = "A") & 
+  theme(plot.title = element_text(face = "bold", size = rel(1.2), hjust = 0.5),
+        plot.subtitle = element_text(face = "italic", size = rel(1.2), hjust = .5))
+
+```
+
+# Render to html and submit problem set
+
+**Render to html** by clicking the "Render" button near the top of your RStudio window (icon with blue arrow)
+
+-   Go to the Canvas --\> Assignments --\> Problem Set 4
+-   Submit both .qmd and .html files\
+-   Use this naming convention "lastname_firstname_ps#" for your .qmd and html files (e.g. beck_emorie_ps4.qmd & beck_emorie_ps4.html)
+
