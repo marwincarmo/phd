@@ -1,10 +1,10 @@
 library(ggplot2)
 library(ivd)
 library(coda)
+library(ggdist)
 
 obj <- readRDS("../../../melms_educ/WORK/-ANALYSIS/MODELS/saeb/out/outm1.rds")
 
-school_colors <- readRDS("WORK/-ANALYSIS/MODELS/saeb/out/school_colors.rds")
 
 .extract_to_mcmc <- function(obj) {
   e_to_mcmc <- lapply(obj$samples, FUN = function(x) mcmc(x$samples))
@@ -155,9 +155,11 @@ if(no_ranef_s == 1) {
   u_lower <- apply(posterior_samples, 2, function(x) quantile(x, probs = 0.025))
   u_upper <- apply(posterior_samples, 2, function(x) quantile(x, probs = 0.975))
   
-  tau <- exp(zeta + u )
-  tau_lower <- exp(zeta + u_lower)
-  tau_upper <- exp(zeta + u_upper)
+  
+  
+  # tau <- exp(zeta + u )
+  # tau_lower <- exp(zeta + u_lower)
+  # tau_upper <- exp(zeta + u_upper)
   
 } else if (no_ranef_s > 1 ) {
   ## if(is.null(variable)) {
@@ -186,15 +188,42 @@ if(no_ranef_s == 1) {
   
   u <-
     colMeans(do.call(rbind, lapply(.extract_to_mcmc(obj ), FUN = function(x) colMeans(x[, pos]))))
-  tau <- exp(zeta + u )
+  # tau <- exp(zeta + u )
   
 } else {
   print("Invalid action specified. Exiting.")
 }
 
+## Get mu's across chains
+mu_combined <- lapply(obj$samples, function(chain) {
+  mu_indices <- grep("mu", colnames(chain$samples))
+  mu_samples <- chain$samples[, mu_indices, drop = FALSE]
+  return(mu_samples)
+})
+
+## Get tau's across chains
+tau_combined <- lapply(obj$samples, function(chain) {
+  tau_indices <- grep("tau", colnames(chain$samples))
+  tau_samples <- chain$samples[, tau_indices, drop = FALSE]
+  return(tau_samples)
+})
+
+# Combine chains into one large matrix
+# tau_matrix <- colMeans(do.call(rbind, tau_combined))
+
+# Compute the posterior means
+posterior_tau_means <- colMeans(do.call(rbind, tau_combined))
+posterior_mu_means <- colMeans(do.call(rbind, mu_combined))
+
+tau <- tapply(posterior_tau_means, obj$Y$group_id, mean)
+mu <- tapply(posterior_mu_means, obj$Y$group_id, mean)
+
 ## Add tau to data frame -- ensure correct order
 df_pip <-
   cbind(df_pip[order(df_pip$id), ], tau )
+
+df_pip <-
+  cbind(df_pip[order(df_pip$id), ], mu )
 ## Make nudge scale dependent:
 ## (not used)
 ord <- (max(df_pip$ordered ) - min(df_pip$ordered ))/50
@@ -233,9 +262,11 @@ print(plt )
 # df_funnel <-
 #   cbind(df_pip[order(df_pip$id), ], tau )
 
+
+
 plt <- ggplot(df_pip, aes(x = tau, y = pip)) +
   geom_point(data = subset(df_pip, pip < pip_level), 
-             alpha = .6, size = 4, stroke = 1, shape = 21, fill = "grey40", color = "black") +
+             alpha = .3, size = 4, stroke = 1, shape = 21, fill = "grey40", color = "black") +
   geom_jitter(data = subset(df_pip, pip >= pip_level),
              aes(fill = factor(id)), size = 4, shape = 21,  position = "jitter") + 
   labs(x = "Within-Cluster SD") +
@@ -246,9 +277,9 @@ plt <- ggplot(df_pip, aes(x = tau, y = pip)) +
             #nudge_x = -.005,
             size = 4)+
   geom_abline(intercept = pip_level, slope = 0, lty =  3) +
-  ylim(c(0, 1 ) )+ggtitle(variable) +
+  ylim(c(0, 1 ) ) +
   scale_fill_manual("ID", values = cluster_colors) +
-  labs(x = "Within-cluster SD",
+  labs(x = "Posterior SD",
        y = "Posterior Inclusion Probability",
        title = variable) +
   guides(fill = "none") +
@@ -258,81 +289,64 @@ print( plt )
 
 # 4. Outcome --------------------------------------------------------------
 
-df_y <- merge(df_pip,
-              aggregate(Y ~ group_id, data = obj$Y, FUN = mean),
-              by.x = "id", by.y = "group_id")
-df_y$tau <- tau
-nx <- (max(df_y$tau ) - min(df_y$tau ))/50
+# df_y <- merge(df_pip,
+#               aggregate(Y ~ group_id, data = obj$Y, FUN = mean),
+#               by.x = "id", by.y = "group_id")
+# df_y$tau <- tau
+# nx <- (max(df_y$tau ) - min(df_y$tau ))/50
 ## 
-plt <- ggplot(df_y, aes(x = Y, y = pip)) +
-  geom_point(data = subset(df_y, pip < pip_level), 
+plt <- ggplot(df_pip, aes(x = mu, y = pip)) +
+  geom_point(data = subset(df_pip, pip < pip_level), 
              alpha = .3, stroke = 1, aes(size=tau),
-             shape = 21, fill = "black", color = "black") +
-  geom_point(data = subset(df_y, pip >= pip_level),
-             aes(fill = color, size = tau),  shape = 21, color = "black") +
-  #geom_point(data = subset(df_y, pip < pip_level), aes(size=tau), alpha = .4) +
-  # geom_point(data = subset(df_y, pip >= pip_level),
-  #            aes(color = as.factor(id), size = tau)) +
-  geom_text(data = subset(df_y, pip >= pip_level),
+             shape = 21, fill = "grey40", color = "black") +
+  geom_point(data = subset(df_pip, pip >= pip_level),
+             aes(fill = factor(id), size = tau),  shape = 21, color = "black") +
+  geom_text(data = subset(df_pip, pip >= pip_level),
             aes(label = id),
             nudge_x = -.05,
             vjust = -0.5,
             size = 4)+
   geom_abline(intercept = pip_level, slope = 0, lty =  3)+
-  #geom_abline(intercept = pip_level - .5, slope = 0, lty =  3)+
   ylim(c(0, 1 ) ) + 
-  ggtitle(variable ) +
-  #scale_fill_manual(values = distinct_colors) +
-  #scale_fill_viridis_c(option = "plasma", alpha = 0.8, begin = 0.5) +
-  guides(size = "none", fill="none")
+  scale_fill_manual("ID", values = cluster_colors) +
+  labs(x = "Posterior Mean of mu",
+       y = "Posterior Inclusion Probability",
+       title = variable) +
+  guides(fill = "none", 
+         size = "none") +
+  theme_light()
 print(plt )
 
+# 5. Halfeye plot ----------------------------------------------------
 
-# 5. Caterpillar ----------------------------------------------------------
+posterior_long <- stack(as.data.frame(posterior_samples))
+posterior_long$ind <- as.numeric(sub(".*\\[(\\d+),.*", "\\1", posterior_long$ind))
+subdata <- subset(posterior_long, ind %in% which(df_pip$pip >= pip_level))
 
-u_summary <- data.frame(
-  RandomEffect = 1:length(u),
-  Median = u_median,
-  Lower95CI = u_lower,
-  Upper95CI = u_upper,
-  pip = df_pip$pip,
-  color = df_pip$color
-)
+hist(posterior_long[posterior_long$ind == "u[46, 2]", "values"])
 
-u_ordered <- u_summary[order(u_summary[, "Median"]), ]
-u_ordered$ordered <- 1:nrow(u_summary )
+pip_order <- df_pip[df_pip$pip >= pip_level, c("id", "pip")]
 
-plt <- ggplot(u_ordered, aes(x = ordered, y = Median, color = Median)) +
-  geom_pointrange(
-    aes(ymin = Lower95CI, ymax = Upper95CI),
-    size = 0.7,  # Thicker lines for better visibility
-    linetype = "solid",
-    color = "black",
-    alpha = 0.7
-  ) +
-  geom_point(data = subset(u_ordered, pip < pip_level), 
-             size = 2.5, stroke = .1, aes(size=tau), alpha = .3,
-             shape = 21, fill = "black", color = "black") +
-  geom_point(data = subset(u_ordered, pip >= pip_level),
-             aes(fill = color), size = 2.5, stroke = .1, 
-             shape = 21, color = "black") +
-  # geom_point(
-  #   size = 2.5,  # Larger points
-  #   stroke = 1,  # Stroke width
-  #   shape = 21,  # Shape 21 allows for both fill and stroke
-  #   aes(fill = Median),  # Set fill color to white for contrast
-  #   color = "black"
-  #   ) +
-  #viridis::scale_fill_viridis(option = "D", direction = 1) +
-  #scale_fill_viridis_c(option = "plasma", alpha = 0.8, begin = 0.5) +
-  #scale_fill_manual(values = distinct_colors) +
-  geom_abline(intercept = 0, slope = 0, lty =  3) +
-  guides(color = "none", fill = "none")
+pip_order[order(pip_order$pip), ]$id
 
+ggplot(subdata) +
+  aes( x = reorder(factor(ind), values, median),
+       y = values,
+       fill = factor(ind))+
+  scale_fill_manual(values = cluster_colors) +
+  stat_halfeye() +
+  guides(fill = "none") +
+  labs(x = "Cluster ID",
+       y = "Random effect posterior distribution",
+       title = variable) +
+  theme_light()
 
+ggplot(subset(posterior_long, ind %in% c("u[1,2]", "u[2,2]", "u[3,2]")), 
+       aes(y = ind, x = values)) +
+  stat_halfeye(aes(fill = after_stat(level)), 
+               .width = c(0.8, 0.95), fill_type = "gradient") +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_minimal() +
+  labs(y = "Parameter", x = "Posterior Samples", 
+       title = "Gradient Interval Plot for Selected Parameters")
 
-# ggplot(u_ordered, aes(x = ordered, y = Mean)) +
-# geom_point() +  # Plot the mean of tau
-# geom_errorbar(aes(ymin = Lower95CI, ymax = Upper95CI), width = 0.2)+
-# viridis::scale_color_viridis(option = "D", direction = 1)
-print(plt)
