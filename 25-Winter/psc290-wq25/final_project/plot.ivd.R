@@ -253,7 +253,11 @@ plt <- ggplot(df_pip, aes(x = ordered, y = pip)) +
   labs(x = "Ordered index",
        y = "Posterior Inclusion Probability",
        title = variable) +
-  theme_light()
+  theme_ridges() +
+  theme(
+    axis.title.x = element_text(hjust = 0.5),
+    axis.title.y = element_text(hjust = 0.5)
+  )
 print(plt )
 
 
@@ -284,7 +288,11 @@ plt <- ggplot(df_pip, aes(x = tau, y = pip)) +
        y = "Posterior Inclusion Probability",
        title = variable) +
   guides(fill = "none") +
-  theme_light()
+  theme_ridges() +
+  theme(
+    axis.title.x = element_text(hjust = 0.5),
+    axis.title.y = element_text(hjust = 0.5)
+  )
 print( plt )
 
 
@@ -315,7 +323,11 @@ plt <- ggplot(df_pip, aes(x = mu, y = pip)) +
        title = variable) +
   guides(fill = "none", 
          size = "none") +
-  theme_light()
+  theme_ridges() +
+  theme(
+    axis.title.x = element_text(hjust = 0.5),
+    axis.title.y = element_text(hjust = 0.5)
+  )
 print(plt )
 
 # 5. Halfeye plot ----------------------------------------------------
@@ -355,6 +367,30 @@ ggplot(subdata) +
   guides(fill = "none",
          color = "none")+
   theme_light()
+
+## ggridges
+
+plt_tau <- ggplot(subdata) +
+  aes( y = reorder(factor(ind), values, median),
+       x = values,
+       fill = factor(ind),
+       color = factor(ind)
+  )+
+  stat_pointinterval()+
+  scale_fill_manual(values =cluster_colors, guide = "none") +
+  scale_color_manual(values =cluster_colors, guide = "none") +
+  scale_y_discrete(breaks = NULL) +
+  geom_density_ridges(alpha = .4, scale =3,rel_min_height = 0.005,
+                      linewidth = 1 ) +
+  scale_y_discrete(expand = c(0, 0), name= "Cluster ID") +     # will generally have to set the `expand` option
+  scale_x_continuous(expand = c(0, 0), name= "Sigma") +   # for both axes to remove unneeded padding
+  coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
+  theme_ridges() +
+  theme(
+    axis.title.x = element_text(hjust = 0.5),
+    axis.title.y = element_text(hjust = 0.5)
+  )
+plt_tau
 
 # 6. Within SD ------------------------------------------------------------
 
@@ -424,7 +460,7 @@ ggplot(sub_tau) +
 
 ## ggridges
 
-ggplot(sub_tau) +
+plt_u <- ggplot(sub_tau) +
   aes( y = reorder(factor(ind), values, median),
        x = values,
        fill = factor(ind),
@@ -445,3 +481,4 @@ ggplot(sub_tau) +
     axis.title.x = element_text(hjust = 0.5),
     axis.title.y = element_text(hjust = 0.5)
   )
+plt_u
