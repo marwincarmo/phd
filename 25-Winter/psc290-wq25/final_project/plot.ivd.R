@@ -437,8 +437,8 @@ ggplot(sub_tau) +
   scale_y_discrete(breaks = NULL) +
   geom_density_ridges(alpha = .4, scale =3,rel_min_height = 0.005,
                       linewidth = 1 ) +
-  scale_y_discrete(expand = c(0, 0)) +     # will generally have to set the `expand` option
-  scale_x_continuous(expand = c(0, 0), name= "Random effect") +   # for both axes to remove unneeded padding
+  scale_y_discrete(expand = c(0, 0), name= "Cluster ID") +     # will generally have to set the `expand` option
+  scale_x_continuous(expand = c(0, 0), name= "Random effect estimate") +   # for both axes to remove unneeded padding
   coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
   theme_ridges() +
   theme(
