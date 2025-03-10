@@ -324,8 +324,6 @@ posterior_long <- stack(as.data.frame(posterior_samples))
 posterior_long$ind <- as.numeric(sub(".*\\[(\\d+),.*", "\\1", posterior_long$ind))
 subdata <- subset(posterior_long, ind %in% which(df_pip$pip >= pip_level))
 
-hist(posterior_long[posterior_long$ind == "u[46, 2]", "values"])
-
 pip_order <- df_pip[df_pip$pip >= pip_level, c("id", "pip")]
 
 ggplot(subdata) +
@@ -432,21 +430,18 @@ ggplot(sub_tau) +
        fill = factor(ind),
        color = factor(ind)
   )+
-  stat_pointinterval() +
+  stat_pointinterval()+
+ 
   scale_fill_manual(values =cluster_colors, guide = "none") +
   scale_color_manual(values =cluster_colors, guide = "none") +
   scale_y_discrete(breaks = NULL) +
-  geom_density_ridges(alpha = .5, scale =3) +
+  geom_density_ridges(alpha = .4, scale =3,rel_min_height = 0.005,
+                      linewidth = 1 ) +
   scale_y_discrete(expand = c(0, 0)) +     # will generally have to set the `expand` option
-  scale_x_continuous(expand = c(0, 0)) +   # for both axes to remove unneeded padding
+  scale_x_continuous(expand = c(0, 0), name= "Random effect") +   # for both axes to remove unneeded padding
   coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
-  # stat_pointinterval(
-  #   geom = "label",
-  #   aes(label = factor(ind)),
-  #   .width = c(0.66, 0.95),
-  #   #position = position_dodge(width = 1),
-  #   size = 3,
-  #   color = "black",
-  #   #position = position_dodge(width = .4, preserve = "single")
-  # )+
-  theme_ridges() 
+  theme_ridges() +
+  theme(
+    axis.title.x = element_text(hjust = 0.5),
+    axis.title.y = element_text(hjust = 0.5)
+  )
