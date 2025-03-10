@@ -2,6 +2,7 @@ library(ggplot2)
 library(ivd)
 library(coda)
 library(ggdist)
+library(ggridges)
 
 obj <- readRDS("../../../melms_educ/WORK/-ANALYSIS/MODELS/saeb/out/outm1.rds")
 
@@ -327,26 +328,125 @@ hist(posterior_long[posterior_long$ind == "u[46, 2]", "values"])
 
 pip_order <- df_pip[df_pip$pip >= pip_level, c("id", "pip")]
 
-pip_order[order(pip_order$pip), ]$id
-
 ggplot(subdata) +
-  aes( x = reorder(factor(ind), values, median),
-       y = values,
-       fill = factor(ind))+
+  aes( y = reorder(factor(ind), values, median),
+       x = values,
+       fill = factor(ind),
+       color = factor(ind)
+       )+
   scale_fill_manual(values = cluster_colors) +
-  stat_halfeye() +
-  guides(fill = "none") +
-  labs(x = "Cluster ID",
-       y = "Random effect posterior distribution",
+  stat_slab(
+    height = 5,
+    alpha = .7,
+    expand = FALSE, trim = FALSE, density = "unbounded",
+    ill_type = "gradient",
+    show.legend = FALSE
+  ) +
+  stat_pointinterval()+
+  stat_pointinterval(
+    geom = "label",
+    aes(label = factor(ind)),
+    .width = c(0.66, 0.95),
+    #position = position_dodge(width = 1),
+    size = 3,
+    color = "black",
+    #position = position_dodge(width = .4, preserve = "single")
+  )+
+  scale_color_manual(values =cluster_colors) +
+  scale_y_discrete(breaks = NULL) +
+  guides(fill = "none",
+         color = "none")+
+  theme_light()
+
+# 6. Within SD ------------------------------------------------------------
+
+group_id <- obj$Y$group_id
+
+# Function to compute mean within school clusters for one matrix
+aggregate_by_school <- function(mat, group_id) {
+  t(sapply(split(seq_along(group_id), group_id), function(cols) rowMeans(mat[, cols, drop = FALSE])))
+}
+
+# Apply this function to each chain separately
+tau_reduced <- lapply(tau_combined, aggregate_by_school, group_id = group_id)
+
+# Convert each element in the list to a matrix (for consistency)
+tau_reduced <- lapply(tau_reduced, as.matrix)
+
+# Check the structure of the reduced data
+str(tau_reduced)
+
+# Transpose each matrix (to make schools the columns)
+tau_transposed <- lapply(tau_reduced, t)
+
+# Stack chains row-wise
+tau_matrix <- do.call(rbind, tau_transposed)
+
+# Check structure
+str(tau_matrix)
+
+
+tau_long <- stack(as.data.frame(tau_matrix))
+
+sub_tau <- subset(tau_long, ind %in% which(df_pip$pip >= pip_level))
+
+## Plot
+
+ggplot(sub_tau) +
+  aes( y = reorder(factor(ind), values, median),
+       x = log(values),
+       fill = factor(ind),
+       color = factor(ind)
+       )+
+  scale_fill_manual(values = cluster_colors) +
+  stat_slab(
+    height = 2,
+    alpha = .7,
+    expand = FALSE, trim = FALSE, density = "unbounded",
+    show.legend = FALSE
+  ) +
+  stat_pointinterval()+
+  stat_pointinterval(
+    geom = "label",
+    aes(label = factor(ind)),
+    .width = c(0.66, 0.95),
+    #position = position_dodge(width = 1),
+    size = 3,
+    color = "black",
+    #position = position_dodge(width = .4, preserve = "single")
+  )+
+  scale_color_manual(values =cluster_colors) +
+  scale_y_discrete(breaks = NULL) +
+  guides(fill = "none",
+         color = "none") +
+  labs(x = "Within-cluster SD posterior distribution",
+       y = NULL,
        title = variable) +
   theme_light()
 
-ggplot(subset(posterior_long, ind %in% c("u[1,2]", "u[2,2]", "u[3,2]")), 
-       aes(y = ind, x = values)) +
-  stat_halfeye(aes(fill = after_stat(level)), 
-               .width = c(0.8, 0.95), fill_type = "gradient") +
-  scale_fill_viridis_c(option = "plasma") +
-  theme_minimal() +
-  labs(y = "Parameter", x = "Posterior Samples", 
-       title = "Gradient Interval Plot for Selected Parameters")
+## ggridges
 
+ggplot(sub_tau) +
+  aes( y = reorder(factor(ind), values, median),
+       x = values,
+       fill = factor(ind),
+       color = factor(ind)
+  )+
+  stat_pointinterval() +
+  scale_fill_manual(values =cluster_colors, guide = "none") +
+  scale_color_manual(values =cluster_colors, guide = "none") +
+  scale_y_discrete(breaks = NULL) +
+  geom_density_ridges(alpha = .5, scale =3) +
+  scale_y_discrete(expand = c(0, 0)) +     # will generally have to set the `expand` option
+  scale_x_continuous(expand = c(0, 0)) +   # for both axes to remove unneeded padding
+  coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
+  # stat_pointinterval(
+  #   geom = "label",
+  #   aes(label = factor(ind)),
+  #   .width = c(0.66, 0.95),
+  #   #position = position_dodge(width = 1),
+  #   size = 3,
+  #   color = "black",
+  #   #position = position_dodge(width = .4, preserve = "single")
+  # )+
+  theme_ridges() 
