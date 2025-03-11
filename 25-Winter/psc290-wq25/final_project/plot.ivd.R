@@ -364,27 +364,36 @@ ggplot(subdata) +
 
 ## ggridges
 
-plt_tau <- ggplot(subdata) +
+plt_u <- ggplot(subdata) +
   aes( y = reorder(factor(ind), values, median),
        x = values,
        fill = factor(ind),
        color = factor(ind)
   )+
-  stat_pointinterval()+
   scale_fill_manual(values =cluster_colors, guide = "none") +
   scale_color_manual(values =cluster_colors, guide = "none") +
-  scale_y_discrete(breaks = NULL) +
-  geom_density_ridges(alpha = .4, scale =3,rel_min_height = 0.005,
-                      linewidth = 1 ) +
-  scale_y_discrete(expand = c(0, 0), name= "Cluster ID") +     # will generally have to set the `expand` option
-  scale_x_continuous(expand = c(0, 0), name= "Sigma") +   # for both axes to remove unneeded padding
+  geom_density_ridges(alpha = .4, scale =3,rel_min_height = 0.0005,
+                      linewidth = 1) +
+  stat_pointinterval()+
+  stat_pointinterval(
+    geom = "label",
+    aes(label = factor(ind)),
+    .width = c(0.66, 0.95),
+    size = 3,
+    color = "black",
+  )+
+  scale_y_discrete(expand = c(0, 0), name= NULL) +     # will generally have to set the `expand` option
+  scale_x_continuous(expand = c(0, 0), name= "Random effect estimate") +   # for both axes to remove unneeded padding
   coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
   theme_ridges() +
   theme(
     axis.title.x = element_text(hjust = 0.5),
-    axis.title.y = element_text(hjust = 0.5)
+    axis.title.y = element_text(hjust = 0.5),
+    axis.text.y = element_blank()
   )
-plt_tau
+plt_u
+
+saveRDS(plt_u, "final_project/plots/ranef.rds")
 
 # 6. Within SD ------------------------------------------------------------
 
@@ -422,13 +431,13 @@ sub_tau <- subset(tau_long, ind %in% which(df_pip$pip >= pip_level))
 
 ggplot(sub_tau) +
   aes( y = reorder(factor(ind), values, median),
-       x = log(values),
+       x = values,
        fill = factor(ind),
        color = factor(ind)
        )+
   scale_fill_manual(values = cluster_colors) +
   stat_slab(
-    height = 2,
+    height = 3,
     alpha = .7,
     expand = FALSE, trim = FALSE, density = "unbounded",
     show.legend = FALSE
@@ -454,25 +463,34 @@ ggplot(sub_tau) +
 
 ## ggridges
 
-plt_u <- ggplot(sub_tau) +
+plt_sigma <- ggplot(sub_tau) +
   aes( y = reorder(factor(ind), values, median),
        x = values,
        fill = factor(ind),
        color = factor(ind)
   )+
-  stat_pointinterval()+
+  #stat_pointinterval()+
  
   scale_fill_manual(values =cluster_colors, guide = "none") +
   scale_color_manual(values =cluster_colors, guide = "none") +
-  scale_y_discrete(breaks = NULL) +
-  geom_density_ridges(alpha = .4, scale =3,rel_min_height = 0.005,
+  geom_density_ridges(alpha = .7, scale =2.5,rel_min_height = 0.005,
                       linewidth = 1 ) +
-  scale_y_discrete(expand = c(0, 0), name= "Cluster ID") +     # will generally have to set the `expand` option
-  scale_x_continuous(expand = c(0, 0), name= "Random effect estimate") +   # for both axes to remove unneeded padding
+  stat_pointinterval()+
+  stat_pointinterval(
+    geom = "label",
+    aes(label = factor(ind)),
+    .width = c(0.66, 0.95),
+    size = 3,
+    color = "black",
+  )+
+  scale_y_discrete(expand = c(0, 0), name= NULL) +     # will generally have to set the `expand` option
+  scale_x_continuous(expand = c(0, 0), name= "Within-cluster SD") +   # for both axes to remove unneeded padding
   coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
   theme_ridges() +
   theme(
     axis.title.x = element_text(hjust = 0.5),
-    axis.title.y = element_text(hjust = 0.5)
+    axis.title.y = element_text(hjust = 0.5),
+    axis.text.y = element_blank()
   )
-plt_u
+plt_sigma
+saveRDS(plt_sigma, "final_project/plots/sigma.rds")
