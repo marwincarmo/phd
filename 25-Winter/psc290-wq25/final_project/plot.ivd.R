@@ -94,7 +94,7 @@ for(i in 1:Sr ) {
 no_ranef_s <- obj$nimble_constants$Sr
 
 ## Create a color vector for clusters with pip >= pip_level
-set.seed(164839)
+set.seed(167779)
 cluster_colors <- randomcoloR::distinctColorPalette(
   k = sum(ss_means[[1]] >= pip_level)
 )
