@@ -233,7 +233,7 @@ nx <- (max(df_pip$tau ) - min(df_pip$tau ))/50
 
 # 2. PIP ------------------------------------------------------------------
 
-plt <- ggplot(df_pip, aes(x = ordered, y = pip)) +
+plt_pip <- ggplot(df_pip, aes(x = ordered, y = pip)) +
   geom_point(data = subset(df_pip, pip < pip_level), 
              alpha = .6, 
              size = 4, 
@@ -252,14 +252,14 @@ plt <- ggplot(df_pip, aes(x = ordered, y = pip)) +
   ylim(c(0, 1 ) ) + 
   labs(x = "Ordered index",
        y = "Posterior Inclusion Probability",
-       title = variable) +
+       title = "Scale Random Intercept") +
   theme_ridges() +
   theme(
     axis.title.x = element_text(hjust = 0.5),
     axis.title.y = element_text(hjust = 0.5)
   )
-print(plt )
-
+print(plt_pip )
+saveRDS(plt_pip, "final_project/plots/pip.rds")
 
 # 3. Funnel ---------------------------------------------------------------
 
@@ -269,7 +269,7 @@ print(plt )
 
 
 
-plt <- ggplot(df_pip, aes(x = tau, y = pip)) +
+plt_funnel <- ggplot(df_pip, aes(x = tau, y = pip)) +
   geom_point(data = subset(df_pip, pip < pip_level), 
              alpha = .3, size = 4, stroke = 1, shape = 21, fill = "grey40", color = "black") +
   geom_jitter(data = subset(df_pip, pip >= pip_level),
@@ -284,27 +284,21 @@ plt <- ggplot(df_pip, aes(x = tau, y = pip)) +
   geom_abline(intercept = pip_level, slope = 0, lty =  3) +
   ylim(c(0, 1 ) ) +
   scale_fill_manual("ID", values = cluster_colors) +
-  labs(x = "Posterior SD",
+  labs(x = "Within-cluster SD",
        y = "Posterior Inclusion Probability",
-       title = variable) +
+       title = "Scale Random Intercept") +
   guides(fill = "none") +
   theme_ridges() +
   theme(
     axis.title.x = element_text(hjust = 0.5),
     axis.title.y = element_text(hjust = 0.5)
   )
-print( plt )
-
+print( plt_funnel )
+saveRDS(plt_funnel, "final_project/plots/funnel.rds")
 
 # 4. Outcome --------------------------------------------------------------
 
-# df_y <- merge(df_pip,
-#               aggregate(Y ~ group_id, data = obj$Y, FUN = mean),
-#               by.x = "id", by.y = "group_id")
-# df_y$tau <- tau
-# nx <- (max(df_y$tau ) - min(df_y$tau ))/50
-## 
-plt <- ggplot(df_pip, aes(x = mu, y = pip)) +
+plt_y <- ggplot(df_pip, aes(x = mu, y = pip)) +
   geom_point(data = subset(df_pip, pip < pip_level), 
              alpha = .3, stroke = 1, aes(size=tau),
              shape = 21, fill = "grey40", color = "black") +
@@ -318,7 +312,7 @@ plt <- ggplot(df_pip, aes(x = mu, y = pip)) +
   geom_abline(intercept = pip_level, slope = 0, lty =  3)+
   ylim(c(0, 1 ) ) + 
   scale_fill_manual("ID", values = cluster_colors) +
-  labs(x = "Posterior Mean of mu",
+  labs(x = "Cluster mean",
        y = "Posterior Inclusion Probability",
        title = variable) +
   guides(fill = "none", 
@@ -328,7 +322,7 @@ plt <- ggplot(df_pip, aes(x = mu, y = pip)) +
     axis.title.x = element_text(hjust = 0.5),
     axis.title.y = element_text(hjust = 0.5)
   )
-print(plt )
+print(plt_y )
 
 # 5. Halfeye plot ----------------------------------------------------
 
