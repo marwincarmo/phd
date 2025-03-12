@@ -259,6 +259,7 @@ plt_pip <- ggplot(df_pip, aes(x = ordered, y = pip)) +
     axis.title.y = element_text(hjust = 0.5)
   )
 print(plt_pip )
+
 saveRDS(plt_pip, "final_project/plots/pip.rds")
 
 # 3. Funnel ---------------------------------------------------------------
@@ -286,14 +287,26 @@ plt_funnel <- ggplot(df_pip, aes(x = tau, y = pip)) +
   scale_fill_manual("ID", values = cluster_colors) +
   labs(x = "Within-cluster SD",
        y = "Posterior Inclusion Probability",
-       title = "Scale Random Intercept") +
+       title = "Intercept") +
   guides(fill = "none") +
+  annotate(
+    "rect", xmin = quantile(df_pip$tau, .025), 
+    xmax = quantile(df_pip$tau, .975), ymin = 0
+    , ymax = 1, fill = "#9ECAE1", alpha = .3
+  )+
+  annotate("label", label = "95% CrI", 
+           color = "white", 
+           fill = "#9ECAF0", 
+           x = quantile(df_pip$tau, .975) -sd(df_pip$tau),
+           size = 6, fontface = "bold",
+           y =0.1, hjust = 0) + 
   theme_ridges() +
   theme(
     axis.title.x = element_text(hjust = 0.5),
     axis.title.y = element_text(hjust = 0.5)
   )
 print( plt_funnel )
+
 saveRDS(plt_funnel, "final_project/plots/funnel.rds")
 
 # 4. Outcome --------------------------------------------------------------
@@ -323,6 +336,7 @@ plt_y <- ggplot(df_pip, aes(x = mu, y = pip)) +
     axis.title.y = element_text(hjust = 0.5)
   )
 print(plt_y )
+saveRDS(plt_y, "final_project/plots/outcome.rds")
 
 # 5. Halfeye plot ----------------------------------------------------
 
@@ -372,8 +386,9 @@ plt_u <- ggplot(subdata) +
   )+
   scale_fill_manual(values =cluster_colors, guide = "none") +
   scale_color_manual(values =cluster_colors, guide = "none") +
-  geom_density_ridges(alpha = .4, scale =3,rel_min_height = 0.0005,
-                      linewidth = 1) +
+  geom_density_ridges(alpha = .7, scale =3,rel_min_height = 0.0005,
+                      linewidth = 1
+                      ) +
   stat_pointinterval()+
   stat_pointinterval(
     geom = "label",

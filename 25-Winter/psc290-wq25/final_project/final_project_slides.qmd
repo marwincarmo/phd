@@ -1,6 +1,6 @@
 ---
-title: "Identification of Consistent and Inconsistent Academic Achievement in Grouping Units"
-subtitle: "PSC 290 - Data Visualization"
+title: "Identification of Consistent and Inconsistent Schools"
+subtitle: "Data Visualization in R -- Final project"
 author: "Marwin Carmo"
 format: 
   revealjs:
@@ -20,7 +20,7 @@ format:
     margin-right: "0"
     width: 1400
     # height: 900
-    #footer: "Beyond Averages with MELSM and Spike-and-Slab"
+    footer: "Identification of Consistent and Inconsistent Schools"
     #logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
 editor: source
 editor_options: 
@@ -30,6 +30,7 @@ editor_options:
 ```{r}
 library(ggplot2)
 library(patchwork)
+library(ivd)
 ```
 
 
@@ -41,9 +42,10 @@ library(patchwork)
 
 pip <- readRDS("plots/pip.rds")
 funnel <- readRDS("plots/funnel.rds")
+outcome <- readRDS("plots/outcome.rds")
 ranef <- readRDS("plots/ranef.rds")
 sigma <- readRDS("plots/sigma.rds")
-
+m1 <- readRDS("/run/media/mcarmo/662229CC2229A253/RProjects/melms_educ/WORK/-ANALYSIS/MODELS/saeb/out/outm1.rds")
 ```
 
 
@@ -51,19 +53,13 @@ sigma <- readRDS("plots/sigma.rds")
 
 - The Spike-and-Slab Mixed-Effects Location Scale model (SS-MELSM) methodology identifies clustering units (students, classrooms, etc.) that exhibit unusual levels of residual variability—such as consistency or inconsistency—in academic achievement.
 
-- The Posterior Inclusion Probability (PIP), quantifies the probability that a given random effect is included in the residual variance (scale) model.
-
-- Evidence for retaining the random effect is evidence of unusual variability.
-
-## Background
+- Higher (>.75) Posterior Inclusion Probability (PIP) of the scale random effect is evidence of unusual variability.
 
 - `ivd` is a package that facilitates the implementation of the SS-MELSM.
 
-- Once (in)consistent schools are identified, researchers may want to investigate these clusters to understand what distinguishes them from others.
-
 ## Research question
 
-::: {.fragment .fade-up style="text-align: center; margin-top: 1em"}
+::: {.fragment .fade-up style="text-align: center; margin-top: 1em; font-size: 1.5em"}
 How can we visualize these clusters to clearly highlight what makes them unique compared to others?
 :::
 
@@ -73,9 +69,11 @@ How can we visualize these clusters to clearly highlight what makes them unique 
 
 - Standardized math scores from 11,386 11th and 12th-grade students across 160 schools.
 
-- I will work with posterior estimates from the scale model.
-
-- Specifically, I will use the PIPs, the estimated random effects standard deviations, the within-school residual variance, and the estimated math scores.
+- I will work with posterior estimates from the scale model: 
+  - PIPs, 
+  - random effects standard deviations, 
+  - within-school residual variance, and 
+  - math scores.
 
 ## Improvements to existing plots
 
@@ -86,7 +84,8 @@ How can we visualize these clusters to clearly highlight what makes them unique 
 #| fig-cap: 
 #|   - "Old version"
 #|   - "New version"
-pip
+
+plot(m1, "pip")
 pip
 ```
 
@@ -99,7 +98,8 @@ pip
 #| fig-cap: 
 #|   - "Old version"
 #|   - "New version"
-funnel
+
+plot(m1, "funnel")
 funnel
 ```
 
@@ -112,8 +112,9 @@ funnel
 #| fig-cap: 
 #|   - "Old version"
 #|   - "New version"
-funnel
-funnel
+
+plot(m1, "outcome")
+outcome
 ```
 
 ## New plots
