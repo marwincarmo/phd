@@ -29,7 +29,6 @@ editor_options:
 
 ```{r}
 library(ggplot2)
-library(patchwork)
 library(ivd)
 ```
 
