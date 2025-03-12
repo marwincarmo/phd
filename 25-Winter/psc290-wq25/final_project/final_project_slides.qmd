@@ -1,0 +1,132 @@
+---
+title: "Identification of Consistent and Inconsistent Academic Achievement in Grouping Units"
+subtitle: "PSC 290 - Data Visualization"
+author: "Marwin Carmo"
+format: 
+  revealjs:
+    scrollable: true
+    incremental: true
+    code-tools: true
+    code-copy: true
+    code-line-numbers: true
+    code-link: true
+    preview-links: true
+    slide-number: true
+    self-contained: true
+    fig-height: 4
+    fig-width: 6
+    fig-align: center
+    margin-left: "0"
+    margin-right: "0"
+    width: 1400
+    # height: 900
+    #footer: "Beyond Averages with MELSM and Spike-and-Slab"
+    #logo: "https://github.com/emoriebeck/psc290-data-viz-2022/raw/main/01-week1-intro/02-code/02-images/ucdavis_logo_blue.png"
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(ggplot2)
+library(patchwork)
+```
+
+
+```{r}
+# pip <- readRDS("final_project/plots/pip.rds")
+# funnel <- readRDS("final_project/plots/funnel.rds")
+# ranef <- readRDS("final_project/plots/ranef.rds")
+# sigma <- readRDS("final_project/plots/sigma.rds")
+
+pip <- readRDS("plots/pip.rds")
+funnel <- readRDS("plots/funnel.rds")
+ranef <- readRDS("plots/ranef.rds")
+sigma <- readRDS("plots/sigma.rds")
+
+```
+
+
+## Background
+
+- The Spike-and-Slab Mixed-Effects Location Scale model (SS-MELSM) methodology identifies clustering units (students, classrooms, etc.) that exhibit unusual levels of residual variability—such as consistency or inconsistency—in academic achievement.
+
+- The Posterior Inclusion Probability (PIP), quantifies the probability that a given random effect is included in the residual variance (scale) model.
+
+- Evidence for retaining the random effect is evidence of unusual variability.
+
+## Background
+
+- `ivd` is a package that facilitates the implementation of the SS-MELSM.
+
+- Once (in)consistent schools are identified, researchers may want to investigate these clusters to understand what distinguishes them from others.
+
+## Research question
+
+::: {.fragment .fade-up style="text-align: center; margin-top: 1em"}
+How can we visualize these clusters to clearly highlight what makes them unique compared to others?
+:::
+
+- The final goal is to enhance the visualizations currently provided by the `ivd` package.
+
+## Method
+
+- Standardized math scores from 11,386 11th and 12th-grade students across 160 schools.
+
+- I will work with posterior estimates from the scale model.
+
+- Specifically, I will use the PIPs, the estimated random effects standard deviations, the within-school residual variance, and the estimated math scores.
+
+## Improvements to existing plots
+
+### PIP plot
+
+```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "Old version"
+#|   - "New version"
+pip
+pip
+```
+
+## Improvements to existing plots
+
+### Funnel plot
+
+```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "Old version"
+#|   - "New version"
+funnel
+funnel
+```
+
+## Improvements to existing plots
+
+### Outcome plot
+
+```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "Old version"
+#|   - "New version"
+funnel
+funnel
+```
+
+## New plots
+
+### Sugarloaf plots
+
+```{r}
+#| layout-ncol: 2
+
+ranef
+sigma
+```
+
+![](PaodeAcucar.JPG){.fragment .absolute .nostretch top=0 left=600 width="350px"}
+
+<!-- ![](sugarloaf.jpg){.fragment .absolute top=200 left=600 width="200" height="350"} -->
