@@ -1,0 +1,116 @@
+---
+title: "Using MELSM to Identify Consistent and Inconsistent Schools"
+author: "Marwin Carmo"
+#date: "2025-02-14"
+format: 
+  pdf:
+    bm: true
+    amsmath: true
+    mathspec: true
+            
+---
+
+## Background
+
+Mixed-effects location-scale models (MELSM) are an extension of standard mixed-effects models, such that the residual variance is not assumed to be constant but can be modeled, allowing the inclusion of a sub-model to address potential differences in the residual variance. The MELSM estimates simultaneously a model for the means (location) and a model for residual variance (scale). For instance, in an educational research setting, the model defines a multilevel mode for the observed values, $y_{ij}$, for school $j$ and student $i$, and a multilevel model for the within-school residual variances, $\sigma_{ij}$.
+
+Based on the MESLM ability to estimate residual standard deviations, we can implement the spike-and-slab regularization technique to the scale random effects to identify schools (clusters) whose student-level residual standard deviations are not captured well by scale fixed effects. The idea is to place an indicator variable, $\delta \in$ [0, 1], to the random effects to be subjected to shrinkage where the school-level effect for the scale either retains the random effect or reduces to the fixed effect, according to $\delta$’s value. So, for each $j$ school and $k$ random effect, a posterior inclusion probability (PIP) is computed to quantify the probability that a given random effect is included in the model, conditional on the observed data. A PIP greater than 0.75 indicates strong evidence that the school's residual variability deviates significantly from the average due to higher or lower consistency in student performance. This method is termed Spike and slab mixed-effects location-scale model (SS-MELSM) and is implemented the R package `ivd`.
+
+## Research question
+
+The motivation for the SS-MELSM is to identify and isolate clusters that display unusual amounts of residual variability. It shares the same general approach of modeling residual variances in a MELSM, such as studying variables that contribute to (in)consistency. The focus, however, is on the \textit{identification} of clustering units that show unusually high or low consistency in academic achievement. It is expected that the clusters attributed PIPs higher than 0.75 have a distinct pattern of within-cluster variability that clearly distinct them from others.
+
+## Method
+
+The data for this study comes from The Elementary Education Evaluation System (Saeb), an assessment program conducted by the Brazilian government to evaluate the quality of elementary education across the country. This contains standardized math test scores from 11,386 11th and 12th graders across 160 schools and is part of the `ivd` package. 
+
+To keep this illustration simple, I opted for a simpler model that featured an intercept-only specification in both the location and scale submodels. The model predicting math achievement for the $i$-th student within the $j$-th school is:
+
+\begin{equation}
+\label{eq:model-1}
+\begin{aligned}
+\text{mAch}_{ij} & \sim  \mathcal{N}(\mu_j, \sigma_j)\\
+\mu_j &= \gamma_{0} + u_{0j}\\
+\sigma_j &= \exp(\eta_{0} + t_{0j})
+\end{aligned}
+\end{equation}
+
+
+\begin{equation} \nonumber
+  \textbf{v}=
+  \begin{bmatrix} u_0 \\ t_0 \end{bmatrix} \sim \mathcal{N}
+    \begin{pmatrix}
+        \boldsymbol{0}=
+        \begin{bmatrix} 0 \\ 0 \end{bmatrix},
+        \boldsymbol{\Sigma}=
+        \begin{bmatrix} \tau^2_{u_0} & \tau_{u_0t_0} \\ 
+                        \tau_{u_0t_0} & \tau^2_{t_0} 
+        \end{bmatrix}
+    \end{pmatrix}
+\end{equation}
+
+This model defines math achievement ($\text{mAch}_{ij}$) via the fixed intercept parameter $\gamma_0$ and the random intercept $u_{0j}$, capturing the deviation of the $j$-th school from the fixed effect. Each school's residual standard deviation is modeled as a function of the fixed effect $\eta_0$ and the school-specific deviation $t_{0j}$, both defined on the log scale.
+
+The random effects are assumed to come from the same multivariate Gaussian Normal distribution with zero means and covariance matrix $\Sigma$. This matrix can be decomposed into $\boldsymbol\Sigma = \boldsymbol{\tau}\boldsymbol{\Omega\tau}'$, where $\boldsymbol{\tau}$ is a diagonal matrix holding the random-effect standard deviations and $\boldsymbol\Omega$ is the correlation matrix that contains the correlations among all random effects. Next, we can decompose $\boldsymbol\Omega$ via the Cholesky factor $\textbf{L}$ of $\boldsymbol\Omega = \textbf{L}'\textbf{L}$.
+
+With these decomposition, the random effects vector $\textbf{v}$ by multiplying $\textbf{L}$ with the standard deviations $\boldsymbol{\tau}$ and scaling it with a standard normally distributed $\textbf{z}_j$. Then, it can be expanded to include an indicator vector $\boldsymbol{\delta}_j$ of length $k$ (for $1, \ldots, k$ random effects) for each random effect to be subjected to shrinkage:
+
+\begin{equation} \label{eq:ss_v}
+\textbf{v}_j = \boldsymbol{\tau}\textbf{L}\boldsymbol{z}_j\boldsymbol{\delta}_j.
+\end{equation}
+
+Each element in $\boldsymbol{\delta}_j$ takes integers $\in \{0,1\}$ and follows a $\delta_{jk} \sim \text{Bernoulli}(\pi=0.5)$ distribution. Depending on $\delta$'s value, the computations in Equation \eqref{eq:ss_v} will either retain the random effect or shrink it to exactly zero. Consequently, the estimated posterior inclusion probability (PIP) quantifies the probability that a given random effect is included in the model, conditional on the observed data. The PIP of any random effect $k$ is determined by the proportion of MCMC samples where $\delta_{jk} = 1$ across the the total number of posterior samples $S$:
+\begin{align}
+\label{eq:pip}
+Pr(\delta_{jk} = 1 | \textbf{Y}) = \frac{1}{S} \sum_{s = 1}^S \delta_{jks}.
+\end{align}
+
+Setting the prior probability of $\pi$ to 0.5 implies equal prior odds, $Pr(\delta_{jk} = 1)/Pr(\delta_{jk} = 0) = 1$, reflecting no prior information about the presence of a random effect. The Bayes factor for including the $k$th random effect in the $j$th school simplifies to:
+\begin{align}
+\label{eq:bf_pip}
+BF_{10_{jk}} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 | \textbf{Y}) }.
+\end{align}
+
+A posterior inclusion probability $Pr(\delta_j = 1|\textbf{Y}) \geq 0.75$, corresponding to a $BF_{10_{jk}} \geq 3$, provides evidence for including the random effect over fixed effects alone.
+
+This model was fitted using the `ivd` package using six chains of 3,000 iterations and 12,000 warm-up samples. The results present the posterior estimates of: (i) the PIP for $\delta_{jt_0}$, (ii) the scale random effect SD, $\tau_{t_0}$, (iii) within-school residual SD, $\sigma_j$, and (iv) the math scores.
+
+## Results
+
+\newpage
+
+```{r}
+#| eval: true
+#| include: false
+library(ggplot2)
+pip <- readRDS("plots/paper/pip.rds")
+funnel <- readRDS("plots/paper/funnel.rds")
+outcome <- readRDS("plots/paper/outcome.rds")
+ranef <- readRDS("plots/paper/ranef.rds")
+sigma <- readRDS("plots/paper/sigma.rds")
+```
+
+## Visualization
+
+```{r}
+#| echo: false
+#| fig-height: 4
+#| fig-width: 6
+#| fig-cap: "The posterior inclusion probabilities of the scale random effect for the 160 schools in the dataset for Models 1 and 2. A dotted line marks the PIP threshold of 0.75. Schools with PIPs exceeding this threshold are colored."
+
+#| fig-align: "center"
+pip +
+  labs(title = "Scale Intercept")
+```
+
+```{r}
+#| label: fig-funnel
+#| echo: false
+#| fig-cap: Scatter plots of posterior inclusion probability (PIP) versus within-cluster standard deviation (SD). The y-axis represents the PIP for the scale random intercept, and the x-axis represents the within-cluster SD. The plots exhibit a V-shaped pattern, where schools with the lowest and highest SDs are positioned toward the left and right, respectively, while those with average SDs are clustered near the center.
+#| fig-height: 4
+#| fig-width: 6
+funnel +
+  labs(title = "Scale Intercept")
+```
+
+As seen in @fig-funnel
