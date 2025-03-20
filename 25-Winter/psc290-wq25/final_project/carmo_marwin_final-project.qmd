@@ -128,7 +128,7 @@ funnel / outcome +
 ```{r}
 #| label: fig-sugarloaf
 #| echo: false
-#| fig-cap: Density plots of the posterior estimates of the scale random effect (panel A), and cluster SD for schools with PIP for the inclusion of the scale random effect larger than 0.75. Schools with lower PIP show more posterior mass of $t_0$ on the spike (panel A) and, consequently, more posterior mass on the average residual standard deviation. In both panels, color shading represent the limits of posterior probability density.
+#| fig-cap: Density plots of the posterior estimates of the scale random effect (panel A), and cluster SD for schools with PIP for the inclusion of the scale random effect larger than 0.75. Schools with lower PIP show more posterior mass of $t_0$ on the spike (panel A) and, consequently, more posterior mass on the average residual standard deviation. In both panels, color shading represent the limits of posterior probabilities.
 #| fig-height: 7
 #| fig-width: 6
 ranef / sigma
