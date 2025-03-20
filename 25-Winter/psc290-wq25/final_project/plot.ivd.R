@@ -3,6 +3,7 @@ library(ivd)
 library(coda)
 library(ggdist)
 library(ggridges)
+library(ggrepel)
 
 obj <- readRDS("../../../melms_educ/WORK/-ANALYSIS/MODELS/saeb/out/outm1.rds")
 
@@ -230,29 +231,38 @@ df_pip <-
 ord <- (max(df_pip$ordered ) - min(df_pip$ordered ))/50
 nx <- (max(df_pip$tau ) - min(df_pip$tau ))/50
 
+y_lower <- ifelse(min(df_pip$pip) < 0.25, 0, 0.25)
 
 # 2. PIP ------------------------------------------------------------------
 
 plt_pip <- ggplot(df_pip, aes(x = ordered, y = pip)) +
   geom_point(data = subset(df_pip, pip < pip_level), 
-             alpha = .6, 
-             size = 4, 
-             stroke = 1, 
+             alpha = .3, 
+             size = 5, 
              shape = 21, 
              fill = "grey40", 
              color = "black") +
   geom_jitter(data = subset(df_pip, pip >= pip_level),
-              aes(fill = factor(id)), 
-              size = 4, 
-              stroke = 1, 
+              fill = "#0265a5", 
+              size = 5, 
               shape = 21, 
-              color = "black") +
-  scale_fill_manual("ID", values = cluster_colors) +
+              color = "white") +
+  #scale_fill_manual("ID", values = cluster_colors) +
+  geom_label_repel(data = subset(df_pip, pip >= pip_level),
+                  nudge_y = 1 - subset(df_pip, pip >= pip_level)$pip,
+                  aes(label = id),
+                  force = 100,
+                  box.padding   = 0.35,
+                  point.padding = 0.5,
+                  segment.color = 'grey50',
+                  direction = "x"
+  ) +
   geom_abline(intercept = pip_level, slope = 0, lty =  3)+
-  ylim(c(0, 1 ) ) + 
+  scale_y_continuous(limits = c(y_lower, 1),
+                     breaks = seq(y_lower, 1, by = 0.25))+
   labs(x = "Ordered index",
        y = "Posterior Inclusion Probability",
-       title = "Scale Random Intercept") +
+       title = "Intercept") +
   theme_ridges() +
   theme(
     axis.title.x = element_text(hjust = 0.5),
@@ -272,34 +282,35 @@ saveRDS(plt_pip, "final_project/plots/pip.rds")
 
 plt_funnel <- ggplot(df_pip, aes(x = tau, y = pip)) +
   geom_point(data = subset(df_pip, pip < pip_level), 
-             alpha = .3, size = 4, stroke = 1, shape = 21, fill = "grey40", color = "black") +
+             alpha = .3, size = 5, shape = 21, fill = "grey40", color = "white") +
   geom_jitter(data = subset(df_pip, pip >= pip_level),
-             aes(fill = factor(id)), size = 4, shape = 21,  position = "jitter") + 
+              fill = "#0265a5", size = 5,shape = 21,  position = "jitter",
+              color = "white") + 
   labs(x = "Within-Cluster SD") +
-  geom_text(data = subset(df_pip, pip >= pip_level),
-            aes(label = id),
-            nudge_x = -nx,
-            vjust = -0.5,
-            #nudge_x = -.005,
-            size = 4)+
+  geom_text_repel(data = subset(df_pip, pip >= pip_level),
+                  aes(label = id),
+                  #box.padding   = 0.35,
+                  point.padding = 0.5,
+                  #segment.color = 'grey50'
+  ) +
   geom_abline(intercept = pip_level, slope = 0, lty =  3) +
-  ylim(c(0, 1 ) ) +
-  scale_fill_manual("ID", values = cluster_colors) +
+  scale_y_continuous(limits = c(y_lower, 1),
+                     breaks = seq(y_lower, 1, by = 0.25)) +
   labs(x = "Within-cluster SD",
        y = "Posterior Inclusion Probability",
        title = "Intercept") +
   guides(fill = "none") +
-  annotate(
-    "rect", xmin = quantile(df_pip$tau, .025), 
-    xmax = quantile(df_pip$tau, .975), ymin = 0
-    , ymax = 1, fill = "#9ECAE1", alpha = .3
-  )+
-  annotate("label", label = "95% CrI", 
-           color = "white", 
-           fill = "#9ECAF0", 
-           x = quantile(df_pip$tau, .975) -sd(df_pip$tau),
-           size = 6, fontface = "bold",
-           y =0.1, hjust = 0) + 
+  # annotate(
+  #   "rect", xmin = quantile(df_pip$tau, .025), 
+  #   xmax = quantile(df_pip$tau, .975), ymin = 0
+  #   , ymax = 1, fill = "#9ECAE1", alpha = .3
+  # )+
+  # annotate("label", label = "95% CrI", 
+  #          color = "white", 
+  #          fill = "#9ECAF0", 
+  #          x = quantile(df_pip$tau, .975) -sd(df_pip$tau),
+  #          size = 6, fontface = "bold",
+  #          y =0.1, hjust = 0) + 
   theme_ridges() +
   theme(
     axis.title.x = element_text(hjust = 0.5),
@@ -314,20 +325,22 @@ saveRDS(plt_funnel, "final_project/plots/funnel.rds")
 plt_y <- ggplot(df_pip, aes(x = mu, y = pip)) +
   geom_point(data = subset(df_pip, pip < pip_level), 
              alpha = .3, stroke = 1, aes(size=tau),
-             shape = 21, fill = "grey40", color = "black") +
+             shape = 21, fill = "grey40", color = "white") +
   geom_point(data = subset(df_pip, pip >= pip_level),
-             aes(fill = factor(id), size = tau),  shape = 21, color = "black") +
+             fill = "#0265a5", shape = 21,  position = "jitter",
+             aes(size = tau), color = "white") +
   geom_text(data = subset(df_pip, pip >= pip_level),
             aes(label = id),
             nudge_x = -.05,
             vjust = -0.5,
             size = 4)+
   geom_abline(intercept = pip_level, slope = 0, lty =  3)+
-  ylim(c(0, 1 ) ) + 
+  scale_y_continuous(limits = c(y_lower, 1),
+                     breaks = seq(y_lower, 1, by = 0.25))+
   scale_fill_manual("ID", values = cluster_colors) +
   labs(x = "Cluster mean",
        y = "Posterior Inclusion Probability",
-       title = variable) +
+       title = "Intercept") +
   guides(fill = "none", 
          size = "none") +
   theme_ridges() +
@@ -346,61 +359,70 @@ subdata <- subset(posterior_long, ind %in% which(df_pip$pip >= pip_level))
 
 pip_order <- df_pip[df_pip$pip >= pip_level, c("id", "pip")]
 
-ggplot(subdata) +
-  aes( y = reorder(factor(ind), values, median),
-       x = values,
-       fill = factor(ind),
-       color = factor(ind)
-       )+
-  scale_fill_manual(values = cluster_colors) +
-  stat_slab(
-    height = 5,
-    alpha = .7,
-    expand = FALSE, trim = FALSE, density = "unbounded",
-    ill_type = "gradient",
-    show.legend = FALSE
-  ) +
-  stat_pointinterval()+
-  stat_pointinterval(
-    geom = "label",
-    aes(label = factor(ind)),
-    .width = c(0.66, 0.95),
-    #position = position_dodge(width = 1),
-    size = 3,
-    color = "black",
-    #position = position_dodge(width = .4, preserve = "single")
-  )+
-  scale_color_manual(values =cluster_colors) +
-  scale_y_discrete(breaks = NULL) +
-  guides(fill = "none",
-         color = "none")+
-  theme_light()
+gradient <- c("#3182BD60","#3182BD80", "#3182BDB3", "#3182BD80", "#3182BD60", "white")
+
+gradient <- c("#0265a560","#0265a580", "#0265a5b3", "#0265a580", "#0265a560", "white")
+
+
+
+# ggplot(subdata) +
+#   aes( y = reorder(factor(ind), values, median),
+#        x = values,
+#        fill = factor(ind),
+#        color = factor(ind)
+#        )+
+#   scale_fill_manual(values = cluster_colors) +
+#   stat_slab(
+#     height = 5,
+#     alpha = .7,
+#     expand = FALSE, trim = FALSE, density = "unbounded",
+#     ill_type = "gradient",
+#     show.legend = FALSE
+#   ) +
+#   stat_pointinterval()+
+#   stat_pointinterval(
+#     geom = "label",
+#     aes(label = factor(ind)),
+#     .width = c(0.66, 0.95),
+#     #position = position_dodge(width = 1),
+#     size = 3,
+#     color = "black",
+#     #position = position_dodge(width = .4, preserve = "single")
+#   )+
+#   scale_color_manual(values =cluster_colors) +
+#   scale_y_discrete(breaks = NULL) +
+#   guides(fill = "none",
+#          color = "none")+
+#   theme_light()
 
 ## ggridges
 
 plt_u <- ggplot(subdata) +
   aes( y = reorder(factor(ind), values, median),
        x = values,
-       fill = factor(ind),
-       color = factor(ind)
-  )+
-  scale_fill_manual(values =cluster_colors, guide = "none") +
-  scale_color_manual(values =cluster_colors, guide = "none") +
-  geom_density_ridges(alpha = .7, scale =3,rel_min_height = 0.0005,
-                      linewidth = 1
-                      ) +
-  stat_pointinterval()+
+       fill = factor(stat(quantile))
+  ) +
+  stat_density_ridges(#aes(factor(ind)),
+    scale =2.5,rel_min_height = 0.005,
+    geom = "density_ridges_gradient",
+    calc_ecdf = TRUE,
+    linewidth = .5,
+    color = "white",
+    quantiles = c(0.025, .16, .84, 0.975)) +
   stat_pointinterval(
     geom = "label",
-    aes(label = factor(ind)),
+    aes(label = factor(ind),
+        fill = "white"),
     .width = c(0.66, 0.95),
     size = 3,
     color = "black",
-  )+
+  ) +
+  scale_fill_manual(values = gradient, guide = "none") +
   scale_y_discrete(expand = c(0, 0), name= NULL) +     # will generally have to set the `expand` option
   scale_x_continuous(expand = c(0, 0), name= "Random effect estimate") +   # for both axes to remove unneeded padding
   coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
   theme_ridges() +
+  labs(title = "Intercept") +
   theme(
     axis.title.x = element_text(hjust = 0.5),
     axis.title.y = element_text(hjust = 0.5),
@@ -444,60 +466,109 @@ sub_tau <- subset(tau_long, ind %in% which(df_pip$pip >= pip_level))
 
 ## Plot
 
-ggplot(sub_tau) +
-  aes( y = reorder(factor(ind), values, median),
-       x = values,
-       fill = factor(ind),
-       color = factor(ind)
-       )+
-  scale_fill_manual(values = cluster_colors) +
-  stat_slab(
-    height = 3,
-    alpha = .7,
-    expand = FALSE, trim = FALSE, density = "unbounded",
-    show.legend = FALSE
-  ) +
-  stat_pointinterval()+
-  stat_pointinterval(
-    geom = "label",
-    aes(label = factor(ind)),
-    .width = c(0.66, 0.95),
-    #position = position_dodge(width = 1),
-    size = 3,
-    color = "black",
-    #position = position_dodge(width = .4, preserve = "single")
-  )+
-  scale_color_manual(values =cluster_colors) +
-  scale_y_discrete(breaks = NULL) +
-  guides(fill = "none",
-         color = "none") +
-  labs(x = "Within-cluster SD posterior distribution",
-       y = NULL,
-       title = variable) +
-  theme_light()
+# ggplot(sub_tau) +
+#   aes( y = reorder(factor(ind), values, median),
+#        x = values,
+#        fill = factor(ind),
+#        color = factor(ind)
+#        )+
+#   scale_fill_manual(values = cluster_colors) +
+#   stat_slab(
+#     height = 3,
+#     alpha = .7,
+#     expand = FALSE, trim = FALSE, density = "unbounded",
+#     show.legend = FALSE
+#   ) +
+#   stat_pointinterval()+
+#   stat_pointinterval(
+#     geom = "label",
+#     aes(label = factor(ind)),
+#     .width = c(0.66, 0.95),
+#     #position = position_dodge(width = 1),
+#     size = 3,
+#     color = "black",
+#     #position = position_dodge(width = .4, preserve = "single")
+#   )+
+#   scale_color_manual(values =cluster_colors) +
+#   scale_y_discrete(breaks = NULL) +
+#   guides(fill = "none",
+#          color = "none") +
+#   labs(x = "Within-cluster SD posterior distribution",
+#        y = NULL,
+#        title = variable) +
+#   theme_light()
 
 ## ggridges
 
 plt_sigma <- ggplot(sub_tau) +
   aes( y = reorder(factor(ind), values, median),
        x = values,
-       fill = factor(ind),
-       color = factor(ind)
-  )+
-  #stat_pointinterval()+
- 
-  scale_fill_manual(values =cluster_colors, guide = "none") +
-  scale_color_manual(values =cluster_colors, guide = "none") +
-  geom_density_ridges(alpha = .7, scale =2.5,rel_min_height = 0.005,
-                      linewidth = 1 ) +
-  stat_pointinterval()+
+       fill = factor(stat(quantile))
+  ) +
+  stat_density_ridges(#aes(factor(ind)),
+    scale =2.5,rel_min_height = 0.005,
+    geom = "density_ridges_gradient",
+    calc_ecdf = TRUE,
+    linewidth = .7,
+    quantiles = c(0.025, .16, .84, 0.975)) +
   stat_pointinterval(
     geom = "label",
-    aes(label = factor(ind)),
+    aes(label = factor(ind),
+        fill = "white"),
     .width = c(0.66, 0.95),
     size = 3,
     color = "black",
+  ) +
+  scale_fill_manual(values = gradient, guide = "none") +
+  scale_y_discrete(expand = c(0, 0), name= NULL) +     # will generally have to set the `expand` option
+  scale_x_continuous(expand = c(0, 0), name= "Random effect estimate") +   # for both axes to remove unneeded padding
+  coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
+  theme_ridges() +
+  labs(title = "Intercept") +
+  theme(
+    axis.title.x = element_text(hjust = 0.5),
+    axis.title.y = element_text(hjust = 0.5),
+    axis.text.y = element_blank()
+  )
+plt_sigma
+saveRDS(plt_sigma, "final_project/plots/sigma.rds")
+
+## Testin quantile alpha
+
+# Create the new vector with the pattern: before - original - after
+new <- as.vector(sapply(cluster_colors, function(color) c(paste0(color, "40"), color, paste0(color, "40"))))
+
+# Print result
+print(new)
+scales::show_col(new)
+
+
+
+ggplot(sub_tau) +
+  aes( y = reorder(factor(ind), values, median),
+       x = values,
+       fill = factor(stat(quantile)),
+       #color = factor(ind)
   )+
+  #stat_pointinterval(aes(fill = factor(ind)), .width = c(0))+
+  stat_density_ridges(#aes(factor(ind)),
+    scale =2.5,rel_min_height = 0.005,
+    geom = "density_ridges_gradient",
+                      calc_ecdf = TRUE,
+    linewidth = .7,
+                      quantiles = c(0.025, .16, .84, 0.975)) +
+  # stat_pointinterval(aes(
+  #   fill = factor(ind)))+
+  stat_pointinterval(
+    geom = "label",
+    aes(label = factor(ind),
+        fill = "white"),
+    .width = c(0.66, 0.95),
+    size = 3,
+    color = "black",
+  ) +
+  scale_fill_manual(values = cores, guide = "none") +
+  #scale_color_manual(values =cluster_colors, guide = "none") +
   scale_y_discrete(expand = c(0, 0), name= NULL) +     # will generally have to set the `expand` option
   scale_x_continuous(expand = c(0, 0), name= "Within-cluster SD") +   # for both axes to remove unneeded padding
   coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
@@ -507,5 +578,3 @@ plt_sigma <- ggplot(sub_tau) +
     axis.title.y = element_text(hjust = 0.5),
     axis.text.y = element_blank()
   )
-plt_sigma
-saveRDS(plt_sigma, "final_project/plots/sigma.rds")

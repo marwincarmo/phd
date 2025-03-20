@@ -4,6 +4,9 @@ author: "Marwin Carmo"
 #date: "2025-02-14"
 format: 
   pdf:
+    documentclass: report
+    fig-height: 4
+    fig-width: 6
     bm: true
     amsmath: true
     mathspec: true
@@ -22,9 +25,9 @@ The motivation for the SS-MELSM is to identify and isolate clusters that display
 
 ## Method
 
-The data for this study comes from The Elementary Education Evaluation System (Saeb), an assessment program conducted by the Brazilian government to evaluate the quality of elementary education across the country. This contains standardized math test scores from 11,386 11th and 12th graders across 160 schools and is part of the `ivd` package. 
+The data for this study comes from The Elementary Education Evaluation System (Saeb), an assessment program conducted by the Brazilian government to evaluate the quality of elementary education across the country. This dataset contains standardized math test scores from 11,386 11th and 12th graders across 160 schools and is part of the `ivd` package. 
 
-To keep this illustration simple, I opted for a simpler model that featured an intercept-only specification in both the location and scale submodels. The model predicting math achievement for the $i$-th student within the $j$-th school is:
+To keep this illustration simple, I opted for a model that features an intercept-only specification in both the location and scale submodels. The model predicting math achievement for the $i$-th student within the $j$-th school is:
 
 \begin{equation}
 \label{eq:model-1}
@@ -51,7 +54,7 @@ To keep this illustration simple, I opted for a simpler model that featured an i
 
 This model defines math achievement ($\text{mAch}_{ij}$) via the fixed intercept parameter $\gamma_0$ and the random intercept $u_{0j}$, capturing the deviation of the $j$-th school from the fixed effect. Each school's residual standard deviation is modeled as a function of the fixed effect $\eta_0$ and the school-specific deviation $t_{0j}$, both defined on the log scale.
 
-The random effects are assumed to come from the same multivariate Gaussian Normal distribution with zero means and covariance matrix $\Sigma$. This matrix can be decomposed into $\boldsymbol\Sigma = \boldsymbol{\tau}\boldsymbol{\Omega\tau}'$, where $\boldsymbol{\tau}$ is a diagonal matrix holding the random-effect standard deviations and $\boldsymbol\Omega$ is the correlation matrix that contains the correlations among all random effects. Next, we can decompose $\boldsymbol\Omega$ via the Cholesky factor $\textbf{L}$ of $\boldsymbol\Omega = \textbf{L}'\textbf{L}$.
+The random effects are assumed to come from the same multivariate Gaussian Normal distribution with zero means and covariance matrix $\boldsymbol\Sigma$. This matrix can be decomposed into $\boldsymbol\Sigma = \boldsymbol{\tau}\boldsymbol{\Omega\tau}'$, where $\boldsymbol{\tau}$ is a diagonal matrix holding the random-effect standard deviations and $\boldsymbol\Omega$ is the correlation matrix that contains the correlations among all random effects. Next, we can decompose $\boldsymbol\Omega$ via the Cholesky factor $\textbf{L}$ of $\boldsymbol\Omega = \textbf{L}'\textbf{L}$.
 
 With these decomposition, the random effects vector $\textbf{v}$ by multiplying $\textbf{L}$ with the standard deviations $\boldsymbol{\tau}$ and scaling it with a standard normally distributed $\textbf{z}_j$. Then, it can be expanded to include an indicator vector $\boldsymbol{\delta}_j$ of length $k$ (for $1, \ldots, k$ random effects) for each random effect to be subjected to shrinkage:
 
@@ -73,44 +76,89 @@ BF_{10_{jk}} = \frac{Pr(\delta_{jk} = 1 | \textbf{Y}) }{1 - Pr(\delta_{jk} = 1 |
 
 A posterior inclusion probability $Pr(\delta_j = 1|\textbf{Y}) \geq 0.75$, corresponding to a $BF_{10_{jk}} \geq 3$, provides evidence for including the random effect over fixed effects alone.
 
-This model was fitted using the `ivd` package using six chains of 3,000 iterations and 12,000 warm-up samples. The results present the posterior estimates of: (i) the PIP for $\delta_{jt_0}$, (ii) the scale random effect SD, $\tau_{t_0}$, (iii) within-school residual SD, $\sigma_j$, and (iv) the math scores.
+This model was fitted using the `ivd` package using six chains of 3,000 iterations and 12,000 warm-up samples. The results present the posterior estimates of: (i) the PIP for $\delta_{jt_0}$, (ii) the scale random effect SD, $\tau_{t_0}$, (iii) within-school residual SD, $\sigma_j$, and (iv) the math scores, $\mu_j$.
 
 ## Results
 
-\newpage
+The location model yielded an intercept fixed effect of $\gamma_0=0.115$ (95\% CrI [0.055; 0.174]). This suggests that, on average, schools in this sub-sample performed slightly above the standardized mean score of the larger sample of schools from which it was drawn. In the scale model, the estimated intercept of the residual standard deviation was $\eta_0=-0.235$ (95\% CrI [-0.253; -0.217]) on the log scale. This corresponds to a mean of $\exp(-0.235)=0.791$ on the standard deviation metric. @fig-pip displays the 160 PIPs for all schools. Notably, eight schools exhibited PIPs greater than 0.75, as indicated by the colored points above the dotted line. These PIPs suggest significant deviations from the average school-level variance. 
+
+@fig-funnel, panel A, shows the distribution of within-school residual standard deviations. Among the eight identified schools, five exhibited lower-than-average standard deviations, indicating \textit{higher consistency} in student performance. Conversely, the remaining three schools showed greater variability, reflected by their positioning farther to the right and above the dotted line, indicating \textit{lower consistency} (larger standard deviations) in math achievement for these schools. This pattern is further elucidated in panel B, which shows a scatterplot of school PIPs to their average math scores. School 46 was not only highly consistent in math achievement, but they also performed better than the average in our sample. We can also observe a mix of more inconsistent and consistent schools within 0.5 standard deviations of the mean. While the average math achievement of these schools is comparable, the within-school variability was substantially different.
+
+@fig-sugarloaf shows the posterior distributions of the scale random intercept for four specific schools. 
+Panel A illustrates School 46, a high-achieving and the most consistent school in the sample, that ``escaped'' the pull of the spike. In contrast, Panel B shows one of the more inconsistent schools with an average math achievement. This school had a PIP of 0.884 with a small evidence of a spike effect. 
+In contrast, School 38, shown in Panel C, was both average in math achievement and average in the residual standard deviation with a clear spike at zero, indicating that the fixed effect captured this school well.
 
 ```{r}
 #| eval: true
 #| include: false
 library(ggplot2)
-pip <- readRDS("plots/paper/pip.rds")
-funnel <- readRDS("plots/paper/funnel.rds")
-outcome <- readRDS("plots/paper/outcome.rds")
-ranef <- readRDS("plots/paper/ranef.rds")
-sigma <- readRDS("plots/paper/sigma.rds")
+library(patchwork)
+pip <- readRDS("plots/pip.rds")
+funnel <- readRDS("plots/funnel.rds")
+outcome <- readRDS("plots/outcome.rds")
+ranef <- readRDS("plots/ranef.rds")
+sigma <- readRDS("plots/sigma.rds")
 ```
 
 ## Visualization
 
 ```{r}
+#| label: fig-pip
 #| echo: false
+#| message: false
+#| warning: false
+#| fig-align: center
+#| fig-cap: The posterior inclusion probabilities of the scale random effect for the 160 schools in the dataset for Models 1 and 2. A dotted line marks the PIP threshold of 0.75. Schools with PIPs exceeding this threshold are colored.
 #| fig-height: 4
 #| fig-width: 6
-#| fig-cap: "The posterior inclusion probabilities of the scale random effect for the 160 schools in the dataset for Models 1 and 2. A dotted line marks the PIP threshold of 0.75. Schools with PIPs exceeding this threshold are colored."
-
-#| fig-align: "center"
-pip +
-  labs(title = "Scale Intercept")
+pip 
 ```
 
 ```{r}
 #| label: fig-funnel
 #| echo: false
 #| fig-cap: Scatter plots of posterior inclusion probability (PIP) versus within-cluster standard deviation (SD). The y-axis represents the PIP for the scale random intercept, and the x-axis represents the within-cluster SD. The plots exhibit a V-shaped pattern, where schools with the lowest and highest SDs are positioned toward the left and right, respectively, while those with average SDs are clustered near the center.
-#| fig-height: 4
+#| fig-height: 7
 #| fig-width: 6
-funnel +
-  labs(title = "Scale Intercept")
+funnel / outcome
 ```
 
-As seen in @fig-funnel
+```{r}
+#| label: fig-sugarloaf
+#| echo: false
+#| fig-cap: Scatter plots of posterior inclusion probability (PIP) versus within-cluster standard deviation (SD). The y-axis represents the PIP for the scale random intercept, and the x-axis represents the within-cluster SD. The plots exhibit a V-shaped pattern, where schools with the lowest and highest SDs are positioned toward the left and right, respectively, while those with average SDs are clustered near the center.
+#| fig-height: 7
+#| fig-width: 6
+ranef / sigma
+```
+
+## Visualization strategies
+
+In this project I created mainly four ways to visualize the posterior distribution of estimates produced by the `ivd` model. They were designed to complement the information provided by the model's summary by focusing on the schools with PIPs exceeding the proposed threshold of "significance."
+
+For all plots, color was used as a tool to highlight particular schools. In @fig-pip and both panels of @fig-funnel, those with unnusual levels of variability were colored to emphasize to the user that these are the relevant units, opposed to the gray shade given to schools with "average" variability that do not provide relevant information to the purposes of the analysis. In previous versions of these plots, a unique color was assigned to each high-PIP school to distinguish them. However, following Wilke's () recommendation, now all high-PIP schools have the same color and are identified by direct labeling. Using different colored points could lead to too many different colors to distinct. Adding colors and direct labels then added irrelevant information given that colors now were not needed to distinguish the points.
+
+<!-- Use direct labeling instead of colors when you need to distinguish between more than about eight categorical items.  -->
+
+<!-- Then, unique colors were attributed for each of these high-PIP schools using a qualitative color scale produced by the `randomcoloR` package. In this paper's example, there were only eight high-PIP schools, but there is no limit to the number of clusters with unnusual variability and, consequently, to the colors needed. Using the `distinctColorPalette()` function ensures that colors optimally distinct will be attributed to these clusters, irrespective of how many are needed. -->
+
+The associations among PIPs and $\tau_{t_0}$ and $\mu_j$ are represented by scatterplots, named `funnel` and `outcome` plots, respectively. Although no trends are expected to be seen, this option was chosen to give a quick snapshot of how schools with high PIP are located across the within-cluster SD and the cluster mean spectrum. Similarly, the plot in @fig-pip glances on the distribution of estimated PIPs.
+
+
+
+- Funnel plot
+  - color
+  - shape, linetype
+  - direct labeling
+  - line for reference
+  - overlapping points: alpha, nudge
+  - larger labels so text is visible
+- Outcome plot
+  - proportions? (dot size)
+  - 
+
+- Sugarloaf
+  - point estimates
+  - uncertainty
+  - direct labeling
+  - color
