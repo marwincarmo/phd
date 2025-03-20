@@ -2,6 +2,9 @@
 title: "Using MELSM to Identify Consistent and Inconsistent Schools"
 author: "Marwin Carmo"
 #date: "2025-02-14"
+execute: 
+  message: false
+  warning: false
 format: 
   pdf:
     documentclass: report
@@ -84,9 +87,7 @@ The location model yielded an intercept fixed effect of $\gamma_0=0.115$ (95\% C
 
 @fig-funnel, panel A, shows the distribution of within-school residual standard deviations. Among the eight identified schools, five exhibited lower-than-average standard deviations, indicating \textit{higher consistency} in student performance. Conversely, the remaining three schools showed greater variability, reflected by their positioning farther to the right and above the dotted line, indicating \textit{lower consistency} (larger standard deviations) in math achievement for these schools. This pattern is further elucidated in panel B, which shows a scatterplot of school PIPs to their average math scores. School 46 was not only highly consistent in math achievement, but they also performed better than the average in our sample. We can also observe a mix of more inconsistent and consistent schools within 0.5 standard deviations of the mean. While the average math achievement of these schools is comparable, the within-school variability was substantially different.
 
-@fig-sugarloaf shows the posterior distributions of the scale random intercept for four specific schools. 
-Panel A illustrates School 46, a high-achieving and the most consistent school in the sample, that ``escaped'' the pull of the spike. In contrast, Panel B shows one of the more inconsistent schools with an average math achievement. This school had a PIP of 0.884 with a small evidence of a spike effect. 
-In contrast, School 38, shown in Panel C, was both average in math achievement and average in the residual standard deviation with a clear spike at zero, indicating that the fixed effect captured this school well.
+@fig-sugarloaf shows the posterior distributions of the scale random intercept for the eight shcools with PIP > 0.75. Panel A shows the posterior distribution of $t_{0j}$ and in panel B, the posterior of $\sigma_j$. The pattern is similar given that $\sigma_j$ is a function of $t_{0j}$. Notably, the estimates of schools 46 and 39, respectively the more consistent and inconsistent schools in the sample, ``escaped'' the pull of the spike. For other schools, as the PIP of $\delta_{0j}$ got closer to 0.75, we can observe a significant posterior mass of $t_{0j}$ on the spike, although a notable portion remains in the slab. These are characteristics of moderate evidence favoring the inclusion of the random effect.
 
 ```{r}
 #| eval: true
@@ -108,7 +109,7 @@ sigma <- readRDS("plots/sigma.rds")
 #| message: false
 #| warning: false
 #| fig-align: center
-#| fig-cap: The posterior inclusion probabilities of the scale random effect for the 160 schools in the dataset for Models 1 and 2. A dotted line marks the PIP threshold of 0.75. Schools with PIPs exceeding this threshold are colored.
+#| fig-cap: The posterior inclusion probabilities of the scale random effect for the 160 schools in the dataset for Models 1 and 2. A dotted line marks the PIP threshold of 0.75. Schools with PIPs exceeding this threshold are colored and labeled.
 #| fig-height: 4
 #| fig-width: 6
 pip 
@@ -117,16 +118,17 @@ pip
 ```{r}
 #| label: fig-funnel
 #| echo: false
-#| fig-cap: Scatter plots of posterior inclusion probability (PIP) versus within-cluster standard deviation (SD). The y-axis represents the PIP for the scale random intercept, and the x-axis represents the within-cluster SD. The plots exhibit a V-shaped pattern, where schools with the lowest and highest SDs are positioned toward the left and right, respectively, while those with average SDs are clustered near the center.
+#| fig-cap: Scatter plots of posterior inclusion probability (PIP) versus within-cluster standard deviation (panel A) and math achievement (panel B). The y-axis represents the PIP for the scale random intercept. In panel A, the x-axis represents the estimated within-cluster SD, and in panel B, the estimated math achievement. In panel A, the plot exhibit a V-shaped pattern, where schools with the lowest and highest SDs are positioned toward the left and right, respectively. In panel B, the color shade represent the school's within-cluster SD.
 #| fig-height: 7
 #| fig-width: 6
-funnel / outcome
+funnel / outcome + 
+  plot_annotation(tag_levels = 'A',title = "")
 ```
 
 ```{r}
 #| label: fig-sugarloaf
 #| echo: false
-#| fig-cap: Scatter plots of posterior inclusion probability (PIP) versus within-cluster standard deviation (SD). The y-axis represents the PIP for the scale random intercept, and the x-axis represents the within-cluster SD. The plots exhibit a V-shaped pattern, where schools with the lowest and highest SDs are positioned toward the left and right, respectively, while those with average SDs are clustered near the center.
+#| fig-cap: Density plots of the posterior estimates of the scale random effect (panel A), and cluster SD for schools with PIP for the inclusion of the scale random effect larger than 0.75. Schools with lower PIP show more posterior mass of $t_0$ on the spike (panel A) and, consequently, more posterior mass on the average residual standard deviation. In both panels, color shading represent the limits of posterior probability density.
 #| fig-height: 7
 #| fig-width: 6
 ranef / sigma
@@ -136,29 +138,14 @@ ranef / sigma
 
 In this project I created five ways to visualize the posterior distribution of estimates produced by the `ivd` model. They were designed to complement the information provided by the model's summary by focusing on the schools with PIPs exceeding the proposed threshold of "significance."
 
-For all plots, color was used as a tool to highlight particular schools. In @fig-pip and both panels of @fig-funnel, those with unnusual levels of variability were colored to emphasize to the user that these are the relevant units, opposed to the gray shade given to schools with "average" variability that do not provide relevant information to the purposes of the analysis. In previous versions of these plots, a unique color was assigned to each high-PIP school to distinguish them. However, following Wilke's () recommendation, now all high-PIP schools have the same color and are identified by direct labeling. Using different colored points could lead to too many different colors to distinct. Adding colors and direct labels then added irrelevant information given that colors now were not needed to distinguish the points.
+For all plots, color was used to highlight and distinguish particular schools. In @fig-pip and both panels of @fig-funnel, those with unusual levels of variability were colored to emphasize that these are the relevant units, opposed to the gray shade given to schools with "average" variability that do not provide relevant information to the purposes of the analysis. In previous versions of these plots, a unique color was assigned to each high-PIP school to distinguish them. Now all high-PIP schools have the same color and are identified by direct labeling. Given the number of high-PIP schools, different colored points led to too many different colors to distinct. Adding colors *and* direct labels resulted in irrelevant information being displayed, given that colors now were not needed to distinguish the points.
+
+Particularly to panel B in @fig-funnel, a sequential color scale was used to indicate which schools have more or less within-cluster standard deviation than other ones. In a previous version of this plot size was used to encode this difference. However, that provided only limited information given the difficulty of differentiating sizes that were similar and also for the challenge of setting up a proper legend guide to interpret the different sizes. Additionally, very consistent schools, such as 46, were represented by points that were too small to be seen. Switching to a sequential color scale provided a clearer visualization of the points and better represented the idea of a continuous scale.
 
 <!-- Use direct labeling instead of colors when you need to distinguish between more than about eight categorical items.  -->
 
 <!-- Then, unique colors were attributed for each of these high-PIP schools using a qualitative color scale produced by the `randomcoloR` package. In this paper's example, there were only eight high-PIP schools, but there is no limit to the number of clusters with unnusual variability and, consequently, to the colors needed. Using the `distinctColorPalette()` function ensures that colors optimally distinct will be attributed to these clusters, irrespective of how many are needed. -->
 
-The associations among PIPs and $\tau_{t_0}$ and $\mu_j$ are represented by scatterplots, named `funnel` and `outcome` plots, respectively. Although no trends are expected to be seen, this option was chosen to give a quick snapshot of how schools with high PIP are located across the within-cluster SD and the cluster mean spectrum. Similarly, the plot in @fig-pip glances on the distribution of estimated PIPs.
+@fig-funnel shows the associations among PIPs and $\tau_{t_0}$ and $\mu_j$ represented by scatterplots. Although no trends are expected to be seen, this option was chosen to give a quick snapshot of how schools with high PIP are located across the within-cluster SD and the cluster mean spectrum. Similarly, the plot in @fig-pip glances on the distribution of estimated PIPs.
 
-
-
-- Funnel plot
-  - color
-  - shape, linetype
-  - direct labeling
-  - line for reference
-  - overlapping points: alpha, nudge
-  - larger labels so text is visible
-- Outcome plot
-  - proportions? (dot size)
-  - 
-
-- Sugarloaf
-  - point estimates
-  - uncertainty
-  - direct labeling
-  - color
+The plots from @fig-sugarloaf were designed to visualize uncertainty of point estimates. I opted for ridgeline plots to facilitate the comparison of the posterior distribution of the residual standard deviation of the high-PIP schools, emphasizing that more uncertainty (lower PIP) is a result of more posterior mass on the spike. Also, had the model identified a larger number of schools with unusual variability, ridgeplots could scale well to more distributions. In these plots, a sequential color scale was used to distinguish regions of posterior probabilities. The increasing shade of the blue color was used to indicate that the probability density is higher closer to the posterior mean and lower on the tails. 
