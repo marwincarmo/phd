@@ -134,7 +134,7 @@ ranef / sigma
 
 ## Visualization strategies
 
-In this project I created mainly four ways to visualize the posterior distribution of estimates produced by the `ivd` model. They were designed to complement the information provided by the model's summary by focusing on the schools with PIPs exceeding the proposed threshold of "significance."
+In this project I created five ways to visualize the posterior distribution of estimates produced by the `ivd` model. They were designed to complement the information provided by the model's summary by focusing on the schools with PIPs exceeding the proposed threshold of "significance."
 
 For all plots, color was used as a tool to highlight particular schools. In @fig-pip and both panels of @fig-funnel, those with unnusual levels of variability were colored to emphasize to the user that these are the relevant units, opposed to the gray shade given to schools with "average" variability that do not provide relevant information to the purposes of the analysis. In previous versions of these plots, a unique color was assigned to each high-PIP school to distinguish them. However, following Wilke's () recommendation, now all high-PIP schools have the same color and are identified by direct labeling. Using different colored points could lead to too many different colors to distinct. Adding colors and direct labels then added irrelevant information given that colors now were not needed to distinguish the points.
 

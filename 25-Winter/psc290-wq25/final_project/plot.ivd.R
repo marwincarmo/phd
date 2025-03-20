@@ -322,18 +322,26 @@ saveRDS(plt_funnel, "final_project/plots/funnel.rds")
 
 # 4. Outcome --------------------------------------------------------------
 
+# Categorize tau values based on standard deviations
+df_pip$tau_category <- cut(df_pip$tau, 
+                           breaks = c(-Inf, tau_mean - 3*tau_sd, tau_mean - 2*tau_sd, 
+                                      tau_mean + 2*tau_sd, tau_mean + 3*tau_sd, Inf),
+                           labels = c("< 3 SD", "< 2 SD", 
+                                      "Within 2 SD", 
+                                      "> 2 SD", "> 3 SD"),
+                           right = FALSE)  # Ensures intervals are closed on the left
+
 plt_y <- ggplot(df_pip, aes(x = mu, y = pip)) +
   geom_point(data = subset(df_pip, pip < pip_level), 
-             alpha = .3, stroke = 1, aes(size=tau),
+             alpha = .3, stroke = 1, aes(size=tau_category),
              shape = 21, fill = "grey40", color = "white") +
   geom_point(data = subset(df_pip, pip >= pip_level),
-             fill = "#0265a5", shape = 21,  position = "jitter",
-             aes(size = tau), color = "white") +
-  geom_text(data = subset(df_pip, pip >= pip_level),
-            aes(label = id),
-            nudge_x = -.05,
-            vjust = -0.5,
-            size = 4)+
+             fill = "#3182BD", shape = 21,  position = "jitter",
+             aes(size = tau_category), color = "white") +
+  geom_text_repel(data = subset(df_pip, pip >= pip_level),
+                  aes(label = id),
+                  point.padding = 0.5
+  ) +
   geom_abline(intercept = pip_level, slope = 0, lty =  3)+
   scale_y_continuous(limits = c(y_lower, 1),
                      breaks = seq(y_lower, 1, by = 0.25))+
@@ -342,7 +350,7 @@ plt_y <- ggplot(df_pip, aes(x = mu, y = pip)) +
        y = "Posterior Inclusion Probability",
        title = "Intercept") +
   guides(fill = "none", 
-         size = "none") +
+         size = guide_legend("Within-cluster SD")) +
   theme_ridges() +
   theme(
     axis.title.x = element_text(hjust = 0.5),
@@ -536,45 +544,105 @@ saveRDS(plt_sigma, "final_project/plots/sigma.rds")
 ## Testin quantile alpha
 
 # Create the new vector with the pattern: before - original - after
-new <- as.vector(sapply(cluster_colors, function(color) c(paste0(color, "40"), color, paste0(color, "40"))))
+# new <- as.vector(sapply(cluster_colors, function(color) c(paste0(color, "40"), color, paste0(color, "40"))))
+# 
+# # Print result
+# print(new)
+# scales::show_col(new)
+# 
+# 
+# 
+# ggplot(sub_tau) +
+#   aes( y = reorder(factor(ind), values, median),
+#        x = values,
+#        fill = factor(stat(quantile)),
+#        #color = factor(ind)
+#   )+
+#   #stat_pointinterval(aes(fill = factor(ind)), .width = c(0))+
+#   stat_density_ridges(#aes(factor(ind)),
+#     scale =2.5,rel_min_height = 0.005,
+#     geom = "density_ridges_gradient",
+#                       calc_ecdf = TRUE,
+#     linewidth = .7,
+#                       quantiles = c(0.025, .16, .84, 0.975)) +
+#   # stat_pointinterval(aes(
+#   #   fill = factor(ind)))+
+#   stat_pointinterval(
+#     geom = "label",
+#     aes(label = factor(ind),
+#         fill = "white"),
+#     .width = c(0.66, 0.95),
+#     size = 3,
+#     color = "black",
+#   ) +
+#   scale_fill_manual(values = cores, guide = "none") +
+#   #scale_color_manual(values =cluster_colors, guide = "none") +
+#   scale_y_discrete(expand = c(0, 0), name= NULL) +     # will generally have to set the `expand` option
+#   scale_x_continuous(expand = c(0, 0), name= "Within-cluster SD") +   # for both axes to remove unneeded padding
+#   coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
+#   theme_ridges() +
+#   theme(
+#     axis.title.x = element_text(hjust = 0.5),
+#     axis.title.y = element_text(hjust = 0.5),
+#     axis.text.y = element_blank()
+#   )
 
-# Print result
-print(new)
-scales::show_col(new)
-
-
-
-ggplot(sub_tau) +
-  aes( y = reorder(factor(ind), values, median),
-       x = values,
-       fill = factor(stat(quantile)),
-       #color = factor(ind)
-  )+
-  #stat_pointinterval(aes(fill = factor(ind)), .width = c(0))+
-  stat_density_ridges(#aes(factor(ind)),
-    scale =2.5,rel_min_height = 0.005,
-    geom = "density_ridges_gradient",
-                      calc_ecdf = TRUE,
-    linewidth = .7,
-                      quantiles = c(0.025, .16, .84, 0.975)) +
-  # stat_pointinterval(aes(
-  #   fill = factor(ind)))+
-  stat_pointinterval(
-    geom = "label",
-    aes(label = factor(ind),
-        fill = "white"),
-    .width = c(0.66, 0.95),
-    size = 3,
-    color = "black",
+subdata  |> 
+  ggplot(aes(y = reorder(factor(ind), values, median),
+             x = values)) +
+  geom_density_ridges_gradient(
+    aes(fill = stat(quantile)),
+    #quantiles = c(0.025, 0.1, 0.9, 0.975),
+    quantiles = c(0.005, 0.025, 0.1, 0.9, 0.975, 0.995),
+    calc_ecdf = TRUE,
+    scale = 1.5,
+    color = colorspace::darken("#0072B2", .4),
+    size = 0.3,
+    rel_min_height = 0.005
   ) +
-  scale_fill_manual(values = cores, guide = "none") +
-  #scale_color_manual(values =cluster_colors, guide = "none") +
-  scale_y_discrete(expand = c(0, 0), name= NULL) +     # will generally have to set the `expand` option
-  scale_x_continuous(expand = c(0, 0), name= "Within-cluster SD") +   # for both axes to remove unneeded padding
-  coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
-  theme_ridges() +
+  geom_point(
+    stat = ggstance:::StatSummaryh,
+    fun.x = median,
+    size = 2.5, color = "#D55E00"
+  ) +
+  scale_x_continuous(
+    #    expand = c(0, 0),
+    name = "mean rating"
+  ) +
+  scale_y_discrete(name = NULL) +
+  scale_fill_manual(
+    name = "posterior prob.",
+    values = c(
+      "#00000000",#"#A5C5EDA0", x < 0.005
+      "#81A7D6A0", # desaturate(lighten("#0072B2", .4), .3) 0.005 < x < 0.025
+      "#508CC6A0", # desaturate(lighten("#0072B2", .2), .1) 0.025 < x < 0.1
+      "#035B8FA0", # darken("#0072B2", .2) 0.1 < x < 0.9
+      "#508CC6A0", # 0.9 < x < 0.975
+      "#81A7D6A0" # 0.975 < x < 0.999
+      ,"#00000000" # x > 0.999
+    ),
+    # breaks = c(4, 3, 2),
+    # labels = c("80%", "95%", "99%"),
+    guide = guide_legend(
+      direction = "horizontal",
+      title.position = "top",
+      label.position = "bottom",
+      override.aes = list(color = NA)
+    )
+  ) +
+  #coord_cartesian(xlim = c(2.6, 3.6), clip = "off") +
+  theme_void() +
   theme(
-    axis.title.x = element_text(hjust = 0.5),
-    axis.title.y = element_text(hjust = 0.5),
-    axis.text.y = element_blank()
+    axis.line.x = element_line(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    axis.title.x = element_text(hjust = 1),
+    legend.position = c(1, 0.013),
+    legend.justification = c(1, 0),
+    legend.key.height = grid::unit(14, "pt"),
+    legend.key.width = grid::unit(35, "pt"),
+    legend.spacing.x = grid::unit(7, "pt"),
+    legend.spacing.y = grid::unit(3.5, "pt"),
+    legend.box.background = element_rect(fill = "white", color = NA),
+    legend.box.spacing = grid::unit(0, "pt"),
+    legend.title.align = 0.5
   )
