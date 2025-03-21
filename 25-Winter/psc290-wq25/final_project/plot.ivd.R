@@ -331,13 +331,14 @@ df_pip$tau_category <- cut(df_pip$tau,
                                       "> 2 SD", "> 3 SD"),
                            right = FALSE)  # Ensures intervals are closed on the left
 
-plt_y <- ggplot(df_pip, aes(x = mu, y = pip)) +
-  geom_point(data = subset(df_pip, pip < pip_level), 
-             alpha = .3, stroke = 1, aes(size=tau_category),
-             shape = 21, fill = "grey40", color = "white") +
+plt_y <- ggplot(df_pip, aes(x = mu, y = pip, fill = tau)) +
+  geom_point(data = subset(df_pip, pip < pip_level),
+             alpha = .3, stroke = 1, #fill="grey40",
+             shape = 21, color = "grey40", size = 5) +
   geom_point(data = subset(df_pip, pip >= pip_level),
-             fill = "#3182BD", shape = 21,  position = "jitter",
-             aes(size = tau_category), color = "white") +
+             shape = 21#,  position = "jitter"
+             , aes(color = tau), 
+             size=5) +
   geom_text_repel(data = subset(df_pip, pip >= pip_level),
                   aes(label = id),
                   point.padding = 0.5
@@ -345,18 +346,65 @@ plt_y <- ggplot(df_pip, aes(x = mu, y = pip)) +
   geom_abline(intercept = pip_level, slope = 0, lty =  3)+
   scale_y_continuous(limits = c(y_lower, 1),
                      breaks = seq(y_lower, 1, by = 0.25))+
-  scale_fill_manual("ID", values = cluster_colors) +
+  scale_fill_gradient2(
+    midpoint = median(df_pip$tau, na.rm = TRUE),
+    , low = "#2166ACFF", high = "#B2182BFF"
+    , mid = "#F7F7F7FF"
+    , name = "Within-cluster SD"
+    ) + 
+  scale_color_gradient2(
+    midpoint = median(df_pip$tau, na.rm = TRUE),
+    , low = "#2166ACFF", high = "#B2182BFF" #BuRd pallete
+    , mid = "#F7F7F7FF", guide='none') + 
   labs(x = "Cluster mean",
        y = "Posterior Inclusion Probability",
        title = "Intercept") +
-  guides(fill = "none", 
-         size = guide_legend("Within-cluster SD")) +
+  guides(
+    color = "none",
+    fill = guide_colorbar(
+    #direction = "horizontal",  # Horizontal legend
+    title.position = "left",   # Title on top
+    barwidth = unit(10, "lines"),  # Width of the color bar
+    barheight = unit(0.8, "lines"),  # Height of the color bar
+    label.position = "bottom"  # Labels below the color bar
+  )) +
   theme_ridges() +
   theme(
     axis.title.x = element_text(hjust = 0.5),
-    axis.title.y = element_text(hjust = 0.5)
+    axis.title.y = element_text(hjust = 0.5),
+    legend.position = "bottom"
+    #legend.position = c(0.7, 0.15)
   )
 print(plt_y )
+  # ggplot(df_pip, aes(x = mu, y = pip)) +
+  # geom_point(data = subset(df_pip, pip < pip_level), 
+  #            alpha = .3, stroke = 1, aes(size=tau),
+  #            shape = 21, fill = "grey40", color = "white") +
+  # geom_point(data = subset(df_pip, pip >= pip_level),
+  #            fill = "#3182BD", shape = 21,  position = "jitter",
+  #            aes(size = tau), color = "white") +
+  # geom_text_repel(data = subset(df_pip, pip >= pip_level),
+  #                 aes(label = id),
+  #                 point.padding = 0.5
+  # ) +
+  # geom_abline(intercept = pip_level, slope = 0, lty =  3)+
+  # scale_y_continuous(limits = c(y_lower, 1),
+  #                    breaks = seq(y_lower, 1, by = 0.25))+
+  # scale_fill_manual("ID", values = cluster_colors) +
+  # labs(x = "Cluster mean",
+  #      y = "Posterior Inclusion Probability",
+  #      title = "Intercept") +
+  # guides(fill = "none", 
+  #        size = guide_legend("Within-cluster SD",
+  #                            direction = "horizontal")
+  #        ) +
+  # theme_ridges() +
+  # theme(
+  #   axis.title.x = element_text(hjust = 0.5),
+  #   axis.title.y = element_text(hjust = 0.5),
+  #   legend.position = c(.45,.1)
+  # )
+
 saveRDS(plt_y, "final_project/plots/outcome.rds")
 
 # 5. Halfeye plot ----------------------------------------------------
@@ -405,37 +453,89 @@ gradient <- c("#0265a560","#0265a580", "#0265a5b3", "#0265a580", "#0265a560", "w
 
 ## ggridges
 
-plt_u <- ggplot(subdata) +
-  aes( y = reorder(factor(ind), values, median),
-       x = values,
-       fill = factor(stat(quantile))
-  ) +
-  stat_density_ridges(#aes(factor(ind)),
-    scale =2.5,rel_min_height = 0.005,
-    geom = "density_ridges_gradient",
+plt_u <- subdata |> 
+  ggplot(aes(y = reorder(factor(ind), values, median),
+             x = values)) +
+  geom_density_ridges_gradient(
+    aes(fill = after_stat(quantile)),
+    quantiles = c(0.005, 0.025, 0.1, 0.9, 0.975, 0.995),
     calc_ecdf = TRUE,
-    linewidth = .5,
-    color = "white",
-    quantiles = c(0.025, .16, .84, 0.975)) +
-  stat_pointinterval(
-    geom = "label",
-    aes(label = factor(ind),
-        fill = "white"),
-    .width = c(0.66, 0.95),
-    size = 3,
-    color = "black",
+    scale = 1.5,
+    color = colorspace::darken("#0072B2", .4),
+    size = 0.3,
+    rel_min_height = 0.005
   ) +
-  scale_fill_manual(values = gradient, guide = "none") +
-  scale_y_discrete(expand = c(0, 0), name= NULL) +     # will generally have to set the `expand` option
-  scale_x_continuous(expand = c(0, 0), name= "Random effect estimate") +   # for both axes to remove unneeded padding
-  coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
-  theme_ridges() +
+  geom_point(
+    stat = ggstance:::StatSummaryh,
+    fun.x = median,
+    size = 2.5, color = "#D55E00"
+  ) +
+  scale_x_continuous(
+    #    expand = c(0, 0),
+    name = "Random effect estimate"
+  ) +
+  scale_y_discrete(name = NULL) +
+  scale_fill_manual(
+    name = "posterior prob.",
+    values = c(
+      "#81A7D6A0",#"#A5C5EDA0", x < 0.005
+      "#81A7D6A0", # desaturate(lighten("#0072B2", .4), .3) 0.005 < x < 0.025
+      "#508CC6A0", # desaturate(lighten("#0072B2", .2), .1) 0.025 < x < 0.1
+      "#035B8FA0", # darken("#0072B2", .2) 0.1 < x < 0.9
+      "#508CC6A0", # 0.9 < x < 0.975
+      "#81A7D6A0" # 0.975 < x < 0.999
+      ,"#81A7D6A0" # x > 0.999
+    ),
+    #breaks = c(3, 4, 5),  # Map to the quantiles for 80%, 95%, 99%
+    labels = c("0.5%", "2.5%", "10%",
+               "90%","95%", "99%"),  # Custom labels for the legend
+    #limits = c(3, 4, 5),  # Ensure only these breaks are included in the legend
+    # guide = guide_legend(
+    #   direction = "horizontal",
+    #   title.position = "top",
+    #   label.position = "bottom",
+    #   override.aes = list(color = NA)
+    # )
+    guide = "none"
+  ) +
   labs(title = "Intercept") +
+  theme_ridges() +
   theme(
     axis.title.x = element_text(hjust = 0.5),
     axis.title.y = element_text(hjust = 0.5),
-    axis.text.y = element_blank()
+    #axis.text.y = element_blank(),
+    legend.position = c(0.5, 0.2)
   )
+  # aes( y = reorder(factor(ind), values, median),
+  #      x = values,
+  #      fill = factor(stat(quantile))
+  # ) +
+  # stat_density_ridges(#aes(factor(ind)),
+  #   scale =2.5,rel_min_height = 0.005,
+  #   geom = "density_ridges_gradient",
+  #   calc_ecdf = TRUE,
+  #   linewidth = .5,
+  #   color = "white",
+  #   quantiles = c(0.025, .16, .84, 0.975)) +
+  # stat_pointinterval(
+  #   geom = "label",
+  #   aes(label = factor(ind),
+  #       fill = "white"),
+  #   .width = c(0.66, 0.95),
+  #   size = 3,
+  #   color = "black",
+  # ) +
+  # scale_fill_manual(values = gradient, guide = "none") +
+  # scale_y_discrete(expand = c(0, 0), name= NULL) +     # will generally have to set the `expand` option
+  # scale_x_continuous(expand = c(0, 0), name= "Random effect estimate") +   # for both axes to remove unneeded padding
+  # coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
+  # theme_ridges() +
+  # labs(title = "Intercept") +
+  # theme(
+  #   axis.title.x = element_text(hjust = 0.5),
+  #   axis.title.y = element_text(hjust = 0.5),
+  #   axis.text.y = element_blank()
+  # )
 plt_u
 
 saveRDS(plt_u, "final_project/plots/ranef.rds")
@@ -508,35 +608,58 @@ sub_tau <- subset(tau_long, ind %in% which(df_pip$pip >= pip_level))
 
 ## ggridges
 
-plt_sigma <- ggplot(sub_tau) +
-  aes( y = reorder(factor(ind), values, median),
-       x = values,
-       fill = factor(stat(quantile))
-  ) +
-  stat_density_ridges(#aes(factor(ind)),
-    scale =2.5,rel_min_height = 0.005,
-    geom = "density_ridges_gradient",
+plt_sigma <- sub_tau  |> 
+  ggplot(aes(y = reorder(factor(ind), values, median),
+                        x = values)) +
+  geom_density_ridges_gradient(
+    aes(fill = after_stat(quantile)),
+    quantiles = c(0.005, 0.025, 0.1, 0.9, 0.975, 0.995),
     calc_ecdf = TRUE,
-    linewidth = .7,
-    quantiles = c(0.025, .16, .84, 0.975)) +
-  stat_pointinterval(
-    geom = "label",
-    aes(label = factor(ind),
-        fill = "white"),
-    .width = c(0.66, 0.95),
-    size = 3,
-    color = "black",
+    scale = 1.5,
+    color = colorspace::darken("#0072B2", .4),
+    size = 0.3,
+    rel_min_height = 0.005
   ) +
-  scale_fill_manual(values = gradient, guide = "none") +
-  scale_y_discrete(expand = c(0, 0), name= NULL) +     # will generally have to set the `expand` option
-  scale_x_continuous(expand = c(0, 0), name= "Random effect estimate") +   # for both axes to remove unneeded padding
-  coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
-  theme_ridges() +
+  geom_point(
+    stat = ggstance:::StatSummaryh,
+    fun.x = median,
+    size = 2.5, color = "#D55E00"
+  ) +
+  scale_x_continuous(
+    #    expand = c(0, 0),
+    name = "Within-cluster SD"
+  ) +
+  scale_y_discrete(name = NULL) +
+  scale_fill_manual(
+    name = "posterior prob.",
+    values = c(
+      "#81A7D6A0",#"#A5C5EDA0", x < 0.005
+      "#81A7D6A0", # desaturate(lighten("#0072B2", .4), .3) 0.005 < x < 0.025
+      "#508CC6A0", # desaturate(lighten("#0072B2", .2), .1) 0.025 < x < 0.1
+      "#035B8FA0", # darken("#0072B2", .2) 0.1 < x < 0.9
+      "#508CC6A0", # 0.9 < x < 0.975
+      "#81A7D6A0" # 0.975 < x < 0.999
+      ,"#81A7D6A0" # x > 0.999
+    ),
+    #breaks = c(3, 4, 5),  # Map to the quantiles for 80%, 95%, 99%
+    labels = c("0.5%", "2.5%", "10%",
+               "90%","95%", "99%"),  # Custom labels for the legend
+    #limits = c(3, 4, 5),  # Ensure only these breaks are included in the legend
+    # guide = guide_legend(
+    #   direction = "horizontal",
+    #   title.position = "top",
+    #   label.position = "bottom",
+    #   override.aes = list(color = NA)
+    # )
+    guide = "none"
+  ) +
   labs(title = "Intercept") +
+  theme_ridges() +
   theme(
     axis.title.x = element_text(hjust = 0.5),
     axis.title.y = element_text(hjust = 0.5),
-    axis.text.y = element_blank()
+    #axis.text.y = element_blank(),
+    legend.position = c(0.5, 0.2)
   )
 plt_sigma
 saveRDS(plt_sigma, "final_project/plots/sigma.rds")
@@ -591,7 +714,7 @@ subdata  |>
   ggplot(aes(y = reorder(factor(ind), values, median),
              x = values)) +
   geom_density_ridges_gradient(
-    aes(fill = stat(quantile)),
+    aes(fill = after_stat(quantile)),
     #quantiles = c(0.025, 0.1, 0.9, 0.975),
     quantiles = c(0.005, 0.025, 0.1, 0.9, 0.975, 0.995),
     calc_ecdf = TRUE,
@@ -613,16 +736,17 @@ subdata  |>
   scale_fill_manual(
     name = "posterior prob.",
     values = c(
-      "#00000000",#"#A5C5EDA0", x < 0.005
+      "#81A7D6A0",#"#A5C5EDA0", x < 0.005
       "#81A7D6A0", # desaturate(lighten("#0072B2", .4), .3) 0.005 < x < 0.025
       "#508CC6A0", # desaturate(lighten("#0072B2", .2), .1) 0.025 < x < 0.1
       "#035B8FA0", # darken("#0072B2", .2) 0.1 < x < 0.9
       "#508CC6A0", # 0.9 < x < 0.975
       "#81A7D6A0" # 0.975 < x < 0.999
-      ,"#00000000" # x > 0.999
+      ,"#81A7D6A0" # x > 0.999
     ),
-    # breaks = c(4, 3, 2),
-    # labels = c("80%", "95%", "99%"),
+    breaks = c(3, 4, 5),  # Map to the quantiles for 80%, 95%, 99%
+    labels = c("80%", "95%", "99%"),  # Custom labels for the legend
+    limits = c(3, 4, 5),  # Ensure only these breaks are included in the legend
     guide = guide_legend(
       direction = "horizontal",
       title.position = "top",
@@ -631,7 +755,7 @@ subdata  |>
     )
   ) +
   #coord_cartesian(xlim = c(2.6, 3.6), clip = "off") +
-  theme_void() +
+  #theme_void() +
   theme(
     axis.line.x = element_line(color = "black"),
     axis.ticks.x = element_line(color = "black"),
