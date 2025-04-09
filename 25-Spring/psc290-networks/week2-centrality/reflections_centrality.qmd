@@ -1,0 +1,31 @@
+---
+title: "On centrality measures in psychological networks"
+author: "Marwin Carmo"
+date: "2025-04-08"
+execute: 
+  message: false
+  warning: false
+format: 
+  pdf:
+    documentclass: report
+    fig-height: 4
+    fig-width: 6
+    bm: true
+    amsmath: true
+    mathspec: true
+bibliography: references.bib
+---
+
+In psychometric networks, centrality measures are used as proxies to find which symptoms or behaviors are "important," given the assumption that this particular phenomenon constitutes a network. We hope to identify intervention targets for changing or "disturbing" the disorder by finding these special nodes. While this approach makes intuitive sense and is relatively easy to estimate, it might not provide the information researchers wish to find. In the following paragraphs, I will concatenate ideas from this week's readings and impressions I have had so far as a researcher to reflect on the problematic use of centrality measures when modeling psychological phenomena. My focus will be on mental health research and modeling of psychopathological symptoms, an area that I have had direct contact with.
+
+Psychometric (or psychological) networks have been on the rise in the past five years or so, and every sub-discipline of Psychology has likely had its example of a phenomenon being modeled as a network. Once our field was introduced to the idea of psychopathology and comorbidity resulting from a network model, it makes intuitive sense to suppose many phenomena follow this structure of interconnected nodes that interact with each other, originating a cluster of symptoms and behaviors. 
+
+Our network conceptualization inherits many assumptions from other areas, such as social networks. As argued in @bringmann2019jap, we have been using centrality indices as measures of importance for symptoms in these networks, but without consideration for the assumptions these measures carry. As the authors debate, in many of our applications, we do not know how the information flows through the network or if it is, in fact, a flow process- if something is flowing between the symptoms. Even in their original field, centrality indices have been debated. However, psychology has been searching for such symptoms as if targeting them in a clinical intervention would disturb the whole network and, presumably, impact the activation of the other nodes.
+
+Another important consideration regards the discrepancy between nomothetic and idiographic network models. We might find highly central symptoms in between-persons networks, but that are not as important when looking at the individual level in person-specific networks. In collaboration with clinical psychologists, I estimated individual networks for 240 participants with and without concussion history from 22 post-concussion symptoms collected thrice daily using EMA. I looked at each individual's most central symptom in their contemporaneous network using bridge strength. In line with @bringmann2019jap's paper, I found high variability across participants, making it very difficult to single out one particular symptom for each group (concussion and control) that could be seen as the "most important" one. There was also a contrast when analyzing the between-persons networks. For instance, in the control group, Fatigue and Irritability were the most frequent "strongest" symptoms, but when looking at the aggregate results, they were only the 4th and 13th more central symptoms in that network.
+
+Even assuming that we carefully considered the centrality assumptions in our study design, empirical research has been showing us we might be prone to miss the point if we try to take results from the group level and apply them to the individual. In a greater abstraction, we are not sure a centrality measure has the same meaning as idiographic and nomothetic networks. Or if the flow process of the symptoms (assuming it is real) works in the same way at both levels. Going a step further, a node might be more or less active depending on one or more variables not in the modeled network. When active, its centrality value could change, making the centrality a condition of the state of the system and not an immutable attribute.
+
+Finally, the considerations from @dablander2019sr add crucial information about the distinction between centrality and causality. Most networks estimated in psychological studies are undirected, and these types of networks could correspond to many distinct causal systems. While they can be a source of relevant information, we do not have guarantees that intervening on a node based on centrality measures will have the expected causal effects on the network. The authors even show that it is not better than selecting a node at random from a DAG. If we assume that symptoms are causally interacting with each other, modeling centrality, as we generally do, might not provide a good representation of this system.
+
+## References
