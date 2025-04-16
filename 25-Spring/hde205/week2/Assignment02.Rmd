@@ -230,3 +230,6 @@ p <- ggplot(data = mydata2_long, aes(x = time, y = ipred, group = record_id))
 p + geom_point(color="blue") + geom_line(color="blue") +theme_minimal()
 ```
 
+## Write a few sentences reporting the results and their interpretation
+
+On average, participants had an intercept of 21.68 (SD = 4.96), indicating a relatively high baseline level of insomnia severity. The mean slope was –3.54 (SD = 2.69), suggesting that most individuals experienced a decrease in insomnia severity over time. The correlation between intercept and slope was –0.61, indicating that participants with higher initial insomnia severity tended to show greater improvements (i.e., more negative slopes). 
