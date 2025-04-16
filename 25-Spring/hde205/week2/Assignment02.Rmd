@@ -2,8 +2,7 @@
 title: "Assignment 02"
 author: "Your name"
 date: "2025-04-16"
-output: 
-  officedown::rdocx_document
+output: officedown::rdocx_document
 ---
 
 ```{r setup, include=FALSE}
@@ -11,7 +10,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
-```{r}
+```{r echo=TRUE}
 library(ggplot2)
 library(kableExtra)
 library(psych)
@@ -19,34 +18,13 @@ library(moments)
 ```
 
 
-```{r }
-data <- read.csv("../data/clean_data.csv")
-mydata <- data |> 
-  dplyr::select(record_id, redcap_event_name, randomizacao, idade, sexo, etnia, estado_civil,
-    filhos_numero, escolaridade, peso, altura, medicacao_semana, 
-    igi_escore, ehad_depressao_escore, ehad_ansiedade_escore) |> 
-  dplyr::filter(redcap_event_name %in% c("elegibilidade_arm_1",
-                                         "desfechos_arm_1",
-                                         "followup_arm_1")) |> 
-  dplyr::mutate(
-    redcap_event_name = factor(dplyr::case_when(
-    redcap_event_name == "elegibilidade_arm_1" ~ 1,
-    redcap_event_name == "desfechos_arm_1" ~ 2,
-    redcap_event_name == "followup_arm_1" ~ 3
-    ))
-    )
-
-english_names <- c("record_id", "redcap_event_name", "randomization", "age",
-                   "sex", "ethnicity", "marital_status", "child_n", "education",
-                   "weight", "height", "medication_weekly", "insomina_severity",
-                   "depression", "anxiety")
-
-colnames(mydata) <- english_names
+```{r echo=TRUE}
+mydata <- read.csv("../data/mydata.csv")
 ```
 
 # Question 0
 
-```{r}
+```{r echo=TRUE}
 sel_data <- mydata[, c("record_id", "redcap_event_name", "insomina_severity")]
 
 
@@ -57,8 +35,8 @@ mydata2_wide <- reshape(sel_data,
 
 mydata2 <- mydata2_wide[complete.cases(mydata2_wide), ]
 ```
-# Residualized Gain Scores
 
+# Residualized Gain Scores
 
 ## Write out the equation for the residualized gain model.
 
@@ -82,7 +60,7 @@ res_m1 <- resid(m1)
 
 ## regressing time 3 on time 2
 
-m2 <- lm(insomina_severity.3 ~ insomina_severity.2) 
+m2 <- lm(insomina_severity.3 ~ insomina_severity.2, data=mydata2) 
 # saving the residuals
 res_m2 <- resid(m2)
 ```
@@ -120,10 +98,12 @@ modelsummary::modelsummary(m2,
 ```{r echo=FALSE}
 
 psych::describe(res_m1) |> 
+  as.data.frame() |> 
   kable(digits = 1,
         caption = "Residualized gain scores for T2 - T1")
 
 psych::describe(res_m2) |> 
+  as.data.frame() |> 
   kable(digits = 1,
         caption = "Residualized gain scores for T3 - T2")
 ```
@@ -173,11 +153,14 @@ summary_data <- mydata2[, c("insomina_severity.1",
                             "quadratic_trend")]
 colnames(summary_data) <- c("Time1", "Time2", "Time3", "Linear", "Quadratic")
 
-kable(psych::describe(summary_data), digits = 1)
+psych::describe(summary_data) |> 
+  as.data.frame() |> 
+  kable(digits=1)
 ```
 
 ```{r}
 round(cor(summary_data, use = "pairwise.complete.obs"), 2) |> 
+  as.data.frame() |> 
   kable()
 ```
 

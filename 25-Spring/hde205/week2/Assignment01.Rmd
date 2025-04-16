@@ -19,11 +19,9 @@ mydata <- read.csv("../data/mydata.csv")
 
 # Question 1
 
-The dataset comprises longitudinal data from a sample of 227 participants suffering rom insomnia complaints who completed repeated assessments of insomnia severity, anxiety, and depression at three distinct occasions: baseline, 6 weeks (post-treatment), and 6 months (follow-up). Each participant was randomized to one of three groups: (a) ACT-I; *n* = 76, (b) CBT-I; *n* = 76, or (c) Wait List; *n* = 75.
+The data set comprises longitudinal data from a sample of 227 participants suffering from insomnia complaints who completed repeated assessments of insomnia severity, anxiety, and depression at three distinct occasions: baseline, 6 weeks (post-treatment), and 6 months (follow-up). Each participant was randomized to one of two therapy groups or the control group: (a) ACT-I; *n* = 76, (b) CBT-I; *n* = 76, or (c) Wait List; *n* = 75. In total, there were 173 (76%) female participants and the mean age was 40.6 years (SD = 10.2). 
 
-In total, there were 173 (76%) female participants and the mean age was 40.6 years (SD = 10.2). 
-
-# Question 2
+# Question 2  
 
 For the time varying variables we can look at Insomnia Severity. Higher scores mean more insomnia symptoms.
 
@@ -52,11 +50,10 @@ cor(mydata2_wide[, c(2,3,4)], use = "complete.obs") |>
 mydata |> 
   tidyr::pivot_longer(cols = insomina_severity:anxiety,
                       names_to = "symptom", values_to = "score") |> 
-  dplyr::filter(symptom != "insomina_severity") |> 
+  dplyr::filter(symptom == "insomina_severity") |> 
   ggplot(aes( x = redcap_event_name, y = score, group = record_id)) +
   geom_point() + 
   geom_line() +
-  facet_wrap("symptom") +
   labs(x = "Time", y = "Insomnia Severity") +
   scale_x_continuous(breaks = c(1,2,3)) +
   theme_minimal()
