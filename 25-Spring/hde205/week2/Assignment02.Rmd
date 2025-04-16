@@ -22,7 +22,6 @@ library(moments)
 mydata <- read.csv("../data/mydata.csv")
 ```
 
-# Question 0
 
 ```{r echo=TRUE}
 sel_data <- mydata[, c("record_id", "redcap_event_name", "insomina_severity")]
