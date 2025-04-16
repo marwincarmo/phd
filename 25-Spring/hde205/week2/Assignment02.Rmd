@@ -1,0 +1,249 @@
+---
+title: "Assignment 02"
+author: "Your name"
+date: "2025-04-16"
+output: 
+  officedown::rdocx_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r}
+library(ggplot2)
+library(kableExtra)
+library(psych)
+library(moments)
+```
+
+
+```{r }
+data <- read.csv("../data/clean_data.csv")
+mydata <- data |> 
+  dplyr::select(record_id, redcap_event_name, randomizacao, idade, sexo, etnia, estado_civil,
+    filhos_numero, escolaridade, peso, altura, medicacao_semana, 
+    igi_escore, ehad_depressao_escore, ehad_ansiedade_escore) |> 
+  dplyr::filter(redcap_event_name %in% c("elegibilidade_arm_1",
+                                         "desfechos_arm_1",
+                                         "followup_arm_1")) |> 
+  dplyr::mutate(
+    redcap_event_name = factor(dplyr::case_when(
+    redcap_event_name == "elegibilidade_arm_1" ~ 1,
+    redcap_event_name == "desfechos_arm_1" ~ 2,
+    redcap_event_name == "followup_arm_1" ~ 3
+    ))
+    )
+
+english_names <- c("record_id", "redcap_event_name", "randomization", "age",
+                   "sex", "ethnicity", "marital_status", "child_n", "education",
+                   "weight", "height", "medication_weekly", "insomina_severity",
+                   "depression", "anxiety")
+
+colnames(mydata) <- english_names
+```
+
+# Question 0
+
+```{r}
+sel_data <- mydata[, c("record_id", "redcap_event_name", "insomina_severity")]
+
+
+mydata2_wide <- reshape(sel_data,
+                   timevar = "redcap_event_name",
+                   idvar = "record_id",
+                   direction = "wide")
+
+mydata2 <- mydata2_wide[complete.cases(mydata2_wide), ]
+```
+# Residualized Gain Scores
+
+
+## Write out the equation for the residualized gain model.
+
+
+\[
+\begin{aligned}
+y_{2i} &= \beta_0 + \beta_1 y_{1i} + e_i \\
+y_{3i} &= \beta_0 + \beta_1 y_{2i} + e_i
+\end{aligned}
+\]
+
+
+## Run the model for pairs of consecutive occasions (T1 and T2; T2 and T3) and save the residualized gain scores
+
+```{r}
+## regressing time 2 on time 1
+
+m1 <- lm(insomina_severity.2 ~ insomina_severity.1, data=mydata2) 
+# saving the residuals
+res_m1 <- resid(m1)
+
+## regressing time 3 on time 2
+
+m2 <- lm(insomina_severity.3 ~ insomina_severity.2) 
+# saving the residuals
+res_m2 <- resid(m2)
+```
+
+## Create a table summarizing results of the models
+
+```{r echo=FALSE}
+modelsummary::modelsummary(m1,
+                           #fmt = 1,
+                           shape = term ~ statistic,
+                           estimate  = c(
+                                         "{estimate}{stars}"),
+                           statistic = c("conf.int",
+                           "{std.error}", 
+                           "{statistic}",
+                           "{p.value}"),
+                           gof_map = "r.squared")
+```
+
+```{r echo=FALSE}
+modelsummary::modelsummary(m2,
+                           #fmt = 1,
+                           shape = term ~ statistic,
+                           estimate  = c(
+                                         "{estimate}{stars}"),
+                           statistic = c("conf.int",
+                           "{std.error}", 
+                           "{statistic}",
+                           "{p.value}"),
+                           gof_map = "r.squared")
+```
+
+## Summary Statistics for the residualized gain scores
+
+```{r echo=FALSE}
+
+psych::describe(res_m1) |> 
+  kable(digits = 1,
+        caption = "Residualized gain scores for T2 - T1")
+
+psych::describe(res_m2) |> 
+  kable(digits = 1,
+        caption = "Residualized gain scores for T3 - T2")
+```
+# Trend Scores
+
+## Equations
+
+```{r }
+poly(c(0, 1.5, 6), degree = 2)
+```
+
+\[
+\begin{aligned}
+T_{\text{linear}} &= (-0.566)Y_1 + (-0.226)Y_2 + (0.793)Y_3\\
+T_{\text{quadratic}} &= (0.588)Y_1 + (-0.784)Y_2 + (0.196)Y_3
+\end{aligned}
+\]
+
+## Compute the linear and quadratic trend scores for your data. 
+
+```{r echo=TRUE}
+
+# Coefficients for linear and quadratic trends
+linear <- c(-0.679, -0.226, 0.793)
+quadratic <- c(0.588, -0.784, 0.196)
+
+
+mydata2$linear_trend <- with(mydata2,
+  insomina_severity.1 * linear[1] +
+  insomina_severity.2 * linear[2] +
+  insomina_severity.3 * linear[3]
+)
+
+mydata2$quadratic_trend <- with(mydata2,
+  insomina_severity.1 * quadratic[1] +
+  insomina_severity.2 * quadratic[2] +
+  insomina_severity.3 * quadratic[3]
+)
+
+```
+
+```{r}
+summary_data <- mydata2[, c("insomina_severity.1", 
+                            "insomina_severity.2", 
+                            "insomina_severity.3", 
+                            "linear_trend", 
+                            "quadratic_trend")]
+colnames(summary_data) <- c("Time1", "Time2", "Time3", "Linear", "Quadratic")
+
+kable(psych::describe(summary_data), digits = 1)
+```
+
+```{r}
+round(cor(summary_data, use = "pairwise.complete.obs"), 2) |> 
+  kable()
+```
+
+# Individual Curves
+
+## Write out the equation for obtaining the individual curve.
+
+\[
+y_{it} = \beta_{0i} + \beta_{1i}t + e_{it}
+\]
+
+## Compute the individual curves parameters (Intercept and Slope) for your data 
+
+```{r echo=TRUE}
+
+mydata2_long <- reshape(mydata2,
+                        varying = list(c("insomina_severity.1", "insomina_severity.2", "insomina_severity.3")),
+                        v.names = "insomina_severity",
+                        timevar = "time",
+                        times = c(1, 2, 3),
+                        idvar = "record_id",
+                        direction = "long")
+
+
+istats <- data.frame(id=unique(mydata2_long$record_id),
+                     iintercept=rep(NA,length(unique(mydata2_long$record_id))),
+                     islope=rep(NA,length(unique(mydata2_long$record_id))))
+
+# run individual regressions
+for (i in unique(mydata2_long$record_id)){
+    pos <- which(istats$id == i)
+    datai <- mydata2_long[which(mydata2_long$record_id == i),] # subset data for each individual
+
+    istats$iintercept[pos] <- coefficients(lm(insomina_severity~time,data=datai))[1]
+    istats$islope[pos] <- coefficients(lm(insomina_severity~time,data=datai))[2]
+    rm(datai)
+}
+```
+
+```{r}
+means <- sapply(istats[, c("iintercept", "islope")], mean)
+sds   <- sapply(istats[, c("iintercept", "islope")], sd)
+
+cor_is <- cor(istats$iintercept, istats$islope)
+
+summary_table <- data.frame(
+  Parameter = c("Intercept", "Slope"),
+  Mean = round(means, 2),
+  SD = round(sds, 2)
+)
+
+print(summary_table)
+cat("\nCorrelation between intercept and slope:", round(cor_is, 2), "\n")
+
+```
+
+## Plot for predicted curves
+
+```{r}
+# merge istats with verb_long
+mydata2_long <- merge(mydata2_long,istats,by.x="record_id", by.y = "id")
+
+mydata2_long$ipred <- mydata2_long$iintercept+mydata2_long$islope*mydata2_long$time + 0
+
+# plot predicted individual change
+p <- ggplot(data = mydata2_long, aes(x = time, y = ipred, group = record_id))
+p + geom_point(color="blue") + geom_line(color="blue") +theme_minimal()
+```
+
