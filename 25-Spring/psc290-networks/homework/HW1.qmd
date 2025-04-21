@@ -1,0 +1,136 @@
+---
+title: "HW 1: Degrees and Distributions"
+author: "Marwin Carmo"
+format: pdf
+editor: visual
+---
+
+# Introduction
+
+Welcome to Homework Assignment No. 1. For this week's assignment, you'll need to visit [the course website](https://jonathanpark.dev/NetworkAnalysis/hwapp.html). There, you'll find a shiny app to generate the graph you'll need for your homework assignment.
+
+## Instructions
+
+-   Input your first and last name
+-   Input the due date of the assignment \[April 23, 2025\]
+-   Download the `.RDS` file which contains your graph
+-   Load that `.RDS` file into your `R` environment and begin the assignment
+    -   This can be done with the command, \`readRDS()\`\`
+
+> Note: you may review the answers to graphs from any other **past** date. So, if you'd like to check if your code is correct, feel free to do so; however, you may not view the answers for any future dates. **Be sure to submit the graph/answers for the due date above!**
+
+```{r}
+library(igraph)
+library(poweRlaw)
+```
+
+
+```{r}
+hw_graph <- readRDS("hw_graph.rds")
+#hw_graph <- readRDS("today_graph.rds")
+```
+
+
+Below, you will find a template of the questions and fields to provide answers in either `R` or text format. Please use a mix of code and text to answer each question.
+
+## Questions
+
+### **Question 1**. Identify the vertex with the highest **Degree**
+
+#### Answer
+
+```{r}
+deg <- degree(hw_graph)
+max_deg <- which(deg == max(deg))
+```
+
+> The vertex with the highest degree is Node `r max_deg`
+
+### **Question 2**. Identify the vertex with the highest **Closeness**
+
+#### Answer
+
+```{r}
+clos <- closeness(hw_graph)
+max_clos <- which(clos == max(clos))
+```
+
+> The vertex with the highest closeness is Node `r max_clos`
+
+### **Question 3**. Identify the vertex with the highest **Betweenness**
+
+#### Answer
+
+```{r}
+bet <- betweenness(hw_graph)
+max_bet <- which(bet == max(bet))
+```
+
+> The vertex with the highest betweenness is Node `r max_bet`
+
+### **Question 4**. Which **Degree Distribution** is likely to have generated your graph?
+
+#### Answer
+
+The graph is likely generated from an Erdős–Rényi distribution.
+
+
+### **Question 5**. Calculate the **Density** of your graph
+
+#### Answer
+
+```{r}
+ed <- edge_density(hw_graph)
+```
+
+The graph density is given by `r round(ed, 2)`. That means that approximately `r round(ed, 1)*100`% of the possible edges are present.
+
+### **Question 6**. Determine the **Diameter** of your graph
+
+#### Answer
+
+```{r}
+dia <- diameter(hw_graph)
+```
+
+The longest shortest path between any two nodes is `r dia` steps.
+
+### **Question 7**. Calculate the **Average Path Length**
+
+#### Answer
+
+```{r}
+apl <- mean_distance(hw_graph)
+```
+
+On average, any two vertices are `r round(apl, 2)` steps apart. 
+
+### **Question 8**. If you believe your graph is a Barabasi-Albert power law or an Erdos-Renyi random graph, perform a statistical test to support your claim. Alternatively, discuss--and provide evidence--that your graph is a Watts-Strogatz small-world graph.
+
+#### Answer
+
+```{r}
+degrees <- degree(hw_graph)
+
+is.erdosrenyi <- dispois$new(degrees)
+is.erdosrenyi$setXmin(estimate_xmin(is.erdosrenyi))
+
+bs.er <- bootstrap_p(is.erdosrenyi, no_of_sims = 500, threads = 12)
+
+
+```
+
+We do not have evidence to reject the null hypothesis that the graph was generated from a Poisson distribution: KS = `r round(bs.er$gof, 3)`, *p* = `r bs.er$p`
+
+### **Question 9**. Visualize the degree distribution implied by your graph
+
+#### Answer
+
+```{r}
+hist(degrees)
+```
+
+
+### **Question 10** \[Bonus\]. Write out the formulation of a graph ($G$) that gives rise to a bipartite graph. Define both $V$ and $E$
+
+#### Answer
