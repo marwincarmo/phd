@@ -1,0 +1,68 @@
+---
+title: "Assignment 03"
+author: "Marwin Carmo"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+```{r}
+library(ez) 
+library(nlme)
+```
+
+
+```{r}
+mydata <- read.csv("../data/mydata.csv")
+
+# To run the ANOVA, I need to filter out some participants that don't have all three time points
+mydata_clean <- mydata[!is.na(mydata$insomnia_severity), ]
+timepoint_counts <- table(mydata_clean$record_id)
+complete_ids <- names(timepoint_counts[timepoint_counts == 3])
+mydata_complete <- mydata_clean[mydata_clean$record_id %in% complete_ids, ]
+mydata_complete$redcap_event_name <- factor(mydata_complete$redcap_event_name)
+```
+
+(1)	Select a variable in your data for modeling over time. (1 variable, at least 3 occasions). Use the same variable and data as Assignment 2.
+
+> Consistent with last week's assignment, I will work with the outcome of insomnia severity.
+
+(2)	Repeated Measures ANOVA  
+
+a.	Run repeated measures ANOVA using the `ezANOVA` function in the `ez` package
+
+```{r}
+m1 <- ezANOVA(data=mydata_complete, dv=insomnia_severity, wid=record_id, within=redcap_event_name)
+
+```
+
+b.	Decide whether you use the univariate or multivariate test, and justify your decision
+
+> Because the Mauchly's test for sphericity is significant (W = `r round(m1[[2]]$W,2)`, *p* < 0.001), we assume there is a violation of heterogeneity of variances and use the multivariate test.
+
+c.	If you decide to use the univariate test, test for polynomial contrasts (e.g., linear, quadratic time effects) with proper time spacing using the aov function
+
+
+d.	If you decide to use the multivariate test, run the multivariate test (i.e., the MANOVA approach)
+
+```{r}
+# contrasts for unequally spaced time
+contrasts(mydata_complete$redcap_event_name) <- contr.poly(c(0, 1.5, 6))
+
+mUN <- gls(insomnia_severity ~ redcap_event_name, corr = corSymm(form = ~1|record_id), weights = varIdent(form = ~ 1 | redcap_event_name), 
+          method="ML",data=mydata_complete)
+
+mCS <- gls(insomnia_severity ~ redcap_event_name, corr = corCompSymm(form = ~1|record_id), method="ML", data=mydata_complete)
+
+anova(mUN, mCS)
+```
+
+
+e.	Write a few sentences reporting the results and their interpretation.
+
+I examined how insomnia severity changed over three measurement occasions (baseline, posttreatment, and followup) in a sample of 191 participants. The assumption of equal variance and covariance, tested with the Mauchly's test of Sphericity did not adequately describe the data, as indicated by the significant p-value of the test. Therefore, I fitted a multivariate ANOVA model, in which each variance and covariance was estimated separately. The Unstructured model fitted significantly better than a model assuming Compound Symmetry ($\chi^2$(4) = 84.32, *p* < 0.001), and had lower AIC (3316.17 vs. 3392.48) and BIC (3355.32 vs. 3414.24). Significant mean differences in insomnia severity were observed across occasions within the multivariate model, F(1, 2) = 186.38, *p* < .001.
+
+(3)	Include the code you used to complete the assignment.
+

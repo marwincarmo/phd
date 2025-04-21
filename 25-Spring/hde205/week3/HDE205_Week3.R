@@ -8,7 +8,7 @@
 
 
 # Inputing data
-wiscraw <- read.csv('../hde205/data//wisc3raw.csv')
+wiscraw <- read.csv('../hde205/data/wisc3raw.csv')
 
 # Creating a reduced data set with only 3 equally spaced occasions
 verb <- wiscraw[,c(1,3:5)] 
