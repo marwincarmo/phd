@@ -23,7 +23,7 @@ The data set comprises longitudinal data from a sample of 227 participants suffe
 
 # Question 2  
 
-For the time varying variables we can look at Insomnia Severity. Higher scores mean more insomnia symptoms.
+For the time varying variables we can look at Insomnia Severity (ISI). Higher scores mean more insomnia symptoms.
 
 # Question 3
 
