@@ -1,0 +1,18 @@
+---
+title: "Assignment 04"
+author: "Marwin Carmo"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+```{r}
+library(ez) 
+library(nlme)
+```
+
+## (1)	Select a variable in your data for modeling over time. (1 variable, at least 3 occasions). Use the same variable and data as Assignment 3.
+
+Consistent with last assignments 1 and 2, I will work with the outcome of insomnia severity.
