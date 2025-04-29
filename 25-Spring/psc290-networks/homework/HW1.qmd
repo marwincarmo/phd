@@ -27,7 +27,6 @@ library(poweRlaw)
 
 ```{r}
 hw_graph <- readRDS("hw_graph.rds")
-#hw_graph <- readRDS("today_graph.rds")
 ```
 
 
@@ -121,6 +120,7 @@ bs.er <- bootstrap_p(is.erdosrenyi, no_of_sims = 500, threads = 12)
 ```
 
 We do not have evidence to reject the null hypothesis that the graph was generated from a Poisson distribution: KS = `r round(bs.er$gof, 3)`, *p* = `r bs.er$p`
+
 
 ### **Question 9**. Visualize the degree distribution implied by your graph
 
