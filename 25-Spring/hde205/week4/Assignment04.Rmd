@@ -9,10 +9,108 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 ```
 
 ```{r}
-library(ez) 
 library(nlme)
+library(car)
 ```
+
+```{r}
+mydata <- read.csv("../data/mydata.csv")
+# removing NAs
+mydata <- mydata[!is.na(mydata$insomnia_severity), ]
+# convert the time variable to factor
+mydata$redcap_event_name <- factor(mydata$redcap_event_name)
+
+```
+
 
 ## (1)	Select a variable in your data for modeling over time. (1 variable, at least 3 occasions). Use the same variable and data as Assignment 3.
 
 Consistent with last assignments 1 and 2, I will work with the outcome of insomnia severity.
+
+## (2)	Covariance Pattern Model
+
+### a.	Select 3-5 covariance patterns you deem reasonable for your data
+
+```{r}
+mat <- with(mydata, matrix(c(insomnia_severity[redcap_event_name==1], 
+                             insomnia_severity[redcap_event_name==2], 
+                             insomnia_severity[redcap_event_name==3]), ncol = 3))
+var(mat)
+cor(mat)
+```
+
+### b.	Use the gls function in the nlme package to run covariance pattern models to test whether the means are equal across measurement occasions. 
+
+
+```{r}
+## Compound symmetry
+mCS <- gls(insomnia_severity ~ redcap_event_name, corr = corCompSymm(form = ~1|record_id), method="ML",data=mydata)
+
+## AR1
+mAR1 <- gls(insomnia_severity ~ redcap_event_name, corr = corAR1(form = ~1|record_id), method="ML", data=mydata)
+
+## CS with heterogeneous variances
+mCSh <- gls(insomnia_severity ~ redcap_event_name, corr = corCompSymm(form = ~1|record_id), 
+            weights = varIdent(form = ~ 1 | redcap_event_name), method="ML",data=mydata)
+
+## AR1 with heterogeneous variances
+mAR1h <- gls(insomnia_severity ~ redcap_event_name, corr = corAR1(form = ~1|record_id),
+             weights = varIdent(form = ~ 1 | redcap_event_name), method="ML", data=mydata)
+
+## Unstructured
+mUN <- gls(insomnia_severity ~ redcap_event_name, corr = corSymm(form = ~1|record_id),
+           weights = varIdent(form = ~ 1 | redcap_event_name),
+           method="ML",data=mydata)
+```
+
+## c.	Assess the fit of the covariance patterns using AIC and BIC, and determine the best fitting covariance pattern model
+
+```{r}
+anova(mCS, mAR1, mCSh, mAR1h, mUN)
+```
+
+Based on AIC and BIC, the unstructured covariance model provided the best fit to the data compared to the other covariance structures.
+
+### d.	Make a table including the omnibus test results, fit indices, and fixed effects estimates of the best fitting model
+
+```{r}
+modelsummary::modelsummary(mUN)
+```
+
+### e.	Write a few sentences reporting the model selection procedure and results of the best fitting model.
+
+## (3)	Repeated Measures ANOVA with Groups/Time-Invariant Covariate
+
+### a.	Select a grouping variable (e.g., sex) or time-invariant covariate
+
+I will use `sex` as the time-invariant covariate
+
+```{r}
+mydata$sex <- factor(mydata$sex)
+```
+
+### b.	Use the gls function with compound symmetry or unstructured covariance pattern to run repeated measures ANOVA with the grouping variable or time-invariant covariate, test for an interaction effect with time
+
+```{r}
+# contrasts for unequally spaced time
+#contrasts(mydata$redcap_event_name) <- contr.poly(c(0, 1.5, 6))
+
+mUNb <- gls(insomnia_severity ~ redcap_event_name*sex, corr = corSymm(form = ~1|record_id),
+           weights = varIdent(form = ~ 1 | redcap_event_name),
+           method="ML",data=mydata)
+anova(mUNb)
+```
+
+### c.	Test for 1 to 2 contrasts with correct spacing
+
+```{r}
+# contrasts for unequally spaced time
+contrasts(mydata$redcap_event_name) <- contr.poly(c(0, 1.5, 6))
+
+mUNc <- gls(insomnia_severity ~ redcap_event_name*sex, corr = corSymm(form = ~1|record_id),
+           weights = varIdent(form = ~ 1 | redcap_event_name),
+           method="ML",data=mydata)
+summary(mUNc)
+```
+
+### d.	Write a few sentences reporting the results and their interpretation.
