@@ -50,7 +50,7 @@ y_{3i} &= \beta_0 + \beta_1 y_{2i} + e_i
 
 ## Run the model for pairs of consecutive occasions (T1 and T2; T2 and T3) and save the residualized gain scores
 
-```{r}
+```{r echo=TRUE}
 ## regressing time 2 on time 1
 
 m1 <- lm(insomina_severity.2 ~ insomina_severity.1, data=mydata2) 
