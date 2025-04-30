@@ -39,6 +39,8 @@ var(mat)
 cor(mat)
 ```
 
+The variances are different, so heterogeneous variances might be needed. We also don't see an obvious pattern of stronger correlation between closer timepoints, that would be suggestive of an AR covariance pattern.
+
 ### b.	Use the gls function in the nlme package to run covariance pattern models to test whether the means are equal across measurement occasions. 
 
 
@@ -73,29 +75,34 @@ Based on AIC and BIC, the unstructured covariance model provided the best fit to
 
 ### d.	Make a table including the omnibus test results, fit indices, and fixed effects estimates of the best fitting model
 
-```{r}
-modelsummary::modelsummary(mUN)
+```{r echo=FALSE}
+modelsummary::modelsummary(mUN,
+                           shape = term ~ statistic,
+                           statistic = c("conf.int",
+                           "{std.error}", 
+                           "{statistic}",
+                           "{p.value}"),
+                           gof_map = c("r.squared", "aic", "bic"))
 ```
 
 ### e.	Write a few sentences reporting the model selection procedure and results of the best fitting model.
+
+To determine the best-fitting covariance structure a series of generalized least squares models were estimated using different covariance pattern structures: compound symmetry, autoregressive, heterogeneous compound symmetry, heterogeneous autoregressive, and unstructured. Model comparisons were based on the Akaike Information Criterion (AIC), Bayesian Information Criterion (BIC). Among the models tested, the unstructured covariance model demonstrated the best fit, with the lowest AIC (3568.35) and BIC (3608.18) values. This model was statistically significant: F(1, 2) = 194.22, *p* < .001. It was also observed that insomnia severity on T2 was 6.97 points lower on average compared to T1  (*b* = -6.97, SE = 0.39, *p* < 0.001), and that difference was also observed on T3 where the average insomnia severity was 7.09 points lower than the average at T1 (*b* = -7.09, SE = 0.38, *p* < 0.001).
 
 ## (3)	Repeated Measures ANOVA with Groups/Time-Invariant Covariate
 
 ### a.	Select a grouping variable (e.g., sex) or time-invariant covariate
 
-I will use `sex` as the time-invariant covariate
+I will use `randomization` as the time-invariant covariate. Its levels are: Acceptance and Commitment Therapy (ACT), Cognitive Behavioral Therapy (CBT), and Wait List (WL).
 
 ```{r}
-mydata$sex <- factor(mydata$sex)
+mydata$randomization <- factor(mydata$randomization)
 ```
 
 ### b.	Use the gls function with compound symmetry or unstructured covariance pattern to run repeated measures ANOVA with the grouping variable or time-invariant covariate, test for an interaction effect with time
 
 ```{r}
-# contrasts for unequally spaced time
-#contrasts(mydata$redcap_event_name) <- contr.poly(c(0, 1.5, 6))
-
-mUNb <- gls(insomnia_severity ~ redcap_event_name*sex, corr = corSymm(form = ~1|record_id),
+mUNb <- gls(insomnia_severity ~ redcap_event_name*randomization, corr = corSymm(form = ~1|record_id),
            weights = varIdent(form = ~ 1 | redcap_event_name),
            method="ML",data=mydata)
 anova(mUNb)
@@ -103,14 +110,18 @@ anova(mUNb)
 
 ### c.	Test for 1 to 2 contrasts with correct spacing
 
-```{r}
+```{r include=TRUE,echo=FALSE}
 # contrasts for unequally spaced time
 contrasts(mydata$redcap_event_name) <- contr.poly(c(0, 1.5, 6))
 
-mUNc <- gls(insomnia_severity ~ redcap_event_name*sex, corr = corSymm(form = ~1|record_id),
+mUNc <- gls(insomnia_severity ~ redcap_event_name*randomization, corr = corSymm(form = ~1|record_id),
            weights = varIdent(form = ~ 1 | redcap_event_name),
            method="ML",data=mydata)
 summary(mUNc)
 ```
 
 ### d.	Write a few sentences reporting the results and their interpretation.
+
+A generalized least squares model with an unstructured covariance pattern was used to examine changes in insomnia severity across timepoints and randomized conditions. Time was modeled using linear and quadratic contrasts, and interactions with treatment groups were included. There was a significant overall linear decrease in insomnia severity over time (*b* = -5.86, *p* < .001), and a significant quadratic trend (*b* = 3.07, *p* < .001), suggesting that initial reductions in symptoms were followed by a leveling off.
+
+The intervention groups also differed in overall levels of insomnia severity: the CBT group had slightly lower scores compared to the ACT group (*b* = -1.35, *p* = .049), while the WL group had significantly higher scores (*b* = 3.59, *p* < .001).  There were also significant interactions between group and time, including linear and quadratic trends. The WL group seems to improve less over time, compared to group CBT, as shown by showed the significant positive linear interaction (*b* = 3.32, *p* < .001), and a different shape of change, given the negative quadratic interaction (*b* = -1.66, *p* = .0018). There were no significant differences between the linear or quadratic trends of ACT and CBT groups.
