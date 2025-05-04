@@ -222,7 +222,6 @@ contrast(emm,list(diff12g=c(-1,1,0,0,1,-1,0,0)))
 # Not significant. Hence, both groups had similar increase in verbal scores between time 1 and time 2.
 # The adjust argument can be used to adjust for multiple comparisons.
 
-=======
 ############################################################################################################
 # Week 4: Repeated Measures ANOVA II
 ############################################################################################################
