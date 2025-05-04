@@ -1,6 +1,6 @@
 ---
 title: "HW2: Community Detection"
-author: "Your Name Here"
+author: "Marwin Carmo"
 format: pdf
 ---
 
@@ -26,6 +26,7 @@ library(ppclust)
 
 ```{r}
 g <- readRDS("hw2_graph.rds")
+
 ```
 
 Below, you will find a template of the questions and fields to provide answers in either `R` or text format. Please use a mix of code and text to answer each question.
@@ -38,6 +39,10 @@ Below, you will find a template of the questions and fields to provide answers i
 
 ```{r}
 amat <- as_adjacency_matrix(g, sparse = FALSE)
+ng <- graph_from_adjacency_matrix(amat, 
+                                 mode = "undirected", 
+                                 diag = FALSE,
+                                 weighted = TRUE)
 head(amat, 3)
 ```
 
@@ -45,12 +50,9 @@ head(amat, 3)
 
 #### Answer
 
+As $k$ increases, we see a general reduction in the within-cluster $SS$.
+
 ```{r}
-clust <- 10
-
-n.nodes.per.group <- 10 # each custer is assumped to have 10 nodes
-n.groups <- 5 #Five groups 
-
 results.1 <- lapply(1:5, function(k) kmeans(amat, 
                                       centers = k,
                                       iter.max = 1000,
@@ -71,11 +73,11 @@ results.1[[3]][["withinss"]]
 
 #### Answer
 
-Apparently there are no clusters (i.e., each node is its own cluster) given that there is no clear 'elbow' on the line. The pattern persist even increasing to the maximum possible value of $k$. One could maybe say 2 or 3, but the break in the line is very subtle.
+Apparently, there are no clusters (i.e., the nodes form a single community) given that there is no clear 'elbow' on the line. The pattern persists even when increasing to the maximum possible value of $k$. One could maybe say 2 or 3, but the break in the line is very subtle.
 
 ```{r}
-wss.vals <- sapply(results.1, function(res) sum(res$withinss)) # extracting WSS
-plot(wss.vals, type = "l") # plotting the within-cluster variance 
+wss.vals <- sapply(results.1, function(res) sum(res$withinss))
+plot(wss.vals, type = "l")
 ```
 
 
@@ -93,7 +95,7 @@ q_kmeans
 
 #### Answer
 
-For lack of a better option, we could input 2 as the optimal number of clusters. It is clear from these results that all nodes are equally likely to belong in any of the three clusters.
+With a lack of a better option, we can use two as the optimal number of clusters. However, it is clear from these results that all nodes are equally likely to belong in any of the two clusters.
 
 ```{r}
 res_fuzzy <- lapply(1:5, function(k) fcm(amat, 
@@ -101,19 +103,25 @@ res_fuzzy <- lapply(1:5, function(k) fcm(amat,
                                       m = 2))
 
 head(res_fuzzy[[2]]$u, 10)
-```
 
+q_fuzzy <- modularity(ng,
+           res_fuzzy[[2]]$cluster)
+q_fuzzy
+```
 
 ### *Question 6*. Apply the Walktrap algorithm to your graph, with t = 4 (default value). Plot the resulting graph and highlight the groups identified in your Walktrap results.
 
 #### Answer
 
-```{r}
-ng <- graph_from_adjacency_matrix(amat, 
-                                 mode = "undirected", 
-                                 diag = FALSE,
-                                 weighted = TRUE)
-groups <- cluster_walktrap(ng, steps=4)
+Walktrap suggests four groups. However, this pattern is not visually clear from the resulting plot--the nodes appear "randomly" scattered in the graph. This result adds to the intuition elicited by the k-means analysis about the lack of clear communities within this network.
+
+```{r, fig.height=8, fig.width=8}
+
+groups <- cluster_walktrap(g, steps=4)
+
+q_walktrap <- modularity(ng, membership(groups))
+q_walktrap
+
 plot(groups, ng)
 ```
 
@@ -127,13 +135,13 @@ D.mat = diag(1/sqrt(degree(ng)), nrow(amat))
 identity = diag(1, dim(D.mat))
 Laplacian = identity - D.mat  %*% amat %*% D.mat
 
-spectrum = eigen(Laplacian)$vectors[,(nrow(amat)-3):(nrow(amat)-1)] 
+spectrum = eigen(Laplacian)$vectors[,(nrow(amat)-2):(nrow(amat)-1)] 
 
-spec.clust = kmeans(spectrum, centers = 3)
+spec.clust = kmeans(spectrum, centers = 2)
 
-q_walktrap <- modularity(ng,
+q_spec <- modularity(ng,
            spec.clust[["cluster"]])
-q_walktrap
+q_spec
 ```
 
 
@@ -141,8 +149,12 @@ q_walktrap
 
 #### Answer
 
+The highest $Q$ was obtained from the Walktrap algorithm.
+
 ```{r}
 q_kmeans
+q_fuzzy
 q_walktrap
+q_spec
 ```
 
