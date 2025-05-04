@@ -2,7 +2,6 @@
 title: "HW2: Community Detection"
 author: "Your Name Here"
 format: pdf
-editor: visual
 ---
 
 # Introduction
@@ -19,6 +18,16 @@ Welcome to Homework Assignment No. 2. For this week's assignment, you'll need to
 
 > Note: you may review the answers to graphs from any other **past** date. So, if you'd like to check if your code is correct, feel free to do so; however, you may not view the answers for any future dates. **Be sure to submit the graph/answers for the due date above!**
 
+```{r}
+library(igraph)
+library(ppclust)
+```
+
+
+```{r}
+g <- readRDS("hw2_graph.rds")
+```
+
 Below, you will find a template of the questions and fields to provide answers in either `R` or text format. Please use a mix of code and text to answer each question.
 
 ## Questions
@@ -27,30 +36,113 @@ Below, you will find a template of the questions and fields to provide answers i
 
 #### Answer
 
+```{r}
+amat <- as_adjacency_matrix(g, sparse = FALSE)
+head(amat, 3)
+```
+
 ### **Question 2**. Apply k-means clustering to your adjacency matrix using a range of $k$-values and save the results. Print the "withinss" for the first three items in the list (hint: use --\> results\[\[i\]\]\[\["withinss"\]\], where i = item index). As k increases, does the within-cluster variation for each cluster increase or decrease?
 
 #### Answer
+
+```{r}
+clust <- 10
+
+n.nodes.per.group <- 10 # each custer is assumped to have 10 nodes
+n.groups <- 5 #Five groups 
+
+results.1 <- lapply(1:5, function(k) kmeans(amat, 
+                                      centers = k,
+                                      iter.max = 1000,
+                                      nstart = 30))
+
+
+results.1[[1]][["withinss"]]
+
+results.1[[2]][["withinss"]]
+
+results.1[[3]][["withinss"]]
+
+
+```
+
 
 ### **Question 3**. Plot the withinss values for all list items in your k-means clustering results. Based on the plot, what is the most optimal value of 'k' (i.e., number of clusters in your network)?
 
 #### Answer
 
+Apparently there are no clusters (i.e., each node is its own cluster) given that there is no clear 'elbow' on the line. The pattern persist even increasing to the maximum possible value of $k$. One could maybe say 2 or 3, but the break in the line is very subtle.
+
+```{r}
+wss.vals <- sapply(results.1, function(res) sum(res$withinss)) # extracting WSS
+plot(wss.vals, type = "l") # plotting the within-cluster variance 
+```
+
+
 ### **Question 4**. What is Q for the above finding (hint: you will need use results\[\[k\]\]\[\["cluster"\]\] in the membership argument of modularity())?
 
 #### Answer
+
+```{r}
+q_kmeans <- modularity(g, membership = results.1[[2]][["cluster"]])
+q_kmeans
+```
+
 
 ### *Question 5*. Apply fuzzy c-means clustering to your adjacency matrix using a range of $k$-values and save the results. Using the optimal value of k from Q3, print the first 10 rows for the cluster confidence matrix (u). Which node is most likely to be in Cluster k-1?
 
 #### Answer
 
+For lack of a better option, we could input 2 as the optimal number of clusters. It is clear from these results that all nodes are equally likely to belong in any of the three clusters.
+
+```{r}
+res_fuzzy <- lapply(1:5, function(k) fcm(amat, 
+                                      centers = k,
+                                      m = 2))
+
+head(res_fuzzy[[2]]$u, 10)
+```
+
+
 ### *Question 6*. Apply the Walktrap algorithm to your graph, with t = 4 (default value). Plot the resulting graph and highlight the groups identified in your Walktrap results.
 
 #### Answer
+
+```{r}
+ng <- graph_from_adjacency_matrix(amat, 
+                                 mode = "undirected", 
+                                 diag = FALSE,
+                                 weighted = TRUE)
+groups <- cluster_walktrap(ng, steps=4)
+plot(groups, ng)
+```
+
 
 ### *Question 7*. Apply spectral clustering to your graph. You will need both your adjacency matrix and graph object to derive your Laplacian matrix. Use the same value of $k$ as in previous questions. Calculate and report modularity, $Q$ for your results.
 
 #### Answer
 
+```{r}
+D.mat = diag(1/sqrt(degree(ng)), nrow(amat))
+identity = diag(1, dim(D.mat))
+Laplacian = identity - D.mat  %*% amat %*% D.mat
+
+spectrum = eigen(Laplacian)$vectors[,(nrow(amat)-3):(nrow(amat)-1)] 
+
+spec.clust = kmeans(spectrum, centers = 3)
+
+q_walktrap <- modularity(ng,
+           spec.clust[["cluster"]])
+q_walktrap
+```
+
+
 ### *Question 8*. Calculate and compare $Q$ (modularity) for each set of results (k-means, c-means, WalkTrap, spectral). Which approach resulted in the highest $Q$?
 
 #### Answer
+
+```{r}
+q_kmeans
+q_walktrap
+```
+
