@@ -680,7 +680,11 @@ contrast(emm,list(lin_g=c(-0.5858501, -0.3254723, 0.1952834, 0.7160390,0.5858501
 # Comparing the two groups in the difference between verb1 and verb2
 contrast(emm,list(diff12g=c(-1,1,0,0,1,-1,0,0)))
 # Not significant. Hence, both groups had similar increase in verbal scores between time 1 and time 2.
+<<<<<<< HEAD
 
+=======
+=======
+>>>>>>> a7d9ace (resolve conflicts again)
 ############################################################################################################
 # Week 4: Repeated Measures ANOVA II
 ############################################################################################################

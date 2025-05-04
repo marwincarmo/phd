@@ -123,9 +123,7 @@ summary(mUNc)
 
 ### d.	Write a few sentences reporting the results and their interpretation.
 
-<<<<<<< HEAD
 A generalized least squares model with an unstructured covariance pattern was used to examine changes in insomnia severity across timepoints and randomized conditions. Time was modeled using linear and quadratic contrasts, and interactions with treatment groups were included. There was a significant overall linear decrease in insomnia severity over time (*b* = -5.86, *p* < .001), and a significant quadratic trend (*b* = 3.07, *p* < .001), suggesting that initial reductions in symptoms were followed by a leveling off.
 
 The intervention groups also differed in overall levels of insomnia severity: the CBT group had slightly lower scores compared to the ACT group (*b* = -1.35, *p* = .049), while the WL group had significantly higher scores (*b* = 3.59, *p* < .001).  There were also significant interactions between group and time, including linear and quadratic trends. The WL group seems to improve less over time, compared to group CBT, as shown by showed the significant positive linear interaction (*b* = 3.32, *p* < .001), and a different shape of change, given the negative quadratic interaction (*b* = -1.66, *p* = .0018). There were no significant differences between the linear or quadratic trends of ACT and CBT groups.
-=======
->>>>>>> 3ea4445 (hw files)
+
