@@ -1,0 +1,144 @@
+---
+title: "Assignment 05"
+author: "Marwin Carmo"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+```{r}
+library(nlme)
+library(lmerTest)
+library(ggplot2)
+```
+
+```{r}
+mydata <- read.csv("../data/mydata.csv")
+# removing NAs
+mydata <- mydata[!is.na(mydata$insomnia_severity), ]
+# convert the randomization variable to factor
+mydata$randomization <- factor(mydata$randomization)
+
+```
+
+## (1)	Select a variable in your data for modeling over time. (1 variable, at least 3 occasions). Prepare a long-format data set for use. Use the same variable and data as Assignment 4.
+
+Consistent with last assignments, I will work with the outcome of insomnia severity.
+
+## (2)	Plot the raw longitudinal data for all, or some representative subsample of, participants. 
+
+```{r}
+mydata |> 
+  ggplot(aes( x = redcap_event_name, y = insomnia_severity, group = record_id)) +
+  geom_point() + 
+  geom_line() +
+  scale_x_continuous(breaks = c(1,2,3)) +
+  labs(x = "Time", y = "Insomnia Severity") +
+  theme_minimal()
+```
+
+## (3)	Unconditional Growth Curve Analysis (polynomial) 
+
+### a.	Run the multilevel polynomial growth curve models with increasing order (lin, lin+qua, etc.)
+
+```{r}
+## Linear model of change
+
+### random intercept and slope
+mLin <- lmer(insomnia_severity ~ 1 + redcap_event_name + 
+               (1+ redcap_event_name|record_id), REML=FALSE, data=mydata)
+### random intercept only
+mLin_ri <- lmer(insomnia_severity ~ 1 + redcap_event_name + 
+               (1|record_id), REML=FALSE, data=mydata)
+
+
+
+### random intercept and slope with uncorrelated random effects
+mLin_nc <- lmer(insomnia_severity ~ 1 + redcap_event_name + 
+               (1 + redcap_event_name||record_id), REML=FALSE, data=mydata)
+
+## Linear + Quadratic Model of Change
+# mQuad <- lmer(insomnia_severity ~ 1 + redcap_event_name + I(redcap_event_name^2) +
+#                (1+ redcap_event_name +I(redcap_event_name^2)|record_id), 
+#               REML=FALSE, data=mydata)
+# quadratic random slope could not be estimated due to fewer observations 
+# than random effects in the model
+
+## Linear + Quadratic Model of Change without random quadratic effect
+mQuad_ri <- lmer(insomnia_severity ~ 1 + redcap_event_name + I(redcap_event_name^2) +
+               (1+ redcap_event_name  |record_id), 
+              REML=FALSE, data=mydata)
+
+## Linear + Quadratic Model of Change with uncorrelated random effects
+mQuad_nc <- lmer(insomnia_severity ~ 1 + redcap_event_name + I(redcap_event_name^2) +
+               (1+ redcap_event_name +I(redcap_event_name^2)||record_id), 
+              REML=FALSE, data=mydata)
+
+
+```
+
+### b.	Determine the best model representing the data (use theory and/or fit indices to make your decision)
+
+```{r}
+# Comparing linear models
+anova(mLin, mLin_ri) # removing the random slope worsened the model fit
+
+anova(mLin, mLin_nc) # correlated random effects fit significantly better
+
+# Comparing linear to quadratic models
+anova(mLin, mQuad_ri) # the quadratic model with random slope for time had a better fit
+
+# Comparing quadratic model with random slope for linear time to quadratic model with
+# uncorrelated random slopes for linear and quadratic time
+anova(mQuad_ri, mQuad_nc)
+# The Quadratic Model of Change with uncorrelated random effects did not fit
+# significantly better than the previous one
+```
+
+The model with lower fit indices (AIC and BIC) was the model with fixed linear and quadratic terms of change and random effects for the intercept and the linear term of time. 
+
+### c.	Write out the multilevel equation for the best model
+
+$$ \text{ISI}_{ij} = [\beta_0 + \beta_1 (Time_{ij}) + \beta_2 (Time_{ij})^2] + [u_{0j} + u_{1j} (Time_{ij})] + \varepsilon_{ij} $$
+### d.	Make a table for the best model as would appear in a paper. Include fixed effects, random effects, and fit indices (log-likelihood, AIC and BIC).
+
+
+### e.	Plot the predicted scores for all, or a representative subset, of individuals. 
+
+```{r}
+mydata$predquad <- predict(mQuad_ri)
+
+mydata |> 
+  ggplot(aes( x = redcap_event_name, y = predquad, group = record_id)) +
+  geom_point() + 
+  geom_line(alpha=.5) +
+  scale_x_continuous(breaks = c(1,2,3)) +
+  labs(x = "Time", y = "Predicted Insomnia Severity") +
+  theme_minimal()
+```
+
+### f.	Write a few sentences reporting and interpreting the results
+
+## (4)	Growth Curve Analysis with A Time-Invariant Predictor
+
+### a.	Select a time-invariant predictor (categorical or continuous) in your data
+
+I will use `randomization` as the time-invariant predictor. Its levels are: Acceptance and Commitment Therapy (ACT), Cognitive Behavioral Therapy (CBT), and Wait List (WL).
+
+### b.	Include the time-invariant predictor in the best fitting polynomial model in a way you deem appropriate
+
+```{r}
+mQuad2 <- lmer(insomnia_severity ~ 1 + redcap_event_name + I(redcap_event_name^2) +
+               randomization + (1+ redcap_event_name  |record_id), 
+              REML=FALSE, data=mydata)
+```
+
+### c.	Write out the multilevel equation for this model
+
+$$ \text{ISI}_{ij} = [\beta_0 + \beta_1 (Time_{ij}) + \beta_2 (Time_{ij})^2] + \beta_3 Randomization + [u_{0j} + u_{1j} (Time_{ij})] + \varepsilon_{ij} $$
+
+### d.	Make a table reporting the results. Include fixed effects, random effects, and fit indices (log-likelihood, AIC and BIC)
+
+### e.	Write a few sentences reporting and interpreting the results
