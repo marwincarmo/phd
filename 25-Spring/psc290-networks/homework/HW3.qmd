@@ -1,0 +1,120 @@
+---
+title: "HW3: Psychological Networks"
+author: "Marwin Carmo"
+format: pdf
+editor: source
+---
+
+# Introduction
+
+Welcome to Homework Assignment No. 3. For this week's assignment, you'll find the dataset's `.RDS` file on Canvas.
+
+## Instructions
+
+-   Download the dataset from Canvas as a `.RDS` file
+-   Load that `.RDS` file into your `R` environment and begin the assignment
+    -   This can be done with the command, \`readRDS()\`\`
+
+Below, you will find a template of the questions and fields to provide answers in either `R` or text format. Please use a mix of code and text to answer each question.
+
+```{r}
+library(qgraph)
+library(GGMnonreg)
+```
+
+
+## Questions
+
+### **Question 1**. Read in your graph's `.RDS` file and provide descriptive statistics of each of the variables. This can be done in the `psych` package using the `describe()` function. Describe the data verbally.
+
+#### Answer
+
+```{r}
+data_ggm <- readRDS("data.ggm.RDS")
+
+psych::describe(data_ggm)
+```
+This dataset includes 20 variables with 1,000 observations for each. These variables appear to be standardized, given the means close to zero and standard deviation approximately one. The range of the variables are also consistent with a standard normal distribution, with minimum and maximum roughly in line with the extreme 1% tails. The skewness and kurtosis are minimal, which is to be expected for approximately normally distributed and standardized data.
+
+### **Question 2**. Convert your raw data into a covariance matrix using the `cov()` function and then use the `solve()` function to invert the covariance matrix. `print()` your precision matrix as your answer to this question.
+
+#### Answer
+
+```{r}
+Sigma <- cov(data_ggm)
+Theta <- solve(Sigma)
+
+print(Theta)
+```
+
+
+### **Question 3**. Using the following equation, write an `R` function or hard-code a way to convert your precision matrix into the matrix of partial correlations.
+
+$$\text{Cor}(x_{i}, x_{j} | x\__{-i,-j}) = - \frac{k_{ij}}{\sqrt{k_{ii}\cdot k_{jj}}}$$
+
+where $k_{ij} \in  = K = \Sigma^{-1}$
+
+> Show your `R` code and check your result using `cov2pcor()` from the `gRbase` package.
+
+#### Answer
+
+```{r}
+precis_to_pcor <- function(m) {
+  
+  P <- matrix(NA, nrow(m), ncol(m))
+  
+  for (i in 1:nrow(m)) {
+    for (j in 1:ncol(m)) {
+      if(i==j) {
+        P[i, j] <- 1
+      } else {
+        k_ij <- m[i, j]
+        k_ii <- m[i, i]
+        k_jj <- m[j, j]
+        P[i, j] <- -k_ij/sqrt(k_ii*k_jj)
+      }
+    }
+  }
+  return(P)
+} 
+
+# Checking if both functions give the same results
+
+sum(round(precis_to_pcor(Theta), 3) == round(gRbase::cov2pcor(Sigma), 3)) == length(Sigma)
+
+# They match!
+```
+
+
+### **Question 4**. Estimate your graph using EBICglasso and with the NHST graph. Print your results.
+
+#### Answer
+
+```{r}
+#| echo: true
+#| results: 'hide'
+
+NHSTgraph <- ggm_inference(data_ggm, alpha = 0.05,progress=FALSE)
+
+L <- averageLayout(Sigma, NHSTgraph$wadj)
+
+gEBIC <- qgraph(Sigma,
+            graph = "glasso", 
+            sampleSize = nrow(data_ggm), 
+            layout = L,
+            tuning = 0.5,
+            edge.color = c("#0072B2", "#e82d57")) 
+
+
+gNHST <- qgraph(NHSTgraph$wadj,
+                sampleSize = nrow(data_ggm), 
+                layout = L,
+                edge.color = c("#0072B2", "#e82d57"))
+```
+
+
+### *Question 5*. What paths are similar between the two models? Which are different? Are you inclined to trust one network more than the other? Why?
+
+#### Answer
+
+Most of the strongest edges are present in both graphs. Conversely, many weaker edges in the NHST graph, displayed as faint lines, were shrunken to zero in the EBIC estimation. The relationships estimated with these two methods are quite similar, and the choice of one over the other depends on the preference for the level of sparsity. The EBIC model (particularly with the tuning parameter set to 0.5) may be preferred when the research question is less concerned with detecting small effect sizes. That is, when increased specificity is prioritized over sensitivity. In contrast, the NHST network includes all the connections identified by EBIC, along with additional weaker edges. This network may be preferred when the goal is to maximize sensitivity rather than specificity.
