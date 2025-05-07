@@ -111,7 +111,7 @@ $$ \text{ISI}_{ij} = [\beta_0 + \beta_1 (Time_{ij}) + \beta_2 (Time_{ij})^2] + [
 mydata$predquad <- predict(mQuad_ri)
 
 mydata |> 
-  ggplot(aes( x = redcap_event_name, y = predquad, group = record_id)) +
+  ggplot(aes( x = redcap_event_name, y = predquad, group = record_id, color = randomization)) +
   geom_point() + 
   geom_line(alpha=.5) +
   scale_x_continuous(breaks = c(1,2,3)) +
