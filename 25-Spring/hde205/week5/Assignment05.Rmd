@@ -5,7 +5,7 @@ output: word_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
 ```{r}
@@ -131,13 +131,28 @@ I will use `randomization` as the time-invariant predictor. Its levels are: Acce
 
 ```{r}
 mQuad2 <- lmer(insomnia_severity ~ 1 + redcap_event_name + I(redcap_event_name^2) +
-               randomization + (1+ redcap_event_name  |record_id), 
+               redcap_event_name*randomization + (1+ redcap_event_name  |record_id), 
               REML=FALSE, data=mydata)
 ```
 
 ### c.	Write out the multilevel equation for this model
 
-$$ \text{ISI}_{ij} = [\beta_0 + \beta_1 (Time_{ij}) + \beta_2 (Time_{ij})^2] + \beta_3 Randomization + [u_{0j} + u_{1j} (Time_{ij})] + \varepsilon_{ij} $$
+
+$$
+\begin{aligned}
+  Y_{ij} = \; & \beta_0 && \text{(Intercept for WL group at } Time_{ij}=0\text{)} \\
+           & + \beta_1 Time_{ij} && \text{(Linear slope for WL group)} \\
+           & + \beta_2 (Time_{ij})^2 && \text{(Quadratic slope for all groups)} \\
+           & + \beta_3 D_{ACT,j} && \text{(Difference in intercept for ACT vs. WL at } Time_{ij}=0\text{)} \\
+           & + \beta_4 D_{CBT,j} && \text{(Difference in intercept for CBT vs. WL at } Time_{ij}=0\text{)} \\
+           & + \beta_5 (D_{ACT,j} \times Time_{ij}) && \text{(Difference in linear slope for ACT vs. WL)} \\
+           & + \beta_6 (D_{CBT,j} \times Time_{ij}) && \text{(Difference in linear slope for CBT vs. WL)} \\
+           & + u_{0j} + u_{1j} Time_{ij} && \text{(Random effects for individual } j\text{)} \\
+           & + \epsilon_{ij} && \text{(Residual error)}
+\end{aligned}
+$$
+
+
 
 ### d.	Make a table reporting the results. Include fixed effects, random effects, and fit indices (log-likelihood, AIC and BIC)
 
