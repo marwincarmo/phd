@@ -1,0 +1,42 @@
+---
+title: "Assignment 06"
+author: "Marwin Carmo"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r}
+library(nlme)
+library(lmerTest)
+library(ggplot2)
+```
+
+```{r}
+mydata <- read.csv("../data/mydata.csv")
+# removing NAs
+mydata <- mydata[!is.na(mydata$insomnia_severity), ]
+# convert the randomization variable to factor
+mydata$randomization <- factor(mydata$randomization)
+
+```
+
+## (1)	Select a variable in your data for modeling over time. (1 variable, at least 3 occasions). Prepare a person-period (i.e., multiple records per person, “long”) data set for use. Use the same variable and data as Assignment 5.
+
+## (2)	Select a time-varying predictor of interest (categorical or continuous)
+
+Anxiety
+
+## (3)	Determine how to best model the time-varying predictor and run the analysis. Consider the following in the modeling process:
+
+### a.	Is time properly scaled?
+
+
+### b.	How does the predictor affect the DV as specified by your model? Is your model consistent with theory?
+
+
+### c.	Do you need to center your time-varying predictor? How does centering affect your results?
+
+
