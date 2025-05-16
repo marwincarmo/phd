@@ -3,6 +3,9 @@ title: "HW: Temporal and Dynamic Networks"
 author: "Marwin Carmo"
 format: pdf
 editor: visual
+execute: 
+  message: false
+  warning: false
 ---
 
 # Introduction
@@ -35,7 +38,7 @@ df <- readRDS("hwdf.RDS")
 
 n_nodes = max(c(df$tail, df$head))
   base_net = network.initialize(n_nodes, directed = FALSE)
-# The dataframe should be turned into a Temporal Network:
+
 net_dyn = networkDynamic(
   base.net = base_net,
   edge.spells = df[, c("onset", "terminus", "tail", "head")]
@@ -97,11 +100,125 @@ ne = 3
   sim.data = mxGenerateData(osc, nrows = 2000)
 ```
 
+```{r}
+
+apply(sim.data, 2, function(var) {
+  plot(x = (1:nrow(sim.data)), y = var, type = "l",
+      ylab = "Values", xlab = "Time")
+})
+
+```
 
 ### ***Question 4***. Fit a discrete time VAR to the simulated data and print the parameter values. Comment on the recovery, i.e., did the VAR do a good job at estimating the parameters?
 
 #### Answer
 
+```{r}
+#| include: false
+ mx.var = function(dataframe = NULL, varnames = paste0('y', 1:nvar),
+                    Amat = NULL, Qmat = NULL, Rmat = NULL){
+    ne = length(varnames)
+    ini.cond = rep(0, ne)
+    if(is.null(Amat)){
+      Amat = matrix(0, ne, ne)
+    }
+    if(is.null(Qmat)){
+      Qmat = diag(1, ne)
+    }
+    if(is.null(Rmat)){
+      Rmat = diag(1e-5, ne)
+    }
+    amat = mxMatrix('Full', ne, ne, TRUE, Amat, name = 'A')
+    bmat = mxMatrix('Zero', ne, ne, name='B')
+    cdim = list(varnames, paste0('F', 1:ne))
+    cmat = mxMatrix('Diag', ne, ne, FALSE, 1, name = 'C', dimnames = cdim)
+    dmat = mxMatrix('Zero', ne, ne, name='D')
+    qmat = mxMatrix('Symm', ne, ne, FALSE, diag(ne), name='Q', lbound=0)
+    rmat = mxMatrix('Symm', ne, ne, FALSE, diag(1e-5, ne), name='R')
+    xmat = mxMatrix('Full', ne, 1, FALSE, ini.cond, name='x0', lbound=-10, ubound=10)
+    pmat = mxMatrix('Diag', ne, ne, FALSE, 1, name='P0')
+    umat = mxMatrix('Zero', ne, 1, name='u')
+    osc = mxModel("OUMod", amat, bmat, cmat, dmat, qmat, rmat, xmat, pmat, umat,
+                  mxExpectationStateSpace('A', 'B', 'C', 'D', 'Q',
+                                          'R', 'x0', 'P0', 'u'),
+                  mxFitFunctionML(), mxData(dataframe, 'raw'))
+    oscr = mxTryHard(osc)
+    return(ModRes = oscr)
+ }
+```
+
+
+```{r}
+VAR1 = mx.var(dataframe = sim.data, varnames = paste0("V", 1:ne))
+
+params = matrix(0, ne, ne)
+  for(i in 1:nrow(summary(VAR1)$parameters)){
+    params[summary(VAR1)$parameters[i,"row"], summary(VAR1)$parameters[i, "col"]] = 
+      ifelse(abs(summary(VAR1)$parameters[i,"Estimate"]) > 
+               qnorm(0.975) * summary(VAR1)$parameters[i,"Std.Error"],
+             summary(VAR1)$parameters[i,"Estimate"],
+             0.00)
+  }
+
+# True
+VAR.params
+    
+# Estimated
+round(params, 2)
+```
+Yes! The estimated parameter values are very close to the true values. There are only small discrepancies, with maximum differences of 0.02. 
+
 ### ***Question 5***. Now fit a continuous time VAR to the same data. Convert the drift matrix to its discrete time counterpart. Comment on the recovery.
 
 #### Answer
+
+```{r}
+#| include: false
+mx.ctvar = function(dataframe = NULL, varnames = paste0('y', 1:nvar),
+                      Amat = NULL, Qmat = NULL, Rmat = NULL){
+    ne = length(varnames)
+    ini.cond = rep(0, ne)
+    if(is.null(Amat)){
+      Amat = matrix(0, ne, ne)
+    }
+    if(is.null(Qmat)){
+      Qmat = diag(1, ne)
+    }
+    if(is.null(Rmat)){
+      Rmat = diag(1e-5, ne)
+    }
+    amat = mxMatrix('Full', ne, ne, TRUE, Amat, name = 'A')
+    bmat = mxMatrix('Zero', ne, ne, name='B')
+    cdim = list(varnames, paste0('F', 1:ne))
+    cmat = mxMatrix('Diag', ne, ne, FALSE, 1, name = 'C', dimnames = cdim)
+    dmat = mxMatrix('Zero', ne, ne, name='D')
+    qmat = mxMatrix('Symm', ne, ne, FALSE, diag(ne), name='Q', lbound=0)
+    rmat = mxMatrix('Symm', ne, ne, FALSE, diag(1e-5, ne), name='R')
+    xmat = mxMatrix('Full', ne, 1, FALSE, ini.cond, name='x0', lbound=-10, ubound=10)
+    pmat = mxMatrix('Diag', ne, ne, FALSE, 1, name='P0')
+    umat = mxMatrix('Zero', ne, 1, name='u')
+    tmat = mxMatrix('Full', 1, 1, FALSE, name='time', labels='data.Time')
+    
+    osc = mxModel("OUMod", amat, bmat, cmat, dmat, qmat, rmat, xmat, pmat, umat, tmat,
+                  mxExpectationSSCT('A', 'B', 'C', 'D', 'Q',
+                                    'R', 'x0', 'P0', 'u', 'time'),
+                  mxFitFunctionML(), mxData(dataframe, 'raw'))
+    oscr = mxTryHard(osc)
+    return(ModRes = oscr)
+  }
+```
+
+```{r}
+sim.data$Time = 0:(nrow(sim.data)-1)
+ct.var = mx.ctvar(dataframe = sim.data, varnames = paste0("V", 1:ne))
+```
+
+```{r}
+# discrete values
+expm(matrix(summary(ct.var)$parameters$Estimate, 3,3) * 1.00)
+
+#true
+VAR.params 
+```
+
+The recovery of the parameters after fitting a continuous-time VAR is noticeably worse than the direct discrete-time VAR. The model is clearly misspecified, since I generated data from a discrete-time process.
