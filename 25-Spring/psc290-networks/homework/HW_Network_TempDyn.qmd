@@ -76,6 +76,26 @@ $$
 
 #### Answer
 
+```{r}
+ne = 3
+  VAR.params = matrix(c(0.58, 0.27, 0.00,
+                        0.00, 0.65, 0.25,
+                        -0.31, 0.00, 0.62), ne, ne)
+  amat = mxMatrix('Full', ne, ne, TRUE, VAR.params, name = 'A')
+  bmat = mxMatrix('Zero', ne, ne, name='B')
+  cdim = list(paste0("V", 1:ne), paste0('F', 1:ne))
+  cmat = mxMatrix('Diag', ne, ne, FALSE, 1, name = 'C', dimnames = cdim)
+  dmat = mxMatrix('Zero', ne, ne, name='D')
+  qmat = mxMatrix('Symm', ne, ne, FALSE, diag(ne), name='Q', lbound=0)
+  rmat = mxMatrix('Symm', ne, ne, FALSE, diag(1e-5, ne), name='R')
+  xmat = mxMatrix('Full', ne, 1, FALSE, 0, name='x0', lbound=-10, ubound=10)
+  pmat = mxMatrix('Diag', ne, ne, FALSE, 1, name='P0')
+  umat = mxMatrix('Zero', ne, 1, name='u')
+  osc = mxModel("OUMod", amat, bmat, cmat, dmat, qmat, rmat, xmat, pmat, umat,
+                mxExpectationStateSpace('A', 'B', 'C', 'D', 'Q',
+                                        'R', 'x0', 'P0', 'u'))
+  sim.data = mxGenerateData(osc, nrows = 2000)
+```
 
 
 ### ***Question 4***. Fit a discrete time VAR to the simulated data and print the parameter values. Comment on the recovery, i.e., did the VAR do a good job at estimating the parameters?
