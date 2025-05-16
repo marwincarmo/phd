@@ -1,0 +1,62 @@
+---
+title: "HW: Temporal and Dynamic Networks"
+author: "Marwin Carmo"
+format: pdf
+editor: visual
+---
+
+# Introduction
+
+Welcome to the Homework Assignment for Temporal and Dynamic Networks! For this week's assignment, you'll find the dataset's `.RDS` file on Canvas.
+
+## Instructions
+
+-   Download the dataset from Canvas as a `.RDS` file
+-   Load that `.RDS` file into your `R` environment and begin the assignment
+    -   This can be done with the command, \`readRDS()\`\`
+
+Below, you will find a template of the questions and fields to provide answers in either `R` or text format. Please use a mix of code and text to answer each question.
+
+```{r}
+library(sna)
+library(tsna)
+library(ndtv)
+```
+
+## Questions
+
+### ***Question 1***. Read in your temporal network via the `.RDS` file. Pick a random node and visualize its forward path.
+
+#### Answer
+
+```{r}
+hwdf <- readRDS("hwdf.RDS")
+
+
+```
+
+
+### ***Question 2***. Plot your temporal network's density over time.
+
+#### Answer
+
+### ***Question 3***. Using OpenMx, simulate a stationary three variable system that evolves over 2000 time points. Define the $3\times 3$ transition matrix using the following values (but make sure the time series are stationary by plotting them):
+
+$$
+\mathbf{A}_{mat} = 
+\begin{bmatrix}
+  0.58 & 0.00 & -0.31 \\
+  0.27 & 0.65 & 0.00 \\
+  0.00 & 0.20 & 0.62
+\end{bmatrix}
+$$
+
+#### Answer
+
+### ***Question 4***. Fit a discrete time VAR to the simulated data and print the parameter values. Comment on the recovery, i.e., did the VAR do a good job at estimating the parameters?
+
+#### Answer
+
+### ***Question 5***. Now fit a continuous time VAR to the same data. Convert the drift matrix to its discrete time counterpart. Comment on the recovery.
+
+#### Answer
