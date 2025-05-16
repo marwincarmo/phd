@@ -27,16 +27,73 @@ mydata$randomization <- factor(mydata$randomization)
 
 ## (2)	Select a time-varying predictor of interest (categorical or continuous)
 
-Anxiety
+I will select Anxiety scores as the time-varying predictor.
 
 ## (3)	Determine how to best model the time-varying predictor and run the analysis. Consider the following in the modeling process:
 
 ### a.	Is time properly scaled?
-
-
 ### b.	How does the predictor affect the DV as specified by your model? Is your model consistent with theory?
-
-
 ### c.	Do you need to center your time-varying predictor? How does centering affect your results?
 
+## (4)	Write out the equations of your final model
 
+
+$$
+\begin{aligned}
+\text{Level 1}: Y_{ij} = \; & \pi_{0j} && \text{(Intercept for individual} \ j\text{)}\\
+          & + \pi_{1j}Time_{ij} && \text{(Linear slope of} \ Time_{ij} \ \text{for individual} \ j\text{)}\\
+          & + \beta_{20}(Time_{ij})^2 && \text{(Fixed quadratic slope of time)}\\
+          & + \beta_{30}PM\_Anx_{ij} &&  \text{(Fixed slope of person-mean Anxiety)}\\
+          & + \beta_{40}WP\_Anx_{ij} && \text{(Fixed slope of within-person Anxiety)}\\
+          & + \epsilon_{ij} \\
+\text{Level 2}: \pi_{0j} = \; &\beta_{00} && \text{(Average intercept for the ACT group)}\\
+          & + \beta_{01}D_{ACT,j} && \text{(Difference in intercept for the WL group)}\\
+          & + \beta_{02}D_{CBT,j} &&\text{(Difference in intercept for the CBT group)}\\
+          & + u_{0j} && \text{(Random intercept deviation for individual j)} \\
+          \pi_{0j} = \; &\beta_{00} \\
+          &+ \beta_{01}D_{G2,j} && \text{(Difference in linear time slope for the WL group)}\\
+          &+ \beta_{02}D_{G3,j} && \text{(Difference in linear time slope for the CBT group)}\\
+          &+ u_{0j} && \text{(Random linear time slope deviation for individual j)} \\
+\end{aligned}
+$$
+
+## (5)	Make a table for your final model as would appear in a paper
+
+## (6)	Write a few sentences reporting the results
+
+## (7)	Include the code you used to complete the assignment.
+
+```{r}
+## Mean-centering anxiety so now an axiety score of 0 means an average score
+mydata$anxiety_c <- c(scale(mydata$anxiety, scale = FALSE))
+
+## Separating the time-varying predictor into person means and within-person deviations
+mydata2 <- mydata |> 
+  dplyr::with_groups(record_id, dplyr::mutate, PM_anxiety = mean(anxiety)) |> 
+  dplyr::mutate(PMC_anxiety = PM_anxiety - mean(PM_anxiety),
+                WP_anxiety = anxiety - PM_anxiety)
+  
+```
+
+```{r}
+## Building off from the best model of Assignment 5, I will start adding 
+## the fixed effects of PMC and WP anxiety
+m1 <- lmer(insomnia_severity ~ 1 + redcap_event_name + I(redcap_event_name^2) +
+               redcap_event_name*randomization + PM_anxiety + WP_anxiety +
+       (1+ redcap_event_name  |record_id), 
+              REML=FALSE, data=mydata2)
+
+## No more random effects can be added to the model due to sample size restrictions
+## So I will test models where the time-varying predictor interacts with
+## the time-invariant predictor of randomization
+
+m2 <- lmer(insomnia_severity ~ 1 + redcap_event_name + 
+             I(redcap_event_name^2) + redcap_event_name*randomization + 
+             PM_anxiety*randomization + WP_anxiety*randomization +
+             (1+ redcap_event_name|record_id), 
+              REML=FALSE, data=mydata2)
+anova(m1, m2)
+
+## Since model 2 doesn't fit significantly better than model 1, I will stick
+## with the more parsimonious model
+```
