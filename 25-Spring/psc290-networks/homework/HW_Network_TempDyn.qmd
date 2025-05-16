@@ -21,6 +21,7 @@ Below, you will find a template of the questions and fields to provide answers i
 library(sna)
 library(tsna)
 library(ndtv)
+library(OpenMx)
 ```
 
 ## Questions
@@ -30,15 +31,37 @@ library(ndtv)
 #### Answer
 
 ```{r}
-hwdf <- readRDS("hwdf.RDS")
+df <- readRDS("hwdf.RDS")
 
+n_nodes = max(c(df$tail, df$head))
+  base_net = network.initialize(n_nodes, directed = FALSE)
+# The dataframe should be turned into a Temporal Network:
+net_dyn = networkDynamic(
+  base.net = base_net,
+  edge.spells = df[, c("onset", "terminus", "tail", "head")]
+  )
 
+vpath = tPath(net_dyn,v = 13, direction = "fwd")
+print(vpath)
 ```
 
 
 ### ***Question 2***. Plot your temporal network's density over time.
 
 #### Answer
+
+```{r}
+  dynamicdensity = tSnaStats(
+    net_dyn,
+    snafun = "gden",
+    start = 1,
+    end = 300,
+    time.interval = 1,
+    aggregate.dur = 10
+  )
+  plot(dynamicdensity)
+```
+
 
 ### ***Question 3***. Using OpenMx, simulate a stationary three variable system that evolves over 2000 time points. Define the $3\times 3$ transition matrix using the following values (but make sure the time series are stationary by plotting them):
 
@@ -52,6 +75,8 @@ $$
 $$
 
 #### Answer
+
+
 
 ### ***Question 4***. Fit a discrete time VAR to the simulated data and print the parameter values. Comment on the recovery, i.e., did the VAR do a good job at estimating the parameters?
 
