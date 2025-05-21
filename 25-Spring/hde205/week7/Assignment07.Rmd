@@ -1,0 +1,96 @@
+---
+title: "Assignment 07"
+author: "Marwin Carmo"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r}
+library(lavaan)
+library(ggplot2)
+```
+
+```{r}
+mydata <- read.csv("../data/mydata.csv")
+# removing NAs
+mydata <- mydata[!is.na(mydata$insomnia_severity), ]
+# convert the randomization variable to factor
+mydata$randomization <- factor(mydata$randomization)
+
+sel_data <- mydata[, c("record_id", "redcap_event_name", "insomnia_severity")]
+
+
+mydata2 <- reshape(sel_data,
+                   timevar = "redcap_event_name",
+                   idvar = "record_id",
+                   direction = "wide")
+```
+
+```{r}
+## Linear LGM
+
+Llgm <- '
+#Level/Intercept (all constraint to 1)
+Inter =~ 1*insomnia_severity.1 + 1*insomnia_severity.2 + 1*insomnia_severity.3
+
+#Slope
+Slope =~ 0*insomnia_severity.1 + 1.5*insomnia_severity.2 + 6*insomnia_severity.3
+
+#Residuals (Equality constraints)
+insomnia_severity.1 ~~ In*insomnia_severity.1
+insomnia_severity.2 ~~ In*insomnia_severity.2
+insomnia_severity.3 ~~ In*insomnia_severity.3
+
+#Intercept & slope means
+Inter~1
+Slope~1
+
+#Intercept & slope variances
+Inter ~~ Inter
+Slope ~~ Slope
+Inter ~~ Slope
+'
+
+## Quadratic LGM
+
+Qlgm <- '
+#Level/Intercept (all constraint to 1)
+Inter =~ 1*insomnia_severity.1 + 1*insomnia_severity.2 + 1*insomnia_severity.3
+
+#Linear Slope
+Lin =~ 0*insomnia_severity.1 + 1.5*insomnia_severity.2 + 6*insomnia_severity.3
+
+#Quadratic Slope
+Qua =~ 0*insomnia_severity.1 + 2.25*insomnia_severity.2 + 36*insomnia_severity.3
+
+#Residuals (Equality constraints)
+insomnia_severity.1 ~~ In*insomnia_severity.1
+insomnia_severity.2 ~~ In*insomnia_severity.2
+insomnia_severity.3 ~~ In*insomnia_severity.3
+
+#Intercept & slope means
+Inter~1
+Lin~1
+Qua~1
+
+#Intercept & slope variances
+Inter ~~ Inter
+Lin ~~ Lin
+Qua ~~ Qua
+Inter ~~ Lin
+Inter ~~ Qua
+Lin ~~ Qua
+'
+
+
+fit_Llgm <- lavaan(Llgm, data=mydata2)
+fit_Qlgm <- lavaan(Qlgm, data=mydata2)
+
+#Relative model fit test
+# anova(fit_Llgm, fit_Qlgm)
+# Quadratic model did not converge
+```
+
