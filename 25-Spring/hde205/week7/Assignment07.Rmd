@@ -22,11 +22,15 @@ mydata$randomization <- factor(mydata$randomization)
 
 sel_data <- mydata[, c("record_id", "redcap_event_name", "insomnia_severity")]
 
+groups <- dplyr::group_by(mydata, record_id) |> 
+  dplyr::slice_head()
 
 mydata2 <- reshape(sel_data,
                    timevar = "redcap_event_name",
                    idvar = "record_id",
                    direction = "wide")
+
+mydata2$randomization <- factor(groups$randomization, ordered = TRUE)
 ```
 
 ```{r}
@@ -84,13 +88,42 @@ Inter ~~ Lin
 Inter ~~ Qua
 Lin ~~ Qua
 '
+## Linear LGM with Group
 
+Llgm_group <- '
+#Level/Intercept (all constraint to 1)
+Inter =~ 1*insomnia_severity.1 + 1*insomnia_severity.2 + 1*insomnia_severity.3;
+
+#Slope
+Slope =~ 0*insomnia_severity.1 + 1.5*insomnia_severity.2 + 6*insomnia_severity.3;
+
+#Residuals (Equality constraints)
+insomnia_severity.1 ~~ In*insomnia_severity.1;
+insomnia_severity.2 ~~ In*insomnia_severity.2;
+insomnia_severity.3 ~~ In*insomnia_severity.3;
+
+#Intercept & slope 
+Inter ~ 1 + randomization;
+Slope ~ 1 + randomization;
+
+#Intercept & slope variances
+Inter ~~ Inter;
+Slope ~~ Slope;
+Inter ~~ Slope
+'
 
 fit_Llgm <- lavaan(Llgm, data=mydata2)
 fit_Qlgm <- lavaan(Qlgm, data=mydata2)
+fit_Llgm_group <- lavaan(Llgm_group, data=mydata2)
 
-#Relative model fit test
-# anova(fit_Llgm, fit_Qlgm)
-# Quadratic model did not converge
+# Relative model fit test
+# anova(fit_Llgm, fit_Qlgm, fit_Llgm_group)
+# Both Quadratic and Group models did not converge. Standard errors in these
+# models could not be estimated. 
 ```
 
+I estimated three latent growth model (LGM) of insomnia severity over three time points. Linear and quadratic slopes, and a linear slope with randomization as the time-invariant predictor were estimated. However, quadratic and time-invariant models did not converge properly, given the standard errors could not be estimated. Therefore, the results include only the estimates of the linear model and no model comparison was made.
+
+The linear model fit was poor, suggesting misfit to the data: $\chi^2$(3) = 191.85, *p* < .001, CFI = 0.167, TLI = .167. The estimated intercept mean was 16.89 (SE = 0.29, *p* < .001), and the slope mean was -0.92 (SE = 0.06, *p* < .001), indicating a significant linear decrease in insomnia severity over time. The slope and intercept were significantly correlated (*r* = .60, *p* < .001).
+
+The MLM for the linear growth model fitted in Assignment 5 showed a similar intercept (*b* = 21.91, *p* < .001) pattern of improvement (*b* = -3.61, *p* < .001), with significant random effects for both intercept and slope. These results support a linear decline in insomnia over time. However, the estimates for intercept and slope are somewhat different across the two models, indicating the estimates from the SEM model could not be accurate due to the poor model fit.

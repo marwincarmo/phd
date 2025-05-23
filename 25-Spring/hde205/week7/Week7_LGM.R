@@ -75,7 +75,7 @@ Inter~~Inter;
 #creating a new object 'fit_Ulgm' & running a SEM model
 fit_Ulgm <- lavaan(Ulgm, data=my.data)
 
-#getting summary of model estimates (fit & parameters)
+0.#getting summary of model estimates (fit & parameters)
 summary(fit_Ulgm, fit.measures=TRUE)
 
 #getting model parameter estimates only
