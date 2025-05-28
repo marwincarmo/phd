@@ -1,21 +1,33 @@
 ---
 title: "Assignment 08"
 author: "Marwin Carmo"
-output: word_document
+output: 
+  pdf_document:
+    extra_dependencies: ["caption", "booktabs", "geometry", "longtable"]
+
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 ```
 
-```{r}
+
+I specified a multivariate latent growth model to examine the trajectories of insomnia severity and anxiety from baseline to post-test. More specifically, whether initial levels of anxiety were related to change in insomnia severity. 
+
+The model defined time-specific latent factors for insomnia and anxiety, each measured by seven items. The growth component for each construct was defined by an intercept factor (representing baseline levels, with loadings fixed at 1 for both time points on the respective latent factor) and a slope factor (representing the change from baseline to post-test, with loadings fixed at 0 for baseline and 1 for post-test). Given the ordered categorical nature of the items, I used the Diagonally Weighted Least Squares (DWLS) estimator.
+
+The model demonstrated good overall fit to the data: $\chi^2$(338) = 510.29, *p* < 0.001; CFI = 0.965; TLI = 0.961; RMSEA = 0.051 (90% CI [0.042, 0.060]); SRMR = 0.080. Addressing the primary research question, the covariance between baseline anxiety levels  and the subsequent change in insomnia severity was not statistically significant ($\beta$ = -0.006, SE = 0.015, *p* = 0.687). This suggests that initial anxiety levels did not predict the magnitude of change in insomnia severity from baseline to post-test in this sample.
+
+
+
+```{r message=FALSE}
 library(lavaan)
 library(tidyr)
 library(dplyr)
 ```
 
 
-```{r}
+```{r message=FALSE}
 dat <- read.csv("../data/clean_data2.csv")
 
 mydata <- dplyr::filter(dat, redcap_event_name %in% c(
@@ -42,30 +54,132 @@ wide_data <- mydata |>
   )
 ```
 
+$$
+\begin{longtable}{l r r r r}
+\caption{Parameter Estimates for the Two-Time-Point Latent Growth Model of Insomnia and Anxiety} \label{tab:lgm2wavelong} \\ % Caption goes first for longtable
+\toprule
+Parameter Path                                  & Estimate (B) & SE    & z-value & p-value \\
+\midrule
+\endfirsthead % Header for the first page
 
-```{r}
-mydata <- read.csv("../data/mydata.csv")
-# removing NAs
-mydata <- mydata[!is.na(mydata$insomnia_severity), ]
-# convert the time variable to factor
-mydata$redcap_event_name <- factor(mydata$redcap_event_name)
+$\chi^2$ (df)                                   & 510.288 (338) &       &         & <.001   \\
+CFI                                             & 0.965         &       &         &         \\
+TLI                                             & 0.961         &       &         &         \\
+RMSEA [90\% CI]                                 & 0.051         & \multicolumn{3}{l}{[0.042, 0.060]} \\
+SRMR                                            & 0.080         &       &         &         \\
+\addlinespace
+\multicolumn{5}{l}{\textbf{Measurement Model Loadings (Baseline, Time 1)}} \\
+\textit{Insomnia Severity T1} $\rightarrow$       &               &       &         &         \\
+\quad igi\_1a.1                                 & 1.000         & --    & --      & --      \\
+\quad igi\_1b.1                                 & 1.006         & 0.112 & 8.973   & <.001   \\
+\quad igi\_2.1                                  & 0.666         & 0.075 & 8.846   & <.001   \\
+\quad igi\_3.1                                  & 1.188         & 0.126 & 9.398   & <.001   \\
+\quad igi\_4.1                                  & 1.280         & 0.141 & 9.089   & <.001   \\
+\quad igi\_5.1                                  & 1.082         & 0.118 & 9.162   & <.001   \\
+\quad igi\_1c.1                                 & 0.589         & 0.093 & 6.316   & <.001   \\
+\addlinespace
+\textit{Anxiety T1} $\rightarrow$        &               &       &         &         \\
+\quad ehad\_1.1                                 & 1.000         & --    & --      & --      \\
+\quad ehad\_3.1                                 & 1.466         & 0.108 & 13.526  & <.001   \\
+\quad ehad\_5.1                                 & 0.914         & 0.073 & 12.453  & <.001   \\
+\quad ehad\_7.1                                 & 0.615         & 0.059 & 10.495  & <.001   \\
+\quad ehad\_9.1                                 & 1.054         & 0.087 & 12.089  & <.001   \\
+\quad ehad\_11.1                                & 1.129         & 0.094 & 11.956  & <.001   \\
+\quad ehad\_13.1                                & 0.940         & 0.077 & 12.275  & <.001   \\
+\addlinespace
+\multicolumn{5}{l}{\textbf{Growth Factor Means}} \\
+Insomnia Intercept (ItcI, Baseline)             & 0.000         & 0.021 & 0.000   & 1.000   \\
+Anxiety Intercept (ItcA, Baseline)              & 0.000         & 0.018 & 0.000   & 1.000   \\
+Insomnia Slope (SlopeI, Change T1-T2)           & 0.000         & 0.028 & 0.000   & 1.000   \\
+Anxiety Slope (SlopeA, Change T1-T2)            & 0.000         & 0.024 & 0.000   & 1.000   \\
+\addlinespace
+\multicolumn{5}{l}{\textbf{Growth Factor (Co)Variances}} \\
+\textit{Variances:}                             &               &       &         &         \\
+\quad Var(ItcI)                                 & 0.140         & 0.032 & 4.431   & <.001   \\
+\quad Var(ItcA)                                 & 0.166         & 0.019 & 8.588   & <.001   \\
+\quad Var(SlopeI)                               & 0.086         & 0.022 & 3.962   & <.001   \\
+\quad Var(SlopeA)            & 0.018         & 0.013 & 1.346   & 0.178   \\
+\addlinespace
+\textit{Covariances (Selected):}                &               &       &         &         \\
+\quad Cov(ItcI, ItcA)                           & 0.106         & 0.013 & 8.205   & <.001   \\
+\quad Cov(ItcA, SlopeI)                         & -0.006        & 0.015 & -0.403  & 0.687   \\
+\quad Cov(ItcA, SlopeA)\textsuperscript{c}      & 0.041         & 0.014 & 2.972   & 0.003   \\
+\quad Cov(SlopeI, SlopeA)\textsuperscript{c}    & 0.111         & 0.017 & 6.413   & <.001   \\
+\addlinespace
+\multicolumn{5}{l}{\textbf{Residual Variances of Latent Factors (Time-Specific)\textsuperscript{a}}} \\
+Insomnia (In)                                   & 0.113         & 0.016 & 7.055   & <.001   \\
+Anxiety (An)                                    & 0.055         & 0.009 & 6.314   & <.001   \\
+\bottomrule
+\end{longtable}
+$$
 
-wide_data <- mydata |> 
-  tidyr::pivot_wider(
-    id_cols = "record_id",
-    names_from = "redcap_event_name",
-    names_sep = "",
-    values_from = c(insomnia_severity, anxiety)
-  )
-
-```
-
-In this analysis I am estimating a multivariate growth curve model to assess whether initial levels of anxiety correlated with the rate of change in insomnia symptoms over time.
-
-```{r}
+```{r message=FALSE}
 ## Multivariate Linear LGM
 
 MLlgm <- '
+insomnia_severity1 =~ igi_1a.1 + igi_1b.1 + igi_1c.1 + igi_2.1 + igi_3.1 + igi_4.1 + igi_5.1
+insomnia_severity2 =~ igi_1a.2 + igi_1b.2 + igi_1c.2 + igi_2.2 + igi_3.2 + igi_4.2 + igi_5.2
+
+anxiety1 =~ ehad_1.1 + ehad_3.1 + ehad_5.1 + ehad_7.1 + ehad_9.1 + ehad_11.1 + ehad_13.1
+anxiety2 =~ ehad_1.2 + ehad_3.2 + ehad_5.2 + ehad_7.2 + ehad_9.2 + ehad_11.2 + ehad_13.2
+
+#Level/Intercept (all constraint to 1)
+ItcI =~ 1*insomnia_severity1 + 1*insomnia_severity2  
+ItcA =~ 1*anxiety1 + 1*anxiety2 
+
+# Slope
+SlopeI =~ 0*insomnia_severity1 + 1*insomnia_severity2 
+SlopeA =~ 0*anxiety1 + 1*anxiety2 
+
+#Residuals (Equality constraints)
+insomnia_severity1 ~~ In*insomnia_severity1
+insomnia_severity2 ~~ In*insomnia_severity2
+
+
+anxiety1 ~~ An*anxiety1
+anxiety2 ~~ An*anxiety2
+
+
+#Intercept & slope means
+ItcI~1
+ItcA~1
+SlopeI~1
+SlopeA~1
+
+#Intercept & slope variances
+ItcI ~~ ItcI
+ItcI ~~ ItcA
+ItcI ~~ SlopeI
+ItcI ~~ SlopeA
+ItcA ~~ ItcA
+ItcA ~~ SlopeI
+ItcA ~~ SlopeA
+SlopeI ~~ SlopeI
+SlopeI ~~ SlopeA
+SlopeA ~~ SlopeA
+'
+
+#creating a new object 'MLlgm' & running a SEM model
+fit_MLlgm <- lavaan(MLlgm, data=wide_data, estimator = "DWLS",
+                    auto.var=TRUE, auto.fix.first=TRUE, auto.cov.lv.x=TRUE,
+                    meanstructure = TRUE, int.ov.free = TRUE)
+
+#getting summary of model estimates (fit & parameters)
+summary(fit_MLlgm, fit.measures=TRUE)
+```
+
+```{r eval=FALSE, include=FALSE}
+## Multivariate Linear LGM
+
+MLlgm <- '
+insomnia_severity1 =~ igi_1a.1 + igi_1b.1 + igi_1c.1 + igi_2.1 + igi_3.1 + igi_4.1 + igi_5.1
+insomnia_severity2 =~ igi_1a.2 + igi_1b.2 + igi_1c.2 + igi_2.2 + igi_3.2 + igi_4.2 + igi_5.2
+insomnia_severity3 =~ igi_1a.3 + igi_1b.3 + igi_1c.3 + igi_2.3 + igi_3.3 + igi_4.3 + igi_5.3
+
+anxiety1 =~ ehad_1.1 + ehad_3.1 + ehad_5.1 + ehad_7.1 + ehad_9.1 + ehad_11.1 + ehad_13.1
+anxiety2 =~ ehad_1.2 + ehad_3.2 + ehad_5.2 + ehad_7.2 + ehad_9.2 + ehad_11.2 + ehad_13.2
+anxiety3 =~ ehad_1.3 + ehad_3.3 + ehad_5.3 + ehad_7.3 + ehad_9.3 + ehad_11.3 + ehad_13.3
+
 #Level/Intercept (all constraint to 1)
 ItcI =~ 1*insomnia_severity1 + 1*insomnia_severity2 + 1*insomnia_severity3 
 ItcA =~ 1*anxiety1 + 1*anxiety2 + 1*anxiety3
@@ -90,31 +204,40 @@ SlopeI~1
 SlopeA~1
 
 #Intercept & slope variances
-ItcI ~~ ItcI;
-ItcI ~~ ItcA;
-ItcI ~~ SlopeI;
-ItcI ~~ SlopeA;
-ItcA ~~ ItcA;
-ItcA ~~ SlopeI;
-ItcA ~~ SlopeA;
+ItcI ~~ ItcI
+ItcI ~~ ItcA
+ItcI ~~ SlopeI
+ItcI ~~ SlopeA
+ItcA ~~ ItcA
+ItcA ~~ SlopeI
+ItcA ~~ SlopeA
 SlopeI ~~ SlopeI
 SlopeI ~~ SlopeA
-SlopeA ~~ SlopeA;
+SlopeA ~~ SlopeA
 '
 
-#creating a new object 'MLlgm' & running a SEM model
-fit_MLlgm <- lavaan(MLlgm, data=wide_data)
+fit_MLlgm <- lavaan(MLlgm, data=wide_data, estimator = "DWLS", std.lv = TRUE,
+                    auto.var=TRUE, auto.fix.first=TRUE, auto.cov.lv.x=TRUE,
+                    meanstructure = TRUE, int.ov.free = TRUE)
 
-#getting summary of model estimates (fit & parameters)
+
 summary(fit_MLlgm, fit.measures=TRUE)
 ```
 
-
-```{r}
+```{r eval=FALSE, include=FALSE}
 
 ## Multivariate Linear LGM
 
 MLlgmQ <- '
+
+insomnia_severity1 =~ igi_1a.1 + igi_1b.1 + igi_1c.1 + igi_2.1 + igi_3.1 + igi_4.1 + igi_5.1
+insomnia_severity2 =~ igi_1a.2 + igi_1b.2 + igi_1c.2 + igi_2.2 + igi_3.2 + igi_4.2 + igi_5.2
+insomnia_severity3 =~ igi_1a.3 + igi_1b.3 + igi_1c.3 + igi_2.3 + igi_3.3 + igi_4.3 + igi_5.3
+
+anxiety1 =~ ehad_1.1 + ehad_3.1 + ehad_5.1 + ehad_7.1 + ehad_9.1 + ehad_11.1 + ehad_13.1
+anxiety2 =~ ehad_1.2 + ehad_3.2 + ehad_5.2 + ehad_7.2 + ehad_9.2 + ehad_11.2 + ehad_13.2
+anxiety3 =~ ehad_1.3 + ehad_3.3 + ehad_5.3 + ehad_7.3 + ehad_9.3 + ehad_11.3 + ehad_13.3
+
 #Level/Intercept (all constraint to 1)
 ItcI =~ 1*insomnia_severity1 + 1*insomnia_severity2 + 1*insomnia_severity3 
 ItcA =~ 1*anxiety1 + 1*anxiety2 + 1*anxiety3
@@ -168,7 +291,9 @@ QSlopeA ~~ QSlopeA
 
 
 #creating a new object 'MLlgm' & running a SEM model
-fit_MLlgmQ <- lavaan(MLlgmQ, data=wide_data)
+fit_MLlgmQ <- lavaan(MLlgmQ, data=wide_data, estimator = "DWLS",
+                     auto.var=TRUE, auto.fix.first=TRUE, auto.cov.lv.x=TRUE,
+                    meanstructure = TRUE, int.ov.free = TRUE)
 
 #getting summary of model estimates (fit & parameters)
 summary(fit_MLlgmQ, fit.measures=TRUE)
