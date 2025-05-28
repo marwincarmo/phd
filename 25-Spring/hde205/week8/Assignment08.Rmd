@@ -14,6 +14,35 @@ library(tidyr)
 library(dplyr)
 ```
 
+
+```{r}
+dat <- read.csv("../data/clean_data2.csv")
+
+mydata <- dplyr::filter(dat, redcap_event_name %in% c(
+    "elegibilidade_arm_1", 
+    "desfechos_arm_1", "followup_arm_1")
+  ) |> 
+  dplyr::mutate(
+    redcap_event_name = factor(dplyr::case_when(
+      redcap_event_name == "elegibilidade_arm_1" ~ 1,
+      redcap_event_name == "desfechos_arm_1" ~ 2,
+      redcap_event_name == "followup_arm_1" ~ 3
+    ))) |> 
+  dplyr::select(record_id, redcap_event_name,
+                dplyr::starts_with("igi"),
+                dplyr::starts_with("ehad"))
+
+
+wide_data <- mydata |> 
+  tidyr::pivot_wider(
+    id_cols = "record_id",
+    names_from = "redcap_event_name",
+    names_sep = ".",
+    values_from = c(igi_1a:ehad_14)
+  )
+```
+
+
 ```{r}
 mydata <- read.csv("../data/mydata.csv")
 # removing NAs
@@ -42,12 +71,8 @@ ItcI =~ 1*insomnia_severity1 + 1*insomnia_severity2 + 1*insomnia_severity3
 ItcA =~ 1*anxiety1 + 1*anxiety2 + 1*anxiety3
 
 # Slope
-SlopeI =~ 0*insomnia_severity1 + 1.5*insomnia_severity2 + 6*insomnia_severity3
-SlopeA =~ 0*anxiety1 + 1.5*anxiety2 + 6*anxiety3
-
-# Quadratic slope
-QSlopeI =~ 0*insomnia_severity1 + 2.25*insomnia_severity2 + 36*insomnia_severity3
-QSlopeA =~ 0*anxiety1 + 2.25*anxiety2 + 36*anxiety3
+SlopeI =~ 0*insomnia_severity1 + 1*insomnia_severity2 + 4*insomnia_severity3
+SlopeA =~ 0*anxiety1 + 1*anxiety2 + 4*anxiety3
 
 #Residuals (Equality constraints)
 insomnia_severity1 ~~ In*insomnia_severity1
@@ -63,8 +88,6 @@ ItcI~1
 ItcA~1
 SlopeI~1
 SlopeA~1
-QSlopeI~1
-QSlopeA~1
 
 #Intercept & slope variances
 ItcI ~~ ItcI;
