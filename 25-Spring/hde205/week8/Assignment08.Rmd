@@ -1,0 +1,125 @@
+---
+title: "Assignment 08"
+author: "Marwin Carmo"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+```{r}
+library(lavaan)
+library(tidyr)
+library(dplyr)
+```
+
+```{r}
+mydata <- read.csv("../data/mydata.csv")
+# removing NAs
+mydata <- mydata[!is.na(mydata$insomnia_severity), ]
+# convert the time variable to factor
+mydata$redcap_event_name <- factor(mydata$redcap_event_name)
+
+wide_data <- mydata |> 
+  tidyr::pivot_wider(
+    id_cols = "record_id",
+    names_from = "redcap_event_name",
+    names_sep = "",
+    values_from = c(insomnia_severity, anxiety)
+  )
+
+```
+
+In this analysis I am estimating a multivariate growth curve model to assess whether initial levels of anxiety correlated with the rate of change in insomnia symptoms over time.
+
+```{r}
+## Multivariate Linear LGM
+
+MLlgm <- '
+#Level/Intercept (all constraint to 1)
+ItcI =~ 1*insomnia_severity1 + 1*insomnia_severity2 + 1*insomnia_severity3 
+ItcA =~ 1*anxiety1 + 1*anxiety2 + 1*anxiety3
+
+# Slope
+SlopeI =~ 0*insomnia_severity1 + 1.5*insomnia_severity2 + 6*insomnia_severity3
+SlopeA =~ 0*anxiety1 + 1.5*anxiety2 + 6*anxiety3
+
+# Quadratic slope
+QSlopeI =~ 0*insomnia_severity1 + 2.25*insomnia_severity2 + 36*insomnia_severity3
+QSlopeA =~ 0*anxiety1 + 2.25*anxiety2 + 36*anxiety3
+
+#Residuals (Equality constraints)
+insomnia_severity1 ~~ In*insomnia_severity1
+insomnia_severity2 ~~ In*insomnia_severity2
+insomnia_severity3 ~~ In*insomnia_severity3
+
+anxiety1 ~~ An*anxiety1
+anxiety2 ~~ An*anxiety2
+anxiety3 ~~ An*anxiety3
+
+#Intercept & slope means
+ItcI~1
+ItcA~1
+SlopeI~1
+SlopeA~1
+QSlopeI~1
+QSlopeA~1
+
+#Intercept & slope variances
+ItcI ~~ ItcI;
+ItcI ~~ ItcA;
+ItcI ~~ SlopeI;
+ItcI ~~ SlopeA;
+ItcA ~~ ItcA;
+ItcA ~~ SlopeI;
+ItcA ~~ SlopeA;
+SlopeI ~~ SlopeI
+SlopeI ~~ SlopeA
+SlopeA ~~ SlopeA;
+'
+
+#creating a new object 'MLlgm' & running a SEM model
+fit_MLlgm <- lavaan(MLlgm, data=wide_data)
+
+#getting summary of model estimates (fit & parameters)
+summary(fit_MLlgm, fit.measures=TRUE)
+```
+```{r}
+
+## Multivariate Linear LGM
+
+MLlgm <- '
+#Level/Intercept (all constraint to 1)
+ItcI =~ 1*insomnia_severity1 + 1*insomnia_severity2 + 1*insomnia_severity3 
+ItcA =~ 1*anxiety1 + 1*anxiety2 + 1*anxiety3
+
+# Quadratic slope
+QSlopeI =~ 0*insomnia_severity1 + 2.25*insomnia_severity2 + 36*insomnia_severity3
+QSlopeA =~ 0*anxiety1 + 2.25*anxiety2 + 36*anxiety3
+
+#Residuals (Equality constraints)
+insomnia_severity1 ~~ In*insomnia_severity1
+insomnia_severity2 ~~ In*insomnia_severity2
+insomnia_severity3 ~~ In*insomnia_severity3
+
+anxiety1 ~~ An*anxiety1
+anxiety2 ~~ An*anxiety2
+anxiety3 ~~ An*anxiety3
+
+#Intercept & slope means
+ItcI~1
+ItcA~1
+QSlopeI~1
+QSlopeA~1
+'
+
+
+#creating a new object 'MLlgm' & running a SEM model
+fit_MLlgm <- lavaan(MLlgm, data=wide_data)
+
+#getting summary of model estimates (fit & parameters)
+summary(fit_MLlgm, fit.measures=TRUE)
+```
+
+
