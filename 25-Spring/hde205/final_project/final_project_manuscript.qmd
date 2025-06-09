@@ -1,0 +1,62 @@
+---
+title: "Final Project"
+format: pdf
+execute:
+  echo: false
+---
+
+```{r}
+library(lavaan)
+library(dplyr)
+```
+```{r}
+dat <- read.csv("../data/clean_data2.csv")
+
+mydata <- dplyr::filter(dat, redcap_event_name %in% c(
+    "elegibilidade_arm_1", 
+    "desfechos_arm_1", "followup_arm_1")
+  ) |> 
+  dplyr::mutate(
+    redcap_event_name = factor(dplyr::case_when(
+      redcap_event_name == "elegibilidade_arm_1" ~ 1,
+      redcap_event_name == "desfechos_arm_1" ~ 2,
+      redcap_event_name == "followup_arm_1" ~ 3
+    )))
+```
+
+
+## Introduction
+
+a.	Provide the theoretical rationale for your study. Include a brief literature review. Clearly specify your research questions/hypotheses.
+
+## Methods
+
+a.	Briefly describe your research design, target population, sampling/recruitment methods, and procedure.
+b.	Specify the measures you are using and provide information on reliability and validity if possible.
+c.	Specify your analysis plan and outline how each hypothesis will be tested. Write out the equations for the models.
+d.	If there are missing data in your dataset, indicate how they will be treated.
+
+Possible questions:
+
+- Are initial levels of anxiety/depression/beliefs/flexibility correlated with the rate of change in insomnia/depression/anxiety/beliefs symptoms over time?
+
+- Do individuals who start with high levels of X show a slower/steeper decline in insomnia severity?
+
+https://gabriellajg.github.io/EPSY-579-R-Cookbook-for-SEM/lavaan-lab-16-latent-growth-models.html
+
+https://longitudinalanalysis.com/mixture-latent-growth-models-r-a-step-by-step-guide/
+
+https://tdjorgensen.github.io/SEM-in-Ed-compendium/ch27.html
+
+Mixture Latent Growth Mixture Model introduces a categorical variable that accoutns for subgroup membership
+
+## Results
+
+a.	Clearly present and interpret your results. Use subheadings when necessary. 
+b.	Include tables and/or figures in APA format. 
+
+## Discussion
+
+a.	Provide a summary of your research findings (e.g., are your hypotheses supported)?
+b.	Discuss the implications of your findings and limitations of the study.
+
