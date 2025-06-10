@@ -1,0 +1,371 @@
+---
+title: "Final Project"
+format: pdf
+execute:
+  echo: false
+  message: false
+---
+
+```{r}
+library(lavaan)
+library(dplyr)
+library(ggplot2)
+library(lme4)
+library(emmeans)
+```
+
+```{r}
+dat <- read.csv("../data/clean_data2.csv")
+
+mydata <- dplyr::filter(dat, redcap_event_name %in% c(
+    "elegibilidade_arm_1", 
+    "desfechos_arm_1", "followup_arm_1")
+  ) |> 
+  dplyr::mutate(
+    redcap_event_name = factor(dplyr::case_when(
+      redcap_event_name == "elegibilidade_arm_1" ~ 1,
+      redcap_event_name == "desfechos_arm_1" ~ 2,
+      redcap_event_name == "followup_arm_1" ~ 3
+    )),
+    randomizacao = dplyr::case_when(
+      randomizacao ==  1 ~ "act",
+      randomizacao ==  2 ~ "cbt",
+      randomizacao ==  3 ~ "wl",
+    ))
+```
+
+
+Possible questions:
+
+- Are initial levels of anxiety/depression/beliefs/flexibility correlated with the rate of change in insomnia/depression/anxiety/beliefs symptoms over time?
+
+- Do individuals who start with high levels of X show a slower/steeper decline in insomnia severity?
+
+- Are initial levels of dysfunctional beliefs associated with change in insomnia severity? Does that change differ between therapy assignment?
+
+https://gabriellajg.github.io/EPSY-579-R-Cookbook-for-SEM/lavaan-lab-16-latent-growth-models.html
+
+https://longitudinalanalysis.com/mixture-latent-growth-models-r-a-step-by-step-guide/
+
+https://tdjorgensen.github.io/SEM-in-Ed-compendium/ch27.html
+
+Mixture Latent Growth Mixture Model introduces a categorical variable that accounts for subgroup membership
+
+I will answer three questions:
+
+1. Treatment Efficacy: Start with the Linear Mixed-Effects Model on your primary outcome (ISI) to see if and how the treatments worked compared to the waitlist and each other.
+
+2. Secondary Analysis (Predictors): Move to Latent Growth Curve Models to see if baseline characteristics (Anxiety, DBAS, etc.) can predict who changes the most in insomnia.
+
+3. Tertiary Analysis (Mechanisms): Use Multivariate Latent Growth Models to see how people change. Does change in your proposed process variables (DBAS, AAQ) correlate with change in insomnia? This is best done within each treatment group to test your theories about how CBT and ACT work
+
+## 0. Data exploration
+
+Trajectories of change:
+
+```{r fig.dpi=300, fig.height=6, fig.width=6}
+mydata |> 
+  tidyr::pivot_longer(cols = igi_escore,
+                      names_to = "symptom", values_to = "score") |> 
+ # dplyr::filter(symptom == "igi_escore") |> 
+  ggplot(aes( x = redcap_event_name, y = score, group = record_id)) +
+  geom_point() + 
+  geom_line() +
+  labs(x = "Time", y = "Insomnia Severity") +
+  facet_wrap(~randomizacao, dir = "v") +
+  #scale_x_continuous(breaks = c(1,2,3)) +
+  theme_minimal()
+```
+
+## 1. Treatment Efficacy
+
+First, to adapt the model for unequally spaced time points, I need to create a continuous numeric time variable that reflects the actual time elapsed since baseline. 
+
+```{r}
+mydata2 <- mydata |> 
+  dplyr::mutate(
+    time = dplyr::case_when(
+      redcap_event_name == 1 ~ 0,
+      redcap_event_name == 2 ~ 1.5, # 6 weeks
+      redcap_event_name == 3 ~ 7.5, # 6 weeks + 6 months (of 4 weeks)
+    )
+  )
+```
+
+Test the models with increasing complexity: random intercept, linear and quadratic.
+
+```{r}
+# Random intercept
+m1 <- lmerTest::lmer(igi_escore ~ poly(time, 2) * randomizacao + (1 | record_id), REML = FALSE, data = mydata2)
+
+# 
+m2 <- lmerTest::lmer(igi_escore ~ poly(time, 2) * randomizacao + (1 + time | record_id), REML = FALSE, data = mydata2)
+
+# m3 <- lmerTest::lmer(igi_escore ~ poly(time, 2) * randomizacao + (poly(time, 2) | record_id), REML = FALSE, data = mydata2)
+```
+
+
+```{r}
+mQuad <- lmerTest::lmer(
+  igi_escore ~ poly(time, 2) * randomizacao +
+               (1 | record_id),
+  REML = FALSE,
+  data = mydata2
+)
+summary(mQuad)
+```
+Both CBT and ACT were effective at reducing insomnia symptoms compared to the waitlist. Furthermore, while CBT and ACT had similar initial rates of improvement, they differed significantly in the shape of their recovery trajectories over the long term.
+
+1. The ACT Group's Trajectory (The Reference Group)
+
+  -  (Intercept) = 13.87 (p < .001): The estimated average insomnia score for the ACT group at baseline (time = 0) is 13.87.
+  - poly(time, 2)1 = -66.88 (p < .001): This represents the linear time trend for the ACT group. The significant negative value indicates a steep, linear decline in insomnia symptoms over time.
+  - poly(time, 2)2 = 72.32 (p < .001): This represents the quadratic (curvature) time trend for the ACT group. A significant positive quadratic term combined with a negative linear term is the classic signature of a curve that levels off. So, for the ACT group, the initial steep decline in insomnia slowed down over the follow-up period, just as you observed visually.
+
+2. Baseline Differences Between Groups
+
+  - randomizacaocbt = -1.34 (p = .043): The CBT group's average baseline insomnia score was 1.34 points lower than the ACT group's, and this difference is statistically significant.
+  - randomizacaowl = 3.53 (p < .001): The Waitlist group's average baseline insomnia score was 3.53 points higher than the ACT group's.
+  
+3. Differences in Change Over Time (The Interactions)
+This is the most important part for answering your primary question.
+
+  - poly(time, 2)1:randomizacaocbt = -11.80 (p = .151): This tests if the linear slope differs between the CBT and ACT groups. Since it's not significant, there is no evidence that their initial rates of decline were different.
+  - poly(time, 2)2:randomizacaocbt = 20.56 (p = .014): This tests if the quadratic trend (curvature) differs between the CBT and ACT groups. This effect is significant. The positive value means the CBT group had an even stronger positive curvature than the ACT group, suggesting their recovery trajectory leveled off more pronouncedly.
+  - poly(time, 2)1:randomizacaowl = 38.78 (p < .001): This tests if the linear slope differs between the Waitlist and ACT groups. The large, positive, and significant coefficient means the Waitlist group's slope was significantly less steep (i.e., they improved much less) than the ACT group's slope. This confirms ACT was effective.
+  - poly(time, 2)2:randomizacaowl = -39.72 (p < .001): This tests if the curvature differs between the Waitlist and ACT groups. The significant negative value indicates that the Waitlist group's trajectory did not have the same "leveling off" shape as the ACT group's.
+  
+What the Results Mean Together
+
+  The ACT Group (Our Reference): Remember, the ACT group itself has a significant negative linear term (-66.88) and a significant positive quadratic term (72.32). This means the ACT trajectory is also a curve—it shows a steep initial improvement that then slows down and begins to level off.
+
+  The CBT Group (The Comparison):
+      Linear Interaction (p = .151): The initial "steepness" of the decline was statistically the same as ACT.
+      Quadratic Interaction (p = .014): The quadratic term for CBT was significantly more positive (by 20.56) than for ACT.
+
+So, what does a "more positive" quadratic term mean in this context? It means the upward bend of the curve is more pronounced. When you have a steep decline followed by an upward bend, a stronger bend means the leveling off happens earlier or more sharply.
+Evaluating Your Hypothesis
+
+  "...does it mean that for CBT, the change tends to happen only at t2 and stall at the same level, while for ACT, it progresses until the measurement taken at t3?"
+
+  Your description of CBT is excellent: Your intuition that the change for CBT is rapid and then "stalls" is a very good way to describe a more pronounced curve. The data suggests most of the therapeutic gains happened between baseline and 6 weeks, followed by a period of maintenance.
+
+  Your description of ACT needs a slight correction: Your model suggests that ACT also slows down and levels off. The difference is that its "leveling off" is less pronounced than CBT's. It doesn't necessarily mean it progresses linearly all the way to t3; rather, its curve is just gentler.
+
+  "...the 'immediate' change for ACT is comparable to CBT, but the long-term effects are more persistent for ACT"
+
+This is the crucial question, and the coefficients alone don't give us the final answer. A "more pronounced" curve for CBT could mean two things:
+
+  Possibility A: CBT gets patients to a better state faster, and they maintain that excellent result (the curve flattens out at a very low insomnia score).
+  Possibility B: CBT has a great initial effect, but then the progress completely stalls, while ACT's gentler, more sustained improvement eventually "catches up" or even surpasses CBT's outcome at the final time point (t3).
+
+The model shows the trajectories have different shapes, but it doesn't tell us which group ended up with lower insomnia scores at 7.5 months.
+
+### Testing marginal means
+
+```{r}
+# First, create a list of the time points you want to predict at
+time_points <- c(0, 1.5, 7.5) # Baseline, 6 weeks, ~7.5 months
+
+# Calculate the estimated means from your model object 'mQuad'
+predicted_means <- emmeans(mQuad, ~ randomizacao | time, at = list(time = time_points))
+
+# Convert the result to a regular data frame for plotting
+predicted_df <- as.data.frame(predicted_means)
+```
+
+```{r}
+ggplot(predicted_df, aes(x = time, y = emmean, color = randomizacao, group = randomizacao)) +
+  geom_line(linewidth = 1.2) + # Draw the trajectory lines
+  geom_point(size = 3) + # Add points for each measurement time
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) + # Add confidence intervals
+  labs(
+    title = "Estimated Trajectories of Insomnia Severity by Treatment Group",
+    x = "Time from Baseline (Months)",
+    y = "Predicted Insomnia Severity Score (IGI)",
+    color = "Group"
+  ) +
+  scale_x_continuous(breaks = time_points) + # Ensure x-axis ticks are at your time points
+  theme_minimal()
+```
+
+```{r}
+# 'predicted_means' is the emmeans object you created in the previous step
+
+# Perform pairwise comparisons of the groups at each time point
+pairwise_comparisons <- pairs(predicted_means, by = "time")
+
+# Print the results
+print(pairwise_comparisons)
+```
+
+The difference is not statistically significant. In this case, you would conclude that you do not have sufficient evidence to say one therapy is superior to the other at Time 3. This would be the statistical support for your statement that they are "equally effective."
+
+## 2. Predictors of change
+
+```{r}
+
+wide_data <- mydata2 |> 
+dplyr::select(record_id, redcap_event_name, randomizacao, igi_escore, 
+              ehad_ansiedade_escore, aaq_score, dbas_score, sas_score, 
+              spaq_score) |> 
+  tidyr::pivot_wider(
+    id_cols = c(record_id, randomizacao),
+    names_from = "redcap_event_name",
+    names_sep = "_t",
+    values_from = c(igi_escore:sas_score)
+  ) |> 
+  dplyr::filter(randomizacao != "wl",# I only want the cases where change occurred
+                record_id != 928) # missing data 
+```
+
+```{r}
+lgcm_mod <- '
+  # Define the Intercept and Slope factors for Insomnia Severity
+  ItcI =~ 1*igi_escore_t1 + 1*igi_escore_t2 + 1*igi_escore_t3
+  SlopeI =~ 0*igi_escore_t1 + 1.5*igi_escore_t2 + 7.5*igi_escore_t3 # Using actual time in months
+
+  # Regress the growth factors on the baseline predictor
+  # This is your key research question!
+  ItcI ~ dbas_score_t1   # Does baseline DBAS predict baseline insomnia?
+  SlopeI ~ dbas_score_t1 # Does baseline DBAS predict the rate of change in insomnia?
+
+  # You can also let the intercept and slope covary with the predictor
+  ItcI ~~ SlopeI
+'
+
+# Fit the model
+# Use MLR for robustness to non-normality if needed
+fit_lgcm <- sem(lgcm_mod, data = wide_data, missing = "FIML", estimator = "MLR")
+
+# View the results
+summary(fit_lgcm, standardized = TRUE, fit.measures = TRUE)
+```
+
+If the p-value is significant: You have evidence that baseline dysfunctional beliefs are associated with the rate of change in insomnia.
+
+If the coefficient is positive: It means higher baseline DBAS scores are associated with a less steep decline (or a steeper increase) in insomnia.
+
+### Testing interaction by group
+
+```{r}
+
+# The model string is the same
+lgcm_model <- '
+  # Define the Intercept and Slope factors for Insomnia Severity
+  ItcI =~ 1*igi_escore_t1 + 1*igi_escore_t2 + 1*igi_escore_t3
+  SlopeI =~ 0*igi_escore_t1 + 1.5*igi_escore_t2 + 7.5*igi_escore_t3
+  
+  ItcI ~ c(p1_cbt, p1_act) * dbas_score_t1
+  SlopeI ~ c(p2_cbt, p2_act) * dbas_score_t1 # This is our key path
+
+
+  # Let intercept and slope covary
+  ItcI ~~ SlopeI
+'
+
+# Fit the UNCONSTRAINED model
+fit_unconstrained <- sem(lgcm_mod, 
+                         data = wide_data, 
+                         group = "randomizacao", 
+                         missing = "FIML")
+summary(fit_unconstrained, standardized = TRUE, fit.measures = TRUE)
+```
+
+```{r}
+lgcm_model_constrained <- '
+  # ... (Intercept and Slope definitions are the same) ...
+  ItcI =~ 1*igi_escore_t1 + 1*igi_escore_t2 + 1*igi_escore_t3
+  SlopeI =~ 0*igi_escore_t1 + 1.5*igi_escore_t2 + 7.5*igi_escore_t3
+
+  # Allow the intercept path to vary
+  ItcI ~ c(p1_cbt, p1_act) * dbas_score_t1
+  
+  # CONSTRAIN the slope path to be equal across groups by giving it ONE label
+  SlopeI ~ c(p2, p2) * dbas_score_t1
+
+  # Let intercept and slope covary
+  ItcI ~~ SlopeI
+'
+
+# Fit the CONSTRAINED model
+fit_constrained <- sem(lgcm_model_constrained, 
+                       data = wide_data, 
+                       group = "randomizacao", 
+                       missing = "FIML")
+```
+```{r}
+anova(fit_unconstrained, fit_constrained)
+```
+
+- p > .05: The constrained model does not fit significantly worse. This means forcing the path to be equal was a reasonable constraint. You would conclude that there is no evidence of moderation by group for this specific effect.
+
+```{r}
+# Define the QUADRATIC LGCM
+lgcm_quad_model <- '
+ # Define the Intercept, Linear, and Quadratic growth factors
+  ItcI =~ 1*igi_escore_t1 + 1*igi_escore_t2 + 1*igi_escore_t3
+  LinI =~ 0*igi_escore_t1 + 1.5*igi_escore_t2 + 7.5*igi_escore_t3
+  QuadI =~ 0*igi_escore_t1 + 2.25*igi_escore_t2 + 56.25*igi_escore_t3
+
+  # Regress the growth factors on the baseline predictor
+  ItcI ~ dbas_score_t1
+  LinI ~ dbas_score_t1
+  QuadI ~ dbas_score_t1
+
+  # Estimate variances and covariances for Intercept and Linear Slope
+  ItcI ~~ ItcI + LinI
+  LinI ~~ LinI
+  
+  # --- KEY CHANGES HERE ---
+  # Fix the variance of the quadratic slope to zero
+  QuadI ~~ 0*QuadI 
+  
+  # Fix the covariance between the linear and quadratic slopes to zero
+  LinI ~~ 0*QuadI
+
+  # Also fix the covariance between the intercept and quadratic slope to zero
+  ItcI ~~ 0*QuadI
+'
+# Fit the revised model
+fit_lgcm_quad <- sem(lgcm_quad_model, data = wide_data, missing = "FIML", estimator = "MLR")
+summary(fit_lgcm_quad, standardized = TRUE, fit.measures = TRUE)
+```
+```{r}
+wide_data <- mydata2 |> 
+dplyr::select(record_id, redcap_event_name, randomizacao, igi_escore, 
+              ehad_ansiedade_escore, aaq_score, dbas_score, sas_score, 
+              spaq_score) |> 
+  dplyr::filter(randomizacao != "wl",# I only want the cases where change occurred
+                record_id != 928,
+                redcap_event_name != 3) |> 
+  tidyr::pivot_wider(
+    id_cols = c(record_id, randomizacao),
+    names_from = "redcap_event_name",
+    names_sep = "_t",
+    values_from = c(igi_escore:sas_score)
+  ) 
+   # missing data 
+
+# Define the 2-Time-Point LGCM
+library(lavaan)
+
+# Define the residualized change model
+# You will use your WIDE format data
+change_model_syntax <- '
+  # Regress the post-test score on the baseline score and the baseline predictor
+  igi_escore_t2 ~ igi_escore_t1 + dbas_score_t1
+'
+
+# Fit the model
+# You can still use FIML for any missingness on the igi_escore variables
+# And fixed.x=FALSE to handle potential missingness on the predictor
+fit_change <- sem(change_model_syntax, 
+                  data = wide_data, 
+                  missing = "FIML",
+                  fixed.x = FALSE)
+
+# View the results
+summary(fit_change, standardized = TRUE, rsquare = TRUE)
+```
+

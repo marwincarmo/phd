@@ -1,0 +1,32 @@
+---
+title: "final_project"
+format: 
+  apaquarto-pdf: default
+
+   
+---
+
+# 1.	Introduction
+
+Insomnia is a prevalent condition affecting an estimated 10% of adults, leading to significant detriments in mental and physical health and substantial economic burden. The recommended first-line treatment for chronic insomnia is Cognitive Behavioral Therapy for Insomnia (CBT-I), a multi-component protocol strongly endorsed by leading clinical bodies for its proven effectiveness (Morin et al., 2023). The therapy, typically delivered in four to eight sessions, combines sleep restriction, stimulus control, and cognitive restructuring to target sleep patterns and maladaptive beliefs about sleep.
+
+Despite its status as the gold-standard treatment, CBT-I does not lead to remission in a substantial portion of patients, particularly those with psychiatric and medical comorbidities, with some studies showing non-remission rates as high as 60% in such populations (Wu, J. Q., Appleman, E. R., Salazar, R. D., & Ong, J. C., 2015). Furthermore, adherence to key behavioral components, such as sleep restriction, can be challenging for many individuals (Harvey, A. G., & Tang, N. K., 2003). These limitations underscore the need to investigate new psychotherapeutic approaches for insomnia.
+
+Third-wave behavioral therapies, such as Acceptance and Commitment Therapy (ACT), have emerged as a promising alternative. ACT diverges from the cognitive strategies of CBT-I by aiming to develop psychological flexibility—the ability to fully contact the present moment and persist in or change behavior in the service of chosen values (Hayes, S. C., Strosahl, K. D., & Wilson, K. G., 1999). Instead of focusing on mastering or reducing symptoms, ACT promotes acceptance of uncomfortable internal experiences, such as difficult thoughts and feelings about sleep, and shifts the focus away from controlling sleeplessness toward living a meaningful life.
+
+While some research has explored ACT for insomnia, few studies have directly compared ACT as a standalone therapy against CBT-I, especially without the inclusion of traditional behavioral components like stimulus control and sleep restriction. A direct comparison via a randomized clinical trial represents the gold-standard methodology for investigating the relative effectiveness of two treatments (Chambless, D. L., & Hollon, S. D., 1998). Such a study provides a critical opportunity to compare the efficacy of two distinct therapeutic packages: one that aims to change the content of maladaptive cognitions (CBT) versus one that seeks to change their context and the individual's rigid response to them (ACT). This paper details the results of a randomized controlled trial comparing the effectiveness of group-based ACT and CBT for adults with chronic insomnia.
+
+
+## 2.	Methods
+a.	Briefly describe your research design, target population, sampling/recruitment methods, and procedure.
+b.	Specify the measures you are using and provide information on reliability and validity if possible.
+c.	Specify your analysis plan and outline how each hypothesis will be tested. Write out the equations for the models.
+d.	If there are missing data in your dataset, indicate how they will be treated.
+
+# 3.	Results
+a.	Clearly present and interpret your results. Use subheadings when necessary. 
+b.	Include tables and/or figures in APA format. 
+
+# 4.	Discussion
+a.	Provide a summary of your research findings (e.g., are your hypotheses supported)?
+b.	Discuss the implications of your findings and limitations of the study.

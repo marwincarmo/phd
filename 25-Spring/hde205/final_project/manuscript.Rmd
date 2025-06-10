@@ -1,0 +1,178 @@
+---
+title             : "The title"
+shorttitle        : "Title"
+
+author: 
+  - name          : "First Author"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "my@email.com"
+    role: # Contributorship roles (e.g., CRediT, https://credit.niso.org/)
+      - "Conceptualization"
+      - "Writing - Original Draft Preparation"
+      - "Writing - Review & Editing"
+  - name          : "Ernst-August Doelle"
+    affiliation   : "1,2"
+    role:
+      - "Writing - Review & Editing"
+      - "Supervision"
+
+affiliation:
+  - id            : "1"
+    institution   : "Wilhelm-Wundt-University"
+  - id            : "2"
+    institution   : "Konstanz Business School"
+
+  
+keywords          : "keywords"
+wordcount         : "X"
+
+bibliography      : "r-references.bib"
+
+floatsintext      : no
+linenumbers       : no
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+r_refs("r-references.bib")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+# Introduction
+
+Insomnia is a prevalent condition affecting an estimated 10% of adults, leading to significant detriments in mental and physical health and substantial economic burden. The recommended first-line treatment for chronic insomnia is Cognitive Behavioral Therapy for Insomnia (CBT-I), a multi-component protocol strongly endorsed by leading clinical bodies for its proven effectiveness (Morin et al., 2023). The therapy, typically delivered in four to eight sessions, combines sleep restriction, stimulus control, and cognitive restructuring to target sleep patterns and maladaptive beliefs about sleep.
+
+Despite its status as the gold-standard treatment, CBT-I does not lead to remission in a substantial portion of patients, particularly those with psychiatric and medical comorbidities, with some studies showing non-remission rates as high as 60% in such populations (Wu, J. Q., Appleman, E. R., Salazar, R. D., & Ong, J. C., 2015). Furthermore, adherence to key behavioral components, such as sleep restriction, can be challenging for many individuals (Harvey, A. G., & Tang, N. K., 2003). These limitations underscore the need to investigate new psychotherapeutic approaches for insomnia.
+
+Third-wave behavioral therapies, such as Acceptance and Commitment Therapy (ACT), have emerged as a promising alternative. ACT diverges from the cognitive strategies of CBT-I by aiming to develop psychological flexibility—the ability to fully contact the present moment and persist in or change behavior in the service of chosen values (Hayes, S. C., Strosahl, K. D., & Wilson, K. G., 1999). Instead of focusing on mastering or reducing symptoms, ACT promotes acceptance of uncomfortable internal experiences, such as difficult thoughts and feelings about sleep, and shifts the focus away from controlling sleeplessness toward living a meaningful life.
+
+While some research has explored ACT for insomnia, few studies have directly compared ACT as a standalone therapy against CBT-I, especially without the inclusion of traditional behavioral components like stimulus control and sleep restriction. A direct comparison via a randomized clinical trial represents the gold-standard methodology for investigating the relative effectiveness of two treatments (Chambless, D. L., & Hollon, S. D., 1998). Such a study provides a critical opportunity to compare the efficacy of two distinct therapeutic packages: one that aims to change the content of maladaptive cognitions (CBT) versus one that seeks to change their context and the individual's rigid response to them (ACT). This paper details the results of a randomized controlled trial comparing the effectiveness of group-based ACT and CBT for adults with chronic insomnia.
+
+# Methods
+
+This study was a prospective, three-arm, parallel-group, randomized controlled trial that compared Acceptance and Commitment Therapy for Insomnia (ACT-I), Cognitive Behavioral Therapy for Insomnia (CBT-I), and a waitlist (WL) control group. The trial was preregistered (NCT04866914) and received approval from the University of Sao Paulo research ethics committee.
+
+## Participants
+
+The target population was adults aged 18-59 years meeting the diagnostic criteria for chronic insomnia. Participants were recruited between March 2021 and July 2022 via advertisements posted on the social media channels of the Institute of Psychiatry at the University of São Paulo. Inclusion criteria required individuals to experience difficulty initiating or maintaining sleep (sleep onset latency or wake after sleep onset $\geq$ 30 minutes) for more than three nights per week for at least three months, resulting in significant daytime distress or impairment.
+
+Exclusion criteria included the presence of unstable or progressive physical illnesses, unstable psychiatric comorbidities (such as bipolar or psychotic disorders), other untreated sleep disorders (e.g., sleep apnea, restless legs syndrome), current substance misuse, and working night shifts. Participants taking stable doses of sleep medication for at least three months were permitted to join but were instructed not to change their medication during the trial.
+
+## Procedure
+
+Interested individuals first completed an initial online screening on the REDCap platform. Those who passed the initial screening underwent subsequent medical and neuropsychiatric evaluations with an experienced clinician to confirm eligibility. After providing electronic informed consent, eligible participants were randomized into one of the three study arms: ACT-I (*n*=76), CBT-I (*n*=76), or WL (*n*=75). An independent researcher performed the randomization using REDCap's randomization software, and the process was stratified based on baseline Insomnia Severity Index (ISI) scores to ensure balanced groups.
+
+All study assessments and interventions were conducted online. Participants in the ACT-I and CBT-I groups attended six weekly group therapy sessions, each lasting 90 to 120 minutes, via the Zoom platform. Those in the WL group were informed of their functions and assessment periods, and for ethical reasons, were offered treatment after the 6-month follow-up assessment was completed. Outcomes were assessed at baseline (pretreatment), posttreatment (one week after the intervention), and at a 6-month follow-up.
+
+## Measures
+
+### Participants' data
+
+Sociodemographic and clinical information, including sex, age, ethnicity, marital status, family composition (having children), occupation, education level, insomnia duration, type of insomnia, use and type of medication, and comorbidities (clinical and psychiatric).
+
+### Insomnia Severity Index (ISI)
+
+The ISI is a retrospective seven-item scale that evaluates the nature, intensity, and impact of insomnia during the last month. All items are assessed using a 5-point Likert scale (0 = no severity to 4 = high severity), resulting in a total score ranging from 0 to 28. 
+
+### Hospital Anxiety and Depression Scale (HADS)
+
+The Hospital Anxiety and Depression Scale (HADS) comprises 14 items with two subscales for assessing anxiety and depression. The total score for each subscale is 0–21.
+
+## Data analysis
+
+### Treatment Efficacy 
+
+The efficacy of the interventions on insomnia severity was analyzed with a Linear Mixed-Effects Model (LMM). o account for the unequal intervals between assessment points (baseline, 6 weeks, and 7.5 months from baseline), a continuous numeric time variable representing months from baseline (coded 0, 1.5, and 7.5) was used as the primary time metric. A visual inspection of the data suggested an initial rapid decline in symptoms followed by a period of maintenance for the treatment groups. Therefore, both linear and quadratic orthogonal polynomial terms for time were included as fixed effects. 
+
+The model included the main effects of the treatment group (ACT, CBT, Waitlist) and the interaction terms between both the linear and quadratic time polynomials and the group variable. These interaction terms formally test the primary hypothesis of whether the rate and shape of change in insomnia severity differed significantly across the three groups. The general form of the two-level growth model can be expressed as follows:
+
+Level 1 (Within-Person):
+
+$$
+\text{ISI}_{ti} = \beta_{0i} + \beta_{1i} (Time_{ti}) + \beta_{2i} (Time_{ti})^2 + e_{ti} 
+$$
+where $\text{ISI}_{ti}$ is the insomnia score for participant $i$ at time $t$. The individual growth parameters are the intercept ($\beta_{0i}$), the linear rate of change ($\beta_{1i}$), and the quadratic rate of change ($\beta_{2i}$). The term $e_{ti}$ represents the within-person residual variance.
+
+Level 2 (Between-Person):
+
+$$
+\begin{aligned}
+  \beta_{0i} &= \gamma_{00} + \gamma_{01}(\text{GroupCBT}_i) + \gamma_{02}(\text{GroupWL}_i) + u_{0i}\\
+  \beta_{1i} &= \gamma_{10} + \gamma_{11}(\text{GroupCBT}_i) + \gamma_{12}(\text{GroupWL}_i) + u_{1i}\\
+  \beta_{2i} &= \gamma_{20} + \gamma_{21}(\text{GroupCBT}_i) + \gamma_{22}(\text{GroupWL}_i) + u_{2i}\\
+\end{aligned}
+$$
+
+where an individual's growth parameters are modeled as a function of the overall intercept ($\gamma_{00}$), linear slope ($\gamma_{10}$), and quadratic slope ($\gamma_{20}$) for the reference group (ACT), plus fixed effects for being in the CBT or Waitlist (WL) group. The terms $u_{0i}$, $u_{1i}$, and $u_{2i}$ represent the random deviations of participant $i$ from their group's average trajectory, representing individual differences in baseline, linear change, and quadratic change, respectively.
+
+To determine the most appropriate random effects structure, a series of nested models was compared using Likelihood Ratio Tests with Maximum Likelihood (ML) estimation. A baseline model with only a random intercept for participants was compared to a model including a random linear slope, and subsequently to a full model including random intercept, linear, and quadratic slopes. The structure that provided the best fit without being overly complex was retained for the final analysis.
+
+All analyses were conducted in R using the `lme4` and `lmerTest` packages. The reference group for all primary analyses was the ACT group. Post-hoc comparisons of estimated marginal means were conducted using the emmeans package to test for differences between groups at specific time points. 
+<!-- An alpha level of .05 was used to determine statistical significance for all tests. -->
+
+### Predictors of Change
+
+To address the second research question—whether initial levels of auxiliary psychological variables predict the rate of change in insomnia severity—a series of Latent Growth Curve Models (LGCMs) were specified within a Structural Equation Modeling (SEM) framework. By treating the initial level (intercept) and rates of change (slopes) as latent variables, LGCM can directly test if these growth factors are significantly predicted by baseline characteristics.
+
+Each model was specified to capture the non-linear trajectory of insomnia severity identified in the primary analysis. Three latent growth factors were defined: an intercept, a linear slope, and a quadratic slope. To account for the unequal assessment intervals, factor loadings for the slopes were fixed based on a continuous time metric representing months from baseline. The intercept factor loadings were fixed to 1 at all time points (baseline, 1.5 months, 7.5 months). The linear slope factor loadings were fixed to the actual time elapsed (0, 1.5, 7.5), and the quadratic slope factor loadings were fixed to the square of the time metric (0, 2.25, 56.25). The baseline score of each auxiliary variable (e.g., HADS anxiety/depression, AAQ-II psychological inflexibility, DBAS dysfunctional beliefs) was then included as an observed predictor in a separate model.
+
+The structural portion of the LGCM tested the primary hypotheses by regressing the latent growth factors onto the baseline predictor. This can be represented by the following equations:
+
+$$
+\begin{aligned}
+  \text{Intercept}_\text{ISI} &= \lambda_{I0} + \lambda_{I1}(\text{Predictor}_{ti}) + \zeta_I \\
+  \text{LinearSlope}_\text{ISI} &= \lambda_{L0} + \lambda_{L1}(\text{Predictor}_{ti}) + \zeta_L \\
+  \text{QuadraticSlope}_\text{ISI} &= \lambda_{Q0} + \lambda_{Q1}(\text{Predictor}_{ti}) + \zeta_Q \\
+\end{aligned}
+$$
+
+where the key parameters of interest are the path coefficients $\lambda_{L1}$ and $\lambda_{Q1}$. A significant $\lambda_{L1}$ would indicate that the baseline predictor is associated with the initial rate of change in insomnia, while a significant $\lambda_{Q1}$ would indicate an association with the curvature of the trajectory (i.e., the degree to which change accelerates or decelerates).
+
+To investigate whether these predictive relationships were moderated by treatment condition, a multi-group SEM analysis was conducted. This involved comparing a baseline model, where the regression paths from the predictor to the slope factors were freely estimated across the two intervention groups (ACT and CBT), to a more constrained model where these paths were fixed to be equal across groups. A statistically significant chi-square difference test between the unconstrained and constrained models was used as evidence of moderation, indicating that the predictive utility of the baseline characteristic differed significantly by group.
+
+All LGCM analyses required restructuring the data into a wide format and were performed using the `lavaan` package in R. Full Information Maximum Likelihood (FIML) was specified via the `missing = "FIML"` argument to handle missing data, using all available information from participants with partial data. A robust maximum likelihood estimator (MLR) was used to account for potential non-normality in the data. 
+<!-- An alpha level of .05 was used to determine statistical significance. -->
+
+# Results
+
+## Treatment Efficacy 
+
+### Model Selection
+
+To determine the optimal random effects structure for the Linear Mixed-Effects Model, a series of nested models were compared. A model including random intercepts and random linear slopes for time (Model 2) was compared to a more parsimonious model with only random intercepts (Model 1). While the Likelihood Ratio Test indicated a statistically significant improvement in fit for Model 2 ($\chi^2$(2) = 19.78, $p$ < .001), this model resulted in a singular fit, evidenced by a perfect correlation (1.00) between the random intercept and slope estimates. A subsequent model including a random quadratic slope (Model 3) failed to converge. Therefore, the more parsimonious and stable random-intercept-only model (Model 1) was retained for all primary hypothesis testing.
+
+### Treatment Efficacy Over Time
+
+The final model revealed a significant overall quadratic trajectory of insomnia severity over time. For the ACT group, there was a significant negative linear trend ($B$ = -66.88, *p* < .001) and a significant positive quadratic trend ($B$ = 72.32, *p* < .001). This confirms a trajectory of rapid initial improvement in insomnia symptoms that subsequently leveled off during the follow-up period.
+
+The primary hypotheses were tested via the time-by-group interaction terms. The analysis showed that the change in insomnia severity over time differed significantly between the treatment groups and the wait list control. Compared to the ACT group, the Wait list group demonstrated a significantly weaker linear decline ($B$ = 38.78, *p* < .001) and a significantly different curvature ($B$ = -39.72, *p* < .001), indicating substantially less improvement.
+
+When comparing the two active therapies, the linear component of the time-by-group interaction was not significant ($B$ = -11.80, *p* = .151), suggesting that the initial rate of improvement did not differ between the CBT and ACT groups. However, a significant quadratic interaction was found ($B$ = 20.56, *p* = .014), indicating that the shape of the trajectory differed between the two therapies, with the CBT group's recovery curve leveling off more pronouncedly than the ACT group's.
+
+To further clarify these differences, post-hoc comparisons of the estimated marginal means were conducted at the final 7.5-month follow-up. These tests revealed no statistically significant difference in insomnia severity scores between the ACT and CBT groups at the end of the study period, though both active treatment groups maintained significantly lower insomnia scores than the Wait list group (ps < .001). This suggests that while the two therapies may have slightly different trajectories, they result in comparable and effective long-term outcomes.
+
+# Discussion
+
+
+\newpage
+
+# References
+
+::: {#refs custom-style="Bibliography"}
+:::
