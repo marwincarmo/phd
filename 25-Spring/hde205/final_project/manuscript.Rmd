@@ -12,17 +12,15 @@ author:
       - "Conceptualization"
       - "Writing - Original Draft Preparation"
       - "Writing - Review & Editing"
-  - name          : "Ernst-August Doelle"
-    affiliation   : "1,2"
+  - name          : "Marwin Carmo"
+    affiliation   : "1"
     role:
       - "Writing - Review & Editing"
       - "Supervision"
 
 affiliation:
   - id            : "1"
-    institution   : "Wilhelm-Wundt-University"
-  - id            : "2"
-    institution   : "Konstanz Business School"
+    institution   : "University of California, Davis"
 
   
 keywords          : "keywords"
@@ -128,26 +126,15 @@ All analyses were conducted in R using the `lme4` and `lmerTest` packages. The r
 
 ### Predictors of Change
 
-To address the second research question—whether initial levels of auxiliary psychological variables predict the rate of change in insomnia severity—a series of Latent Growth Curve Models (LGCMs) were specified within a Structural Equation Modeling (SEM) framework. By treating the initial level (intercept) and rates of change (slopes) as latent variables, LGCM can directly test if these growth factors are significantly predicted by baseline characteristics.
+To investigate whether baseline psychological characteristics predicted the trajectories of insomnia severity differently across the treatment conditions (i.e., moderation), a series of Linear Mixed-Effects Models (LMMs) were conducted. A separate LMM was constructed for each baseline predictor of interest, including dysfunctional beliefs and attitudes about sleep (DBAS), anxiety (HADS), psychological inflexibility (AAQ-II), and others.
 
-Each model was specified to capture the non-linear trajectory of insomnia severity identified in the primary analysis. Three latent growth factors were defined: an intercept, a linear slope, and a quadratic slope. To account for the unequal assessment intervals, factor loadings for the slopes were fixed based on a continuous time metric representing months from baseline. The intercept factor loadings were fixed to 1 at all time points (baseline, 1.5 months, 7.5 months). The linear slope factor loadings were fixed to the actual time elapsed (0, 1.5, 7.5), and the quadratic slope factor loadings were fixed to the square of the time metric (0, 2.25, 56.25). The baseline score of each auxiliary variable (e.g., HADS anxiety/depression, AAQ-II psychological inflexibility, DBAS dysfunctional beliefs) was then included as an observed predictor in a separate model.
+Each model was specified to test for a three-way interaction between time, treatment group, and the baseline predictor. The Level 1 equation is the same Equation 1 but model's Level 2 structure can be represented by the following equation:
 
-The structural portion of the LGCM tested the primary hypotheses by regressing the latent growth factors onto the baseline predictor. This can be represented by the following equations:
+At Level 2, each individual growth parameter ($\beta_i$) is modeled as a function of fixed effects. For example, an individual's linear slope ($\beta_{1i}$) is determined by the average linear slope for the reference group (ACT) at the mean level of the predictor ($\gamma_{10}$), the effects of being in the CBT or Waitlist (WL) groups, the main effect of the baseline predictor, and the key interaction terms (e.g., $\gamma_{14}$, $\gamma_{15}$). The terms $u_{0i}$ and $u_{1i}$ are the random effects, representing individual deviations from the group's average intercept and linear slope, respectively. To aid in the interpretation of main effects, each continuous baseline predictor was grand-mean centered prior to its inclusion in the model.
 
-$$
-\begin{aligned}
-  \text{Intercept}_\text{ISI} &= \lambda_{I0} + \lambda_{I1}(\text{Predictor}_{ti}) + \zeta_I \\
-  \text{LinearSlope}_\text{ISI} &= \lambda_{L0} + \lambda_{L1}(\text{Predictor}_{ti}) + \zeta_L \\
-  \text{QuadraticSlope}_\text{ISI} &= \lambda_{Q0} + \lambda_{Q1}(\text{Predictor}_{ti}) + \zeta_Q \\
-\end{aligned}
-$$
+The primary hypothesis of moderation was tested by the significance of the three-way interaction terms, which are implicitly represented in the Level 2 equations by the cross-level interactions (e.g., $\gamma_{14}$, $\gamma_{15}$, $\gamma_{24}$, $\gamma_{25}$). In the event of a significant three-way interaction, simple slopes analysis was planned to probe the nature of the moderation by examining the two-way Time * Group interaction at high (+1 SD) and low (-1 SD) levels of the baseline predictor.
 
-where the key parameters of interest are the path coefficients $\lambda_{L1}$ and $\lambda_{Q1}$. A significant $\lambda_{L1}$ would indicate that the baseline predictor is associated with the initial rate of change in insomnia, while a significant $\lambda_{Q1}$ would indicate an association with the curvature of the trajectory (i.e., the degree to which change accelerates or decelerates).
-
-To investigate whether these predictive relationships were moderated by treatment condition, a multi-group SEM analysis was conducted. This involved comparing a baseline model, where the regression paths from the predictor to the slope factors were freely estimated across the two intervention groups (ACT and CBT), to a more constrained model where these paths were fixed to be equal across groups. A statistically significant chi-square difference test between the unconstrained and constrained models was used as evidence of moderation, indicating that the predictive utility of the baseline characteristic differed significantly by group.
-
-All LGCM analyses required restructuring the data into a wide format and were performed using the `lavaan` package in R. Full Information Maximum Likelihood (FIML) was specified via the `missing = "FIML"` argument to handle missing data, using all available information from participants with partial data. A robust maximum likelihood estimator (MLR) was used to account for potential non-normality in the data. 
-<!-- An alpha level of .05 was used to determine statistical significance. -->
+The random effects structure was kept consistent with that of the primary efficacy analysis. All analyses were conducted in R using the lme4 and lmerTest packages, with post-hoc probing conducted using emmeans. An alpha level of .05 was used to determine statistical significance for all tests.
 
 # Results
 

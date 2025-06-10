@@ -333,33 +333,14 @@ summary(fit_lgcm_quad, standardized = TRUE, fit.measures = TRUE)
 ```
 
 ```{r}
-wide_data <- mydata2 |> 
-dplyr::select(record_id, redcap_event_name, randomizacao, igi_escore, 
-              ehad_ansiedade_escore, aaq_score, dbas_score, sas_score, 
-              spaq_score) |> 
-  tidyr::pivot_wider(
-    id_cols = c(record_id, randomizacao),
-    names_from = "redcap_event_name",
-    names_sep = "_t",
-    values_from = c(igi_escore:sas_score)
-  ) |> 
-  dplyr::filter(randomizacao != "wl") |> 
-  tidyr::pivot_longer(
-    cols = dplyr::ends_with("t2"),
-    names_to = c(".value", "set"),
-    names_pattern = "(.)(.)"
-    )
-
-
 baseline_scores <- mydata2 |> 
   filter(redcap_event_name == 1) |> 
   select(record_id, igi_escore, ehad_ansiedade_escore, aaq_score, 
          dbas_score, sas_score, spaq_score) %>%
-  rename_with(~ paste0(., "_t1"), -record_id) 
-# |> 
-#   dplyr::mutate(
-#     dplyr::across(-record_id, ~scale(., scale=FALSE))
-#   )
+  rename_with(~ paste0(., "_t1"), -record_id) |>
+  dplyr::mutate(
+    dplyr::across(-record_id, ~scale(., scale=FALSE))
+  )
 
 # Join baseline scores back to the full dataset
 mydata3 <- mydata2 |> 
@@ -378,11 +359,20 @@ mydata3 <- mydata2 |>
 # mydata2$dbas_baseline_c <- scale(mydata2$dbas_score_t1, center = TRUE, scale = FALSE)
 
 
+preds <- colnames(mydata3)[grepl("_t1$", colnames(mydata3))][-c(1:3)]
+
+preds[3] |> 
+  purrr::map(
+    ~lmerTest::lmer(
+      igi_escore ~ poly(time, 2) * randomizacao * . + (1 | record_id), 
+      REML = FALSE, data = mydata3
+      )
+    )
 
 # Now, fit the LMM with the three-way interaction
 # This is a complex model, start with a random intercept and build up if possible
 final_lmm <- lmerTest::lmer(
-  igi_escore ~ poly(time, 2) * randomizacao * dbas_score_t1 +
+  igi_escore ~ poly(time, 2) * randomizacao * spaq_score_t1 +
                (1 | record_id),
   REML = FALSE,
   data = mydata3
