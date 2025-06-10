@@ -331,41 +331,63 @@ lgcm_quad_model <- '
 fit_lgcm_quad <- sem(lgcm_quad_model, data = wide_data, missing = "FIML", estimator = "MLR")
 summary(fit_lgcm_quad, standardized = TRUE, fit.measures = TRUE)
 ```
+
 ```{r}
 wide_data <- mydata2 |> 
 dplyr::select(record_id, redcap_event_name, randomizacao, igi_escore, 
               ehad_ansiedade_escore, aaq_score, dbas_score, sas_score, 
               spaq_score) |> 
-  dplyr::filter(randomizacao != "wl",# I only want the cases where change occurred
-                record_id != 928,
-                redcap_event_name != 3) |> 
   tidyr::pivot_wider(
     id_cols = c(record_id, randomizacao),
     names_from = "redcap_event_name",
     names_sep = "_t",
     values_from = c(igi_escore:sas_score)
-  ) 
-   # missing data 
+  ) |> 
+  dplyr::filter(randomizacao != "wl") |> 
+  tidyr::pivot_longer(
+    cols = dplyr::ends_with("t2"),
+    names_to = c(".value", "set"),
+    names_pattern = "(.)(.)"
+    )
 
-# Define the 2-Time-Point LGCM
-library(lavaan)
 
-# Define the residualized change model
-# You will use your WIDE format data
-change_model_syntax <- '
-  # Regress the post-test score on the baseline score and the baseline predictor
-  igi_escore_t2 ~ igi_escore_t1 + dbas_score_t1
-'
+baseline_scores <- mydata2 |> 
+  filter(redcap_event_name == 1) |> 
+  select(record_id, igi_escore, ehad_ansiedade_escore, aaq_score, 
+         dbas_score, sas_score, spaq_score) %>%
+  rename_with(~ paste0(., "_t1"), -record_id) 
+# |> 
+#   dplyr::mutate(
+#     dplyr::across(-record_id, ~scale(., scale=FALSE))
+#   )
 
-# Fit the model
-# You can still use FIML for any missingness on the igi_escore variables
-# And fixed.x=FALSE to handle potential missingness on the predictor
-fit_change <- sem(change_model_syntax, 
-                  data = wide_data, 
-                  missing = "FIML",
-                  fixed.x = FALSE)
+# Join baseline scores back to the full dataset
+mydata3 <- mydata2 |> 
+  left_join(baseline_scores, by = "record_id")
+```
 
-# View the results
-summary(fit_change, standardized = TRUE, rsquare = TRUE)
+
+
+```{r}
+# First, you need a baseline-only version of your predictor.
+# Let's assume your 'wide_data' has a 'dbas_score_t1' column.
+# Merge this baseline score back into your long-format 'mydata2'.
+# Make sure to center it for interpretability.
+
+# For example:
+# mydata2$dbas_baseline_c <- scale(mydata2$dbas_score_t1, center = TRUE, scale = FALSE)
+
+
+
+# Now, fit the LMM with the three-way interaction
+# This is a complex model, start with a random intercept and build up if possible
+final_lmm <- lmerTest::lmer(
+  igi_escore ~ poly(time, 2) * randomizacao * dbas_score_t1 +
+               (1 | record_id),
+  REML = FALSE,
+  data = mydata3
+)
+
+summary(final_lmm)
 ```
 
