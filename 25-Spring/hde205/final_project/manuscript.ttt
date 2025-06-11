@@ -1,0 +1,11 @@
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[]
+\begin{tabular}{lllll}
+\cline{1-2}
+\multicolumn{2}{|l|}{table title}                                          \\ \cline{1-2}
+\multicolumn{1}{|l|}{p-value}             & \multicolumn{1}{l|}{decision}  \\ \cline{1-2}
+\multicolumn{1}{|l|}{p\textgreater{}0.05} & \multicolumn{1}{l|}{do not reject H0} \\ \cline{1-2}
+\multicolumn{1}{|l|}{p\textless{}0.05}    & \multicolumn{1}{l|}{reject H0} \\ \cline{1-2}
+\end{tabular}
+\end{table*}

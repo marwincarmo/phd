@@ -10,8 +10,10 @@ execute:
 library(lavaan)
 library(dplyr)
 library(ggplot2)
-library(lme4)
+library(lmerTest)
 library(emmeans)
+library(purrr)
+library(broom.mixed)
 ```
 
 ```{r}
@@ -344,7 +346,8 @@ baseline_scores <- mydata2 |>
 
 # Join baseline scores back to the full dataset
 mydata3 <- mydata2 |> 
-  left_join(baseline_scores, by = "record_id")
+  left_join(baseline_scores, by = "record_id") |> 
+  dplyr::filter(randomizacao != "wl")
 ```
 
 
@@ -361,23 +364,26 @@ mydata3 <- mydata2 |>
 
 preds <- colnames(mydata3)[grepl("_t1$", colnames(mydata3))][-c(1:3)]
 
-preds[3] |> 
-  purrr::map(
-    ~lmerTest::lmer(
-      igi_escore ~ poly(time, 2) * randomizacao * . + (1 | record_id), 
-      REML = FALSE, data = mydata3
+models <- preds |> 
+  map(
+    ~{
+      var <- .x
+      f <- as.formula(
+        paste0("igi_escore ~ poly(time, 2) * randomizacao * ", var, " + (1 | record_id)")
       )
-    )
+      lmerTest::lmer(f, REML = FALSE, data = mydata3)
+    }
+  )
 
-# Now, fit the LMM with the three-way interaction
-# This is a complex model, start with a random intercept and build up if possible
-final_lmm <- lmerTest::lmer(
-  igi_escore ~ poly(time, 2) * randomizacao * spaq_score_t1 +
-               (1 | record_id),
-  REML = FALSE,
-  data = mydata3
-)
+tidy_summaries <- models |> 
+  map_df(~tidy(.x), .id = "predictor")
 
-summary(final_lmm)
+tidy_summaries |> 
+  #dplyr::filter(predictor == 3)
+  dplyr::filter(term %in% preds)
+  # dplyr::filter(term %in% c(
+  #   paste0("poly(time, 2)1:randomizacaocbt:", preds),
+  #   paste0("poly(time, 2)2:randomizacaocbt:", preds)
+  # ))
 ```
 
