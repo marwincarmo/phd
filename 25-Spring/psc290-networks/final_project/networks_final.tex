@@ -1,0 +1,229 @@
+% This is the "preamble" of the document. This is where the format options get set.
+% Pro-tip: things following the % mark will not be compiled by LaTeX. I'll be using them extensively to explain things as we go.
+% Note: not to scare you off of LaTeX, but it's normal to have problems. And ya girl has been having some. I've included the copyright info at the bottom of the document from the guy who wrote this package, because his documentation doesn't entirely match how it's actually used. So this is a combination of his working preamble along with my added commentary or explanation. 
+%% 
+
+
+\documentclass[stu,12pt,floatsintext]{apa7}
+% Document class input explanation ________________
+% LaTeX files need to start with the document class, so it knows what it's using
+% - This file is using the apa7 document class, as it has a lot of the formatting built in
+% There are two sets of brackets in LaTeX, for each command (the things that start with the slash \ )
+% - The squiggle brackets {} are mandatory for executing the command
+% - The square brackets [] are options for that command. There can be more than one set of square brackets for some commands
+% Options used in this document (general note - for each of these, if you want to use the other options, swap it out in that spot in the square brackets):
+% - stu: this sets the `document mode' as the "student paper" version. Other options are jou (journal), man (manuscript, for journal submission), and doc (a plain document)
+% --- The student setting includes things like 'duedate', 'course', and 'professor' on the title page. If these aren't wanted/needed, use the 'man' setting. It also defaults to including the tables and figures at the end of the document. This can be changed by including the 'floatsintext' option, as I have for you. If the instructor wants those at the end, remove that from the square brackets.
+% --- The manuscript setting is roughly what you would use to submit to a journal, so uses 'date' instead of 'duedate', and doesn't include the 'course' or 'professor' info. As with 'stu', it defaults to putting the tables and figures at the end rather than in text. The same option will bump those images in text.
+% --- Journal ('jou') outputs something similar to a common journal format - double columned text and figurs in place. This can be fun, especially if you are sumbitting this as a writing sample in applications.
+% --- Document ('doc') outputs single columned, single spaced text with figures in place. Another option for producing a more polished looking document as a writing sample.
+% - 12pt: sets the font size to 12pt. Other options are 10pt or 11pt
+% - floatsintext: makes it so tables and figures will appear in text rather than at the end. Unforunately, not having this option set breaks the whole document, and I haven't been able to figure out why. IT's GREAT WHEN THINGS WORK LIKE THEY'RE SUPPOSED TO.
+
+\usepackage[american]{babel}
+
+\usepackage{csquotes} % One of the things you learn about LaTeX is at some level, it's like magic. The references weren't printing as they should without this line, and the guy who wrote the package included it, so here it is. Because LaTeX reasons.
+\usepackage[style=apa,sortcites=true,sorting=nyt,backend=biber,natbib=true]{biblatex}
+% biblatex: loads the package that will handle the bibliographic info. Other option is natbib, which allows for more customization
+% - style=apa: sets the reference format to use apa (albeit the 6th edition)
+\DeclareLanguageMapping{american}{american-apa} % Gotta make sure we're patriotic up in here. Seriously, though, there can be local variants to how citations are handled, this sets it to the American idiosyncrasies 
+\addbibresource{bibliography.bib} % This is the companion file to the main one you're writing. It contains all of the bibliographic info for your references. It's a little bit of a pain to get used to, but once you do, it's the best. Especially if you recycle references between papers. You only have to get the pieces in the holes once.`
+
+%\usepackage[T1]{fontenc} 
+%\usepackage{mathptmx} % This is the Times New Roman font, which was the norm back in my day. If you'd like to use a different font, the options are laid out here: https://www.overleaf.com/learn/latex/Font_typefaces
+% Alternately, you can comment out or delete these two commands and just use the Overleaf default font. So many choices!
+
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage{nicefrac}
+
+% Title page stuff _____________________
+\title{A Bayesian Framework for Comparing Observed Graphs to Common Generative Models} % The big, long version of the title for the title page
+%\shorttitle{Data needs for SS-MELSM} % The short title for the header
+\author{Marwin Carmo}
+\duedate{Spring 2025}
+% \date{January 17, 2024} The student version doesn't use the \date command, for whatever reason
+\affiliation{University of California, Davis}
+\course{PSC 290} % LaTeX gets annoyed (i.e., throws a grumble-error) if this is blank, so I put something here. However, if your instructor will mark you off for this being on the title page, you can leave this entry blank (delete the PSY 4321, but leave the command), and just make peace with the error that will happen. It won't break the document.
+\professor{Dr. Jonathan Park}  % Same situation as for the course info. Some instructors want this, some absolutely don't and will take off points. So do what you gotta.
+
+%\abstract{Insert abstract text here.}
+
+%\keywords{APA style, demonstration} % If you need to have keywords for your paper, delete the % at the start of this line
+
+\begin{document}
+\maketitle % This tells LaTeX to make the title page
+
+% \section{Introduction} This command is commented out, because I was taught it was redundant to have the paper's title and introduction together. If your instructor wants it to say "Introduction", delete the % at the start
+
+Real-world networks exhibit complex structures. As such, graph generative models have been proposed to explain their topological properties, each representing a distinct hypothesis about the rules of network formation \parencite{wallis2007}. For example, some models posit that connections form randomly, while others suggest that new connections are preferentially made to already popular nodes, or that nodes form distinct communities. These structural characteristics affect the distribution of influence and importance among nodes. Therefore, a critical question is: given a real-world network, which generative model provides the most probable explanation for its observed structure? 
+
+This project suggests a quantitative method to perform this comparison. With Bayesian model selection we can calculate the posterior probability of each candidate model given the observed data \parencite{rouder2018}. We can weigh the evidence and determine how our belief in each model should be updated after seeing the data. However, they also carry a major challenge: for most graph generative models, the likelihood function (i.e., the probability of observing a specific graph given the model's parameters) is mathematically intractable. This complexity makes standard Bayesian computation impossible \parencite{murray2012mcmc}.
+
+Approximate Bayesian Computation (ABC) is a class of computational methods designed to circumvent this problem. Instead of evaluating an intractable likelihood function, ABC simulates datasets from a model and compares them to the observed data. If a simulation closely resembles the real data, the model parameters that produced it are considered plausible. While ABC has been applied to network science for estimating the parameters of a single model and for inference in large growing networks , a user-friendly framework for comparing an observed graph against a diverse suite of standard generative models is still absent.
+
+This project proposes a blueprint for a unified and accessible Bayesian framework for graph model selection. This framework will allow researchers to obtain a probabilistic measure of whether simple, known mechanisms (e.g., the random edge formation in Erdos-Renyi models) are adequate to explain observed network structure, or if more intricate mechanisms (like preferential attachment in Barabási-Albert models) are required.
+
+\subsection{Objectives}
+
+The first aim is to develop and implement the core Bayesian model selection framework. This involves building an ABC engine capable of estimating posterior model probabilities for graph data. A key part is to integrate simulators for a range of canonical graph generative models, including the Erdos-Renyi (ER) , Watts-Strogatz (WS) , Barabási-Albert (BA) , and Stochastic Block (SBM) models. Then, to formulate and test appropriate prior distributions for the parameters of each model.
+
+The second aim is to establish a methodology for selecting informative summary statistics. The ABC method relies on comparing summary statistics (e.g., average path length, clustering coefficient) rather than the entire, complex graph structures. The choice of these statistics is critical. The proposed framework will evaluate the effectiveness of theory-driven graph metrics and also implement and assess semi-automated, regression-based methods for identifying a reduced set of highly informative summary statistics from a large pool of candidates. The use of boosting techniques will also be explored.
+
+The third aim is to validate the framework's performance and demonstrate its utility. To ensure the framework is accurate, I will develop a validation study using simulated graphs, generated from known models, quantifying the framework's ability to correctly identify the true generating model. Subsequently, this validated framework will be applied to real-world network datasets to demonstrate its practical utility.
+
+
+\section{Method}
+
+\subsection{Model selection}
+
+Given an observed graph $G$ and a set of candidate models $\{M_1, \ldots, M_k\}$, the goal is to compute the posterior probability of each model, $p(M_k|G)$. This is achieved via Bayes' theorem, which states that the posterior probability of a model is proportional to its prior probability multiplied by the marginal likelihood. The marginal likelihood, $p(G|M_k)$, is the probability of observing the data given the model, averaged over all possible parameter values. It is the intractability of this marginal likelihood for graph models that motivates the proposed computational approach.
+
+\subsection{Approximate Bayesian Computation (ABC)}
+
+The ABC algorithm is a simulation-based procedure. It begins by selecting a model and a set of its parameters from their prior distributions. A synthetic graph is then simulated using this model and parameters. Summary statistics are calculated for both the observed and simulated graphs, and if the distance between these sets of statistics is below a small tolerance threshold, the chosen model is 'accepted'. By repeating this process many times, the proportion of acceptances for each model provides an approximation of its posterior probability. This process can be summarised in the following steps:
+
+1. Sample a model $M_k$ from the model prior $p(M)$.
+
+2. Sample a parameter set $\theta_k$ from the parameter prior $p(\theta_k|M_k)$.
+
+3. Simulate a graph $\widetilde{G}$ from $M_k$ using $\theta_k$.
+
+4. Calculate a vector of summary statistics $S(\widetilde{G})$ and $S(G)$.
+
+5. If the distance $d(S(G), S(\widetilde{G}))$ is below a tolerance $\epsilon$, accept the model choice $M_k$.
+
+6. Repeat steps 1-5 many times. The approximate posterior probability $p(M_k|\widetilde{G})$ is the fraction of accepted samples that correspond to model $M_k$
+
+
+\subsection{Comparison with Clauset et al. (2009)}
+
+The framework for power-law distributions by Clauset consists of two main parts: a goodness-of-fit test and model comparison via likelihood ratios.
+
+\begin{itemize}
+
+\item Goodness-of-fit: The goodness-of-fit test based on the Kolmogorov-Smirnov (KS) statistic to generate a p-value. This p-value represents the probability of seeing data as extreme as, or more extreme than, the observed data, assuming the fitted power-law model is the true generating process. A small p-value is taken as evidence to reject the power-law hypothesis.
+
+\item Model comparison: For data that passes the goodness-of-fit test, likelihood ratio tests are used to compare the power law against alternative distributions (e.g., log-normal, exponential). This test determines which model has a higher likelihood at its best-fit point and provides a p-value for the significance of that preference.
+
+The proposed Bayesian framework differs in its fundamental inferential philosophy and the questions it answers:
+
+\item Probability statements: The most significant difference lies in the output. The Clauset et al. method provides a statement about the probability of the data given the model. It allows for the rejection of a hypothesis but does not quantify the probability of the hypothesis itself. The Bayesian framework, in contrast, aims to compute the posterior model probability, $p(\text{mode}|\text{data})$. This is a statement about the probability of the model being correct, given the data.
+
+\item Model comparison: The maximum likelihood estimate (MLE) compares models at their single best-performing parameter settings. The Bayesian approach, through the marginal likelihood, compares models by averaging their performance over their entire parameter space, weighted by the prior.
+
+\item Handling uncertainty: The MLE provides a point estimate for model parameters and standard errors. Bayesian inference provides a full posterior distribution for each parameter, offering a more complete view of uncertainty.
+
+\end{itemize}
+
+\section{Analysis plan}
+
+\subsection{Validation with simulated data}
+
+The first phase will focus on a simulation study to validate the proposed method's accuracy and characterize its performance. This involves generating a large number of simulated graphs where the generative model and its parameters are known.
+
+\begin{itemize}
+
+\item Graphs will be generated from three primary models: Erdos-Renyi (ER) , Watts-Strogatz (WS), and Barabási-Albert (BA). For each model, I will vary its key parameters across a range of values (e.g., connection probability for ER; rewiring probability for WS). A range of network sizes (e.g., n = 30, 50, 100, 500, 1000 nodes) will also be tested.
+
+\item For each simulated graph, the posterior probabilities of all candidate models and their parameters will be computed and performance will be assessed using metrics such as: 
+	
+	\begin{enumerate}
+     \item Model recovery: The primary metric will be the percentage of simulations where the true generating model is correctly assigned the highest posterior probability.
+     \item Posterior concentration: The average posterior probability assigned to the true model across all simulations. A high average value indicates strong evidence for the correct model.
+     \item Parameter recovery: For simulations where the model is correctly identified, the accuracy of the parameter estimates will be assessed by comparing the posterior mean or median to the known true parameter values.
+     \end{enumerate}
+
+\item Sensitivity Analysis: I will also analyze how these performance metrics are affected by (a) the choice of summary statistics (comparing a manually-selected set against a semi-automatically selected set 1 ), (b) the ABC tolerance parameter $\epsilon$, and (c) the degree of ambiguity between models (e.g., testing a WS model with high rewiring against an ER model to test discriminability). 
+\end{itemize}
+
+\subsection{Validation with simulated data}
+
+Upon successful validation, the proposed method will be applied to open network datasets, possibly from different domains but with a greater emphasis to psychometric networks. The analysis will focus on interpreting the resulting posterior model probabilities. For instance, finding that a Barabási-Albert model has a much higher posterior probability than other models for a given network would provide quantitative evidence that growth and preferential attachment are key organizing principles for that system.
+
+
+\section{Challenges}
+
+Despite the promising alternative this Bayesian framework proposes, there are many aspects inherent to it that could make its implementation challenging:
+
+\begin{enumerate}
+
+	\item ABC is inherently simulation-heavy and can be computationally expensive, especially for large networks.
+	\item The choice of summary statistics is crucial for the accuracy of ABC but finding a method that works well across diverse graph types is not a simple task. Automated methods exist but have their own complexities.
+	\item Bayesian model comparison can be sensitive to prior distributions, both for the models and parameters within each model. Each generative model has their own set of parameters that requires different prior specifications. Therefore, it is not trivial to specify priors that make these comparisons ``fair''.
+	\item Only a limited set of models will be tested. If the true generative process is not represented, the best fit among the options might still be a poor absolute fit.
+
+\end{enumerate}
+
+\printbibliography
+
+\end{document}
+
+%% 
+%% Copyright (C) 2019 by Daniel A. Weiss <daniel.weiss.led at gmail.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% This work is not endorsed by, affiliated with, or probably even known
+%% by, the American Psychological Association.
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Daniel A. Weiss.
+%% 
+%% This work consists of the file  apa7.dtx
+%% and the derived files           apa7.ins,
+%%                                 apa7.cls,
+%%                                 apa7.pdf,
+%%                                 README,
+%%                                 APA7american.txt,
+%%                                 APA7british.txt,
+%%                                 APA7dutch.txt,
+%%                                 APA7english.txt,
+%%                                 APA7german.txt,
+%%                                 APA7ngerman.txt,
+%%                                 APA7greek.txt,
+%%                                 APA7czech.txt,
+%%                                 APA7turkish.txt,
+%%                                 APA7endfloat.cfg,
+%%                                 Figure1.pdf,
+%%                                 shortsample.tex,
+%%                                 longsample.tex, and
+%%                                 bibliography.bib.
+%% 
+%%
+%%
+%% This is file `./samples/shortsample.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% apa7.dtx  (with options: `shortsample')
+%% ----------------------------------------------------------------------
+%% 
+%% apa7 - A LaTeX class for formatting documents in compliance with the
+%% American Psychological Association's Publication Manual, 7th edition
+%% 
+%% Copyright (C) 2019 by Daniel A. Weiss <daniel.weiss.led at gmail.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% This work is not endorsed by, affiliated with, or probably even known
+%% by, the American Psychological Association.
+%% 
+%% ----------------------------------------------------------------------

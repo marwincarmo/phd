@@ -1,0 +1,19 @@
+[0] Config.pm:308> INFO - This is Biber 2.20
+[0] Config.pm:311> INFO - Logfile is 'networks_final.blg'
+[29] biber:340> INFO - === Wed Jun 11, 2025, 22:09:37
+[36] Biber.pm:420> INFO - Reading 'networks_final.bcf'
+[67] Biber.pm:994> INFO - Found 2 citekeys in bib section 0
+[74] Biber.pm:4463> INFO - Processing section 0
+[78] Biber.pm:4654> INFO - Looking for bibtex file 'bibliography.bib' for section 0
+[79] bibtex.pm:1713> INFO - LaTeX decoding ...
+[81] bibtex.pm:1519> INFO - Found BibTeX data source 'bibliography.bib'
+[105] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[105] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[105] Biber.pm:4283> INFO - Sorting list 'nyt/apasortcite//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
+[105] Biber.pm:4289> INFO - No sort tailoring available for locale 'en-US'
+[109] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[109] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[109] Biber.pm:4283> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
+[109] Biber.pm:4289> INFO - No sort tailoring available for locale 'en-US'
+[110] bbl.pm:676> INFO - Writing 'networks_final.bbl' with encoding 'UTF-8'
+[111] bbl.pm:779> INFO - Output to networks_final.bbl
